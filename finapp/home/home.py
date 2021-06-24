@@ -12,5 +12,6 @@ home = Blueprint('home', __name__)
 
 
 @home.route('/', methods=["GET"])
+@login_required
 def index():
     return "Welcome"
