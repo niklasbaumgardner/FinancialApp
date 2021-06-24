@@ -40,7 +40,7 @@ def login():
             # add remember me button
             login_user(user)
             print(email, "next", request.args.get('next'))
-            return redirect(url_for('home.add_round'))
+            return redirect(url_for('home.index'))
         
         elif user:
             flash('Password was incorrect. Try again', 'w3-pale-red')

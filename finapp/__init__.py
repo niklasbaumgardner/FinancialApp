@@ -24,6 +24,6 @@ def create_app():
     from finapp.home.home import home as home_blueprint
     app.register_blueprint(home_blueprint)
 
-    # migrate.init_app(app, db)
+    migrate.init_app(app, db)
 
     return app

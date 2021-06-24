@@ -19,19 +19,29 @@
 
     <div class="w3-cell-row w3-padding-32 content">
         <div class="w3-container w3-cell" style="width:15%"></div>
-            <div class="w3-container">
-                <table class="w3-table w3-striped w3-bordered w3-border">
+        <div class="w3-container">
+            {% for budget in budgets %}
+                <div class="w3-card-4 w3-dark-grey">
+
+                    <div class="w3-container w3-center">
+                    <h3>{{ budget.name }}</h3>
+                    <h5>{{ budget.total }}</h5>
+                    </div>
+                    
+                </div>
+            {% endfor %}
+            <!-- <table class="w3-table w3-striped w3-bordered w3-border">
+                <tr>
+                    <th class="w3-center">Name</th><th class="w3-center">Handicap</th>
+                </tr>
+                {% for user in users %}
                     <tr>
-                        <th class="w3-center">Name</th><th class="w3-center">Handicap</th>
+                        <td class="w3-center"><p style="padding:0;">{{ user.name }}</p></td>
+                        <td class="w3-center"><p style="padding:0;">{{ user.handicap }}</p></td>
                     </tr>
-                    {% for user in users %}
-                        <tr>
-                            <td class="w3-center"><p style="padding:0;">{{ user.name }}</p></td>
-                            <td class="w3-center"><p style="padding:0;">{{ user.handicap }}</p></td>
-                        </tr>
-                    {% endfor %}
-                </table>
-            </div>
+                {% endfor %}
+            </table> -->
+        </div>
         <div class="w3-container w3-cell" style="width:15%"></div>
         </div>
 

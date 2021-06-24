@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}Add Transaction{% endblock title %}
+{% block addtransaction %}w3-text-blue{% endblock addtransaction %}
+
+
+
+{% block content %}
+
+<script>
+    function openTab(tabName, tabButton) {
+        var i;
+        var tabs = document.getElementsByClassName("tab");
+        for (i = 0; i < tabs.length; i++) {
+            tabs[i].style.display = "none";
+        }
+        var tabbuttons = document.getElementsByClassName("tabbutton");
+        for (i = 0; i < tabbuttons.length; i++) {
+            tabbuttons[i].className = tabbuttons[i].className.replace(" w3-light-grey", "");
+        }
+        document.getElementById(tabName).style.display = "block";
+        document.getElementById(tabButton).className += " w3-light-grey";
+    }
+</script>
+    <div class="w3-cell-row w3-padding-32">
+        <div class="w3-container">
+            <br><br><br><br>
+            <h1>Add Transaction</h1>
+        </div>
+        
+    </div>
+
+    <!-- TODO: Look at decode page for form format width/scaling -->
+
+    <div class="w3-cell-row w3-mobile w3-margin-bottom" style="height: 100%;">
+        <div class="w3-cell" style="width:20%"></div>
+        <div class="w3-cell w3-mobile w3-margin-top w3-margin-bottom">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="w3-panel {{ category }} w3-display-container w3-border">
+                                <span onclick="this.parentElement.style.display='none'" class="w3-button w3-display-topright">&times;</span>
+                                <h3>{{ message }}</h3>
+                                </button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+            <div class="w3-bar w3-dark-grey">
+                <button id="tab1" class="w3-bar-item w3-button tabbutton w3-light-grey" onclick="openTab('paycheck', 'tab1')">Add Paycheck</button>
+                <button id="tab2" class="w3-bar-item w3-button tabbutton" onclick="openTab('budg', 'tab2')">Add/Subtract From Budget</button>
+                <button id="tab3" class="w3-bar-item w3-button tabbutton" onclick="openTab('btob', 'tab3')">Budget to Budget</button>
+            </div>
+
+            <div id="paycheck" class="tab ">
+                <form class="w3-container w3-margin-bottom w3-light-grey w3-card-4" action="" method="POST">
+                    
+                    <div class="w3-cell-row w3-margin">
+                        <div class="w3-cell w3-left" style="width:95%">
+                            <label class="" for="name"><h4 style="text-align: left;">Paycheck Name</h4></label>
+                            <input class="w3-input w3-border w3-animate-input" type="text" id="name" name="name" placeholder="Transaction Name" style="width:100%" required>
+
+                            <label class="" for="name"><h4 style="text-align: left;">Paycheck Amount</h4></label>
+                            <input class="w3-input w3-border w3-animate-input" style="width:30%" type="text" id="name" name="name" placeholder="Paycheck Amount" style="width:100%" required>
+                        </div>
+                        <div class="w3-cell" style="width:50%">
+                            <label class="w3-center" for="existing_courses"><h4>Existing Budgets</h4></label>
+                            <ul name="existing_courses" class="max_height w3-ul w3-border w3-margin w3-center">
+                                {% for budget in budgets %}
+                                    <li><div style="height: 40px;" class="">{{ budget.name }} <input class="w3-right w3-input w3-border" style="width:30%" type="text" id="{{ budget.name }}" name="{{ budget.name }}" placeholder="0" required></div></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <div id="budg" class="tab" style="display:none">
+                <form class="w3-container w3-margin-bottom w3-light-grey w3-card-4" action="" method="POST">
+                    <div class="w3-cell-row w3-margin">
+                        <div class="w3-cell w3-left" style="width:95%">
+                            <label class="" for="name"><h4 style="text-align: left;">Budget Name</h4></label>
+                            <input class="w3-input w3-border w3-animate-input" type="text" id="name" name="name" placeholder="Transaction Name" style="width:100%" required>
+
+                            <label class="" for="name"><h4 style="text-align: left;">Amount</h4></label>
+                            <input class="w3-input w3-border w3-animate-input" type="text" id="amount" name="amount" placeholder="Amount" style="width:50%" required>
+
+                            <label for="budget"><h4 style="text-align: left;">Choose a budget</h4></label>
+                            <select class="w3-input w3-border" name="budget" id="budget" style="width:50%" required>
+                                {% for budget in budgets %}
+                                    <option class="w3-input w3-border" value="{{ budget.id }}">{{ budget.name }} | {{ budget.total }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <div id="btob" class="tab" style="display:none">
+                <form class="w3-container w3-margin-bottom w3-light-grey w3-card-4" action="" method="POST">
+                    <div class="w3-cell-row w3-margin">
+                        <div class="w3-cell w3-left" style="width:95%">
+                            <label class="" for="name"><h4 style="text-align: left;">Budget Name</h4></label>
+                            <input class="w3-input w3-border w3-animate-input" type="text" id="name" name="name" placeholder="Transaction Name" style="width:100%" required>
+
+                            <label class="" for="name"><h4 style="text-align: left;">Amount</h4></label>
+                            <input class="w3-input w3-border w3-animate-input" type="text" id="amount" name="amount" placeholder="Amount" style="width:50%" required>
+                        </div>
+                        <!-- <br><br><br><br><br><br> -->
+                        
+                    </div>
+                    <div class="w3-cell-row w3-margin">
+                        <div class="w3-cell w3-left" style="width:95%">
+
+                            <label for="source_budget"><h4 style="text-align: left;">Source budget</h4></label>
+                            <select class="w3-input w3-border" name="source_budget" id="source_budget" style="width:50%" required>
+                                {% for budget in budgets %}
+                                    <option class="w3-input w3-border" value="{{ budget.id }}">{{ budget.name }} | {{ budget.total }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <br>
+                        <div class="w3-cell" style="width:50%">
+                            <label for="dest_budget"><h4 style="text-align: left;">Destination budget</h4></label>
+                            <select class="w3-input w3-border" name="dest_budget" id="dest_budget" style="width:50%" required>
+                                {% for budget in budgets %}
+                                    <option class="w3-input w3-border" value="{{ budget.id }}">{{ budget.name }} | {{ budget.total }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!-- <form class="w3-container w3-margin-bottom w3-light-grey w3-card-4" action="" method="POST">
+
+                <div class="w3-cell-row w3-margin">
+                    <div class="w3-cell w3-left" style="width:95%">
+                        <label class="" for="name"><h4 style="text-align: left;">Budget Name</h4></label>
+                        <input class="w3-input w3-border w3-animate-input" type="text" id="name" name="name" placeholder="Budget Name" style="width:100%" required>
+
+                        <label class="" for="par"><h4 style="text-align: left;">Starting Amount</h4></label>
+                        <input class="w3-input w3-border" type="text" id="amount" name="amount" value="0" style="width:40%" required>
+
+                        <!-- <label class="" for="rating"><h4 style="text-align: left;">Rating</h4></label>
+                        <input class="w3-input w3-border" type="text" id="rating" name="rating" placeholder="Rating" style="width:40%" required>
+
+                        <label class="" for="slope"><h4 style="text-align: left;">Slope</h4></label>
+                        <input class="w3-input w3-border" type="text" id="slope" name="slope" placeholder="Slope" style="width:40%" required> -->
+
+            <br><br><br><br><br>
+        </div>
+        <div class="w3-cell" style="width:20%"></div>
+
+    </div>
+
+{% endblock content %}s
