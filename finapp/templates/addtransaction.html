@@ -54,7 +54,7 @@
             </div>
 
             <div id="paycheck" class="tab ">
-                <form class="w3-container w3-margin-bottom w3-light-grey" action="" method="POST">
+                <form class="w3-container w3-margin-bottom w3-light-grey" action="{{ url_for('home.paycheck') }}" method="POST">
                     
                     <div class="w3-cell-row w3-margin">
                         <div class="w3-cell w3-left" style="width:95%">
@@ -62,13 +62,13 @@
                             <input class="w3-input w3-border w3-animate-input" type="text" id="name" name="name" placeholder="Transaction Name" style="width:100%" required>
 
                             <label class="" for="name"><h4 style="text-align: left;">Paycheck Amount</h4></label>
-                            <input class="w3-input w3-border" style="width:40%" type="text" id="name" name="name" placeholder="Paycheck Amount" style="width:100%" required>
+                            <input class="w3-input w3-border" style="width:40%" type="text" id="amount" name="amount" placeholder="Paycheck Amount" style="width:100%" required>
                         </div>
                         <div class="w3-cell" style="width:50%">
                             <label class="w3-center" for="existing_courses"><h4>Existing Budgets</h4></label>
                             <ul name="existing_courses" class="max_height w3-ul w3-border w3-margin w3-center">
                                 {% for budget in budgets %}
-                                    <li><div style="height: 40px;" class="">{{ budget.name }} <input class="w3-right w3-input w3-border" style="width:30%" type="text" id="{{ budget.name }}" name="{{ budget.name }}" placeholder="0" required></div></li>
+                                    <li><div style="height: 40px;" class="">{{ budget.name }} <input class="w3-right w3-input w3-border" style="width:30%" type="text" id="{{ budget.name }}{{ budget.id }}" name="{{ budget.name }}{{ budget.id }}" placeholder="0" required></div></li>
                                 {% endfor %}
                             </ul>
                         </div>
@@ -78,7 +78,7 @@
             </div>
             
             <div id="budg" class="tab" style="display:none">
-                <form class="w3-container w3-margin-bottom w3-light-grey" action="" method="POST">
+                <form class="w3-container w3-margin-bottom w3-light-grey" action="{{ url_for('home.budget_transaction') }}" method="POST">
                     <div class="w3-cell-row w3-margin">
                         <div class="w3-cell w3-left" style="width:95%">
                             <label class="" for="name"><h4 style="text-align: left;">Budget Name</h4></label>
@@ -101,7 +101,7 @@
             </div>
             
             <div id="btob" class="tab" style="display:none">
-                <form class="w3-container w3-margin-bottom w3-light-grey" action="" method="POST">
+                <form class="w3-container w3-margin-bottom w3-light-grey" action="{{ url_for('home.budget_to_budget') }}" method="POST">
                     <div class="w3-cell-row w3-margin">
                         <div class="w3-cell w3-left" style="width:95%">
                             <label class="" for="name"><h4 style="text-align: left;">Budget Name</h4></label>

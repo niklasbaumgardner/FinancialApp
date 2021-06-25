@@ -15,6 +15,7 @@ home = Blueprint('home', __name__)
 @login_required
 def index():
     budgets = Budget.query.filter_by(user_id=current_user.get_id()).all()
+    budgets.sort(key=lambda x: x.name)
     return render_template("index.html", budgets=budgets)
 
 
@@ -23,6 +24,7 @@ def index():
 def add_budget():
     if request.method == 'GET':
         budgets = Budget.query.filter_by(user_id=current_user.get_id()).all()
+        budgets.sort(key=lambda x: x.name)
         return render_template("addbudget.html", budgets=budgets)
     
     elif request.method == 'POST':
@@ -40,6 +42,7 @@ def add_budget():
 def add_transaction():
     if request.method == 'GET':
         budgets = Budget.query.filter_by(user_id=current_user.get_id()).all()
+        budgets.sort(key=lambda x: x.name)
         return render_template("addtransaction.html", budgets=budgets)
     
     elif request.method == 'POST':
@@ -49,16 +52,58 @@ def add_transaction():
 @home.route('/paycheck', methods=["POST"])
 @login_required
 def paycheck():
-    return
+    budgets = Budget.query.filter_by(user_id=current_user.get_id()).all()
+
+    name = request.form.get("name")
+    amount = request.form.get('amount')
+    print(name, amount)
+    # buddic = {}
+    for budget in budgets:
+        b_amt = float(request.form.get(budget.name + str(budget.id)))
+        if b_amt > 0:
+            trans = Transaction(name=name, budget_id=budget.id, user_id=current_user.get_id(), amount=b_amt, date=datetime.datetime.now())
+            do_transaction(trans)
+    # print(buddic)
+    return redirect(url_for('home.index'))
 
 
 @home.route('/budget_transaction', methods=["POST"])
 @login_required
 def budget_transaction():
-    return
+    # budgets = Budget.query.filter_by(user_id=current_user.get_id()).all()
+
+    name = request.form.get("name")
+    amount = float(request.form.get('amount'))
+    budget_id = request.form.get('budget')
+    budget = Budget.query.filter_by(user_id=current_user.get_id(), id=budget_id).first()
+    trans = Transaction(name=name, budget_id=budget.id, user_id=current_user.get_id(), amount=amount, date=datetime.datetime.now())
+    do_transaction(trans)
+    # print(buddic)
+    return redirect(url_for('home.index'))
 
 
 @home.route('/budget_to_budget', methods=["POST"])
 @login_required
 def budget_to_budget():
     return
+
+@home.route('/view_budget/<int:id>')
+@login_required
+def view_budget(id):
+    budget = Budget.query.filter_by(id=id, user_id=current_user.get_id()).first()
+    transactions = Transaction.query.filter_by(budget_id=budget.id, user_id=current_user.get_id()).all()
+    transactions.sort(key=lambda x: x.date, reverse=True)
+    return render_template('viewbudget.html', budget=budget, transactions=transactions)
+
+
+def do_transaction(transaction):
+    budget = Budget.query.filter_by(id=transaction.budget_id, user_id=current_user.get_id()).first()
+    budget.total += transaction.amount
+
+    db.session.add(transaction)
+    db.session.commit()
+
+    return transaction
+
+def link_transactions(t1, t2):
+    pass
