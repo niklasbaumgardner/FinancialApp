@@ -44,3 +44,21 @@ def add_transaction():
     
     elif request.method == 'POST':
         return
+
+
+@home.route('/paycheck', methods=["POST"])
+@login_required
+def paycheck():
+    return
+
+
+@home.route('/budget_transaction', methods=["POST"])
+@login_required
+def budget_transaction():
+    return
+
+
+@home.route('/budget_to_budget', methods=["POST"])
+@login_required
+def budget_to_budget():
+    return
