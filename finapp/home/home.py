@@ -29,11 +29,14 @@ def add_budget():
     
     elif request.method == 'POST':
         name = request.form.get('name')
-        amount = request.form.get('amount')
+        amount = float(request.form.get('amount'))
 
-        budg = Budget(name=name, total=amount, user_id=current_user.get_id())
+        budg = Budget(name=name, total=0, user_id=current_user.get_id())
         db.session.add(budg)
         db.session.commit()
+
+        trans = Transaction(name=f"Initial Transaction for {name}", budget_id=budg.id, amount=amount, user_id=current_user.get_id())
+        do_transaction(trans)
         return redirect(url_for('home.index'))
 
 
@@ -75,8 +78,8 @@ def budget_transaction():
     name = request.form.get("name")
     amount = float(request.form.get('amount'))
     budget_id = request.form.get('budget')
-    budget = Budget.query.filter_by(user_id=current_user.get_id(), id=budget_id).first()
-    trans = Transaction(name=name, budget_id=budget.id, user_id=current_user.get_id(), amount=amount, date=datetime.datetime.now())
+    # budget = Budget.query.filter_by(user_id=current_user.get_id(), id=budget_id).first()
+    trans = Transaction(name=name, budget_id=budget_id, user_id=current_user.get_id(), amount=amount, date=datetime.datetime.now())
     do_transaction(trans)
     # print(buddic)
     return redirect(url_for('home.index'))
@@ -85,7 +88,16 @@ def budget_transaction():
 @home.route('/budget_to_budget', methods=["POST"])
 @login_required
 def budget_to_budget():
-    return
+    name = request.form.get("name")
+    amount = float(request.form.get('amount'))
+    source_budget = request.form.get('source_budget')
+    dest_budget = request.form.get('dest_budget')
+
+    trans1 = Transaction(name=name, budget_id=source_budget, user_id=current_user.get_id(), amount=-amount, date=datetime.datetime.now())
+    trans2 = Transaction(name=name, budget_id=dest_budget, user_id=current_user.get_id(), amount=amount, date=datetime.datetime.now())
+    do_transaction(trans1)
+    do_transaction(trans2)
+    return redirect(url_for('home.index'))
 
 @home.route('/view_budget/<int:id>')
 @login_required
@@ -95,6 +107,17 @@ def view_budget(id):
     transactions.sort(key=lambda x: x.date, reverse=True)
     return render_template('viewbudget.html', budget=budget, transactions=transactions)
 
+
+@home.route('/delete_transaction/<int:b_id>/<int:t_id>')
+@login_required
+def delete_transaction(b_id, t_id):
+    trans = Transaction.query.filter_by(id=t_id, budget_id=b_id, user_id=current_user.get_id()).first()
+    db.session.delete(trans)
+    db.session.commit()
+
+    update_budget(b_id)
+
+    return redirect(url_for('home.index', id=b_id))
 
 def do_transaction(transaction):
     budget = Budget.query.filter_by(id=transaction.budget_id, user_id=current_user.get_id()).first()
@@ -107,3 +130,27 @@ def do_transaction(transaction):
 
 def link_transactions(t1, t2):
     pass
+
+def update_budget(b_id):
+    budget = Budget.query.filter_by(id=b_id, user_id=current_user.get_id()).first()
+
+    transactions = Transaction.query.filter_by(user_id=current_user.get_id(), budget_id=budget.id).all()
+    total = 0
+    for trans in transactions:
+        total += trans.amount
+    budget.total = total
+
+    db.session.commit()
+
+
+def update_budgets():
+    budgets = Budget.query.filter_by(user_id=current_user.get_id()).all()
+
+    for budget in budgets:
+        transactions = Transaction.query.filter_by(user_id=current_user.get_id(), budget_id=budget.id).all()
+        total = 0
+        for trans in transactions:
+            total += trans.amount
+        budget.total = total
+
+    db.session.commit()

@@ -30,7 +30,7 @@
                         <td class="w3-center"><p style="padding:0;">{{ trans.name }}</p></td>
                         <td class="w3-center"><p style="padding:0;">{{ trans.amount }}</p></td>
                         <td class="w3-center"><p style="padding:0;">{{ trans.date }}</p></td>
-                        <td class="w3-center"><a style="padding:0;" class="w3-text-red" href="">delete</a></td>
+                        <td class="w3-center"><a style="padding:0;" class="w3-text-red" href="{{ url_for('home.delete_transaction', b_id=budget.id, t_id=trans.id) }}">delete</a></td>
                     </tr>
                 {% endfor %}
             </table>

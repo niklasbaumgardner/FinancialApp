@@ -21,16 +21,17 @@
         <div class="w3-container w3-cell" style="width:15%"></div>
         <div class="w3-container">
             {% for budget in budgets %}
-                <div class="w3-card-4 w3-dark-grey">
-                    <a href="{{ url_for('home.view_budget', id=budget.id) }}">
+                <div class="w3-card-4 w3-light-grey">
+                    <a href="{{ url_for('home.view_budget', id=budget.id) }}" style="text-decoration: none;">
                         <div class="w3-container w3-center">
-                            <h3>{{ budget.name }}</h3>
-                            <h5>{{ budget.total }}</h5>
+                            <h3 class="w3-text-blue">{{ budget.name }} Fund</h3>
+                            <h5 class="w3-text-red">{{ budget.total }}</h5>
                         </div>
                     </a>
                     
                     
                 </div>
+                <br><br><br>
             {% endfor %}
             <!-- <table class="w3-table w3-striped w3-bordered w3-border">
                 <tr>
