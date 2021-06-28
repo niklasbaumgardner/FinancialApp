@@ -29,14 +29,19 @@ def add_budget():
     
     elif request.method == 'POST':
         name = request.form.get('name')
-        amount = float(request.form.get('amount'))
+        try:
+            amount = float(request.form.get('amount'))
+        except:
+            amount = 0
 
-        budg = Budget(name=name, total=0, user_id=current_user.get_id())
+        budg = Budget(name=name, total=amount, user_id=current_user.get_id())
         db.session.add(budg)
         db.session.commit()
 
-        trans = Transaction(name=f"Initial Transaction for {name}", budget_id=budg.id, amount=amount, user_id=current_user.get_id())
-        do_transaction(trans)
+        if amount != 0:
+            trans = Transaction(name=f"Initial Transaction for {name}", budget_id=budg.id, amount=amount, user_id=current_user.get_id())
+            do_transaction(trans)
+
         return redirect(url_for('home.index'))
 
 
@@ -117,7 +122,27 @@ def delete_transaction(b_id, t_id):
 
     update_budget(b_id)
 
-    return redirect(url_for('home.index', id=b_id))
+    return redirect(url_for('home.view_budget', id=b_id))
+
+
+@home.route('/delete_budget/<int:b_id>/<int:new_budget>')
+@login_required
+def delete_budget(b_id, new_budget):
+
+    budg = Budget.query.filter_by(id=b_id, user_id=current_user.get_id()).first()
+    db.session.delete(trans)
+    db.session.commit()
+
+    if new_budget != -1:
+        # move transactions to new budget
+        pass
+    else:
+        # delete transactions
+        transactions = Transaction.query.filter_by(budget_id=b_id, user_id=current_user.get_id()).all()
+        for trans in transactions:
+            delete_transaction(b_id, trans.id)
+    return redirect(url_for('home.index'))
+
 
 def do_transaction(transaction):
     budget = Budget.query.filter_by(id=transaction.budget_id, user_id=current_user.get_id()).first()
