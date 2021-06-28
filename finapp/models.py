@@ -19,6 +19,9 @@ class Budget(db.Model):
     total = db.Column(db.Float, nullable=False)
     name = db.Column(db.String(60), nullable=False)
 
+    def __str__(self):
+        return f"{self.name:<20s}|     {self.total:<6.2f}"
+
 class Transaction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)

@@ -32,15 +32,15 @@
                         {% endfor %}
                     {% endif %}
                 {% endwith %}
-            <form class="w3-container w3-margin-bottom w3-light-grey w3-card-4" action="{{ url_for('home.add_budget') }}" method="POST">
+            <form class="w3-container w3-margin-bottom w3-light-grey w3-round-small" action="{{ url_for('home.add_budget') }}" method="POST">
 
                 <div class="w3-cell-row w3-margin">
                     <div class="w3-cell w3-left" style="width:95%">
                         <label class="" for="name"><h4 style="text-align: left;">Budget Name</h4></label>
-                        <input class="w3-input w3-border w3-animate-input" type="text" id="name" name="name" placeholder="Budget Name" style="width:100%" required>
+                        <input class="w3-input w3-border w3-animate-input w3-round-small" type="text" id="name" name="name" placeholder="Budget Name" style="width:100%" required>
 
                         <label class="" for="par"><h4 style="text-align: left;">Starting Amount</h4></label>
-                        <input class="w3-input w3-border" type="text" id="amount" name="amount" value="0" style="width:40%" required>
+                        <input class="w3-input w3-border w3-round-small" type="text" id="amount" name="amount" value="0" style="width:40%" required>
 
                         <!-- <label class="" for="rating"><h4 style="text-align: left;">Rating</h4></label>
                         <input class="w3-input w3-border" type="text" id="rating" name="rating" placeholder="Rating" style="width:40%" required>
@@ -51,9 +51,9 @@
                     </div>
                     <div class="w3-cell" style="width:50%">
                         <label class="w3-center" for="existing_courses"><h4>Existing Budgets</h4></label>
-                        <ul name="existing_courses" class="max_height w3-ul w3-border w3-margin w3-center">
+                        <ul name="existing_courses" class="max_height w3-ul w3-border w3-margin w3-round-small">
                             {% for budget in budgets %}
-                                <li>{{ budget.name }} | {{ budget.total }}</li>
+                                <li style="white-space: pre-wrap;">{{ str(budget) }}</li>
                             {% endfor %}
                         </ul>
                     </div>

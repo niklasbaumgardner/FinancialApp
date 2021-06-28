@@ -33,6 +33,13 @@
                         <td class="w3-center"><a style="padding:0;" class="w3-text-red" href="{{ url_for('home.delete_transaction', b_id=budget.id, t_id=trans.id) }}">delete</a></td>
                     </tr>
                 {% endfor %}
+                <form></form>
+                <tr>
+                    <td class="w3-center"><input type="text" form="addTransaction" name="name" placeholder="Transactions name"></td>
+                    <td class="w3-center"><input type="text" form="addTransaction" name="amount" placeholder="Amount"></td>
+                    <td class="w3-center"></td>
+                    <td class="w3-center"><form id="addTransaction" method="POST" action="{{ url_for('home.budget_transaction') }}"><input name="budget" value="{{ budget.id }}" hidden><input type="submit" value="Add Transaction"></form></td>
+                </tr>
             </table>
             <!-- <table class="w3-table w3-striped w3-bordered w3-border">
                 <tr>

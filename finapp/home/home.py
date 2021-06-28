@@ -25,7 +25,7 @@ def add_budget():
     if request.method == 'GET':
         budgets = Budget.query.filter_by(user_id=current_user.get_id()).all()
         budgets.sort(key=lambda x: x.name)
-        return render_template("addbudget.html", budgets=budgets)
+        return render_template("addbudget.html", budgets=budgets, str=str)
     
     elif request.method == 'POST':
         name = request.form.get('name')
@@ -83,11 +83,12 @@ def budget_transaction():
     name = request.form.get("name")
     amount = float(request.form.get('amount'))
     budget_id = request.form.get('budget')
+
     # budget = Budget.query.filter_by(user_id=current_user.get_id(), id=budget_id).first()
     trans = Transaction(name=name, budget_id=budget_id, user_id=current_user.get_id(), amount=amount, date=datetime.datetime.now())
     do_transaction(trans)
     # print(buddic)
-    return redirect(url_for('home.index'))
+    return redirect(url_for('home.view_budget', id=budget_id))
 
 
 @home.route('/budget_to_budget', methods=["POST"])
@@ -125,22 +126,19 @@ def delete_transaction(b_id, t_id):
     return redirect(url_for('home.view_budget', id=b_id))
 
 
-@home.route('/delete_budget/<int:b_id>/<int:new_budget>')
+@home.route('/delete_budget/<int:b_id>')
 @login_required
-def delete_budget(b_id, new_budget):
+def delete_budget(b_id):
 
     budg = Budget.query.filter_by(id=b_id, user_id=current_user.get_id()).first()
     db.session.delete(trans)
     db.session.commit()
 
-    if new_budget != -1:
-        # move transactions to new budget
-        pass
-    else:
-        # delete transactions
-        transactions = Transaction.query.filter_by(budget_id=b_id, user_id=current_user.get_id()).all()
-        for trans in transactions:
-            delete_transaction(b_id, trans.id)
+    
+    # delete transactions
+    transactions = Transaction.query.filter_by(budget_id=b_id, user_id=current_user.get_id()).all()
+    for trans in transactions:
+        delete_transaction(b_id, trans.id)
     return redirect(url_for('home.index'))
 
 
