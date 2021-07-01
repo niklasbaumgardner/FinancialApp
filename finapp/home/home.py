@@ -111,7 +111,7 @@ def view_budget(id):
     budget = Budget.query.filter_by(id=id, user_id=current_user.get_id()).first()
     transactions = Transaction.query.filter_by(budget_id=budget.id, user_id=current_user.get_id()).all()
     transactions.sort(key=lambda x: x.date, reverse=True)
-    return render_template('viewbudget.html', budget=budget, transactions=transactions)
+    return render_template('viewbudget.html', budget=budget, transactions=transactions, round=round)
 
 
 @home.route('/delete_transaction/<int:b_id>/<int:t_id>')
