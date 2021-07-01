@@ -39,7 +39,7 @@ def add_budget():
         db.session.commit()
 
         if amount != 0:
-            trans = Transaction(name=f"Initial Transaction for {name}", budget_id=budg.id, amount=amount, user_id=current_user.get_id())
+            trans = Transaction(name=f"Initial Transaction for {name}", budget_id=budg.id, amount=amount, user_id=current_user.get_id(), date=datetime.datetime.now())
             do_transaction(trans)
 
         return redirect(url_for('home.index'))
@@ -126,19 +126,30 @@ def delete_transaction(b_id, t_id):
     return redirect(url_for('home.view_budget', id=b_id))
 
 
-@home.route('/delete_budget/<int:b_id>')
+@home.route('/delete_budget/<int:b_id>', methods=["POST"])
 @login_required
 def delete_budget(b_id):
+    try:
+        new_budget = int(request.form.get("new_budget"))
+    except:
+        new_budget = None
+
+    if new_budget is not None:
+        # transfer transactions to new budget
+        transactions = Transaction.query.filter_by(budget_id=b_id, user_id=current_user.get_id()).all()
+        for trans in transactions:
+            trans.budget_id = new_budget
+        db.session.commit()
+    else:
+        # delete transactions
+        transactions = Transaction.query.filter_by(budget_id=b_id, user_id=current_user.get_id()).all()
+        for trans in transactions:
+            delete_transaction(b_id, trans.id)
 
     budg = Budget.query.filter_by(id=b_id, user_id=current_user.get_id()).first()
-    db.session.delete(trans)
+    db.session.delete(budg)
     db.session.commit()
 
-    
-    # delete transactions
-    transactions = Transaction.query.filter_by(budget_id=b_id, user_id=current_user.get_id()).all()
-    for trans in transactions:
-        delete_transaction(b_id, trans.id)
     return redirect(url_for('home.index'))
 
 
@@ -153,6 +164,12 @@ def do_transaction(transaction):
 
 def link_transactions(t1, t2):
     pass
+
+def delete_transaction(b_id, t_id):
+    # need to edit once transactions are linked
+    trans = Transaction.query.filter_by(id=t_id, budget_id=b_id, user_id=current_user.get_id()).first()
+    db.session.delete(trans)
+    db.session.commit()
 
 def update_budget(b_id):
     budget = Budget.query.filter_by(id=b_id, user_id=current_user.get_id()).first()
@@ -174,6 +191,6 @@ def update_budgets():
         total = 0
         for trans in transactions:
             total += trans.amount
-        budget.total = total
+        budget.total = round(total, 2)
 
     db.session.commit()

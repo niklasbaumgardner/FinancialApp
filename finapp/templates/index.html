@@ -32,7 +32,7 @@
                     <div class="w3-light-grey">
                         <a href="{{ url_for('home.view_budget', id=budget.id) }}" style="text-decoration: none;">
                             <div class="w3-container w3-center">
-                                <h3 class="w3-text-blue">{{ budget.name }} Fund</h3>
+                                <h3 class="w3-text-blue">{{ budget.name }} Budget</h3>
                                 <h5 class="w3-text-red">{{ budget.total }}</h5>
                             </div>
                         </a>
@@ -44,17 +44,17 @@
 
                     <div id="id{{ budget.id }}" class="w3-modal" style="display: none;">
                         <div class="w3-modal-content">
-                            <form>
+                            <form method="POST" action="{{ url_for('home.delete_budget', b_id=budget.id) }}">
                                 <div class="w3-container">
                                     <h2>Delete {{ budget.name }} budget?</h2>
                                     <fieldset class="w3-center">
                                         <h6 class="w3-left">Delete this budgets transactions:</h6><br><br>
-                                        <input class="w3-left" type="radio" id="delete" name="transaction" value="HTML">
+                                        <input class="w3-left" type="radio" id="delete" name="new_budget" value="None">
                                         <label class="w3-left" for="delete">&nbsp;Delete Transations</label><br>
                                         <h6 class="w3-left">Or transfer transactions to another budget:</h6><br><br>
                                         {% for budg in budgets %}
                                             {% if budget.id != budg.id %}
-                                                <input class="w3-left" type="radio" id="{{ budg.name }}" name="transaction" value="{{ budg.name}}">
+                                                <input class="w3-left" type="radio" id="{{ budg.name }}" name="new_budget" value="{{ budg.id }}">
                                                 <label class="w3-left" for="{{ budg.name }}">&nbsp;{{ budg.name }}</label><br>
                                             {% endif %}
                                         {% endfor %}
@@ -62,7 +62,7 @@
                                     <br>
                                     <span onclick="document.getElementById('id{{ budget.id }}').style.display='none'" class="w3-button w3-display-topright">&times;</span>
                                     <div class="w3-cell-row">
-                                        <a id="delete_button" href="{{ url_for('home.delete_budget', b_id=budget.id) }}" class="w3-button w3-red w3-round-small">Delete</a>&nbsp;
+                                        <button type="submit" id="delete_button" class="w3-button w3-red w3-round-small">Delete</button>&nbsp;
                                         <a onclick="document.getElementById('id{{ budget.id }}').style.display='none'" class="w3-button w3-light-grey w3-round-small">Cancel</a>
                                     </div>
                                     <br>
