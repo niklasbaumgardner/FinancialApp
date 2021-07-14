@@ -16,7 +16,8 @@ home = Blueprint('home', __name__)
 def index():
     budgets = Budget.query.filter_by(user_id=current_user.get_id()).all()
     budgets.sort(key=lambda x: x.name)
-    return render_template("index.html", budgets=budgets, round=round)
+    total = sum([x.total for x in budgets ])
+    return render_template("index.html", budgets=budgets, round=round, total=total)
 
 
 @home.route('/add_budget', methods=["GET", "POST"])
