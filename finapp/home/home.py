@@ -16,7 +16,7 @@ home = Blueprint('home', __name__)
 def index():
     budgets = Budget.query.filter_by(user_id=current_user.get_id()).all()
     budgets.sort(key=lambda x: x.name)
-    total = sum([ x.total for x in budgets ])
+    total = round(sum([ x.total for x in budgets ]), 2)
     return render_template("index.html", budgets=budgets, round=round, total=total)
 
 
@@ -114,8 +114,25 @@ def view_budget(id):
     transactions.sort(key=lambda x: x.date, reverse=True)
     return render_template('viewbudget.html', budget=budget, transactions=transactions, round=round)
 
+@home.route('/edit_transaction/<int:b_id>/<int:t_id>', methods=["POST"])
+@login_required
+def edit_transaction(b_id, t_id):
+    new_name = request.form.get(f'editName{t_id}')
+    new_amount = request.form.get(f'editAmount{t_id}')
 
-@home.route('/delete_transaction/<int:b_id>/<int:t_id>')
+    trans = Transaction.query.filter_by(id=t_id, user_id=current_user.get_id()).first()
+
+    if new_name:
+        trans.name = new_name
+    if new_amount:
+        trans.amount = new_amount
+    db.session.commit()
+
+    return redirect(url_for('home.view_budget', id=b_id))
+
+
+
+@home.route('/delete_transaction/<int:b_id>/<int:t_id>', methods=["POST"])
 @login_required
 def delete_transaction(b_id, t_id):
     trans = Transaction.query.filter_by(id=t_id, budget_id=b_id, user_id=current_user.get_id()).first()
