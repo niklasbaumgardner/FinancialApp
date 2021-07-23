@@ -14,10 +14,17 @@ home = Blueprint('home', __name__)
 @home.route('/', methods=["GET"])
 @login_required
 def index():
-    budgets = Budget.query.filter_by(user_id=current_user.get_id()).all()
-    budgets.sort(key=lambda x: x.name)
-    total = sum([x.total for x in budgets ])
-    return render_template("index.html", budgets=budgets, round=round, total=total)
+    temp = Budget.query.filter_by(user_id=current_user.get_id()).all()
+    temp.sort(key=lambda x: x.name)
+
+    budgets = []
+    for i in range(0, len(temp), 3):
+        budgets.append(temp[i:i+3])
+    
+    print(budgets)
+    
+    total = sum([x.total for x in temp ])
+    return render_template("index.html", budgets=budgets, round=round, total=total, enumerate=enumerate)
 
 
 @home.route('/add_budget', methods=["GET", "POST"])

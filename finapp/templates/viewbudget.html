@@ -51,59 +51,46 @@
         btn.disabled = true;
     }
 </script>
-
-
-    <div class="w3-cell-row w3-padding-32">
-        <div class="w3-container">
-            <br><br><br><br>
-            <h1>{{ budget.name }}</h1>
-            <h2>Total: {{ round(budget.total, 2) }}</h2>
+    <div class="container-fluid mt-5">
+        <div class="container pb-5 pt-5">
+            <h1 class="fw-bold text-white">
+                {{ budget.name }}
+            </h1>
+            <p class="fs-4 mb-0 subhead text-white-50">
+                Total: {{ round(budget.total, 2) }}
+            </p>
         </div>
-        
+    </div>
+
+    <div class="container-fluid">
+        <div class="container">
+            <table class="table table-dark">
+                <tr class="table-dark">
+                    <th class="table-dark ">Name</th><th class="table-dark">Amount</th><th class="table-dark">Date</th><th></th>
+                </tr>
+                {% for trans in transactions %}
+                    <tr class="table-dark">
+                        <td class="table-dark"><p style="padding:0;">{{ trans.name }}</p></td>
+                        <td class="table-dark"><p style="padding:0;">{{ trans.amount }}</p></td>
+                        <td class="table-dark"><p style="padding:0;">{{ trans.date }}</p></td>
+                        <td class="table-dark"><a style="padding:0;" class="w3-text-red" href="{{ url_for('home.delete_transaction', b_id=budget.id, t_id=trans.id) }}">delete</a></td>
+                    </tr>
+                {% endfor %}
+                <tr class="table-dark">
+                    <td class="table-dark"><input type="text" form="addTransaction" id="name" name="name" placeholder="Transactions name"></td>
+                    <td class="table-dark"><input type="text" form="addTransaction" id="amount" name="amount" placeholder="Amount"></td>
+                    <td class="table-dark"></td>
+                    <td class="table-dark"><form id="addTransaction" method="POST" action="{{ url_for('home.budget_transaction') }}"><input name="budget" value="{{ budget.id }}" hidden><input id="transSubmit" type="submit" value="Add Transaction" disabled></form></td>
+                </tr>
+            </table>
+        </div>
     </div>
 
 
-    <div class="w3-cell-row w3-padding-32 content">
-        <div class="w3-container w3-cell" style="width:15%"></div>
-        <div class="w3-container">
-            <table class="w3-table w3-striped w3-bordered w3-border">
-                <tr>
-                    <th class="w3-center">Name</th><th class="w3-center">Amount</th><th class="w3-center">Date</th><th></th>
-                </tr>
-                {% for trans in transactions %}
-                    <tr>
-                        <td class="w3-center"><p style="padding:0;">{{ trans.name }}</p></td>
-                        <td class="w3-center"><p style="padding:0;">{{ trans.amount }}</p></td>
-                        <td class="w3-center"><p style="padding:0;">{{ trans.date }}</p></td>
-                        <td class="w3-center"><a style="padding:0;" class="w3-text-red" href="{{ url_for('home.delete_transaction', b_id=budget.id, t_id=trans.id) }}">delete</a></td>
-                    </tr>
-                {% endfor %}
-                <form></form>
-                <tr>
-                    <td class="w3-center"><input type="text" form="addTransaction" id="name" name="name" placeholder="Transactions name"></td>
-                    <td class="w3-center"><input type="text" form="addTransaction" id="amount" name="amount" placeholder="Amount"></td>
-                    <td class="w3-center"></td>
-                    <td class="w3-center"><form id="addTransaction" method="POST" action="{{ url_for('home.budget_transaction') }}"><input name="budget" value="{{ budget.id }}" hidden><input id="transSubmit" type="submit" value="Add Transaction" disabled></form></td>
-                </tr>
-            </table>
-            <!-- <table class="w3-table w3-striped w3-bordered w3-border">
-                <tr>
-                    <th class="w3-center">Name</th><th class="w3-center">Handicap</th>
-                </tr>
-                {% for user in users %}
-                    <tr>
-                        <td class="w3-center"><p style="padding:0;">{{ user.name }}</p></td>
-                        <td class="w3-center"><p style="padding:0;">{{ user.handicap }}</p></td>
-                    </tr>
-                {% endfor %}
-            </table> -->
-        </div>
-        <div class="w3-container w3-cell" style="width:15%"></div>
-        </div>
 
     <script>
         document.getElementById("name").addEventListener("keyup", checkInput);
         document.getElementById("amount").addEventListener("keyup", checkInput);
     </script>
 
-{% endblock content %}s
+{% endblock content %}

@@ -6,25 +6,85 @@
 
 
 {% block content %}
-{% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        <!-- <div class="container flex-row"> -->
-            {% for category, message in messages %}
-                <div class="alert alert-primary fixed" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                <!-- <div class="w3-panel {{ category }} w3-display-container w3-border">
-                    <span onclick="this.parentElement.style.display='none'" class="w3-button w3-display-topright">&times;</span>
-                    <h3>{{ message }}</h3>
-                    
-                </div> -->
-            {% endfor %}
-        <!-- </div> -->
+
+
+<section class="vh-100">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="container-fluid pt-5 mt-alerts">
+                {% for category, message in messages %}
+                    <div class=" alert alert-primary alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+            
+        {% endif %}
+    {% endwith %}
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                <div class="card bg-dark text-white" style="border-radius: 1rem;">
+                    <div class="card-body p-5 text-center">
         
-    {% endif %}
-{% endwith %}
-<main class="form-signin">
+                    <form action="{{ url_for('auth.login') }}" method="POST">
+                        <div class="mb-md-5 mt-md-4 pb-5">
+        
+                            <h2 class="fw-bold mb-2 text-uppercase">Login</h2>
+                            <p class="text-white-50 mb-5">Please enter your login and password!</p>
+            
+                            <div class="form-outline form-white mb-4">
+                            <input type="email" id="email" name="email" class="form-control form-control-lg" />
+                            <label class="form-label" for="typeEmailX">Email</label>
+                            </div>
+            
+                            <div class="form-outline form-white mb-4">
+                            <input type="password" id="password" name="password" class="form-control form-control-lg" />
+                            <label class="form-label" for="typePasswordX">Password</label>
+                            </div>
+            
+                            <!-- <p class="small mb-5 pb-lg-2"><a class="text-white-50" href="#!">Forgot password?</a></p> -->
+            
+                            <button class="btn btn-outline-light btn-lg px-5" type="submit">Login</button>
+            
+                        </div>
+                    </form>
+        
+                    <div>
+                        <p class="mb-0">Don't have an account? <a href="{{ url_for('auth.signup') }}" class="text-white-50 fw-bold">Sign Up</a></p>
+                    </div>
+        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- <main class="form-signin">
+    <form>
+        <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+    
+        <div class="form-floating">
+            <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+            <label for="floatingInput">Email address</label>
+        </div>
+        <div class="form-floating">
+            <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+            <label for="floatingPassword">Password</label>
+        </div>
+    
+        <div class="checkbox mb-3">
+            <label>
+            <input type="checkbox" value="remember-me"> Remember me
+            </label>
+        </div>
+        <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+        <p class="mt-5 mb-3 text-muted">&copy; 2017–2021</p>
+    </form>
+</main> -->
+<!-- <main class="form-signin">
     <div class="d-flex flex-row justify-content-center container-fluid">
         <form action="{{ url_for('auth.login') }}" method="POST">
             <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
@@ -46,7 +106,7 @@
             <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
         </form>
     </div>
-</main>
+</main> -->
 
 
 

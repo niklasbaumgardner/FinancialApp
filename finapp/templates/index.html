@@ -14,71 +14,46 @@
     }
 </script>
 
-
-    <div class="w3-cell-row w3-padding-32">
-        <div class="w3-container">
-            <br><br><br><br>
-            <h1>Welcome</h1>
-            <p>Your total of all budgets is {{ total }}</p>
+    <div class="container-fluid mt-5">
+        <div class="container pb-5 pt-5">
+            <h1 class="fw-bold text-white">
+                Welcome
+            </h1>
+            <p class="fs-4 mb-0 subhead text-white-50">
+                Your total of all budgets is {{ total }}
+            </p>
         </div>
-        
     </div>
 
-
-    <div class="w3-cell-row w3-padding-32 content">
-        <div class="w3-container w3-cell" style="width:15%"></div>
-        <div class="w3-container w3-round-small">
-            {% if budgets %}
-                {% for budget in budgets %}
-                    <div class="w3-light-grey">
-                        <a href="{{ url_for('home.view_budget', id=budget.id) }}" style="text-decoration: none;">
-                            <div class="w3-container w3-center">
-                                <h3 class="w3-text-blue">{{ budget.name }} Budget</h3>
-                                <h5 class="w3-text-red">{{ round(budget.total, 2) }}</h5>
-                            </div>
-                        </a>
-                        <button onclick="delete_budget('id{{ budget.id }}', '{{ budget.name }}', 'url')">Delete {{ budget.name }} Budget?</button>
-                        
-                        
-                    </div>
-                    <br><br><br>
-
-                    <div id="id{{ budget.id }}" class="w3-modal" style="display: none;">
-                        <div class="w3-modal-content">
-                            <form method="POST" action="{{ url_for('home.delete_budget', b_id=budget.id) }}">
-                                <div class="w3-container">
-                                    <h2>Delete {{ budget.name }} budget?</h2>
-                                    <fieldset class="w3-center">
-                                        <h6 class="w3-left">Delete this budgets transactions:</h6><br><br>
-                                        <input class="w3-left" type="radio" id="delete" name="new_budget" value="None">
-                                        <label class="w3-left" for="delete">&nbsp;Delete Transations</label><br>
-                                        <h6 class="w3-left">Or transfer transactions to another budget:</h6><br><br>
-                                        {% for budg in budgets %}
-                                            {% if budget.id != budg.id %}
-                                                <input class="w3-left" type="radio" id="{{ budg.name }}" name="new_budget" value="{{ budg.id }}">
-                                                <label class="w3-left" for="{{ budg.name }}">&nbsp;{{ budg.name }}</label><br>
-                                            {% endif %}
-                                        {% endfor %}
-                                    </fieldset>
-                                    <br>
-                                    <span onclick="document.getElementById('id{{ budget.id }}').style.display='none'" class="w3-button w3-display-topright">&times;</span>
-                                    <div class="w3-cell-row">
-                                        <button type="submit" id="delete_button" class="w3-button w3-red w3-round-small">Delete</button>&nbsp;
-                                        <a onclick="document.getElementById('id{{ budget.id }}').style.display='none'" class="w3-button w3-light-grey w3-round-small">Cancel</a>
+    {% if budgets %}
+        <div class="container pt-3">
+            {% for group in budgets %}
+                <div class="row">
+                    {% for budget in group %}
+                        <div class="col-sm mt-5">
+                            <a href="{{ url_for('home.view_budget', id=budget.id) }}" style="text-decoration: none;">
+                                <div class="card bg-dark text-white">
+                                    <div class="card-body p-4 rounded-bottom">
+                                        <h4>{{ budget.name }} Budget</h4>
+                                        <p>{{ round(budget.total, 2) }}</p>
                                     </div>
-                                    <br>
                                 </div>
-                            </form>
+                            </a>
+                            
                         </div>
-                    </div>
-
-                {% endfor %}
-            {% else %}
-                    <h4>No budgets! Click <a href="{{ url_for('home.add_budget') }}">HERE</a> to add a budget.</h4>
-            {% endif %}
+                    {% endfor %}
+                </div>
+            {% endfor %}
         </div>
-        <div class="w3-container w3-cell" style="width:15%"></div>
-    </div>
+    {% else %}
+    {% endif %}
+
+    
+
+
+
+
+    
 
     
 
