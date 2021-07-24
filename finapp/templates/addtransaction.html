@@ -16,10 +16,10 @@
         }
         var tabbuttons = document.getElementsByClassName("tabbutton");
         for (i = 0; i < tabbuttons.length; i++) {
-            tabbuttons[i].className = tabbuttons[i].className.replace(" w3-light-grey", "");
+            tabbuttons[i].className = tabbuttons[i].className.replace(" text-white", "");
         }
-        document.getElementById(tabName).style.display = "block";
-        document.getElementById(tabButton).className += " w3-light-grey";
+        document.getElementById(tabButton).className += " text-white";
+        document.getElementById('input-card').innerHTML = document.getElementById(tabName).innerHTML;
     }
 
     function checkPaycheck(e) {
@@ -63,14 +63,30 @@
     }
 
 </script>
-    <div class="w3-cell-row w3-padding-32">
-        <div class="w3-container">
-            <br><br><br><br>
-            <h1>Add Transaction</h1>
+<div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-12">
+            <div class="card bg-dark text-white" style="border-radius: 1rem;">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs bg-dark">
+                        <li class="nav-item">
+                            <a id="tab1" class="nav-link tabbutton bg-dark text-white" aria-current="page" href="javascript:void(0)" onclick="openTab('paycheck', 'tab1')">Add Paycheck</a>
+                        </li>
+                        <li class="nav-item">
+                            <a id="tab2" class="nav-link tabbutton bg-dark" href="javascript:void(0)" onclick="openTab('budg', 'tab2')">Add/Subtract From Budget</a>
+                        </li>
+                        <li class="nav-item">
+                            <a id="tab3" class="nav-link tabbutton bg-dark" href="javascript:void(0)" onclick="openTab('btob', 'tab3')">Budget to Budget</a>
+                        </li>
+                    </ul>
+                </div>
+                <div id="input-card" class="card-body">
+                </div>
+                
+            </div>
         </div>
-        
     </div>
-
+</div>
     <!-- TODO: Look at decode page for form format width/scaling -->
 
     <div class="w3-cell-row w3-mobile w3-margin-bottom" style="height: 100%;">
@@ -89,12 +105,12 @@
                 {% endwith %}
 
             <div class="w3-bar w3-dark-grey w3-round-small">
-                <button id="tab1" class="w3-round-small w3-bar-item w3-button tabbutton w3-light-grey" onclick="openTab('paycheck', 'tab1')">Add Paycheck</button>
-                <button id="tab2" class="w3-round-small w3-bar-item w3-button tabbutton" onclick="openTab('budg', 'tab2')">Add/Subtract From Budget</button>
-                <button id="tab3" class="w3-round-small w3-bar-item w3-button tabbutton" onclick="openTab('btob', 'tab3')">Budget to Budget</button>
+                <!-- <button  class="w3-round-small w3-bar-item w3-button  w3-light-grey" onclick="openTab('paycheck', 'tab1')">Add Paycheck</button>
+                <button  class="w3-round-small w3-bar-item w3-button " onclick="openTab('budg', 'tab2')">Add/Subtract From Budget</button>
+                <button  class="w3-round-small w3-bar-item w3-button " onclick="openTab('btob', 'tab3')">Budget to Budget</button> -->
             </div>
 
-            <div id="paycheck" class="tab ">
+            <div id="paycheck" class="tab" style="display:none">
                 <form class="w3-container w3-margin-bottom w3-light-grey w3-round-small" action="{{ url_for('home.paycheck') }}" method="POST">
                     
                     <div class="w3-cell-row w3-margin">
@@ -190,6 +206,8 @@
         {% for budget in budgets %}
             document.getElementById("{{ budget.name }}{{ budget.id }}").addEventListener("keyup", checkPaycheck);
         {% endfor %}
+
+        document.getElementById('input-card').innerHTML = document.getElementById('paycheck').innerHTML;
     </script>
 
 {% endblock content %}s

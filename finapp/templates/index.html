@@ -14,8 +14,8 @@
     }
 </script>
 
-    <div class="container-fluid mt-5">
-        <div class="container pb-5 pt-5">
+    <div class="container-fluid">
+        <div class="container pt-5">
             <h1 class="fw-bold text-white">
                 Welcome
             </h1>
@@ -26,7 +26,7 @@
     </div>
 
     {% if budgets %}
-        <div class="container pt-3">
+        <div class="container py-5 pt-5">
             {% for group in budgets %}
                 <div class="row">
                     {% for budget in group %}
@@ -46,15 +46,7 @@
             {% endfor %}
         </div>
     {% else %}
+        <h4>No budgets! Click <a href="{{ url_for('home.add_budget') }}">HERE</a> to add a budget.</h4>
     {% endif %}
-
-    
-
-
-
-
-    
-
-    
 
 {% endblock content %}s

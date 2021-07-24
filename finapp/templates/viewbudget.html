@@ -51,7 +51,7 @@
         btn.disabled = true;
     }
 </script>
-    <div class="container-fluid mt-5">
+    <div class="container-fluid">
         <div class="container pb-5 pt-5">
             <h1 class="fw-bold text-white">
                 {{ budget.name }}
@@ -77,10 +77,10 @@
                     </tr>
                 {% endfor %}
                 <tr class="table-dark">
-                    <td class="table-dark"><input type="text" form="addTransaction" id="name" name="name" placeholder="Transactions name"></td>
-                    <td class="table-dark"><input type="text" form="addTransaction" id="amount" name="amount" placeholder="Amount"></td>
+                    <td class="table-dark"><input class="form-control" type="text" form="addTransaction" id="name" name="name" placeholder="Transactions name"></td>
+                    <td class="table-dark"><input class="form-control" type="text" form="addTransaction" id="amount" name="amount" placeholder="Amount"></td>
                     <td class="table-dark"></td>
-                    <td class="table-dark"><form id="addTransaction" method="POST" action="{{ url_for('home.budget_transaction') }}"><input name="budget" value="{{ budget.id }}" hidden><input id="transSubmit" type="submit" value="Add Transaction" disabled></form></td>
+                    <td class="table-dark"><form id="addTransaction" method="POST" action="{{ url_for('home.budget_transaction') }}"><input name="budget" value="{{ budget.id }}" hidden><input class="btn btn-primary" id="transSubmit" type="submit" value="Add Transaction" disabled></form></td>
                 </tr>
             </table>
         </div>

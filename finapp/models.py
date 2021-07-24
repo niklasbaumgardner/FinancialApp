@@ -20,7 +20,7 @@ class Budget(db.Model):
     name = db.Column(db.String(60), nullable=False)
 
     def __str__(self):
-        return f"{self.name:<20s}|     {self.total:<6.2f}"
+        return f"{self.name : <30s}|{self.total : >10.2f}"
 
 class Transaction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
