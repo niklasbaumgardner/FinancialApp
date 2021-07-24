@@ -31,11 +31,13 @@ html, body {
     margin: 0;
 }
 .wrapper {
+    display: flex;
+    align-items: center;
+    flex-direction: column; 
+    justify-content: center;
+    width: 100%;
     min-height: 100%;
-
-  /* Equal to height of footer */
-  /* But also accounting for potential margin-bottom of last child */
-    margin-bottom: -50px;
+    padding: 20px;
 }
 .footer {
     height: 50px;
@@ -80,7 +82,7 @@ html, body {
     background-color: white;
 }
 
-/* select {
-    width: 50%;
-    height: 35px;
-} */
+.custombg {
+    background: rgb(51, 47, 47);
+    background-size: cover;
+}

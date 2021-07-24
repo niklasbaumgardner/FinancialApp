@@ -8,53 +8,62 @@
 {% block content %}
 
 
-    <div class="w3-cell-row w3-padding-32">
-        <div class="w3-container">
-            <br><br><br><br>
-            <h1>Login</h1>
-        </div>
+<section class="">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="container-fluid pt-5 mt-alerts d-flex justify-content-center">
+                {% for category, message in messages %}
+                    <div class=" alert alert-primary alert-dismissible fade show w-25" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+            
+        {% endif %}
+    {% endwith %}
+    <div class="container py-5">
+        <div class="row d-flex justify-content-center align-items-center">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                <div class="card bg-dark text-white" style="border-radius: 1rem;">
+                    <div class="card-body p-5">
         
-    </div>
-
-    <!-- TODO: Look at decode page for form format width/scaling -->
-
-    <div class="w3-cell-row w3-mobile w3-margin-bottom" style="height: 100%;">
-        <div class="w3-cell" style="width:20%"></div>
-        <div class="w3-cell w3-mobile w3-margin-top w3-margin-bottom">
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        <div class="w3-panel {{ category }} w3-display-container w3-border">
-                            <span onclick="this.parentElement.style.display='none'" class="w3-button w3-display-topright">&times;</span>
-                            <h3>{{ message }}</h3>
-                            </button>
+                    <form action="{{ url_for('auth.login') }}" method="POST">
+                        <div class="mb-md-5 mt-md-4">
+        
+                            <h2 class="fw-bold mb-2 text-uppercase">Login</h2>
+                            <p class="text-white-50 mb-5">Please enter your login and password</p>
+            
+                            <div class="form-outline form-white mb-4">
+                                <label class="form-label" for="typeEmailX">Email</label>
+                                <input type="email" id="email" name="email" class="form-control" />
+                            
+                            </div>
+            
+                            <div class="form-outline form-white mb-4">
+                                <label class="form-label" for="typePasswordX">Password</label>
+                                <input type="password" id="password" name="password" class="form-control" />
+                            
+                            </div>
+            
+                            <!-- <p class="small mb-5 pb-lg-2"><a class="text-white-50" href="#!">Forgot password?</a></p> -->
+            
+                            <button class="btn btn-outline-light px-5" type="submit">Login</button>
+            
                         </div>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
-            <form class="w3-container w3-margin-bottom w3-light-grey w3-card-4" action="{{ url_for('auth.login') }}" method="POST">
-    
-                <!-- <label class="" for="name"><h4 style="text-align: left;">Name</h4></label>
-                <input class="w3-input w3-border w3-animate-input" type="text" id="name" name="name" placeholder="Your name" style="width:50%"> -->
-            
-                <label class="" for="email"><h4 style="text-align: left;">Email</h4></label>
-                <input class="w3-input w3-border w3-animate-input" type="email" id="email" name="email" placeholder="Your email" {% if email %}value="{{ email }}"{% endif %} style="width:50%">
-            
-                <label class="" for="password"><h4 style="text-align: left;">Password</h4></label>
-                <input class="w3-input w3-border w3-animate-input" type="password" id="password" name="password" placeholder="Password" style="width:50%">
+                    </form>
         
-                <!-- <label class="" for="message"><h4 style="text-align: left;">Message</h4></label>
-                <textarea class="w3-input w3-border" id="message" name="message" placeholder="Message" style="height:200px;resize:none;"></textarea> -->
-            
-                <input class="w3-button w3-block w3-section w3-blue w3-ripple w3-padding" type="submit" value="Login">
-
-                <p>Don't have an account? Click <a href="{{ url_for('auth.signup') }}">here</a> to sign up</p>
-            
-            </form>
-            <br><br><br><br><br>
+                    <div>
+                        <p class="mb-0">Don't have an account? <a href="{{ url_for('auth.signup') }}" class="text-white-50 fw-bold">Sign Up</a></p>
+                    </div>
+        
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="w3-cell" style="width:20%"></div>
-
     </div>
+</section>
 
-{% endblock content %}s
+
+
+{% endblock content %}
