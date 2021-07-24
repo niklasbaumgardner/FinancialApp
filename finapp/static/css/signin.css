@@ -6,7 +6,7 @@
   background: -webkit-linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1));
 
   /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-  background: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1));
+  background: linear-gradient(to right, rgba(170, 17, 222, 1), rgba(37, 117, 252, 1));
 
   background-size: cover;
 }
@@ -35,14 +35,3 @@
   -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
   background-color: #555;
 }
-
-/* .scrollbar
-{
-  margin-left: 30px;
-  float: left;
-  height: 300px;
-  width: 65px;
-  background: #F5F5F5;
-  overflow-y: scroll;
-  margin-bottom: 25px;
-} */

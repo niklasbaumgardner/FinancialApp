@@ -15,13 +15,20 @@ home = Blueprint('home', __name__)
 @login_required
 def index():
     temp = Budget.query.filter_by(user_id=current_user.get_id()).all()
-    temp.sort(key=lambda x: x.name)
+    temp.sort(key=lambda x: x.name.lower())
+    # for b in temp:
+    #     print(b.id)
+    #     print(b.name)
+    # print()
 
     budgets = []
     for i in range(0, len(temp), 3):
         budgets.append(temp[i:i+3])
     
-    print(budgets)
+    # for group in budgets:
+    #     for b in group:
+    #         print(b.name)
+    #     print()
     
     total = sum([x.total for x in temp ])
     return render_template("index.html", budgets=budgets, round=round, total=total, enumerate=enumerate)
@@ -75,10 +82,14 @@ def paycheck():
     print(name, amount)
     # buddic = {}
     for budget in budgets:
-        b_amt = float(request.form.get(budget.name + str(budget.id)))
-        if b_amt > 0:
-            trans = Transaction(name=name, budget_id=budget.id, user_id=current_user.get_id(), amount=b_amt, date=datetime.datetime.now())
-            do_transaction(trans)
+        try:
+
+            b_amt = float(request.form.get(budget.name + str(budget.id)))
+            if b_amt > 0:
+                trans = Transaction(name=name, budget_id=budget.id, user_id=current_user.get_id(), amount=b_amt, date=datetime.datetime.now())
+                do_transaction(trans)
+        except:
+            continue
     # print(buddic)
     return redirect(url_for('home.index'))
 
