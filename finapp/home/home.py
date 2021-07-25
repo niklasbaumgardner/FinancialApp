@@ -20,7 +20,7 @@ def index():
         budgets.append(temp[i:i+3])
     
     total = sum([x.total for x in temp ])
-    return render_template("index.html", budgets=budgets, round=round, total=total, enumerate=enumerate)
+    return render_template("index.html", budgets=budgets, round=round, total=total)
 
 
 @home.route('/add_budget', methods=["GET", "POST"])

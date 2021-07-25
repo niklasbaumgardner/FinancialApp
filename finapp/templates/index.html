@@ -7,6 +7,10 @@
 
 {% block content %}
 <script>
+    function add_new_budget() {
+        document.getElementById('addNewBudgetModal').style.display = 'block';
+    }
+
     function delete_budget(budget_id) {
         // document.getElementById('delete_button').href = url;
 
@@ -15,12 +19,19 @@
 </script>
     <div class="container-fluid">
         <div class="container pt-5">
-            <h1 class="fw-bold text-white">
-                Welcome
-            </h1>
-            <p class="fs-4 mb-0 subhead text-white-50">
-                Your total of all budgets is {{ total }}
-            </p>
+            <div class="row justify-content-between">
+                <div class="col-auto me-auto">
+                    <h1 class="fw-bold text-white">
+                        Welcome
+                    </h1>
+                    <p class="fs-4 mb-0 subhead text-white-50">
+                        Your total of all budgets is {{ total }}
+                    </p>
+                </div>
+                <div class="col-auto pt-5 me-auto" style="margin-right: 0px !important;">
+                    <button class="btn btn-outline-light" onclick="add_new_budget()">Add New Budget</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -35,7 +46,7 @@
                                     <div class="card-body p-4 rounded-bottom">
                                         <h4 class="text-white">{{ budget.name }} Budget</h4>
                                         <p class="text-white">{{ round(budget.total, 2) }}</p>
-                                        <a class="btn btn-primary" style="padding:0;" href="javascript:void(0);" onclick="delete_budget('{{ budget.id }}')">Delete</a>
+                                        <a class="btn btn-sm btn-outline-primary" href="javascript:void(0);" onclick="delete_budget('{{ budget.id }}')">Delete</a>
                                     </div>
                                 </div>
                             </a>
@@ -82,5 +93,75 @@
     {% else %}
         <h4>No budgets! Click <a href="{{ url_for('home.add_budget') }}">HERE</a> to add a budget.</h4>
     {% endif %}
+
+    <div id="addNewBudgetModal" class="modal" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Budget</h5>
+                    <button onclick="document.getElementById('addNewBudgetModal').style.display='none'" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addNewBudgetForm" action="{{ url_for('home.add_budget') }}" method="POST">
+                        <div class="mb-md-5">
+        
+                            <!-- <h2 class="card-title">Add Budget</h2>
+                            <br> -->
+                            <div class="form-outline form-white mb-4">
+                                <label class="form-label" for="name">Budget Name</label>
+                                <input type="text" id="name" name="name" class="form-control" required/>
+                            
+                            </div>
+            
+                            <div class="form-outline form-white mb-4">
+                                <label class="form-label" for="amount">Starting Amount</label>
+                                <input type="text" id="amount" name="amount" class="form-control" required/>
+                            
+                            </div>
+            
+                            <!-- <button class="btn btn-outline-light px-5 mt-3" type="submit">Add Budget</button> -->
+            
+                        </div>
+                    </form>
+
+                    <div class="accordion" id="accordionExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingOne">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                    See Existing Budgets
+                                </button>
+                            </h2>
+                            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <ul name="existing_budgets" class="list-group" id="style-1" style="max-height: 200px;overflow-y: scroll;">
+                                        {% for group in budgets %}
+                                            {% for budget in group %}
+                                                <li class="list-group-item" >
+                                                    <div class="d-flex justify-content-between">
+                                                        <div>
+                                                            {{ budget.name }}
+                                                        </div>
+                                                        <div>
+                                                            {{ round(budget.total, 2) }}
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button onclick="document.getElementById('addNewBudgetModal').style.display='none'" type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                    <!-- <button type="button" onclick="document.getElementById('addNewBudgetForm').submit()" class="btn btn-primary">Add Budget</button> -->
+                    <input type="submit" form="addNewBudgetForm" class="btn btn-primary" value="Add Budget"/>
+                </div>
+            </div>
+        </div>
+    </div>
 
 {% endblock content %}s
