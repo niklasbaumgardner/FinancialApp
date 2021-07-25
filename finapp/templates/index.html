@@ -7,10 +7,10 @@
 
 {% block content %}
 <script>
-    function delete_budget(budget_id, name, url) {
+    function delete_budget(budget_id) {
         // document.getElementById('delete_button').href = url;
 
-        document.getElementById(budget_id).style.display = 'block';
+        document.getElementById('id' + budget_id).style.display = 'block';
     }
 </script>
     <div class="container-fluid">
@@ -35,10 +35,45 @@
                                     <div class="card-body p-4 rounded-bottom">
                                         <h4>{{ budget.name }} Budget</h4>
                                         <p>{{ round(budget.total, 2) }}</p>
+                                        <a class="btn btn-primary" style="padding:0;" href="javascript:void(0);" onclick="delete_budget('{{ budget.id }}')">Delete</a>
                                     </div>
                                 </div>
                             </a>
                             
+                        </div>
+
+                        <div id="id{{ budget.id }}" class="modal" style="display: none;">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Delete budget {{ budget.name }} ?</h5>
+                                        <button onclick="document.getElementById('id{{ budget.id }}').style.display='none'" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>Are you sure you want to delete this transaction?</p>
+                                        <fieldset class="w3-center">
+                                            <h6 class="w3-left">Delete this budgets transactions:</h6><br><br>
+                                            <input class="form-check-input" type="radio" id="delete" name="new_budget" value="None">
+                                            <label class="" for="delete">&nbsp;Delete Transations</label><br>
+                                            <h6 class="">Or transfer transactions to another budget:</h6><br><br>
+                                            {% for group in budgets %}
+                                                {% for budg in group %}
+                                                    {% if budget.id != budg.id %}
+                                                        <input class="form-check-input" type="radio" id="{{ budg.name }}" name="new_budget" value="{{ budg.id }}">
+                                                        <label class="form-check-label" for="{{ budg.name }}">{{ budg.name }}</label><br>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% endfor %}
+                                        </fieldset>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <form method="POST" action="{{ url_for('home.delete_budget', b_id=budget.id) }}">
+                                            <button type="submit" id="delete_button" class="btn btn-danger">Delete</button>
+                                            <button onclick="document.getElementById('id{{ budget.id }}').style.display='none'" type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     {% endfor %}
                 </div>

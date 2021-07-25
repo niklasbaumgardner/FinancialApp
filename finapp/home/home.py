@@ -5,10 +5,8 @@ from finapp.models import User, Budget, Transaction
 from finapp.extensions import db
 import datetime
 
-# app = Flask(__name__)
 
 home = Blueprint('home', __name__)
-# mail = Mail(home)
 
 
 @home.route('/', methods=["GET"])
@@ -16,19 +14,10 @@ home = Blueprint('home', __name__)
 def index():
     temp = Budget.query.filter_by(user_id=current_user.get_id()).all()
     temp.sort(key=lambda x: x.name.lower())
-    # for b in temp:
-    #     print(b.id)
-    #     print(b.name)
-    # print()
 
     budgets = []
     for i in range(0, len(temp), 3):
         budgets.append(temp[i:i+3])
-    
-    # for group in budgets:
-    #     for b in group:
-    #         print(b.name)
-    #     print()
     
     total = sum([x.total for x in temp ])
     return render_template("index.html", budgets=budgets, round=round, total=total, enumerate=enumerate)
@@ -128,6 +117,7 @@ def budget_to_budget():
 @login_required
 def view_budget(id):
     budget = Budget.query.filter_by(id=id, user_id=current_user.get_id()).first()
+
     transactions = Transaction.query.filter_by(budget_id=budget.id, user_id=current_user.get_id()).all()
     transactions.sort(key=lambda x: x.date, reverse=True)
     return render_template('viewbudget.html', budget=budget, transactions=transactions, round=round)
@@ -145,6 +135,7 @@ def edit_transaction(b_id, t_id):
     if new_amount:
         trans.amount = new_amount
     db.session.commit()
+    update_budget(b_id)
 
     return redirect(url_for('home.view_budget', id=b_id))
 

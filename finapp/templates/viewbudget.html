@@ -95,12 +95,44 @@
                     <th class="table-dark ">Name</th><th class="table-dark">Amount</th><th class="table-dark">Date</th><th></th>
                 </tr>
                 {% for trans in transactions %}
-                    <tr class="table-dark">
-                        <td class="table-dark"><p style="padding:0;">{{ trans.name }}</p></td>
-                        <td class="table-dark"><p style="padding:0;">{{ trans.amount }}</p></td>
-                        <td class="table-dark"><p style="padding:0;">{{ trans.date }}</p></td>
-                        <td class="table-dark"><a style="padding:0;" class="w3-text-red" href="{{ url_for('home.delete_transaction', b_id=budget.id, t_id=trans.id) }}">delete</a></td>
-                    </tr>
+                    <form method="POST" id="trans{{ trans.id }}" action="{{ url_for('home.edit_transaction', b_id=budget.id, t_id=trans.id) }}">
+                        <tr class="table-dark">
+                            <td class="table-dark">
+                                <p class="show-not-edit-{{ trans.id }}" id="name{{ trans.id }}" style="padding:0;">{{ trans.name }}</p>
+                                <input class="show-edit-{{ trans.id }} form-control" type="text" id="editName{{ trans.id }}" name="editName{{ trans.id }}" value="{{ trans.name }}" hidden>
+                            </td>
+                            <td class="table-dark">
+                                <p class="show-not-edit-{{ trans.id }}" id="amount{{ trans.id }}" style="padding:0;">{{ trans.amount }}</p>
+                                <input class="show-edit-{{ trans.id }} form-control" type="text" id="editAmount{{ trans.id }}" name="editAmount{{ trans.id }}" value="{{ trans.amount }}" hidden>
+                            </td>
+                            <td class="table-dark"><p style="padding:0;">{{ trans.date }}</p></td>
+                            <td class="table-dark">
+                                <a class="show-not-edit-{{ trans.id }} w3-text-red" style="padding:0;" href="javascript:void(0);" onclick="editTransaction('{{ trans.id }}')">edit</a>
+                                <a class="show-edit-{{ trans.id }} w3-text-red" style="padding:0;" href="javascript:void(0);" onclick="document.getElementById('trans{{ trans.id }}').submit();" hidden>update</a>
+                                | 
+                                <a class="show-not-edit-{{ trans.id }} w3-text-red" style="padding:0;" href="javascript:void(0);" onclick="deleteTransaction('{{ trans.id }}')">delete</a>
+                                <a class="show-edit-{{ trans.id }} w3-text-red" style="padding:0;" href="javascript:void(0);" onclick="cancelEdit('{{ trans.id }}')" hidden>cancel</a>
+                            </td>
+                        </tr>
+                    </form>
+                    <div id="id{{ trans.id }}" class="modal" style="display: none;">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Delete transaction {{ trans.name }} ?</h5>
+                                    <button onclick="document.getElementById('id{{ trans.id }}').style.display='none'" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Are you sure you want to delete this transaction?</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <form method="POST" action="{{ url_for('home.delete_transaction', b_id=budget.id, t_id=trans.id) }}">
+                                        <button type="submit" id="delete_button" class="btn btn-danger">Delete</button>
+                                        <button onclick="document.getElementById('id{{ trans.id }}').style.display='none'" type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                 {% endfor %}
                 <tr class="table-dark">
                     <td class="table-dark"><input class="form-control" type="text" form="addTransaction" id="name" name="name" placeholder="Transactions name"></td>
