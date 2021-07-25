@@ -106,7 +106,7 @@
                                     <p class="show-not-edit-{{ trans.id }}" id="amount{{ trans.id }}" style="padding:0;">{{ trans.amount }}</p>
                                     <input class="show-edit-{{ trans.id }} form-control" type="text" id="editAmount{{ trans.id }}" name="editAmount{{ trans.id }}" value="{{ trans.amount }}" hidden>
                                 </td>
-                                <td class="table-dark"><p style="padding:0;">{{ trans.date }}</p></td>
+                                <td class="table-dark"><p style="padding:0;">{{ trans.date.strftime("%B %d, %Y") }}</p></td>
                                 <td class="table-dark">
                                     <a class="show-not-edit-{{ trans.id }} w3-text-red" style="padding:0;" href="javascript:void(0);" onclick="editTransaction('{{ trans.id }}')">edit</a>
                                     <a class="show-edit-{{ trans.id }} w3-text-red" style="padding:0;" href="javascript:void(0);" onclick="document.getElementById('trans{{ trans.id }}').submit();" hidden>update</a>
