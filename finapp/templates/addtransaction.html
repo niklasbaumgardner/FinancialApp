@@ -134,7 +134,7 @@
                                 <label for="budget"><h4>Choose a budget</h4></label>
                                 <select class="form-select w-75" name="budget" id="budget" required>
                                     {% for budget in budgets %}
-                                        <option class="" value="{{ budget.id }}">{{ budget.name }} | {{ budget.total }}</option>
+                                        <option class="" value="{{ budget.id }}">{{ str(budget) }}</option>
                                     {% endfor %}
                                 </select>
 
@@ -168,7 +168,7 @@
                                         <label for="source_budget"><h4>Source budget</h4></label>
                                         <select class="form-select" name="source_budget" id="source_budget"  required>
                                             {% for budget in budgets %}
-                                                <option class="" value="{{ budget.id }}">{{ budget.name }} | {{ budget.total }}</option>
+                                                <option class="" value="{{ budget.id }}">{{ str(budget) }}</option>
                                             {% endfor %}
                                         </select>
                                     </div>
@@ -179,7 +179,7 @@
                                         <label for="dest_budget"><h4>Destination budget</h4></label>
                                         <select class="form-select" name="dest_budget" id="dest_budget" required>
                                             {% for budget in budgets %}
-                                                <option class="" value="{{ budget.id }}">{{ budget.name }} | {{ budget.total }}</option>
+                                                <option class="" value="{{ budget.id }}">{{ str(budget) }}</option>
                                             {% endfor %}
                                         </select>
 
