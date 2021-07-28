@@ -8,6 +8,64 @@
 {% block content %}
 
 <script>
+    // var prefills;
+
+    // window.onload = function() {
+    //     prefills = httpGetAsync();
+    //     // prefills.then(response => 
+    //     //     console.log(response));
+    // }
+
+    // async function httpGetAsync() {
+    //     var temp = await fetch("{{ url_for('home.get_prefill_paycheck') }}", { method: 'GET'}).then(response => response.json());
+    //     return temp;
+
+    // }
+
+    // function prefillBudgets(total) {
+    //     // console.log(prefills);
+    //     // var budgets = 
+    //     total0 = Number(total);
+    //     total1 = Number(total).toFixed(1);
+    //     total2 = Number(total).toFixed(2);
+    //     console.log(total0, total1, total2);
+    //     prefills.then( response => {
+    //         console.log(response);
+    //         var temp0 = response[total0];
+    //         var temp1 = response[total1];
+    //         var temp2 = response[total2];
+    //         console.log(temp0, temp1, temp2);
+    //     });
+    // }
+
+    function fillvalues(id, totalAmount) {
+        document.getElementById('previousPaycheckModal').style.display='none';
+
+        var table = document.getElementById(id);
+        var list = [];
+        for (var r = 1; r < table.rows.length - 1; r++) {
+            var name = table.rows[r].cells[0].innerHTML;
+            var id = table.rows[r].cells[1].id;
+            var amount = table.rows[r].cells[1].innerHTML;
+            var temp = [name + id, amount];
+            list[list.length] = temp;
+        }
+        
+        document.getElementById('paycheck_amount').value = totalAmount;
+
+        for (var i = 0; i < list.length; i++) {
+            var input = document.getElementById(list[i][0]);
+            // console.log(input);
+            input.value = list[i][1];
+        }
+
+    }
+
+    function openPreviousPaycheckModal() {
+        document.getElementById('previousPaycheckModal').style.display = 'block';
+    }
+
+
     function openTab(tabName, tabButton) {
         var i;
         var tabs = document.getElementsByClassName("tab");
@@ -22,6 +80,7 @@
         document.getElementById(tabName).style.display = 'block';
     }
 
+
     function checkPaycheck(e) {
         console.log('hey');
         // console.log(document.getElementById('paycheck_amount').value);
@@ -32,6 +91,7 @@
         var name = document.getElementById('paycheckName').value;
         console.log(name);
         var total = document.getElementById('paycheck_amount').value;
+        // prefillBudgets(total);
         if (name !== null && name !== '' && total !== null && total != 0) {
             var budgets = document.getElementsByClassName('all-budgets');
             var b_total = 0;
@@ -94,6 +154,11 @@
                                     <div class="form-outline form-white mb-4">
                                         <label class="form-label" for="amount"><h4>Paycheck Amount</h4></label>
                                         <input class="validatePaycheck form-control" type="text" id="paycheck_amount" name="amount" placeholder="Paycheck Amount" required>
+                                    </div>
+                                    <div class="form-outline form-white mb-4">
+                                        <!-- <label class="form-label" for="amount"><h4>Paycheck Amount</h4></label>
+                                        <input class="validatePaycheck form-control" type="text" id="paycheck_amount" name="amount" placeholder="Paycheck Amount" required> -->
+                                        <button type="button" class="btn btn-outline-primary" onclick="openPreviousPaycheckModal()">Copy amounts from previous paycheck</button>
                                     </div>
                                 </div>
                                 <div class="col-sm ">
@@ -202,6 +267,57 @@
 </div>
 
 
+{% if showPrefills %}
+    <div id="previousPaycheckModal" class="modal" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Copy Previous Paycheck Amounts ?</h5>
+                    <button onclick="document.getElementById('previousPaycheckModal').style.display='none'" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="accordion" id="accordionExample">
+                        {% for i, (k, v) in enumerate(prefills.items()) %}
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading{{ i }}">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ i }}" aria-expanded="true" aria-controls="collapse{{ i }}">
+                                        Total Amount: {{ k }}
+                                    </button>
+                                </h2>
+                                <div id="collapse{{ i }}" class="accordion-collapse collapse" aria-labelledby="heading{{ i }}" data-bs-parent="#accordionExample">
+                                    <div class="accordion-body">
+                                        <table id="table{{ i }}" class="table table-secondary">
+                                            <thead>
+                                                <tr class="table-secondary">
+                                                    <th scope="col">Budget Name</th>
+                                                    <th scope="col">Amount</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for budget in v %}
+                                                    <tr class="table-secondary">
+                                                        <td>{{ budget[1] }}</td>
+                                                        <td id={{ budget[0] }}>{{ budget[2] }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                                <tr>
+                                            </tbody>
+                                        </table>
+                                        <button onclick="fillvalues('table{{ i }}', {{ k }});" class="btn btn-outline-primary">Select this previous amount</button>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                        <button onclick="document.getElementById('previousPaycheckModal').style.display='none'" type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
             
             
 
@@ -212,6 +328,9 @@
         {% for budget in budgets %}
             document.getElementById("{{ budget.name }}{{ budget.id }}").addEventListener("keyup", checkPaycheck);
         {% endfor %}
+
+        // prefills = httpGetAsync();
+        // console.log(prefills);
 
     </script>
 

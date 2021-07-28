@@ -56,33 +56,37 @@
                         <div id="id{{ budget.id }}" class="modal" style="display: none;">
                             <div class="modal-dialog">
                                 <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Delete budget {{ budget.name }} ?</h5>
-                                        <button onclick="document.getElementById('id{{ budget.id }}').style.display='none'" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <p>Are you sure you want to delete this transaction?</p>
-                                        <fieldset class="w3-center">
-                                            <h6 class="w3-left">Delete this budgets transactions:</h6><br><br>
-                                            <input class="form-check-input" type="radio" id="delete" name="new_budget" value="None">
-                                            <label class="" for="delete">&nbsp;Delete Transations</label><br>
-                                            <h6 class="">Or transfer transactions to another budget:</h6><br><br>
-                                            {% for group in budgets %}
-                                                {% for budg in group %}
-                                                    {% if budget.id != budg.id %}
-                                                        <input class="form-check-input" type="radio" id="{{ budg.name }}" name="new_budget" value="{{ budg.id }}">
-                                                        <label class="form-check-label" for="{{ budg.name }}">{{ budg.name }}</label><br>
-                                                    {% endif %}
+                                    <form method="POST" action="{{ url_for('home.delete_budget', b_id=budget.id) }}">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Delete budget {{ budget.name }} ?</h5>
+                                            <button onclick="document.getElementById('id{{ budget.id }}').style.display='none'" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <h6>Are you sure you want to delete this transaction?</h6>
+                                            <fieldset class="w3-center">
+                                                <h6 class="w3-left">Delete this budgets transactions:</h6>
+                                                <input class="form-check-input" type="radio" id="delete" name="new_budget" value="None">
+                                                <label class="" for="delete">&nbsp;Delete transations</label><br><br>
+                                                <h6 class="">Or transfer transactions to another budget:</h6>
+                                                {% for group in budgets %}
+                                                    {% for budg in group %}
+                                                        {% if budget.id != budg.id %}
+                                                            <input class="form-check-input" type="radio" id="{{ budg.name }}" name="new_budget" value="{{ budg.id }}">
+                                                            <label class="form-check-label" for="{{ budg.name }}">{{ budg.name }}</label><br>
+                                                        {% endif %}
+                                                    {% endfor %}
                                                 {% endfor %}
-                                            {% endfor %}
-                                        </fieldset>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <form method="POST" action="{{ url_for('home.delete_budget', b_id=budget.id) }}">
-                                            <button type="submit" id="delete_button" class="btn btn-danger">Delete</button>
-                                            <button onclick="document.getElementById('id{{ budget.id }}').style.display='none'" type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
-                                        </form>
-                                    </div>
+                                            </fieldset>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <!-- <form method="POST" action="{{ url_for('home.delete_budget', b_id=budget.id) }}"> -->
+                                                <button type="submit" id="delete_button" class="btn btn-danger">Delete</button>
+                                                <button onclick="document.getElementById('id{{ budget.id }}').style.display='none'" type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                                            <!-- </form> -->
+                                        </div>
+
+                                    </form>
+
                                 </div>
                             </div>
                         </div>
@@ -157,7 +161,6 @@
                 </div>
                 <div class="modal-footer">
                     <button onclick="document.getElementById('addNewBudgetModal').style.display='none'" type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
-                    <!-- <button type="button" onclick="document.getElementById('addNewBudgetForm').submit()" class="btn btn-primary">Add Budget</button> -->
                     <input type="submit" form="addNewBudgetForm" class="btn btn-primary" value="Add Budget"/>
                 </div>
             </div>

@@ -1,7 +1,7 @@
 
 from flask import Blueprint, render_template, flash, redirect, url_for, request
 from flask_login import login_user, current_user, logout_user, login_required
-from finapp.models import User, Budget, Transaction
+from finapp.models import User, Budget, Transaction, PaycheckPrefill
 from finapp.extensions import db
 import datetime
 
@@ -55,10 +55,40 @@ def add_transaction():
     if request.method == 'GET':
         budgets = Budget.query.filter_by(user_id=current_user.get_id()).all()
         budgets.sort(key=lambda x: x.name)
-        return render_template("addtransaction.html", budgets=budgets, str=str)
+        # prefills = PaycheckPrefill.query.filter_by(user_id=current_user.get_id()).all()
+        prefills = get_prefill_paycheck()
+        for k, v in prefills.items():
+            for item in v:
+                for budget in budgets:
+                    # print(budget.id, item[0])
+                    if budget.id == item[0]:
+                        # print('niklas')
+                        item.insert(1, budget.name)
+                        break
+
+        print(type(prefills), prefills)
+        return render_template("addtransaction.html", budgets=budgets, str=str, prefills=prefills, enumerate=enumerate, showPrefills=len(prefills)>0)
     
     elif request.method == 'POST':
         return
+
+
+@home.route('/get_prefill_paycheck', methods=["GET"])
+@login_required
+def get_prefill_paycheck():
+    prefills = PaycheckPrefill.query.filter_by(user_id=current_user.get_id()).all()
+
+    prefill_dict = {}
+    for prefill in prefills:
+        # print(prefill.total_amount, prefill.budget_id, prefill.amount)
+        temp = [prefill.budget_id, prefill.amount]
+        try:
+            prefill_dict[prefill.total_amount].append(temp)
+        except:
+            prefill_dict[prefill.total_amount] = [temp]
+    
+    return prefill_dict
+
 
 
 @home.route('/paycheck', methods=["POST"])
@@ -74,12 +104,20 @@ def paycheck():
         try:
 
             b_amt = float(request.form.get(budget.name + str(budget.id)))
-            if b_amt > 0:
+            if b_amt:
                 trans = Transaction(name=name, budget_id=budget.id, user_id=current_user.get_id(), amount=b_amt, date=datetime.datetime.now())
                 do_transaction(trans)
+
+                # prefill = PaycheckPrefill(budget_id=budget.id, user_id=current_user.get_id(), total_amount=amount, amount=b_amt)
+                # do_prefill(prefill)
+
+
         except:
-            continue
-    # print(buddic)
+            b_amt = 0
+
+        prefill = PaycheckPrefill(budget_id=budget.id, user_id=current_user.get_id(), total_amount=amount, amount=b_amt)
+        do_prefill(prefill)
+
     return redirect(url_for('home.index'))
 
 
@@ -160,6 +198,8 @@ def delete_budget(b_id):
         new_budget = int(request.form.get("new_budget"))
     except:
         new_budget = None
+    
+    print(new_budget)
 
     if new_budget is not None:
         # transfer transactions to new budget
@@ -167,6 +207,7 @@ def delete_budget(b_id):
         for trans in transactions:
             trans.budget_id = new_budget
         db.session.commit()
+        update_budget(new_budget)
     else:
         # delete transactions
         transactions = Transaction.query.filter_by(budget_id=b_id, user_id=current_user.get_id()).all()
@@ -188,6 +229,16 @@ def do_transaction(transaction):
     db.session.commit()
 
     return transaction
+
+
+def do_prefill(prefill):
+    db_prefill = PaycheckPrefill.query.filter_by(user_id=current_user.get_id(), total_amount=prefill.total_amount, budget_id=prefill.budget_id).first()
+
+    if db_prefill:
+        db_prefill.amount = prefill.amount
+    else:
+        db.session.add(prefill)
+    db.session.commit()
 
 def link_transactions(t1, t2):
     pass
