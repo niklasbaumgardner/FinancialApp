@@ -19,7 +19,7 @@ def index():
     for i in range(0, len(temp), 3):
         budgets.append(temp[i:i+3])
     
-    total = sum([x.total for x in temp ])
+    total = round(sum([x.total for x in temp ]), 2)
     return render_template("index.html", budgets=budgets, round=round, total=total)
 
 
