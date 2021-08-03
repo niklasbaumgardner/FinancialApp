@@ -154,10 +154,13 @@ def budget_to_budget():
 @home.route('/view_budget/<int:id>')
 @login_required
 def view_budget(id):
+
+    page = request.args.get('page', 1, type=int)
+
     budget = Budget.query.filter_by(id=id, user_id=current_user.get_id()).first()
 
-    transactions = Transaction.query.filter_by(budget_id=budget.id, user_id=current_user.get_id()).all()
-    transactions.sort(key=lambda x: x.date, reverse=True)
+    transactions = Transaction.query.filter_by(budget_id=budget.id, user_id=current_user.get_id()).order_by(Transaction.date.desc()).paginate(page=page, per_page=10)
+    # transactions.sort(key=lambda x: x.date, reverse=True)
     return render_template('viewbudget.html', budget=budget, transactions=transactions, round=round, strftime=datetime.datetime.strftime)
 
 @home.route('/edit_transaction/<int:b_id>/<int:t_id>', methods=["POST"])
