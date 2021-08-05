@@ -129,7 +129,9 @@
                                     <div class="form-outline form-white mb-4">
                                         <!-- <label class="form-label" for="amount"><h4>Paycheck Amount</h4></label>
                                         <input class="validatePaycheck form-control" type="text" id="paycheck_amount" name="amount" placeholder="Paycheck Amount" required> -->
-                                        <button type="button" class="btn btn-outline-primary" onclick="openPreviousPaycheckModal()">Copy amounts from previous paycheck</button>
+                                        {% if showPrefills %}
+                                            <button type="button" class="btn btn-outline-primary" onclick="openPreviousPaycheckModal()">Copy amounts from previous paycheck</button>
+                                        {% endif %}
                                     </div>
                                 </div>
                                 <div class="col-sm ">
