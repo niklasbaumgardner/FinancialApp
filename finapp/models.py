@@ -34,7 +34,7 @@ class PaycheckPrefill(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     total_amount = db.Column(db.Float, nullable=False)
-    # budgets = db.Column(db.String(100), nullable=False)
+    
     budget_id = db.Column(db.Integer, db.ForeignKey('budget.id'), nullable=False)
     amount = db.Column(db.Float, nullable=False)
 

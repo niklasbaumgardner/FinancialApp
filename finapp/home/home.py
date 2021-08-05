@@ -12,8 +12,7 @@ home = Blueprint('home', __name__)
 @home.route('/', methods=["GET"])
 @login_required
 def index():
-    temp = Budget.query.filter_by(user_id=current_user.get_id()).all()
-    temp.sort(key=lambda x: x.name.lower())
+    temp = get_budgets()
 
     budgets = []
     for i in range(0, len(temp), 3):
@@ -27,8 +26,7 @@ def index():
 @login_required
 def add_budget():
     if request.method == 'GET':
-        budgets = Budget.query.filter_by(user_id=current_user.get_id()).all()
-        budgets.sort(key=lambda x: x.name)
+        budgets = get_budgets()
         return render_template("addbudget.html", budgets=budgets, str=str)
     
     elif request.method == 'POST':
@@ -53,9 +51,7 @@ def add_budget():
 @login_required
 def add_transaction():
     if request.method == 'GET':
-        budgets = Budget.query.filter_by(user_id=current_user.get_id()).all()
-        budgets.sort(key=lambda x: x.name)
-        # prefills = PaycheckPrefill.query.filter_by(user_id=current_user.get_id()).all()
+        budgets = get_budgets()
         prefills = get_prefill_paycheck()
         for k, v in prefills.items():
             for item in v:
@@ -76,7 +72,7 @@ def add_transaction():
 @home.route('/get_prefill_paycheck', methods=["GET"])
 @login_required
 def get_prefill_paycheck():
-    prefills = PaycheckPrefill.query.filter_by(user_id=current_user.get_id()).all()
+    prefills = get_prefills()
 
     prefill_dict = {}
     for prefill in prefills:
@@ -94,7 +90,7 @@ def get_prefill_paycheck():
 @home.route('/paycheck', methods=["POST"])
 @login_required
 def paycheck():
-    budgets = Budget.query.filter_by(user_id=current_user.get_id()).all()
+    budgets = get_budgets()
 
     name = request.form.get("name")
     amount = request.form.get('amount')
@@ -124,13 +120,11 @@ def paycheck():
 @home.route('/budget_transaction', methods=["POST"])
 @login_required
 def budget_transaction():
-    # budgets = Budget.query.filter_by(user_id=current_user.get_id()).all()
 
     name = request.form.get("name")
     amount = float(request.form.get('amount'))
     budget_id = request.form.get('budget')
 
-    # budget = Budget.query.filter_by(user_id=current_user.get_id(), id=budget_id).first()
     trans = Transaction(name=name, budget_id=budget_id, user_id=current_user.get_id(), amount=amount, date=datetime.datetime.now())
     do_transaction(trans)
     # print(buddic)
@@ -157,11 +151,13 @@ def view_budget(id):
 
     page = request.args.get('page', 1, type=int)
 
-    budget = Budget.query.filter_by(id=id, user_id=current_user.get_id()).first()
+    budget = get_budget(id)
+
+    budgets = get_budgets()
 
     transactions = Transaction.query.filter_by(budget_id=budget.id, user_id=current_user.get_id()).order_by(Transaction.date.desc()).paginate(page=page, per_page=10)
-    # transactions.sort(key=lambda x: x.date, reverse=True)
-    return render_template('viewbudget.html', budget=budget, transactions=transactions, round=round, strftime=datetime.datetime.strftime)
+    
+    return render_template('viewbudget.html', budget=budget, transactions=transactions, round=round, strftime=datetime.datetime.strftime, budgets=budgets, str=str)
 
 @home.route('/edit_transaction/<int:b_id>/<int:t_id>', methods=["POST"])
 @login_required
@@ -169,7 +165,7 @@ def edit_transaction(b_id, t_id):
     new_name = request.form.get(f'editName{t_id}')
     new_amount = request.form.get(f'editAmount{t_id}')
 
-    trans = Transaction.query.filter_by(id=t_id, user_id=current_user.get_id()).first()
+    trans = get_transaction(b_id, t_id)
 
     if new_name:
         trans.name = new_name
@@ -180,12 +176,27 @@ def edit_transaction(b_id, t_id):
 
     return redirect(url_for('home.view_budget', id=b_id))
 
+@home.route('/move_transaction/<int:sb_id>/<int:t_id>', methods=["POST"])
+@login_required
+def move_transaction(sb_id, t_id):
+    trans = get_transaction(sb_id, t_id)
+    new_budget_id = request.form.get('new_budget')
+    if trans and new_budget_id:
+        new_budget = get_budget(new_budget_id)
 
+        if new_budget:
+            trans.budget_id = new_budget.id
+            db.session.commit()
+
+            update_budget(sb_id)
+            update_budget(new_budget.id)
+
+    return redirect(url_for('home.view_budget', id=sb_id))
 
 @home.route('/delete_transaction/<int:b_id>/<int:t_id>', methods=["POST"])
 @login_required
 def delete_transaction(b_id, t_id):
-    trans = Transaction.query.filter_by(id=t_id, budget_id=b_id, user_id=current_user.get_id()).first()
+    trans = get_transaction(b_id, t_id)
     db.session.delete(trans)
     db.session.commit()
 
@@ -206,26 +217,64 @@ def delete_budget(b_id):
 
     if new_budget is not None:
         # transfer transactions to new budget
-        transactions = Transaction.query.filter_by(budget_id=b_id, user_id=current_user.get_id()).all()
+        transactions = get_transactions(b_id)
         for trans in transactions:
             trans.budget_id = new_budget
         db.session.commit()
         update_budget(new_budget)
     else:
         # delete transactions
-        transactions = Transaction.query.filter_by(budget_id=b_id, user_id=current_user.get_id()).all()
+        transactions = get_transactions(b_id)
         for trans in transactions:
             delete_transaction(b_id, trans.id)
+        
+    # delete prefills
+    prefills = get_prefills_by_budget(b_id)
+    for prefill in prefills:
+        delete_prefill(prefill.id)
 
-    budg = Budget.query.filter_by(id=b_id, user_id=current_user.get_id()).first()
+    budg = get_budget(b_id)
     db.session.delete(budg)
     db.session.commit()
 
     return redirect(url_for('home.index'))
 
 
+# Functions
+
+def get_budgets():
+    budgets = Budget.query.filter_by(user_id=current_user.get_id()).all()
+    budgets.sort(key=lambda x: x.name.lower())
+
+    return budgets
+
+def get_budget(id):
+    budget = Budget.query.filter_by(id=id, user_id=current_user.get_id()).first()
+    return budget
+
+def get_transactions(budget_id):
+    transactions = Transaction.query.filter_by(budget_id=b_id, user_id=current_user.get_id()).all()
+    return transactions
+
+def get_transaction(budget_id, trans_id):
+    transactions = Transaction.query.filter_by(id=trans_id, budget_id=b_id, user_id=current_user.get_id()).first()
+    return transactions
+
+def get_prefills():
+    prefills = PaycheckPrefill.query.filter_by(user_id=current_user.get_id()).all()
+    return prefills
+
+def get_prefills_by_budget(budget_id):
+    prefills = PaycheckPrefill.query.filter_by(budget_id=budget_id, user_id=current_user.get_id()).all()
+    return prefills
+
+def get_prefill(prefill_id):
+    prefill = PaycheckPrefill.query.filter_by(id=p_id, user_id=current_user.get_id()).first()
+    return prefill
+
+
 def do_transaction(transaction):
-    budget = Budget.query.filter_by(id=transaction.budget_id, user_id=current_user.get_id()).first()
+    budget = get_budget(transaction.budget_id)
     budget.total += transaction.amount
 
     db.session.add(transaction)
@@ -248,27 +297,34 @@ def link_transactions(t1, t2):
 
 def delete_transaction(b_id, t_id):
     # need to edit once transactions are linked
-    trans = Transaction.query.filter_by(id=t_id, budget_id=b_id, user_id=current_user.get_id()).first()
+    trans = get_transaction(b_id, t_id)
     db.session.delete(trans)
     db.session.commit()
 
-def update_budget(b_id):
-    budget = Budget.query.filter_by(id=b_id, user_id=current_user.get_id()).first()
-
-    transactions = Transaction.query.filter_by(user_id=current_user.get_id(), budget_id=budget.id).all()
-    total = 0
-    for trans in transactions:
-        total += trans.amount
-    budget.total = total
-
+def delete_prefill(p_id):
+    pre = get_prefill(p_id)
+    db.session.delete(pre)
     db.session.commit()
+
+def update_budget(b_id):
+    budget = get_budget(b_id)
+
+    if budget:
+
+        transactions = get_transactions(budget.id)
+        total = 0
+        for trans in transactions:
+            total += trans.amount
+        budget.total = total
+
+        db.session.commit()
 
 
 def update_budgets():
-    budgets = Budget.query.filter_by(user_id=current_user.get_id()).all()
+    budgets = get_budgets()
 
     for budget in budgets:
-        transactions = Transaction.query.filter_by(user_id=current_user.get_id(), budget_id=budget.id).all()
+        transactions = get_transactions(budget.id)
         total = 0
         for trans in transactions:
             total += trans.amount

@@ -2,23 +2,31 @@
 
 {% block title %}{{ budget.name }}{% endblock title %}
 
-{% block backButton %}<button class="btn btn-outline-primary me-5"> &#8249; Back</button>{% endblock backButton %}
+{% block backButton %}<a href="/" class="btn btn-outline-primary me-5"> &#8249; Back</a>{% endblock backButton %}
 
 
 
 {% block content %}
 <script>
     function deleteTransaction(t_id) {
-        document.getElementById('id' + t_id).style.display = 'block';
+        document.getElementById('delete_id' + t_id).style.display = 'block';
+    }
+
+    function moveTransaction(t_id) {
+        document.getElementById('move_id' + t_id).style.display = 'block';
     }
 
     function editTransaction(id) {
         var hid = document.getElementsByClassName('show-edit-' + id);
+        console.log(hid);
         for (var i = 0; i < hid.length; i++) {
+
             hid[i].hidden = false;
         }
         var notHid = document.getElementsByClassName('show-not-edit-' + id);
-        for (var i = 0; i < hid.length; i++) {
+        console.log(notHid);
+        for (var i = 0; i < notHid.length; i++) {
+            console.log(i);
             notHid[i].hidden = true;
         }
     }
@@ -29,7 +37,7 @@
             hid[i].hidden = true;
         }
         var notHid = document.getElementsByClassName('show-not-edit-' + id);
-        for (var i = 0; i < hid.length; i++) {
+        for (var i = 0; i < notHid.length; i++) {
             notHid[i].hidden = false;
         }
     }
@@ -109,20 +117,21 @@
                                 </td>
                                 <td class="table-dark"><p style="padding:0;">{{ trans.date.strftime("%B %d, %Y") }}</p></td>
                                 <td class="table-dark">
-                                    <a class="show-not-edit-{{ trans.id }} w3-text-red" style="padding:0;" href="javascript:void(0);" onclick="editTransaction('{{ trans.id }}')">edit</a>
-                                    <a class="show-edit-{{ trans.id }} w3-text-red" style="padding:0;" href="javascript:void(0);" onclick="document.getElementById('trans{{ trans.id }}').submit();" hidden>update</a>
-                                    | 
-                                    <a class="show-not-edit-{{ trans.id }} w3-text-red" style="padding:0;" href="javascript:void(0);" onclick="deleteTransaction('{{ trans.id }}')">delete</a>
-                                    <a class="show-edit-{{ trans.id }} w3-text-red" style="padding:0;" href="javascript:void(0);" onclick="cancelEdit('{{ trans.id }}')" hidden>cancel</a>
+                                    <span class="show-not-edit-{{ trans.id }}"><a class="show-not-edit-{{ trans.id }}" style="padding:0;" href="javascript:void(0);" onclick="editTransaction('{{ trans.id }}')">edit</a> | </span>
+                                    <a class="show-not-edit-{{ trans.id }}" style="padding:0;" href="javascript:void(0);" onclick="moveTransaction('{{ trans.id }}')">move</a>
+                                    <a class="show-edit-{{ trans.id }}" style="padding:0;" href="javascript:void(0);" onclick="document.getElementById('trans{{ trans.id }}').submit();" hidden>update</a>
+                                     |
+                                    <a class="show-not-edit-{{ trans.id }}" style="padding:0;" href="javascript:void(0);" onclick="deleteTransaction('{{ trans.id }}')">delete</a>
+                                    <a class="show-edit-{{ trans.id }}" style="padding:0;" href="javascript:void(0);" onclick="cancelEdit('{{ trans.id }}')" hidden>cancel</a>
                                 </td>
                             </tr>
                         </form>
-                        <div id="id{{ trans.id }}" class="modal" style="display: none;">
+                        <div id="delete_id{{ trans.id }}" class="modal" style="display: none;">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h5 class="modal-title">Delete transaction {{ trans.name }} ?</h5>
-                                        <button onclick="document.getElementById('id{{ trans.id }}').style.display='none'" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <button onclick="document.getElementById('delete_id{{ trans.id }}').style.display='none'" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
                                         <p>Are you sure you want to delete this transaction?</p>
@@ -130,11 +139,46 @@
                                     <div class="modal-footer">
                                         <form method="POST" action="{{ url_for('home.delete_transaction', b_id=budget.id, t_id=trans.id) }}">
                                             <button type="submit" id="delete_button" class="btn btn-danger">Delete</button>
-                                            <button onclick="document.getElementById('id{{ trans.id }}').style.display='none'" type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                                            <button onclick="document.getElementById('delete_id{{ trans.id }}').style.display='none'" type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
                                         </form>
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div id="move_id{{ trans.id }}" class="modal" style="display: none;">
+                            <div class="modal-dialog">\
+                                <form method="POST" action="{{ url_for('home.move_transaction', sb_id=budget.id, t_id=trans.id) }}">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Move transaction {{ trans.name }} ?</h5>
+                                            <button onclick="document.getElementById('move_id{{ trans.id }}').style.display='none'" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Which budget would you like to move this transaction to?</p>
+    
+                                            <div class="form-outline form-white mb-4">
+                                                <label for="new_budget"><h4>Select budget</h4></label>
+                                                <select class="form-select" name="new_budget" id="new_budget" required>
+                                                    {% for budg in budgets %}
+                                                        {% if budget.id != budg.id %}
+                                                            <option class="" value="{{ budg.id }}">{{ str(budg) }}</option>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </select>
+        
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" id="" class="btn btn-primary">Move</button>
+                                            <button onclick="document.getElementById('move_id{{ trans.id }}').style.display='none'" type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                                        </div>
+                                    </div>
+
+                                </form>
+                                
+                            </div>
+                        </div>
+
                     {% endfor %}
                     <tr class="table-dark">
                         <td class="table-dark"><input class="form-control" type="text" form="addTransaction" id="name" name="name" placeholder="Transactions name"></td>
@@ -175,7 +219,7 @@
 
                         {% endif %}
                     {% endfor %}
-                    {% if transactions.page == transactions.total / transactions.per_page %}
+                    {% if transactions.page == transactions.total / transactions.per_page or transactions.total == 0 %}
                         <li class="page-item disabled">
                             <a class="page-link" href="#" aria-label="Next">
                                 <span aria-hidden="true">&raquo;</span>
