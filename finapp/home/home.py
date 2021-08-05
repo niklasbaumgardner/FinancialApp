@@ -224,12 +224,12 @@ def get_budget(id):
 
 
 def get_transactions(budget_id):
-    transactions = Transaction.query.filter_by(budget_id=b_id, user_id=current_user.get_id()).all()
+    transactions = Transaction.query.filter_by(budget_id=budget_id, user_id=current_user.get_id()).all()
     return transactions
 
 
 def get_transaction(budget_id, trans_id):
-    transactions = Transaction.query.filter_by(id=trans_id, budget_id=b_id, user_id=current_user.get_id()).first()
+    transactions = Transaction.query.filter_by(id=trans_id, budget_id=budget_id, user_id=current_user.get_id()).first()
     return transactions
 
 
@@ -249,7 +249,7 @@ def get_prefill_by_amount_and_budget(total_amount, budget_id):
 
 
 def get_prefill(prefill_id):
-    prefill = PaycheckPrefill.query.filter_by(id=p_id, user_id=current_user.get_id()).first()
+    prefill = PaycheckPrefill.query.filter_by(id=prefill_id, user_id=current_user.get_id()).first()
     return prefill
 
 
