@@ -6,18 +6,7 @@ from finapp.models import User
 
 auth = Blueprint('auth', __name__)
 
-# @auth.route('/login')
-# def login():
-#     email = request.args.get('email')
-#     next_ = request.args.get('next')
-#     if email and next_:
-#         return render_template('login.html', email=email, next=next_)
-#     if next_:
-#         return render_template('login.html', next=next_)
-#     if email:
-#         return render_template('login.html', email=email)
 
-#     return render_template("login.html")
 
 @auth.route('/login', methods=["GET", "POST"])
 def login():
@@ -31,16 +20,21 @@ def login():
 
     email = request.form.get('email')
     password = request.form.get('password')
+    remember = request.form.get('remember')
 
     if email and password:
 
         user = User.query.filter_by(email=email).first()
 
         if user and bcrypt.check_password_hash(user.password, password):
-            # add remember me button
-            login_user(user)
-            print(email, "next", request.args.get('next'))
-            return redirect(url_for('home.index'))
+            try:
+                remember = bool(remember)
+            except:
+                remember = False
+            login_user(user, remember=remember)
+            goto = request.args.get('next', '').strip('/')
+            print(email, "next", goto)
+            return redirect(url_for(f'home.{goto}')) if goto else redirect(url_for('home.index'))
         
         elif user:
             flash('Password was incorrect. Try again', 'w3-pale-red')
@@ -92,4 +86,4 @@ def signup_post():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('home.index'))
+    return redirect(url_for('auth.login'))
