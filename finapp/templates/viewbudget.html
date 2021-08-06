@@ -115,7 +115,10 @@
                                     <p class="show-not-edit-{{ trans.id }}" id="amount{{ trans.id }}" style="padding:0;">{{ trans.amount }}</p>
                                     <input class="show-edit-{{ trans.id }} form-control" type="text" id="editAmount{{ trans.id }}" name="editAmount{{ trans.id }}" value="{{ trans.amount }}" hidden>
                                 </td>
-                                <td class="table-dark"><p style="padding:0;">{{ trans.date.strftime("%B %d, %Y") }}</p></td>
+                                <td class="table-dark">
+                                    <p class="show-not-edit-{{ trans.id }}" style="padding:0;">{{ trans.date.strftime("%B %d, %Y") }}</p>
+                                    <input class="show-edit-{{ trans.id }} form-control" type="date" id="editDate{{ trans.id }}" name="editDate{{ trans.id }}" value="{{ trans.date.strftime('%Y-%m-%d') }}" hidden>
+                                </td>
                                 <td class="table-dark">
                                     <span class="show-not-edit-{{ trans.id }}"><a class="show-not-edit-{{ trans.id }}" style="padding:0;" href="javascript:void(0);" onclick="editTransaction('{{ trans.id }}')">edit</a> | </span>
                                     <a class="show-not-edit-{{ trans.id }}" style="padding:0;" href="javascript:void(0);" onclick="moveTransaction('{{ trans.id }}')">move</a>
@@ -181,9 +184,9 @@
 
                     {% endfor %}
                     <tr class="table-dark">
-                        <td class="table-dark"><input class="form-control" type="text" form="addTransaction" id="name" name="name" placeholder="Transactions name"></td>
-                        <td class="table-dark"><input class="form-control" type="text" form="addTransaction" id="amount" name="amount" placeholder="Amount"></td>
-                        <td class="table-dark"></td>
+                        <td class="table-dark"><input class="form-control w-75" type="text" form="addTransaction" id="name" name="name" placeholder="Transactions name"></td>
+                        <td class="table-dark"><input class="form-control w-75" type="text" form="addTransaction" id="amount" name="amount" placeholder="Amount"></td>
+                        <td class="table-dark"><input class="form-control w-75" type="date" form="addTransaction" id="date" name="date" value=""></td>
                         <td class="table-dark"><form id="addTransaction" method="POST" action="{{ url_for('home.budget_transaction') }}"><input name="budget" value="{{ budget.id }}" hidden><input class="btn btn-primary" id="transSubmit" type="submit" value="Add Transaction" disabled></form></td>
     
                     </tr>
@@ -243,6 +246,7 @@
     <script>
         document.getElementById("name").addEventListener("keyup", checkInput);
         document.getElementById("amount").addEventListener("keyup", checkInput);
+        document.getElementById('date').valueAsDate = new Date();
     </script>
 
 {% endblock content %}

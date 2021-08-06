@@ -70,7 +70,12 @@ def paycheck():
             try:
                 b_amt = float(request.form.get(budget.name + str(budget.id)))
                 if b_amt:
-                    trans = Transaction(name=name, budget_id=budget.id, user_id=current_user.get_id(), amount=b_amt, date=datetime.datetime.now())
+                    str_date = request.form.get('date')
+                    if str_date:
+                        date = get_date(str_date)
+                    else:
+                        date = datetime.datetime.now()
+                    trans = Transaction(name=name, budget_id=budget.id, user_id=current_user.get_id(), amount=b_amt, date=date)
                     do_transaction(trans)
             except:
                 b_amt = 0
@@ -90,11 +95,20 @@ def budget_transaction():
         amount = float(request.form.get('amount'))
     except:
         amount = 0
+
+    str_date = request.form.get('date')
+
+    if str_date:
+        date = get_date(str_date)
+
+    else:
+        date = datetime.datetime.now()
+    
     budget_id = request.form.get('budget')
 
     if name and amount and budget_id:
 
-        trans = Transaction(name=name, budget_id=budget_id, user_id=current_user.get_id(), amount=amount, date=datetime.datetime.now())
+        trans = Transaction(name=name, budget_id=budget_id, user_id=current_user.get_id(), amount=amount, date=date)
         do_transaction(trans)
 
     return redirect(url_for('home.view_budget', id=budget_id))
@@ -133,6 +147,7 @@ def view_budget(id):
 def edit_transaction(b_id, t_id):
     new_name = request.form.get(f'editName{t_id}')
     new_amount = request.form.get(f'editAmount{t_id}')
+    new_date = request.form.get(f'editDate{t_id}')
 
     trans = get_transaction(b_id, t_id)
     if trans:
@@ -140,6 +155,17 @@ def edit_transaction(b_id, t_id):
             trans.name = new_name
         if new_amount:
             trans.amount = new_amount
+        
+        if new_date:
+            new_date = get_date(new_date)
+        else:
+            new_date = trans.date
+
+        if not same_day(new_date, trans.date):
+            trans.date = new_date
+            print('not same')
+        else:
+            print('same')
         db.session.commit()
         update_budget(b_id)
 
@@ -208,6 +234,17 @@ def delete_budget(b_id):
     db.session.commit()
 
     return redirect(url_for('home.index'))
+
+
+# API Endpoints
+
+@home.route('/get_data', methods=['GET'])
+@login_required
+def get_data():
+    budget = request.args.get('budget')
+    date = request.args.get('date')
+
+    return
 
 
 # Functions
@@ -332,3 +369,20 @@ def update_budgets():
 
     db.session.commit()
 
+
+def same_day(d1, d2):
+    if d1.year == d2.year and d1.month == d2.month and d1.day == d2.day:
+        return True
+    return False
+
+
+def get_date(str_date):
+    year, month, day = str_date.strip().split('-')
+
+    date_now = datetime.datetime.now()
+
+    date = datetime.datetime(int(year), int(month), int(day))
+    if same_day(date_now, date):
+        return date_now
+
+    return datetime.datetime(int(year), int(month), int(day))

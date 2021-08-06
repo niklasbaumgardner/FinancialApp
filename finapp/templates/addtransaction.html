@@ -30,7 +30,7 @@
             // console.log(input);
             input.value = list[i][1];
         }
-
+        checkPaycheck();
     }
 
     function openPreviousPaycheckModal() {
@@ -63,6 +63,7 @@
         var name = document.getElementById('paycheckName').value;
         console.log(name);
         var total = document.getElementById('paycheck_amount').value;
+        console.log(total);
         // prefillBudgets(total);
         if (name !== null && name !== '' && total !== null && total != 0) {
             var budgets = document.getElementsByClassName('all-budgets');
@@ -126,6 +127,9 @@
                                     <div class="form-outline form-white mb-4">
                                         <label class="form-label" for="amount"><h4>Paycheck Amount</h4></label>
                                         <input class="validatePaycheck form-control" type="text" id="paycheck_amount" name="amount" placeholder="Paycheck Amount" required>
+                                    </div>
+                                    <div class="form-outline form-white mb-4">
+                                        <input class="form-control" type="date" id="date" name="date" value="">
                                     </div>
                                     <div class="form-outline form-white mb-4">
                                         <!-- <label class="form-label" for="amount"><h4>Paycheck Amount</h4></label>
@@ -298,6 +302,8 @@
     <script>
         document.getElementById("paycheckName").addEventListener("keyup", checkPaycheck);
         document.getElementById("paycheck_amount").addEventListener("keyup", checkPaycheck);
+
+        document.getElementById('date').valueAsDate = new Date();
 
         {% for budget in budgets %}
             document.getElementById("{{ budget.name }}{{ budget.id }}").addEventListener("keyup", checkPaycheck);
