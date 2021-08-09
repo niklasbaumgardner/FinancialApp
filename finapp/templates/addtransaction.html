@@ -104,7 +104,7 @@
                 <div class="card-header">
                     <ul class="nav nav-tabs card-header-tabs bg-dark">
                         <li class="nav-item">
-                            <a id="tab1" class="nav-link tabbutton bg-dark text-white" aria-current="page"  onclick="openTab('paycheck', 'tab1')">Add Paycheck</a>
+                            <a id="tab1" class="nav-link tabbutton bg-dark text-white fs-1" aria-current="page"  onclick="openTab('paycheck', 'tab1')">Add Paycheck</a>
                         </li>
                         <!-- <li class="nav-item">
                             <a id="tab2" class="nav-link tabbutton bg-dark"  onclick="openTab('budg', 'tab2')">Add/Subtract From Budget</a>
@@ -121,26 +121,27 @@
                             <div class="row">
                                 <div class="col-sm ">
                                     <div class="form-outline form-white mb-4">
-                                        <label class="form-label" for="name"><h4>Paycheck Name</h4></label>
+                                        <label class="form-label fs-4" for="name">Paycheck Name</label>
                                         <input class="validatePaycheck form-control" type="text" id="paycheckName" name="name" placeholder="Transaction Name" required>
                                     </div>
                                     <div class="form-outline form-white mb-4">
-                                        <label class="form-label" for="amount"><h4>Paycheck Amount</h4></label>
+                                        <label class="form-label fs-4" for="amount">Paycheck Amount</label>
                                         <input class="validatePaycheck form-control" type="text" id="paycheck_amount" name="amount" placeholder="Paycheck Amount" required>
                                     </div>
                                     <div class="form-outline form-white mb-4">
+                                        <label class="form-label fs-4" for="amount">Date</label>
                                         <input class="form-control" type="date" id="date" name="date" value="">
                                     </div>
                                     <div class="form-outline form-white mb-4">
                                         <!-- <label class="form-label" for="amount"><h4>Paycheck Amount</h4></label>
                                         <input class="validatePaycheck form-control" type="text" id="paycheck_amount" name="amount" placeholder="Paycheck Amount" required> -->
                                         {% if showPrefills %}
-                                            <button type="button" class="btn btn-outline-primary" onclick="openPreviousPaycheckModal()">Copy amounts from previous paycheck</button>
+                                            <button type="button" class="btn btn-outline-primary text-wrap" onclick="openPreviousPaycheckModal()">Copy amounts from previous paycheck</button>
                                         {% endif %}
                                     </div>
                                 </div>
                                 <div class="col-sm ">
-                                    <label class="form-label" for="existing_courses"><h4>Existing Budgets</h4></label>
+                                    <label class="form-label fs-4" for="existing_courses">Existing Budgets</label>
                                     <ul name="existing_courses" class="list-group " id="style-1" style="max-height: 349px;overflow-y: scroll;">
                                         {% for budget in budgets %}
                                             <li class="list-group-item">
