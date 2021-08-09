@@ -114,19 +114,30 @@ def budget_transaction():
     return redirect(url_for('home.view_budget', id=budget_id))
 
 
-# need to remove
+@home.route('/transfer', methods=["GET"])
+@login_required
+def transfer():
+    budgets = get_budgets()
+    return render_template('transfer.html', budgets=budgets, str=str)
+
+
+
 @home.route('/budget_to_budget', methods=["POST"])
 @login_required
 def budget_to_budget():
     name = request.form.get("name")
-    amount = float(request.form.get('amount'))
+    try:
+        amount = float(request.form.get('amount'))
+    except:
+        amount = None
     source_budget = request.form.get('source_budget')
     dest_budget = request.form.get('dest_budget')
 
-    trans1 = Transaction(name=name, budget_id=source_budget, user_id=current_user.get_id(), amount=-amount, date=datetime.datetime.now())
-    trans2 = Transaction(name=name, budget_id=dest_budget, user_id=current_user.get_id(), amount=amount, date=datetime.datetime.now())
-    do_transaction(trans1)
-    do_transaction(trans2)
+    if name and amount and source_budget and dest_budget:
+        trans1 = Transaction(name=name, budget_id=source_budget, user_id=current_user.get_id(), amount=-amount, date=datetime.datetime.now())
+        trans2 = Transaction(name=name, budget_id=dest_budget, user_id=current_user.get_id(), amount=amount, date=datetime.datetime.now())
+        do_transaction(trans1)
+        do_transaction(trans2)
     return redirect(url_for('home.index'))
 
 
@@ -237,6 +248,18 @@ def delete_budget(b_id):
     return redirect(url_for('home.index'))
 
 
+@home.route('/delete_prefill/<float:amount>', methods=["POST"])
+@login_required
+def delete_prefill(amount):
+    prefills = get_prefills_by_amount(amount)
+
+    for prefill in prefills:
+        delete_prefill(prefill.id)
+
+    return redirect(url_for('home.add_transaction'))
+
+
+
 # API Endpoints
 
 @home.route('/get_data', methods=['GET'])
@@ -279,6 +302,11 @@ def get_prefills():
 def get_prefills_by_budget(budget_id):
     prefills = PaycheckPrefill.query.filter_by(budget_id=budget_id, user_id=current_user.get_id()).all()
     return prefills
+
+
+def get_prefills_by_amount(total_amount):
+    prefill = PaycheckPrefill.query.filter_by(user_id=current_user.get_id(), total_amount=total_amount).all()
+    return prefill
 
 
 def get_prefill_by_amount_and_budget(total_amount, budget_id):

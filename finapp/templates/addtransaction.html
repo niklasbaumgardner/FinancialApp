@@ -10,6 +10,10 @@
 
 <script>
 
+    function delete_prefill(id) {
+        document.getElementById(id).style.display = 'block';
+    }
+
     function fillvalues(id, totalAmount) {
         document.getElementById('previousPaycheckModal').style.display='none';
 
@@ -99,12 +103,12 @@
 </script>
 <div class="container py-5 h-100">
     <div class="row d-flex justify-content-center align-items-center h-100">
-        <div class="col-md-8">
+        <div class="col-8">
             <div class="card bg-dark text-white" style="border-radius: 1rem;">
                 <div class="card-header">
                     <ul class="nav nav-tabs card-header-tabs bg-dark">
                         <li class="nav-item">
-                            <a id="tab1" class="nav-link tabbutton bg-dark text-white fs-1" aria-current="page"  onclick="openTab('paycheck', 'tab1')">Add Paycheck</a>
+                            <a id="tab1" class="nav-link tabbutton bg-dark text-white fs-4" aria-current="page"  onclick="openTab('paycheck', 'tab1')">Add Paycheck</a>
                         </li>
                         <!-- <li class="nav-item">
                             <a id="tab2" class="nav-link tabbutton bg-dark"  onclick="openTab('budg', 'tab2')">Add/Subtract From Budget</a>
@@ -121,15 +125,15 @@
                             <div class="row">
                                 <div class="col-sm ">
                                     <div class="form-outline form-white mb-4">
-                                        <label class="form-label fs-4" for="name">Paycheck Name</label>
+                                        <label class="form-label" for="name">Paycheck Name</label>
                                         <input class="validatePaycheck form-control" type="text" id="paycheckName" name="name" placeholder="Transaction Name" required>
                                     </div>
                                     <div class="form-outline form-white mb-4">
-                                        <label class="form-label fs-4" for="amount">Paycheck Amount</label>
+                                        <label class="form-label" for="amount">Paycheck Amount</label>
                                         <input class="validatePaycheck form-control" type="text" id="paycheck_amount" name="amount" placeholder="Paycheck Amount" required>
                                     </div>
                                     <div class="form-outline form-white mb-4">
-                                        <label class="form-label fs-4" for="amount">Date</label>
+                                        <label class="form-label" for="amount">Date</label>
                                         <input class="form-control" type="date" id="date" name="date" value="">
                                     </div>
                                     <div class="form-outline form-white mb-4">
@@ -141,7 +145,7 @@
                                     </div>
                                 </div>
                                 <div class="col-sm ">
-                                    <label class="form-label fs-4" for="existing_courses">Existing Budgets</label>
+                                    <label class="form-label" for="existing_courses">Existing Budgets</label>
                                     <ul name="existing_courses" class="list-group " id="style-1" style="max-height: 349px;overflow-y: scroll;">
                                         {% for budget in budgets %}
                                             <li class="list-group-item">
@@ -282,7 +286,38 @@
                                                 <tr>
                                             </tbody>
                                         </table>
-                                        <button onclick="fillvalues('table{{ i }}', {{ k }});" class="btn btn-outline-primary">Select this previous amount</button>
+                                        <div class="row justify-content-between">
+                                            <div class="col-auto me-auto">
+                                                <button onclick="fillvalues('table{{ i }}', {{ k }});" class="btn btn-primary">Select this previous amount</button>
+                                            </div>
+                                            <div class="col-auto ">
+                                                <button onclick="delete_prefill('delete{{ k }}')" class="btn btn-outline-danger">Delete</button>
+                                            </div>
+                                        </div>
+                                        <!-- <button onclick="fillvalues('table{{ i }}', {{ k }});" class="btn btn-primary">Select this previous amount</button>
+                                        <button onclick="fillvalues('table{{ i }}', {{ k }});" class="btn btn-outline-danger">Delete</button> -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="delete{{ k }}" class="modal" style="display: none;">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <form method="POST" action="{{ url_for('home.delete_prefill', amount=k) }}">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Delete prefill amount {{ k }} ?</h5>
+                                                <button onclick="document.getElementById('delete{{ k }}').style.display='none'" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>Are you sure you want to delete this prefill?</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" id="delete_button" class="btn btn-danger">Delete</button>
+                                                <button onclick="document.getElementById('delete{{ k }}').style.display='none'" type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                                            </div>
+                        
+                                        </form>
+                        
                                     </div>
                                 </div>
                             </div>
@@ -295,6 +330,7 @@
             </div>
         </div>
     </div>
+
 {% endif %}
 
             
