@@ -44,7 +44,7 @@
                             <a href="{{ url_for('home.view_budget', id=budget.id) }}" style="text-decoration: none;">
                                 <div class="card bg-dark text-white">
                                     <div class="card-body p-4 rounded-bottom">
-                                        <h4 class="text-white">{{ budget.name }} Budget</h4>
+                                        <h4 class="text-white">{{ budget.name }}</h4>
                                         <p class="text-white">{{ round(budget.total, 2) }}</p>
                                         <a class="btn btn-sm btn-outline-primary" href="javascript:void(0);" onclick="delete_budget('{{ budget.id }}')">Delete</a>
                                     </div>
