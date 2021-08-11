@@ -31,7 +31,7 @@ def add_budget():
     except:
         amount = 0
 
-    if name and amount:
+    if name and amount is not None:
         budg = Budget(name=name, total=0, user_id=current_user.get_id())
         db.session.add(budg)
         db.session.commit()
