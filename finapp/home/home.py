@@ -147,12 +147,12 @@ def budget_to_budget():
 def view_budget(id):
     page = request.args.get('page', 1, type=int)
 
-    tz = timezone('EST')
+    tz = timezone('US/Eastern')
 
     budget = get_budget(id)
     budgets = get_budgets()
     transactions = Transaction.query.filter_by(budget_id=budget.id, user_id=current_user.get_id()).order_by(Transaction.date.desc()).paginate(page=page, per_page=10)
-    
+
     return render_template('viewbudget.html', budget=budget, transactions=transactions, round=round, strftime=datetime.datetime.strftime, budgets=budgets, str=str, date=datetime.datetime.now(tz))
 
 
