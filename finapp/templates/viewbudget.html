@@ -187,7 +187,7 @@
                     <tr class="table-dark">
                         <td class="table-dark"><input class="form-control w-75" type="text" form="addTransaction" id="name" name="name" placeholder="Transactions name"></td>
                         <td class="table-dark"><input class="form-control w-75" type="text" form="addTransaction" id="amount" name="amount" placeholder="Amount"></td>
-                        <td class="table-dark"><input class="form-control w-75" type="date" form="addTransaction" id="date" name="date" value=""></td>
+                        <td class="table-dark"><input class="form-control w-75" type="date" form="addTransaction" id="date" name="date" value="{{ date.strftime('%Y-%m-%d') }}"></td>
                         <td class="table-dark"><form id="addTransaction" method="POST" action="{{ url_for('home.budget_transaction') }}"><input name="budget" value="{{ budget.id }}" hidden><input class="btn btn-primary" id="transSubmit" type="submit" value="Add Transaction" disabled></form></td>
     
                     </tr>
@@ -247,7 +247,7 @@
     <script>
         document.getElementById("name").addEventListener("keyup", checkInput);
         document.getElementById("amount").addEventListener("keyup", checkInput);
-        document.getElementById('date').valueAsDate = new Date();
+        // document.getElementById('date').valueAsDate = new Date();
     </script>
 
 {% endblock content %}
