@@ -4,6 +4,7 @@ from flask_login import login_user, current_user, logout_user, login_required
 from finapp.models import User, Budget, Transaction, PaycheckPrefill
 from finapp.extensions import db
 import datetime
+from pytz import timezone
 
 
 home = Blueprint('home', __name__)
@@ -146,11 +147,13 @@ def budget_to_budget():
 def view_budget(id):
     page = request.args.get('page', 1, type=int)
 
+    tz = timezone('EST')
+
     budget = get_budget(id)
     budgets = get_budgets()
     transactions = Transaction.query.filter_by(budget_id=budget.id, user_id=current_user.get_id()).order_by(Transaction.date.desc()).paginate(page=page, per_page=10)
     
-    return render_template('viewbudget.html', budget=budget, transactions=transactions, round=round, strftime=datetime.datetime.strftime, budgets=budgets, str=str, date=datetime.datetime.now())
+    return render_template('viewbudget.html', budget=budget, transactions=transactions, round=round, strftime=datetime.datetime.strftime, budgets=budgets, str=str, date=datetime.datetime.now(tz))
 
 
 @home.route('/edit_transaction/<int:b_id>/<int:t_id>', methods=["POST"])
