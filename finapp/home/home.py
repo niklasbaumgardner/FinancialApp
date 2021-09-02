@@ -56,7 +56,9 @@ def add_transaction():
                     item.insert(1, budget.name)
                     break
 
-    return render_template("addtransaction.html", budgets=budgets, str=str, prefills=prefills, enumerate=enumerate, showPrefills=len(prefills)>0)
+    tz = timezone('US/Eastern')
+
+    return render_template("addtransaction.html", budgets=budgets, str=str, prefills=prefills, enumerate=enumerate, showPrefills=len(prefills)>0, date=datetime.datetime.now(tz))
 
 
 @home.route('/paycheck', methods=["POST"])
@@ -151,8 +153,8 @@ def view_budget(id):
 
     budget = get_budget(id)
     budgets = get_budgets()
-    transactions = Transaction.query.filter_by(budget_id=budget.id, user_id=current_user.get_id()).order_by( Transaction.date.desc(), Transaction.id.desc()).paginate(page=page, per_page=10)
-
+    transactions = Transaction.query.filter_by(budget_id=budget.id, user_id=current_user.get_id()).order_by(Transaction.date.desc(), Transaction.id.desc()).paginate(page=page, per_page=10)
+    print([ (t.id, t.name, t.date) for t in transactions.items ])
     return render_template('viewbudget.html', budget=budget, transactions=transactions, round=round, strftime=datetime.datetime.strftime, budgets=budgets, str=str, date=datetime.datetime.now(tz))
 
 
@@ -411,7 +413,9 @@ def same_day(d1, d2):
 def get_date(str_date):
     year, month, day = str_date.strip().split('-')
 
-    date_now = datetime.datetime.now()
+    tz = timezone('US/Eastern')
+
+    date_now = datetime.datetime.now(tz)
 
     date = datetime.datetime(int(year), int(month), int(day))
     if same_day(date_now, date):
