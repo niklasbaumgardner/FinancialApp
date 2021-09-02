@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, flash, redirect, url_for, request
 from flask_login import login_user, current_user, logout_user, login_required
 from finapp.models import User, Budget, Transaction, PaycheckPrefill
 from finapp.extensions import db
-import datetime
+from datetime import datetime, timedelta
 from pytz import timezone
 
 
@@ -38,7 +38,7 @@ def add_budget():
         db.session.commit()
 
         if amount != 0:
-            trans = Transaction(name=f"Initial Transaction for {name}", budget_id=budg.id, amount=amount, user_id=current_user.get_id(), date=datetime.datetime.now())
+            trans = Transaction(name=f"Initial Transaction for {name}", budget_id=budg.id, amount=amount, user_id=current_user.get_id(), date=datetime.now())
             do_transaction(trans)
 
     return redirect(url_for('home.index'))
@@ -58,7 +58,7 @@ def add_transaction():
 
     tz = timezone('US/Eastern')
 
-    return render_template("addtransaction.html", budgets=budgets, str=str, prefills=prefills, enumerate=enumerate, showPrefills=len(prefills)>0, date=datetime.datetime.now(tz))
+    return render_template("addtransaction.html", budgets=budgets, str=str, prefills=prefills, enumerate=enumerate, showPrefills=len(prefills)>0, date=datetime.now(tz))
 
 
 @home.route('/paycheck', methods=["POST"])
@@ -77,7 +77,7 @@ def paycheck():
                     if str_date:
                         date = get_date(str_date)
                     else:
-                        date = datetime.datetime.now()
+                        date = datetime.now()
                     trans = Transaction(name=name, budget_id=budget.id, user_id=current_user.get_id(), amount=b_amt, date=date)
                     do_transaction(trans)
             except:
@@ -105,7 +105,9 @@ def budget_transaction():
         date = get_date(str_date)
 
     else:
-        date = datetime.datetime.now()
+        date = datetime.now()
+    
+    print(date)
     
     budget_id = request.form.get('budget')
 
@@ -137,8 +139,8 @@ def budget_to_budget():
     dest_budget = request.form.get('dest_budget')
 
     if name and amount and source_budget and dest_budget:
-        trans1 = Transaction(name=name, budget_id=source_budget, user_id=current_user.get_id(), amount=-amount, date=datetime.datetime.now())
-        trans2 = Transaction(name=name, budget_id=dest_budget, user_id=current_user.get_id(), amount=amount, date=datetime.datetime.now())
+        trans1 = Transaction(name=name, budget_id=source_budget, user_id=current_user.get_id(), amount=-amount, date=datetime.now())
+        trans2 = Transaction(name=name, budget_id=dest_budget, user_id=current_user.get_id(), amount=amount, date=datetime.now())
         do_transaction(trans1)
         do_transaction(trans2)
     return redirect(url_for('home.index'))
@@ -155,7 +157,7 @@ def view_budget(id):
     budgets = get_budgets()
     transactions = Transaction.query.filter_by(budget_id=budget.id, user_id=current_user.get_id()).order_by(Transaction.date.desc(), Transaction.id.desc()).paginate(page=page, per_page=10)
     print([ (t.id, t.name, t.date) for t in transactions.items ])
-    return render_template('viewbudget.html', budget=budget, transactions=transactions, round=round, strftime=datetime.datetime.strftime, budgets=budgets, str=str, date=datetime.datetime.now(tz))
+    return render_template('viewbudget.html', budget=budget, transactions=transactions, round=round, strftime=datetime.strftime, budgets=budgets, str=str, date=datetime.now(tz))
 
 
 @home.route('/edit_transaction/<int:b_id>/<int:t_id>', methods=["POST"])
@@ -177,12 +179,19 @@ def edit_transaction(b_id, t_id):
             new_date = get_date(new_date)
         else:
             new_date = trans.date
+        
+        print(new_date, trans.date)
 
         if not same_day(new_date, trans.date):
+            print(datetime.now())
+            print(new_date)
+            new_date = new_date.replace(tzinfo=None)
+            print(new_date)
             trans.date = new_date
             print('not same')
         else:
             print('same')
+        print(trans.date)
         db.session.commit()
         update_budget(b_id)
 
@@ -415,10 +424,11 @@ def get_date(str_date):
 
     tz = timezone('US/Eastern')
 
-    date_now = datetime.datetime.now(tz)
+    date_now = datetime.now(tz)
 
-    date = datetime.datetime(int(year), int(month), int(day))
+    date = datetime(int(year), int(month), int(day))
     if same_day(date_now, date):
+        print('HER %%%%')
         return date_now
 
-    return datetime.datetime(int(year), int(month), int(day))
+    return datetime(int(year), int(month), int(day))
