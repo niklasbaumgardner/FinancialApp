@@ -54,6 +54,7 @@
                     
                     <div id="btob" class="tab" >
                         <form action="{{ url_for('home.budget_to_budget') }}" method="POST">
+                            <input type="date" id="date" name="date" hidden>
                             <div class="row">
                                 <div class="col-sm ">
                                     <div class="form-outline form-white mb-4">
@@ -133,7 +134,7 @@
             
 
     <script>
-
+        document.getElementById('date').valueAsDate = new Date();
     </script>
 
 {% endblock content %}

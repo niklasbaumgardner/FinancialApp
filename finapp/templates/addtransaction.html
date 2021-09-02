@@ -134,7 +134,7 @@
                                     </div>
                                     <div class="form-outline form-white mb-4">
                                         <label class="form-label" for="amount">Date</label>
-                                        <input class="form-control" type="date" id="date" name="date" value="{{ date.strftime('%Y-%m-%d') }}">
+                                        <input class="form-control" type="date" id="date" name="date" required>
                                     </div>
                                     <div class="form-outline form-white mb-4">
                                         <!-- <label class="form-label" for="amount"><h4>Paycheck Amount</h4></label>
@@ -345,9 +345,6 @@
         {% for budget in budgets %}
             document.getElementById("{{ budget.name }}{{ budget.id }}").addEventListener("keyup", checkPaycheck);
         {% endfor %}
-
-        // prefills = httpGetAsync();
-        // console.log(prefills);
 
     </script>
 
