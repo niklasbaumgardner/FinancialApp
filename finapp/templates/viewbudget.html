@@ -247,7 +247,15 @@
     <script>
         document.getElementById("name").addEventListener("keyup", checkInput);
         document.getElementById("amount").addEventListener("keyup", checkInput);
-        document.getElementById('date').valueAsDate = new Date();
+        var date = new Date();
+        var ele = document.getElementById('date');
+        var year = date.getFullYear().toString().padStart(2, '0');
+        var month = (date.getMonth() + 1).toString().padStart(2, '0');
+        var day = date.getDate();
+        var strDate = year + '-' + month + '-' + day;
+        ele.valueAsDate = date;
+        ele.value = date;
+        
     </script>
 
 {% endblock content %}
