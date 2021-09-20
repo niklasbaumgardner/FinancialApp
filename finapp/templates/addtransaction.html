@@ -340,8 +340,14 @@
         document.getElementById("paycheckName").addEventListener("keyup", checkPaycheck);
         document.getElementById("paycheck_amount").addEventListener("keyup", checkPaycheck);
 
-        document.getElementById('date').valueAsDate = new Date();
-        document.getElementById('date').value = new Date().toDateInputValue();
+        var date = new Date();
+        var ele = document.getElementById('date');
+        var year = date.getFullYear().toString().padStart(2, '0');
+        var month = (date.getMonth() + 1).toString().padStart(2, '0');
+        var day = date.getDate();
+        var strDate = year + '-' + month + '-' + day;
+        ele.valueAsDate = date;
+        ele.value = strDate;
 
         {% for budget in budgets %}
             document.getElementById("{{ budget.name }}{{ budget.id }}").addEventListener("keyup", checkPaycheck);
