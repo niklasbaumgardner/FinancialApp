@@ -341,6 +341,7 @@
         document.getElementById("paycheck_amount").addEventListener("keyup", checkPaycheck);
 
         document.getElementById('date').valueAsDate = new Date();
+        document.getElementById('date').value = new Date().toDateInputValue();
 
         {% for budget in budgets %}
             document.getElementById("{{ budget.name }}{{ budget.id }}").addEventListener("keyup", checkPaycheck);
