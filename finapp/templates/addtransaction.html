@@ -58,18 +58,17 @@
 
 
     function checkPaycheck(e) {
-        console.log('hey');
-        // console.log(document.getElementById('paycheck_amount').value);
+        var amountValid = false;
+        var nameValid = false;
         var submitBtn = document.getElementById('paycheckBtn');
         submitBtn.disabled = true;
-
 
         var name = document.getElementById('paycheckName').value;
         console.log(name);
         var total = document.getElementById('paycheck_amount').value;
         console.log(total);
         // prefillBudgets(total);
-        if (name !== null && name !== '' && total !== null && total != 0) {
+        if (total !== null) {
             var budgets = document.getElementsByClassName('all-budgets');
             var b_total = 0;
             for (var i = 0; i < budgets.length; i++) {
@@ -79,32 +78,42 @@
             console.log(b_total);
 
             if (b_total == total) {
-                var submitBtn = document.getElementById('paycheckBtn');
                 submitBtn.disabled = false;
-                var name = document.getElementById('paycheckName');
-                // name.className.replace(' w3-border-red', '');
-                if (name.classList.contains("w3-border-red")) {
-                    name.classList.remove("w3-border-red");
-
-                }
+                var total_error = document.getElementById('amount_error');
+                total_error.hidden = true;
+                amountValid = true;
             }
             else {
-                var submitBtn = document.getElementById('paycheckBtn');
+                console.log('here');
                 submitBtn.disabled = true;
+                var total_error = document.getElementById('amount_error');
+                total_error.innerHTML = `Paycheck Amount(${total}) does not equal total on the right(${b_total}).`;
+                total_error.hidden = false;
             }
         }
-        else if (name === null || name === '') {
+        if (name === null || name === '') {
             // show error
-            var name = document.getElementById('paycheckName');
-            name.classList.add('w3-border-red');
+            console.log('here');
+            submitBtn.disabled = true;
+            var name_error = document.getElementById('name_error');
+            name_error.hidden = false;
+        }
+        else {
+            var name_error = document.getElementById('name_error');
+            name_error.hidden = true;
+            nameValid = true;
+        }
+
+        if (nameValid && amountValid) {
+            submitBtn.disabled = false;
         }
     }
 
 </script>
 <div class="container py-5 h-100">
     <div class="row d-flex justify-content-center align-items-center h-100">
-        <div class="col-8">
-            <div class="card bg-dark text-white" style="border-radius: 1rem;">
+        <div class="col-sm col-md col-lg col-xl">
+            <div class="card bg-dark text-white" style="">
                 <div class="card-header">
                     <ul class="nav nav-tabs card-header-tabs bg-dark">
                         <li class="nav-item">
@@ -160,6 +169,8 @@
                             </div>
                             <div class="row">
                                 <div class="col-sm mt-5">
+                                    <span id="name_error" class="text-danger" hidden>Paycheck Name is invalid</span><br>
+                                    <span id="amount_error" class="text-danger" hidden></span><br>
                                     <input id="paycheckBtn" class="btn btn-primary " type="submit" value="Add Transaction" disabled>
                                 </div>
                             </div>
@@ -337,8 +348,12 @@
             
 
     <script>
-        document.getElementById("paycheckName").addEventListener("keyup", checkPaycheck);
-        document.getElementById("paycheck_amount").addEventListener("keyup", checkPaycheck);
+        document.getElementById("paycheckName").addEventListener("input", checkPaycheck);
+        document.getElementById("paycheck_amount").addEventListener("input", checkPaycheck);
+
+        {% for budget in budgets %}
+            document.getElementById("{{ budget.name }}{{ budget.id }}").addEventListener("input", checkPaycheck);
+        {% endfor %}
 
         var date = new Date();
         var ele = document.getElementById('date');
@@ -348,11 +363,6 @@
         var strDate = year + '-' + month + '-' + day;
         ele.valueAsDate = date;
         ele.value = strDate;
-
-        {% for budget in budgets %}
-            document.getElementById("{{ budget.name }}{{ budget.id }}").addEventListener("keyup", checkPaycheck);
-        {% endfor %}
-
     </script>
 
 {% endblock content %}
