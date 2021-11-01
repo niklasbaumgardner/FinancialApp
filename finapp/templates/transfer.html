@@ -40,98 +40,62 @@
     }
 
 </script>
+
 <div class="container py-5 h-100">
     <div class="row d-flex justify-content-center align-items-center h-100">
-        <div class="col-6">
-            <div class="card bg-dark text-white" style="border-radius: 1rem;">
-                <div class="card-header px-3">
-                    <div class="fs-4 p-1">
-                        Transfer Money
-                    </div>
+        <div class="col-sm col-md col-lg col-xl">
+            <div class="card bg-dark text-white" style="">
+                <div class="card-header">
+                    <div class="fs-4">Transfer Money</div>
                 </div>
-                <div id="input-card" class="card-body px-5 pb-5">
-                    
-                    
-                    <div id="btob" class="tab" >
+                <div id="input-card" class="card-body p-5">
+                    <div id="paycheck" class="tab">
                         <form action="{{ url_for('home.budget_to_budget') }}" method="POST">
                             <input type="date" id="date" name="date" hidden>
                             <div class="row">
                                 <div class="col-sm ">
                                     <div class="form-outline form-white mb-4">
                                         <label class="form-label" for="name">Transaction Name</label>
-                                        <input class="form-control " type="text" id="name" name="name" placeholder="Transaction Name" required>
+                                        <input class="validatePaycheck form-control" type="text" id="paycheckName" name="name" placeholder="Transaction Name" required>
                                     </div>
                                     <div class="form-outline form-white mb-4">
-                                        <label class="form-label" for="name">Amount</label>
-                                        <input class="form-control " type="text" id="amount" name="amount" placeholder="Amount" required>
+                                        <label class="form-label" for="amount">Amount</label>
+                                        <input class="validatePaycheck form-control" type="text" id="paycheck_amount" name="amount" placeholder="Paycheck Amount" required>
                                     </div>
                                 </div>
-
-                                <div class="form-outline form-white mb-4">
-                                    <label class="form-label" for="source_budget">Source budget</label>
-                                    <select class="form-select" name="source_budget" id="source_budget" onchange="remove_from_dest()" required>
-                                        <option value="">Please select</option>
-                                        {% for budget in budgets %}
-                                            <option class="source" id="source{{ budget.id }}" value="{{ budget.id }}">{{ str(budget) }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                
-                            
-                                <div class="form-outline form-white mb-4">
-                                    <label class="form-label" for="dest_budget">Destination budget</label>
-                                    <select class="form-select" name="dest_budget" id="dest_budget" onchange="remove_from_source()" required>
-                                        <option value="">Please select</option>
-                                        {% for budget in budgets %}
-                                            <option class="dest" id="dest{{ budget.id }}" value="{{ budget.id }}">{{ str(budget) }}</option>
-                                        {% endfor %}
-                                    </select>
-
-                                </div>
-                            </div>
-
-                            <!-- <div class="row">
                                 <div class="col-sm ">
                                     <div class="form-outline form-white mb-4">
                                         <label class="form-label" for="source_budget">Source budget</label>
-                                        <select class="form-select" name="source_budget" id="source_budget"  required>
+                                        <select class="form-select" name="source_budget" id="source_budget" onchange="remove_from_dest()" required>
+                                            <option value="">Please select</option>
                                             {% for budget in budgets %}
-                                                <option value="{{ budget.id }}">{{ str(budget) }}</option>
+                                                <option class="source" id="source{{ budget.id }}" value="{{ budget.id }}">{{ str(budget) }}</option>
                                             {% endfor %}
                                         </select>
                                     </div>
-                                    
-                                </div>
-                                <div class="col-sm ">
                                     <div class="form-outline form-white mb-4">
                                         <label class="form-label" for="dest_budget">Destination budget</label>
-                                        <select class="form-select" name="dest_budget" id="dest_budget" required>
+                                        <select class="form-select" name="dest_budget" id="dest_budget" onchange="remove_from_source()" required>
+                                            <option value="">Please select</option>
                                             {% for budget in budgets %}
-                                                <option class="" value="{{ budget.id }}">{{ str(budget) }}</option>
+                                                <option class="dest" id="dest{{ budget.id }}" value="{{ budget.id }}">{{ str(budget) }}</option>
                                             {% endfor %}
                                         </select>
-
                                     </div>
-                                    
                                 </div>
-                            </div> -->
-                            
-                            <div class="form-outline form-white pt-4">
-                                <input class="btn btn-primary" type="submit" value="Transfer">
-
+                            </div>
+                            <div class="row">
+                                <div class="col-sm mt-5">
+                                    <input class="btn btn-primary" type="submit" value="Transfer">
+                                </div>
                             </div>
                         </form>
                     </div>
                 </div>
-                
             </div>
         </div>
     </div>
 </div>
-
-
-            
-            
 
     <script>
         document.getElementById('date').valueAsDate = new Date();

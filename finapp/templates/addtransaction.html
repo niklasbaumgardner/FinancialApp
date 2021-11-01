@@ -41,22 +41,6 @@
         document.getElementById('previousPaycheckModal').style.display = 'block';
     }
 
-
-    function openTab(tabName, tabButton) {
-        var i;
-        var tabs = document.getElementsByClassName("tab");
-        for (i = 0; i < tabs.length; i++) {
-            tabs[i].style.display = "none";
-        }
-        var tabbuttons = document.getElementsByClassName("tabbutton");
-        for (i = 0; i < tabbuttons.length; i++) {
-            tabbuttons[i].className = tabbuttons[i].className.replace(" text-white", "");
-        }
-        document.getElementById(tabButton).className += " text-white";
-        document.getElementById(tabName).style.display = 'block';
-    }
-
-
     function checkPaycheck(e) {
         var amountValid = false;
         var nameValid = false;
@@ -115,17 +99,7 @@
         <div class="col-sm col-md col-lg col-xl">
             <div class="card bg-dark text-white" style="">
                 <div class="card-header">
-                    <ul class="nav nav-tabs card-header-tabs bg-dark">
-                        <li class="nav-item">
-                            <a id="tab1" class="nav-link tabbutton bg-dark text-white fs-4" aria-current="page"  onclick="openTab('paycheck', 'tab1')">Add Paycheck</a>
-                        </li>
-                        <!-- <li class="nav-item">
-                            <a id="tab2" class="nav-link tabbutton bg-dark"  onclick="openTab('budg', 'tab2')">Add/Subtract From Budget</a>
-                        </li>
-                        <li class="nav-item">
-                            <a id="tab3" class="nav-link tabbutton bg-dark"  onclick="openTab('btob', 'tab3')">Budget to Budget</a>
-                        </li> -->
-                    </ul>
+                    <div class="fs-4">Add Paycheck</div>
                 </div>
                 <div id="input-card" class="card-body p-5">
                     <div id="paycheck" class="tab">
@@ -164,8 +138,6 @@
                                         {% endfor %}
                                     </ul>
                                 </div>
-        
-        
                             </div>
                             <div class="row">
                                 <div class="col-sm mt-5">
@@ -176,85 +148,7 @@
                             </div>
                         </form>
                     </div>
-                    <!-- <div id="budg" class="tab" style="display:none">
-                        <form action="{{ url_for('home.budget_transaction') }}" method="POST">
-                            <div class="form-outline form-white mb-4">
-                                <label class="form-label" for="name"><h4>Transaction Name</h4></label>
-                                <input class="form-control w-75" type="text" id="name" name="name" placeholder="Transaction Name"  required>
-                            </div>
-
-                            <div class="form-outline form-white mb-4">
-                                <label class="form-label" for="name"><h4>Amount</h4></label>
-                                <input class="form-control w-75" type="text" id="amount" name="amount" placeholder="Amount"  required>
-                            </div>
-                            
-
-                            <div class="form-outline form-white mb-4">
-                                <label for="budget"><h4>Choose a budget</h4></label>
-                                <select class="form-select w-75" name="budget" id="budget" required>
-                                    {% for budget in budgets %}
-                                        <option class="" value="{{ budget.id }}">{{ str(budget) }}</option>
-                                    {% endfor %}
-                                </select>
-
-                            </div>
-                            
-
-                            <div class="form-outline form-white pt-4">
-                                <input class="btn btn-primary" type="submit" value="Add Transaction">
-
-                            </div>
-                        </form>
-                    </div> -->
-                    <!-- <div id="btob" class="tab" style="display:none">
-                        <form action="{{ url_for('home.budget_to_budget') }}" method="POST">
-                            <div class="row">
-                                <div class="col-sm ">
-                                    <div class="form-outline form-white mb-4">
-                                        <label class="form-label" for="name"><h4>Transaction Name</h4></label>
-                                        <input class="form-control w-75" type="text" id="name" name="name" placeholder="Transaction Name" required>
-                                    </div>
-                                    <div class="form-outline form-white mb-4">
-                                        <label class="form-label" for="name"><h4>Amount</h4></label>
-                                        <input class="form-control w-75" type="text" id="amount" name="amount" placeholder="Amount" required>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-sm ">
-                                    <div class="form-outline form-white mb-4">
-                                        <label for="source_budget"><h4>Source budget</h4></label>
-                                        <select class="form-select" name="source_budget" id="source_budget"  required>
-                                            {% for budget in budgets %}
-                                                <option value="{{ budget.id }}">{{ str(budget) }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                    
-                                </div>
-                                <div class="col-sm ">
-                                    <div class="form-outline form-white mb-4">
-                                        <label for="dest_budget"><h4>Destination budget</h4></label>
-                                        <select class="form-select" name="dest_budget" id="dest_budget" required>
-                                            {% for budget in budgets %}
-                                                <option class="" value="{{ budget.id }}">{{ str(budget) }}</option>
-                                            {% endfor %}
-                                        </select>
-
-                                    </div>
-                                    
-                                </div>
-                            </div>
-                            
-                            <div class="form-outline form-white pt-4">
-                                <input class="btn btn-primary" type="submit" value="Add Transaction">
-
-                            </div>
-                        </form>
-                    </div> -->
                 </div>
-                
             </div>
         </div>
     </div>
