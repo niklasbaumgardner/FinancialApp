@@ -58,6 +58,8 @@
             for (var i = 0; i < budgets.length; i++) {
                 b_total += Number(budgets[i].value);
             }
+            total = parseFloat(total).toFixed(2);
+            b_total = parseFloat(b_total).toFixed(2);
             console.log(total);
             console.log(b_total);
 
