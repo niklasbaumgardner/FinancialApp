@@ -134,6 +134,17 @@ def budget_to_budget():
     return redirect(url_for('home.index'))
 
 
+@home.route('/edit_budget/<int:id>', methods=["POST"])
+@login_required
+def edit_budget(id):
+    budget = get_budget(id)
+    new_name = request.form.get(f'editName{id}')
+    if budget and new_name:
+        budget.name = new_name
+        db.session.commit()
+    return redirect(url_for('home.index'))
+
+
 @home.route('/view_budget/<int:id>')
 @login_required
 def view_budget(id):

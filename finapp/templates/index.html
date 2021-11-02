@@ -16,6 +16,21 @@
 
         document.getElementById('id' + budget_id).style.display = 'block';
     }
+
+    function toggleEdit(id) {
+        var hid = document.getElementsByClassName('show-edit-' + id);
+        console.log(hid);
+        for (var i = 0; i < hid.length; i++) {
+
+            hid[i].hidden = !hid[i].hidden;
+        }
+        var notHid = document.getElementsByClassName('show-not-edit-' + id);
+        console.log(notHid);
+        for (var i = 0; i < notHid.length; i++) {
+            console.log(i);
+            notHid[i].hidden = !notHid[i].hidden;
+        }
+    }
 </script>
     <div class="container-fluid">
         <div class="container pt-5">
@@ -41,15 +56,25 @@
                 <div class="row">
                     {% for budget in group %}
                         <div class="col-sm mt-5">
-                            <a href="{{ url_for('home.view_budget', id=budget.id) }}" style="text-decoration: none;">
-                                <div class="card bg-dark text-white">
-                                    <div class="card-body p-4 rounded-bottom">
-                                        <h4 class="text-white">{{ budget.name }}</h4>
-                                        <p class="text-white">{{ round(budget.total, 2) }}</p>
-                                        <a class="btn btn-sm btn-outline-primary" href="javascript:void(0);" onclick="delete_budget('{{ budget.id }}')">Delete</a>
+                            <div class="card bg-dark text-white" onclick="location.href='{{ url_for('home.view_budget', id=budget.id) }}';" style="cursor: pointer;">
+                                <div class="card-body p-4 rounded-bottom">
+                                    <p class="show-not-edit-{{ budget.id }} fs-4 text-white mb-0" style="height: 38px;">{{ budget.name }}</p>
+                                    <form method="POST" id="budgetForm{{ budget.id }}" action="{{ url_for('home.edit_budget', id=budget.id) }}">
+                                        <input onclick="event.stopPropagation();"class="show-edit-{{ budget.id }} form-control w-75" name="editName{{ budget.id }}" type="text" value="{{ budget.name }}" hidden required>
+                                    </form>
+                                    <p class="text-white mt-3">{{ round(budget.total, 2) }}</p>
+                                    <div class="d-flex justify-content-end">
+                                        <div class="">
+                                            <a class="show-not-edit-{{ budget.id }} btn btn-sm btn-outline-primary mx-3" href="javascript:void(0);" onclick="toggleEdit('{{ budget.id }}'); event.stopPropagation();">Edit</a>
+                                            <a class="show-edit-{{ budget.id }} btn btn-sm btn-primary mx-3" href="javascript:void(0);" onclick="document.getElementById('budgetForm{{ budget.id }}').submit(); event.stopPropagation();" hidden>Save</a>
+                                        </div>
+                                        <div class="">
+                                            <a class="show-not-edit-{{ budget.id }} btn btn-sm btn-outline-danger" href="javascript:void(0);" onclick="delete_budget('{{ budget.id }}'); event.stopPropagation();">Delete</a>
+                                            <a class="show-edit-{{ budget.id }} btn btn-sm btn-outline-secondary" href="javascript:void(0);" onclick="toggleEdit('{{ budget.id }}'); event.stopPropagation();" hidden>Cancel</a>
+                                        </div>
                                     </div>
                                 </div>
-                            </a>
+                            </div>
                             
                         </div>
 
