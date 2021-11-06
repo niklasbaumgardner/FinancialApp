@@ -19,7 +19,7 @@ function lineChart() {
         data: {
             labels: keys,
             datasets: [{
-                label: 'Total Budget Value',
+                label: 'Total Budgets Worth',
                 data: values,
                 backgroundColor: 'rgba(40, 114, 251)',
                 borderColor: 'rgba(40, 114, 251)',
@@ -91,7 +91,7 @@ function pieChart() {
                 },
                 title: {
                     display: true,
-                    text: 'Budget Values',
+                    text: 'Breakdown of budgets (Amount > 0)',
                     color: 'rgba(255, 255, 255, .79)',
                 }
             },
