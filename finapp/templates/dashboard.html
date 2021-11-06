@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock title %}
+{% block dashboard %}active{% endblock dashboard %}
+
+
+
+{% block content %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.0/chart.min.js" integrity="sha512-GMGzUEevhWh8Tc/njS0bDpwgxdCJLQBWG3Z2Ct+JGOpVnEmjvNx6ts4v6A2XJf1HOrtOsfhv3hBKpK9kE5z8AQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    function getData()
+    {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open( "GET", "{{ url_for('home.get_net_worth') }}", false ); // false for synchronous request
+        xmlHttp.send( null );
+        return xmlHttp.response;
+    }
+</script>
+
+<div class="container py-5 h-100">
+    <div class="card bg-dark h-100 p-5">
+        <canvas id="myChart"></canvas>
+    </div>
+
+</div>
+<script>
+    let data = JSON.parse(getData());
+    // console.log(data);
+    // console.log(typeof(data));
+    let keys = data['keys'];
+    let values = data['values'];
+    // console.log(keys);
+    // console.log(values);
+
+    const ctx = document.getElementById('myChart').getContext('2d');
+    const myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: keys,
+            datasets: [{
+                label: 'Net Worth',
+                data: values,
+                backgroundColor: 'rgba(40, 114, 251)',
+                borderColor: 'rgba(40, 114, 251)',
+                borderWidth: 2,
+                color: 'rgba(255, 255, 255)',
+            }]
+        },
+        options: {
+            plugins: {
+                legend: {
+                    labels: {
+                        color: 'rgba(255, 255, 255)',
+                    }
+                }
+            },
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                backgroundColor: [
+                    'rgba(40, 114, 251)',
+                ],
+                y: {
+                    beginAtZero: true,
+                    labels: {
+                        color: 'rgba(255, 255, 255)',
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, .11)',
+                    },
+                    ticks: {
+                        // Include a dollar sign in the ticks
+                        callback: function(value, index, values) {
+                            return '$' + value;
+                        },
+                        color: 'rgba(255, 255, 255, .79)',
+                    }
+                },
+                x: {
+                    grid: {
+                        color: 'rgba(255, 255, 255, .11)',
+                    },
+                    ticks: {
+                        color: 'rgba(255, 255, 255, .79)',
+                    }
+                },
+            }
+        }
+    });
+</script>
+{% endblock content %}

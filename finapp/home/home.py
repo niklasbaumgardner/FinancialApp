@@ -10,6 +10,7 @@ from pytz import timezone
 home = Blueprint('home', __name__)
 
 
+
 @home.route('/', methods=["GET"])
 @login_required
 def index():
@@ -21,6 +22,24 @@ def index():
     
     total = round(sum([x.total for x in temp ]), 2)
     return render_template("index.html", budgets=budgets, round=round, total=total)
+
+
+@home.route('/dashboard', methods=["GET"])
+@login_required
+def dashboard():
+    return render_template('dashboard.html')
+
+
+@home.route('/get_net_worth', methods=["GET"])
+@login_required
+def get_net_worth():
+    data = net_worth()
+
+    keys = [ k for k in data.keys() ]
+    values = [ v for v in data.values() ]
+
+    return { 'keys': keys, 'values': values }
+
 
 
 @home.route('/add_budget', methods=["POST"])
@@ -412,3 +431,62 @@ def get_date(str_date):
     year, month, day = str_date.strip().split('-')
 
     return date(int(year), int(month), int(day))
+
+
+def transSum(lst):
+    total = 0
+
+    for t in lst:
+        total += t.amount
+    
+    return total
+
+def net_worth():
+    all_budgets = get_budgets()
+    all_trans = []
+    for budget in all_budgets:
+        all_trans += get_transactions(budget.id)
+    all_trans.sort(key=lambda x: x.date)
+
+    data = {}
+
+    for i, trans in enumerate(all_trans):
+        try:
+            curr_date = trans.date.strftime("%m/%d/%Y")
+            next_date = all_trans[i+1].date.strftime("%m/%d/%Y")
+            if curr_date == next_date:
+                continue
+        except: # will hit at end of list and we want to sum at the end of the list
+            pass
+        # str_date = trans.date.strftime("%m/%d/%Y")
+        data[trans.date] = round(transSum(all_trans[:i]) + all_trans[i].amount, 2)
+
+    first = all_trans[0].date
+    last = all_trans[-1].date
+    print(first, last)
+    num_day = last - first
+    step = num_day // 10
+
+    curr = first
+
+    keys = [ k for k in data.keys() ]
+    keys.sort()
+    # print(keys)
+    # return data
+
+    trimmed = {}
+
+    while curr <= last:
+        if curr in data:
+            trimmed[curr.strftime("%m/%d/%Y")] = data[curr]
+        else:
+            index = 0
+            for i, d in enumerate(keys):
+                if curr > d:
+                    trimmed[curr.strftime("%m/%d/%Y")] = data[d]
+                    index = i
+            keys = keys[:i]
+        curr += step
+
+
+    return trimmed
