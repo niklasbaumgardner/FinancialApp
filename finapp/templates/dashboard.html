@@ -3,89 +3,44 @@
 {% block title %}Dashboard{% endblock title %}
 {% block dashboard %}active{% endblock dashboard %}
 
+{% block backButton %}<a href="/" class="btn btn-outline-primary me-5"> &#8249; Back</a>{% endblock backButton %}
+
 
 
 {% block content %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.0/chart.min.js" integrity="sha512-GMGzUEevhWh8Tc/njS0bDpwgxdCJLQBWG3Z2Ct+JGOpVnEmjvNx6ts4v6A2XJf1HOrtOsfhv3hBKpK9kE5z8AQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.0/chart.js" integrity="sha512-CWVDkca3f3uAWgDNVzW+W4XJbiC3CH84P2aWZXj+DqI6PNbTzXbl1dIzEHeNJpYSn4B6U8miSZb/hCws7FnUZA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.0/helpers.esm.min.js" integrity="sha512-1b6IKdJzKvjUfXuATUJs0a4ti8sBZHY0DKZ1O1UCj3cpw+IEKxUwG2UtXNOjS5/JkqxQ2v5GUMFn62mtZyXAfA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.6.0/dist/chart.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/chart.js@3.6.0/helpers/helpers.js"></script> -->
+
 <script>
-    function getData()
-    {
+    function getData(url) {
         var xmlHttp = new XMLHttpRequest();
-        xmlHttp.open( "GET", "{{ url_for('home.get_net_worth') }}", false ); // false for synchronous request
+        xmlHttp.open( "GET", url, false ); // false for synchronous request
         xmlHttp.send( null );
         return xmlHttp.response;
+    }
+    function getNetWorth() {
+        return getData("{{ url_for('home.get_net_worth') }}");
+    }
+    function getPieData() {
+        return getData("{{ url_for('home.get_pie_data') }}");
     }
 </script>
 
 <div class="container py-5 h-100">
-    <div class="card bg-dark h-100 p-5">
-        <canvas id="myChart"></canvas>
+    <div class="row h-100 py-12">
+        <div class="card bg-dark p-5">
+            <canvas id="lineChart"></canvas>
+        </div>
+
     </div>
-
+    <div class="row h-100 mt-5 py-12">
+        <div id="pie-chart-div" class="card bg-dark p-5">
+            <canvas id="pieChart"></canvas>
+        </div>
+    </div>
 </div>
-<script>
-    let data = JSON.parse(getData());
-    // console.log(data);
-    // console.log(typeof(data));
-    let keys = data['keys'];
-    let values = data['values'];
-    // console.log(keys);
-    // console.log(values);
-
-    const ctx = document.getElementById('myChart').getContext('2d');
-    const myChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: keys,
-            datasets: [{
-                label: 'Net Worth',
-                data: values,
-                backgroundColor: 'rgba(40, 114, 251)',
-                borderColor: 'rgba(40, 114, 251)',
-                borderWidth: 2,
-                color: 'rgba(255, 255, 255)',
-            }]
-        },
-        options: {
-            plugins: {
-                legend: {
-                    labels: {
-                        color: 'rgba(255, 255, 255)',
-                    }
-                }
-            },
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                backgroundColor: [
-                    'rgba(40, 114, 251)',
-                ],
-                y: {
-                    beginAtZero: true,
-                    labels: {
-                        color: 'rgba(255, 255, 255)',
-                    },
-                    grid: {
-                        color: 'rgba(255, 255, 255, .11)',
-                    },
-                    ticks: {
-                        // Include a dollar sign in the ticks
-                        callback: function(value, index, values) {
-                            return '$' + value;
-                        },
-                        color: 'rgba(255, 255, 255, .79)',
-                    }
-                },
-                x: {
-                    grid: {
-                        color: 'rgba(255, 255, 255, .11)',
-                    },
-                    ticks: {
-                        color: 'rgba(255, 255, 255, .79)',
-                    }
-                },
-            }
-        }
-    });
-</script>
+<script src="/static/js/dashboard.js"></script>
 {% endblock content %}

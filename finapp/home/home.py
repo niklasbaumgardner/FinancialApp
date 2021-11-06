@@ -41,6 +41,17 @@ def get_net_worth():
     return { 'keys': keys, 'values': values }
 
 
+@home.route('/get_pie_data', methods=["GET"])
+@login_required
+def get_pie_data():
+    data = pie_data()
+
+    keys = [ k for k in data.keys() ]
+    values = [ v for v in data.values() ]
+
+    return { 'keys': keys, 'values': values }
+
+
 
 @home.route('/add_budget', methods=["POST"])
 @login_required
@@ -490,3 +501,13 @@ def net_worth():
 
 
     return trimmed
+
+
+def pie_data():
+    data = {}
+    all_budgets = get_budgets()
+    
+    for budget in all_budgets:
+        data[budget.name] = transSum(get_transactions(budget.id))
+
+    return data

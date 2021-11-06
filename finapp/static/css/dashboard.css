@@ -1,0 +1,9 @@
+#pie-chart-div {
+    max-width: 600px !important;
+    max-height: 600px !important;
+}
+
+.py-12 {
+    padding-left: 12px;
+    padding-right: 12px;
+}
