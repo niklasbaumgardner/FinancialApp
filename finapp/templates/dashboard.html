@@ -27,6 +27,9 @@
     function getPieData() {
         return getData("{{ url_for('home.get_pie_data') }}");
     }
+    function getAllBudgetsLineData() {
+        return getData("{{ url_for('home.get_all_budgets_line_data') }}");
+    }
 </script>
 
 <div class="container py-5 h-100">
@@ -34,13 +37,26 @@
         <div class="card bg-dark p-5">
             <canvas id="lineChart"></canvas>
         </div>
-
     </div>
-    <div class="row h-100 mt-5 py-12">
-        <div id="pie-chart-div" class="card bg-dark p-5">
-            <canvas id="pieChart"></canvas>
+
+    <div class="row h-100 py-12">
+        <div class="col mt-5 p-0">
+            <div id="pie-chart-div" class="card bg-dark p-5">
+                <canvas id="pieChart"></canvas>
+            </div>
+        </div>
+        <div class="col mt-5 p-0">
+            <div id="" class="card bg-dark p-5">
+                <!-- <canvas id="pieChart"></canvas> -->
+                <p class="text-white fs-1">More coming soon...</p>
+            </div>
         </div>
     </div>
+
+    <div class="row h-100 mt-5 py-12">
+        <div class="card bg-dark p-5">
+            <canvas id="allBudgetsLineChart"></canvas>
+        </div>
 </div>
 <script src="/static/js/dashboard.js"></script>
 {% endblock content %}

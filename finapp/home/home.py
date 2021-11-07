@@ -33,12 +33,12 @@ def dashboard():
 @home.route('/get_net_worth', methods=["GET"])
 @login_required
 def get_net_worth():
-    data = net_worth()
+    data, dates = net_worth()
 
     keys = [ k for k in data.keys() ]
     values = [ v for v in data.values() ]
 
-    return { 'keys': keys, 'values': values }
+    return { 'keys': dates, 'values': values }
 
 
 @home.route('/get_pie_data', methods=["GET"])
@@ -50,6 +50,22 @@ def get_pie_data():
     values = [ v for v in data.values() ]
 
     return { 'keys': keys, 'values': values }
+
+
+@home.route('/get_all_budgets_line_data', methods=["GET"])
+@login_required
+def get_all_budgets_line_data():
+    data, dates = all_budgets_net_worth()
+    # print(data)
+
+    names = [ k for k in data.keys() ]
+    # keys = [ k for k in data[names[0]].keys() ]
+    # values = [ v for v in data.values() ]
+    # print(names)
+    # print(keys)
+    # print(data)
+
+    return { 'names': names, 'keys': dates, 'data': data }
 
 
 
@@ -452,15 +468,87 @@ def transSum(lst):
     
     return total
 
-def net_worth():
-    all_budgets = get_budgets()
-    all_trans = []
-    for budget in all_budgets:
-        all_trans += get_transactions(budget.id)
-    all_trans.sort(key=lambda x: x.date)
+def get_dates(first, last):
+    num_day = last - first
+    step = num_day // 10
 
+    budgets_data = {}
+
+    # print(first, last)
+    # print(step, int(step.days))
+
+    dates = []
+    curr = first
+    while curr < last:
+        dates.append(curr)
+        curr += step
+    
+    dates.append(last)
+
+    return dates, step
+
+
+
+def sum_per_date_list(first, last, step, data, dates):
+    # curr = first
+
+    keys = [ k for k in data.keys() ]
+    keys.sort()
+
+    trimmed = {}
+
+    for date in dates:
+        if date in data:
+            trimmed[date.strftime("%m/%d/%Y")] = data[date]
+
+        else:
+            # find next smallest date
+            # curr = date
+            for key_date in keys:
+                if date >= key_date:
+                    trimmed[date.strftime("%m/%d/%Y")] = data[key_date]
+    return trimmed
+
+
+    # while curr <= last:
+    #     # print(first, last, curr, step)
+    #     if curr in data:
+    #         trimmed[curr.strftime("%m/%d/%Y")] = data[curr]
+    #     else:
+    #         index = 0
+    #         for i, d in enumerate(keys):
+    #             if curr >= d:
+    #                 trimmed[curr.strftime("%m/%d/%Y")] = data[d]
+    #                 index = i
+    #         keys = keys[:i]
+    #     curr += step
+
+    # return trimmed
+
+
+def sum_per_date_list_for_individual_budgets(first, last, step, data, dates):
+    curr = first
+
+    trimmed = {}
+
+    while curr <= last:
+        # print(first, last, curr, step)
+        if curr in data:
+            trimmed[curr.strftime("%m/%d/%Y")] = data[curr]
+        else:
+            index = 0
+            for i, d in enumerate(keys):
+                if curr >= d:
+                    trimmed[curr.strftime("%m/%d/%Y")] = data[d]
+                    index = i
+            keys = keys[:i]
+        curr += step
+
+    return trimmed
+
+
+def get_data_dict(all_trans):
     data = {}
-
     for i, trans in enumerate(all_trans):
         try:
             curr_date = trans.date.strftime("%m/%d/%Y")
@@ -471,36 +559,24 @@ def net_worth():
             pass
         # str_date = trans.date.strftime("%m/%d/%Y")
         data[trans.date] = round(transSum(all_trans[:i]) + all_trans[i].amount, 2)
+    return data
+
+
+def net_worth():
+    all_budgets = get_budgets()
+    all_trans = []
+    for budget in all_budgets:
+        all_trans += get_transactions(budget.id)
+    all_trans.sort(key=lambda x: x.date)
+
+    data = get_data_dict(all_trans)
 
     first = all_trans[0].date
     last = all_trans[-1].date
-    print(first, last)
-    num_day = last - first
-    step = num_day // 10
+    dates, step = get_dates(first, last)
+    # print(first, last, dates)
 
-    curr = first
-
-    keys = [ k for k in data.keys() ]
-    keys.sort()
-    # print(keys)
-    # return data
-
-    trimmed = {}
-
-    while curr <= last:
-        if curr in data:
-            trimmed[curr.strftime("%m/%d/%Y")] = data[curr]
-        else:
-            index = 0
-            for i, d in enumerate(keys):
-                if curr > d:
-                    trimmed[curr.strftime("%m/%d/%Y")] = data[d]
-                    index = i
-            keys = keys[:i]
-        curr += step
-
-
-    return trimmed
+    return sum_per_date_list(first, last, step, data, dates), [ d.strftime("%m/%d/%Y") for d in dates ]
 
 
 def pie_data():
@@ -513,3 +589,49 @@ def pie_data():
             data[budget.name] = total
 
     return data
+
+
+def all_budgets_net_worth():
+    # { budget name: { date: net worth } }
+    all_budgets = get_budgets()
+    temp = {}
+    first = None
+    last = None
+    for budget in all_budgets:
+        b_trans = get_transactions(budget.id)
+        if b_trans:
+            b_trans.sort(key=lambda x: x.date)
+
+            b_data = get_data_dict(b_trans)
+            # print(budget.name, b_data)
+
+            if not first or first > b_trans[0].date:
+                # print(first, b_trans[0].date)
+                first = b_trans[0].date
+            if not last or last < b_trans[-1].date:
+                # print(last, b_trans[-1].date)
+                last = b_trans[-1].date
+
+            temp[budget.name] = b_data
+
+            # num_day = last - first
+            # step = num_day // 10
+
+            # if step == timedelta():
+            #     step += timedelta(1)
+
+            # budgets_data[budget.name] = sum_per_date_list(first, last, step, b_data)
+            # print(budgets_data.keys(), budgets_data)
+
+    dates, step = get_dates(first, last)
+
+
+    budgets_data = {}
+    for k, v in temp.items():
+        budgets_data[k] = sum_per_date_list(first, last, step, v, dates)
+
+    return budgets_data, [ d.strftime("%m/%d/%Y") for d in dates ]
+
+
+
+
