@@ -1,6 +1,6 @@
 #pie-chart-div {
-    max-width: 600px !important;
-    max-height: 600px !important;
+    max-width: 700px !important;
+    max-height: 700px !important;
 }
 
 .py-12 {
@@ -14,4 +14,12 @@
 
 .mr-48 {
     margin-right: 48px;
+}
+
+.ml-24 {
+    margin-left: 24px;
+}
+
+.mr-24 {
+    margin-right: 24px;
 }
