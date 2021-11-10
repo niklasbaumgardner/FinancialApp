@@ -105,8 +105,9 @@
                                         </div>
                                         <div class="modal-footer">
                                             <!-- <form method="POST" action="{{ url_for('home.delete_budget', b_id=budget.id) }}"> -->
-                                                <button type="submit" id="delete_button" class="btn btn-danger">Delete</button>
                                                 <button onclick="document.getElementById('id{{ budget.id }}').style.display='none'" type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                                                <button type="submit" id="delete_button" class="btn btn-danger">Delete</button>
+                                                <!-- <button onclick="document.getElementById('id{{ budget.id }}').style.display='none'" type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button> -->
                                             <!-- </form> -->
                                         </div>
 
