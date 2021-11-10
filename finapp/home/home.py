@@ -84,6 +84,8 @@ def add_budget():
         db.session.commit()
 
         if amount != 0:
+            str_date = request.form.get('date')
+            date = get_date(str_date)
             create_transaction(name=f"Initial Transaction for {name}", amount=amount, date=date, budget_id=budg.id)
 
     return redirect(url_for('home.index'))
@@ -308,19 +310,21 @@ def delete_prefill(amount):
 
 # API Endpoints
 
-@home.route('/get_data', methods=['GET'])
-@login_required
-def get_data():
-    budget = request.args.get('budget')
-    date = request.args.get('date')
+# @home.route('/get_data', methods=['GET'])
+# @login_required
+# def get_data():
+#     budget = request.args.get('budget')
+#     date = request.args.get('date')
 
-    return
+#     return
 
 
 # Functions
 
 def create_transaction(name, amount, date, budget_id):
     trans = Transaction(name=name, budget_id=budget_id, user_id=current_user.get_id(), amount=amount, date=date)
+    db.session.add(trans)
+    db.session.commit()
     do_transaction(trans)
 
 
@@ -374,8 +378,6 @@ def do_transaction(transaction):
     budget = get_budget(transaction.budget_id)
     if budget:
         budget.total += transaction.amount
-
-        db.session.add(transaction)
         db.session.commit()
 
         return transaction

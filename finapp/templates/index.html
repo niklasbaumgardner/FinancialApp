@@ -132,6 +132,7 @@
                 </div>
                 <div class="modal-body">
                     <form id="addNewBudgetForm" action="{{ url_for('home.add_budget') }}" method="POST">
+                        <input type="date" id="date" name="date" hidden>
                         <div class="mb-md-5">
         
                             <!-- <h2 class="card-title">Add Budget</h2>
@@ -191,5 +192,9 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.getElementById('date').valueAsDate = new Date();
+    </script>
 
 {% endblock content %}
