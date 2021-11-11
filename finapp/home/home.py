@@ -56,6 +56,8 @@ def get_pie_data():
 @login_required
 def get_all_budgets_line_data():
     data, dates = all_budgets_net_worth()
+    dataNW, datesNW = net_worth()
+
     # print(data)
 
     names = [ k for k in data.keys() ]
@@ -64,6 +66,9 @@ def get_all_budgets_line_data():
     # print(names)
     # print(keys)
     # print(data)
+    names.append('allBudgets')
+
+    data['allBudgets'] = dataNW
 
     return { 'names': names, 'keys': dates, 'data': data }
 
