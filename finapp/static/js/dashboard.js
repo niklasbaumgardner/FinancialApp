@@ -18,9 +18,77 @@ const CHART_COLORS_ARRAY = [
     'rgb(201, 203, 207)'
 ];
 
+const COLORS = [
+    'rgb(201, 203, 207)',
+    'rgb(85, 239, 196)',
+    'rgb(129, 236, 236)',
+    'rgb(116, 185, 255)',
+    'rgb(162, 155, 254)',
+    'rgb(0, 184, 148)',
+    'rgb(0, 206, 201)',
+    'rgb(9, 132, 227)',
+    'rgb(108, 92, 231)',
+    'rgb(255, 118, 117)',
+    'rgb(214, 48, 49)',
+    'rgb(253, 121, 168)',
+    'rgb(232, 67, 147)',
+    'rgb(254, 202, 87)',
+    'rgb(255, 159, 67)',
+    'rgb(255, 107, 107)',
+    'rgb(238, 82, 83)',
+    'rgb(72, 219, 251)',
+    'rgb(10, 189, 227)',
+    'rgb(0, 210, 211)',
+    'rgb(1, 163, 164)',
+    'rgb(95, 39, 205)',
+    'rgb(52, 31, 151)',
+    'rgb(200, 214, 229)',
+    'rgb(131, 149, 167)',
+    'rgb(87, 101, 116)',
+    'rgb(29, 209, 161)',
+];
+
+const COLORS_DICT = {};
+
 const data = JSON.parse(getAllBudgetsLineData());
 
 console.log(data);
+
+function shuffle(array, len) {
+    var i = array.length,
+        j = 0,
+        temp;
+
+    while (i--) {
+        j = Math.floor(Math.random() * (i+1));
+
+        // swap randomly chosen element with current element
+        temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+
+    return array.splice(len);
+}
+
+function assignColors() {
+    let names = data['names'];
+    
+    let arr = [];
+    for (let i = 0; i < COLORS.length; i++) {
+        arr[arr.length] = i;
+    }
+    // console.log(arr);
+
+    let random = shuffle(arr, COLORS.length - names.length);
+    // console.log(random);
+
+    let indx = 0;
+    for (let name of names) {
+        COLORS_DICT[name] = COLORS[random[indx]];
+        indx += 1;
+    }
+}
 
 function lineChart() {
     // let data = JSON.parse(getNetWorth());
@@ -36,8 +104,8 @@ function lineChart() {
                 id: 'allBudgets',
                 label: 'All Budgets',
                 data: values,
-                backgroundColor: 'rgba(40, 114, 251)',
-                borderColor: 'rgba(40, 114, 251)',
+                backgroundColor: COLORS_DICT['allBudgets'],
+                borderColor: COLORS_DICT['allBudgets'],
                 borderWidth: 2,
                 color: 'rgba(255, 255, 255)',
             }]
@@ -51,7 +119,7 @@ function lineChart() {
                 },
                 title: {
                     display: true,
-                    text: 'Sum of Budgets Worth',
+                    text: 'Budgets',
                     color: 'rgba(255, 255, 255)',
                 }
             },
@@ -92,6 +160,12 @@ function pieChart() {
     let keys = data['keys'];
     let values = data['values'];
 
+    let colors = [];
+    // console.log(keys);
+    for (let name of keys) {
+        colors.push(COLORS_DICT[name]);
+    }
+
     const ctx = document.getElementById('pieChart').getContext('2d');
     const myChart = new Chart(ctx, {
         type: 'pie',
@@ -99,7 +173,7 @@ function pieChart() {
             labels: keys,
             datasets: [{
                 data: values,
-                backgroundColor: Object.values(CHART_COLORS),
+                backgroundColor: colors,
                 color: 'rgba(255, 255, 255)',
                 hoverOffset: 4,
             }]
@@ -205,8 +279,8 @@ function addDataForBudget(name) {
         id: name,
         label: name,
         data: data['data'][name],
-        backgroundColor: CHART_COLORS_ARRAY[chart.data.datasets.length % CHART_COLORS_ARRAY.length], //'rgba(40, 114, 251)',
-        borderColor: CHART_COLORS_ARRAY[chart.data.datasets.length % CHART_COLORS_ARRAY.length], //'rgba(40, 114, 251)',
+        backgroundColor: COLORS_DICT[name], //'rgba(40, 114, 251)',
+        borderColor: COLORS_DICT[name], //'rgba(40, 114, 251)',
         borderWidth: 2,
         color: 'rgba(255, 255, 255)',
     }
@@ -216,8 +290,8 @@ function addDataForBudget(name) {
 
 function removeDataForBudget(name) {
     const chart = Chart.getChart('lineChart');
-    console.log(chart.data.datasets);
-    console.log(typeof(chart.data.datasets));
+    // console.log(chart.data.datasets);
+    // console.log(typeof(chart.data.datasets));
 
     let indx = 0;
     for (let data of chart.data.datasets) {
@@ -235,11 +309,11 @@ function toggleShowLine(event) {
     // event.preventDefault();
     let label = event.target;
     // label.blur();
-    console.log(label);
+    // console.log(label);
     let name = label.getAttribute('for');
     let checked = document.getElementById(name).checked;
-    console.log(name);
-    console.log(checked);
+    // console.log(name);
+    // console.log(checked);
 
     if (!checked) {
         addDataForBudget(name);
@@ -256,9 +330,8 @@ function addButtons() {
     // console.log(data);
     let names = data['names'];
 
-    const parser = new DOMParser();
-
     for (let name of names) {
+        // console.log(typeof(name), typeof(id));
         if (name === 'allBudgets') {
             continue;
         }
@@ -282,7 +355,35 @@ function addButtons() {
     document.getElementById('allBudgetsLabel').addEventListener('click', toggleShowLine);
 }
 
-// function
+function reAssignColors() {
+    assignColors();
+    let charts = document.querySelectorAll('canvas');
+
+    for (let canvas of charts) {
+        // console.log(canvas.id);
+        let id = canvas.id;
+        const chart = Chart.getChart(id);
+        if (id === "lineChart") {
+            // console.log(chart.data.datasets);
+            for (let data of chart.data.datasets) {
+                data.backgroundColor = COLORS_DICT[data.id];
+                data.borderColor = COLORS_DICT[data.id];
+            }
+        }
+        else if (id === "pieChart") {
+            let colors = [];
+            for (let name of chart.data.labels) {
+                colors.push(COLORS_DICT[name]);
+            }
+            chart.data.datasets[0].backgroundColor = colors;
+        }
+        chart.update();
+    }
+
+}
+
+// function calls
+assignColors();
 lineChart();
 pieChart();
 addButtons();

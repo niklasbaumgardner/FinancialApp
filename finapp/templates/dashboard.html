@@ -21,9 +21,6 @@
         xmlHttp.send( null );
         return xmlHttp.response;
     }
-    function getNetWorth() {
-        return getData("{{ url_for('home.get_net_worth') }}");
-    }
     function getPieData() {
         return getData("{{ url_for('home.get_pie_data') }}");
     }
@@ -36,10 +33,12 @@
     <div class="row h-100 py-12">
         <div class="card bg-dark p-5">
             <div>
+                <p class="text-white fs-2">Check the budgets you want to view</p>
                 <div id="lineButtons" class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
                     <input type="checkbox" class="btn-check" id="allBudgets" checked>
                     <label id="allBudgetsLabel" class="btn btn-outline-light" for="allBudgets">All Budgets</label>
                 </div>
+                <button class="btn btn-outline-primary" onclick="reAssignColors()">Randomize colors</button>
             </div>
             <div class="card-body">
                 <canvas id="lineChart"></canvas>

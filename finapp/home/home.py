@@ -533,27 +533,6 @@ def sum_per_date_list(first, last, step, data, dates):
     # return trimmed
 
 
-def sum_per_date_list_for_individual_budgets(first, last, step, data, dates):
-    curr = first
-
-    trimmed = {}
-
-    while curr <= last:
-        # print(first, last, curr, step)
-        if curr in data:
-            trimmed[curr.strftime("%m/%d/%Y")] = data[curr]
-        else:
-            index = 0
-            for i, d in enumerate(keys):
-                if curr >= d:
-                    trimmed[curr.strftime("%m/%d/%Y")] = data[d]
-                    index = i
-            keys = keys[:i]
-        curr += step
-
-    return trimmed
-
-
 def get_data_dict(all_trans):
     data = {}
     for i, trans in enumerate(all_trans):
