@@ -28,3 +28,19 @@
 .mr-24 {
     margin-right: 24px;
 }
+
+.fs-75 {
+    font-size: .75rem !important;
+}
+
+.no-underline {
+    text-decoration: none;
+}
+
+.border-transparent {
+    border-bottom: 1px solid rgba(255,255,255,.5);
+}
+
+.w-40 {
+    width: 40%;
+}

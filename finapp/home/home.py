@@ -31,17 +31,6 @@ def dashboard():
     return render_template('dashboard.html')
 
 
-@home.route('/get_net_worth', methods=["GET"])
-@login_required
-def get_net_worth():
-    data, dates = net_worth()
-
-    keys = [ k for k in data.keys() ]
-    values = [ v for v in data.values() ]
-
-    return { 'keys': dates, 'values': values }
-
-
 @home.route('/get_pie_data', methods=["GET"])
 @login_required
 def get_pie_data():
@@ -59,20 +48,24 @@ def get_all_budgets_line_data():
     data, dates = all_budgets_net_worth()
     dataNW, datesNW = net_worth()
 
-    # print(data)
-
-    names = [ k for k in data.keys() ]
-    # keys = [ k for k in data[names[0]].keys() ]
-    # values = [ v for v in data.values() ]
-    # print(names)
-    # print(keys)
-    # print(data)
-    names.append('allBudgets')
+    names = ['allBudgets'] + [ k for k in data.keys() ]
 
     data['allBudgets'] = dataNW
 
     return { 'names': names, 'keys': dates, 'data': data }
 
+
+@home.route('/get_net_spending', methods=["GET"])
+@login_required
+def get_net_spending():
+    date = request.args.get('currentDate')
+    if date:
+        date = get_datetime(date)
+        date = date - timedelta(days=30)
+
+    data = net_spending(date)
+
+    return data
 
 
 @home.route('/add_budget', methods=["POST"])
@@ -85,14 +78,16 @@ def add_budget():
         amount = 0
 
     if name and amount is not None:
-        budg = Budget(name=name, total=0, user_id=current_user.get_id())
-        db.session.add(budg)
-        db.session.commit()
+        duplicate = Budget.query.filter_by(name=name, user_id=current_user.get_id()).first()
+        if not duplicate:
+            budg = Budget(name=name, total=0, user_id=current_user.get_id())
+            db.session.add(budg)
+            db.session.commit()
 
-        if amount != 0:
-            str_date = request.form.get('date')
-            date = get_date(str_date)
-            create_transaction(name=f"Initial Transaction for {name}", amount=amount, date=date, budget_id=budg.id)
+            if amount != 0:
+                str_date = request.form.get('date')
+                date = get_date(str_date)
+                create_transaction(name=f"Initial Transaction for {name}", amount=amount, date=date, budget_id=budg.id)
 
     return redirect(url_for('home.index'))
 
@@ -108,8 +103,6 @@ def add_transaction():
                 if budget.id == item[0]:
                     item.insert(1, budget.name)
                     break
-
-    tz = timezone('US/Eastern')
 
     return render_template("addtransaction.html", budgets=budgets, str=str, prefills=prefills, enumerate=enumerate, showPrefills=len(prefills)>0)
 
@@ -327,10 +320,10 @@ def delete_prefill(amount):
 
 # Functions
 
-def format_to_money_string(number):
-    if number < 0:
+def format_to_money_string(number, include_minus=True):
+    if include_minus and number < 0:
         return f'-${abs(number):,.2f}'
-    return f'${number:,.2f}'
+    return f'${abs(number):,.2f}'
 
 def create_transaction(name, amount, date, budget_id):
     trans = Transaction(name=name, budget_id=budget_id, user_id=current_user.get_id(), amount=amount, date=date)
@@ -350,8 +343,10 @@ def get_budget(id):
     return budget
 
 
-def get_transactions(budget_id):
+def get_transactions(budget_id, start_date=None):
     transactions = Transaction.query.filter_by(budget_id=budget_id, user_id=current_user.get_id()).all()
+    if start_date:
+        return [ t for t in transactions if t.date >= start_date ]
     return transactions
 
 
@@ -473,6 +468,12 @@ def get_date(str_date):
     return date(int(year), int(month), int(day))
 
 
+def get_datetime(str_date):
+    year, month, day = str_date.strip().split('-')
+
+    return datetime(int(year), int(month), int(day))
+
+
 def transSum(lst):
     total = 0
 
@@ -521,22 +522,6 @@ def sum_per_date_list(first, last, step, data, dates):
                 if date >= key_date:
                     trimmed[date.strftime("%m/%d/%Y")] = data[key_date]
     return trimmed
-
-
-    # while curr <= last:
-    #     # print(first, last, curr, step)
-    #     if curr in data:
-    #         trimmed[curr.strftime("%m/%d/%Y")] = data[curr]
-    #     else:
-    #         index = 0
-    #         for i, d in enumerate(keys):
-    #             if curr >= d:
-    #                 trimmed[curr.strftime("%m/%d/%Y")] = data[d]
-    #                 index = i
-    #         keys = keys[:i]
-    #     curr += step
-
-    # return trimmed
 
 
 def get_data_dict(all_trans):
@@ -624,6 +609,36 @@ def all_budgets_net_worth():
 
     return budgets_data, [ d.strftime("%m/%d/%Y") for d in dates ]
 
+
+def in_out_net(trans):
+    in_ = 0
+    out = 0
+    net = 0
+    for tran in trans:
+        if tran.amount > 0:
+            in_ += tran.amount
+        elif tran.amount < 0:
+            out += tran.amount
+    net = in_ + out
+    return in_, out, net
+
+def net_spending(start_date):
+    data = {}
+    total_in = 0
+    total_out = 0
+    total_net = 0
+    all_budgets = get_budgets()
+    for budget in all_budgets:
+        b_trans = get_transactions(budget.id, start_date)
+        if not b_trans:
+            continue
+        in_, out, net = in_out_net(b_trans)
+        total_in += in_
+        total_out += out
+        data[budget.name] = {'in': format_to_money_string(in_), 'out': format_to_money_string(out, False), 'net': format_to_money_string(net)}
+    total_net = total_in + total_out
+    data['allBudgets'] = {'in': format_to_money_string(total_in), 'out': format_to_money_string(total_out, False), 'net': format_to_money_string(total_net)}
+    return data
 
 
 
