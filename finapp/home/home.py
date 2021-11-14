@@ -21,7 +21,8 @@ def index():
         budgets.append(temp[i:i+3])
     
     total = round(sum([x.total for x in temp ]), 2)
-    return render_template("index.html", budgets=budgets, round=round, total=total)
+    format_to_money_string(total)
+    return render_template("index.html", budgets=budgets, round=round, total=format_to_money_string(total), format_to_money_string=format_to_money_string)
 
 
 @home.route('/dashboard', methods=["GET"])
@@ -207,7 +208,7 @@ def view_budget(id):
     budgets = get_budgets()
     transactions = Transaction.query.filter_by(budget_id=budget.id, user_id=current_user.get_id()).order_by(Transaction.date.desc(), Transaction.id.desc()).paginate(page=page, per_page=10)
 
-    return render_template('viewbudget.html', budget=budget, transactions=transactions, round=round, strftime=datetime.strftime, budgets=budgets, str=str)
+    return render_template('viewbudget.html', budget=budget, transactions=transactions, round=round, strftime=datetime.strftime, budgets=budgets, str=str, format_to_money_string=format_to_money_string)
 
 
 @home.route('/edit_transaction/<int:b_id>/<int:t_id>', methods=["POST"])
@@ -325,6 +326,11 @@ def delete_prefill(amount):
 
 
 # Functions
+
+def format_to_money_string(number):
+    if number < 0:
+        return f'-${abs(number):,.2f}'
+    return f'${number:,.2f}'
 
 def create_transaction(name, amount, date, budget_id):
     trans = Transaction(name=name, budget_id=budget_id, user_id=current_user.get_id(), amount=amount, date=date)

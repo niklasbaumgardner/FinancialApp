@@ -92,7 +92,7 @@
                 {{ budget.name }}
             </div>
             <div class="fs-4 mb-0 subhead text-white-50">
-                Total: {{ round(budget.total, 2) }}
+                Total: {{ format_to_money_string(round(budget.total, 2)) }}
             </div>
         </div>
     </div>
@@ -113,7 +113,7 @@
                                     <input class="show-edit-{{ trans.id }} form-control w-75" type="text" id="editName{{ trans.id }}" name="editName{{ trans.id }}" value="{{ trans.name }}" hidden>
                                 </td>
                                 <td class="table-dark">
-                                    <p class="show-not-edit-{{ trans.id }}" id="amount{{ trans.id }}" style="padding:0;">{{ trans.amount }}</p>
+                                    <p class="show-not-edit-{{ trans.id }}" id="amount{{ trans.id }}" style="padding:0;">{{ format_to_money_string(trans.amount) }}</p>
                                     <input class="show-edit-{{ trans.id }} form-control w-75" type="text" id="editAmount{{ trans.id }}" name="editAmount{{ trans.id }}" value="{{ trans.amount }}" hidden>
                                 </td>
                                 <td class="table-dark">
