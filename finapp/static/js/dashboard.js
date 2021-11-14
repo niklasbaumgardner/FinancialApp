@@ -18,35 +18,64 @@ const CHART_COLORS_ARRAY = [
     'rgb(201, 203, 207)'
 ];
 
+// const COLORS = [
+//     'rgb(201, 203, 207)', // grey keep
+//     'rgb(85, 239, 196)',
+//     'rgb(129, 236, 236)',
+//     'rgb(116, 185, 255)',
+//     'rgb(162, 155, 254)',
+//     'rgb(0, 184, 148)',
+//     'rgb(0, 206, 201)',
+//     'rgb(9, 132, 227)',
+//     'rgb(108, 92, 231)',
+//     'rgb(255, 118, 117)',
+//     'rgb(214, 48, 49)',
+//     'rgb(253, 121, 168)',
+//     'rgb(232, 67, 147)',
+//     'rgb(254, 202, 87)',
+//     'rgb(255, 159, 67)',
+//     'rgb(255, 107, 107)',
+//     'rgb(238, 82, 83)',
+//     'rgb(72, 219, 251)',
+//     'rgb(10, 189, 227)',
+//     'rgb(0, 210, 211)',
+//     'rgb(1, 163, 164)',
+//     'rgb(95, 39, 205)',
+//     'rgb(52, 31, 151)',
+//     'rgb(200, 214, 229)',
+//     'rgb(131, 149, 167)',
+//     'rgb(87, 101, 116)',
+//     'rgb(29, 209, 161)',
+// ];
+
 const COLORS = [
-    'rgb(201, 203, 207)',
-    'rgb(85, 239, 196)',
-    'rgb(129, 236, 236)',
-    'rgb(116, 185, 255)',
-    'rgb(162, 155, 254)',
-    'rgb(0, 184, 148)',
-    'rgb(0, 206, 201)',
-    'rgb(9, 132, 227)',
-    'rgb(108, 92, 231)',
-    'rgb(255, 118, 117)',
-    'rgb(214, 48, 49)',
-    'rgb(253, 121, 168)',
-    'rgb(232, 67, 147)',
-    'rgb(254, 202, 87)',
-    'rgb(255, 159, 67)',
-    'rgb(255, 107, 107)',
-    'rgb(238, 82, 83)',
-    'rgb(72, 219, 251)',
-    'rgb(10, 189, 227)',
-    'rgb(0, 210, 211)',
-    'rgb(1, 163, 164)',
-    'rgb(95, 39, 205)',
-    'rgb(52, 31, 151)',
-    'rgb(200, 214, 229)',
-    'rgb(131, 149, 167)',
-    'rgb(87, 101, 116)',
-    'rgb(29, 209, 161)',
+    'rgb(201, 203, 207)', // light grey
+    'rgb(255, 234, 167)', // light pale yellow
+    'rgb(250, 177, 160)', // light pale orange
+    'rgb(116, 185, 255)', // light baby blue
+    'rgb(129, 236, 236)', // light teal
+    'rgb(162, 155, 254)', // light pale purple
+    'rgb(214, 48, 49)',   // red
+    'rgb(0, 184, 148)',   // green
+    'rgb(95, 39, 205)',   // purple
+    'rgb(6, 82, 221)',    // blue
+    'rgb(255, 250, 101)', // yellow
+    'rgb(255, 99, 72)',   // orange
+    'rgb(248, 165, 194)', // light pale pink
 ];
+
+// American yellow #ffeaa7
+// American peach #fab1a0#fab1a0#fab1a0
+// American blue #81ecec#81ecec
+// American blue #74b9ff
+// American purple #a29bfe#a29bfe
+// Aussie green #badc58#badc58
+// Russian pink #f8a5c2#f8a5c2
+// Russian yellow #f7d794#f7d794
+// Russian orange #e77f67#e77f67
+// Russian pink #c44569
+// Russian blue #546de5
+// Russian red #e66767
 
 const COLORS_DICT = {};
 
@@ -67,7 +96,9 @@ function shuffle(array, len) {
         array[i] = array[j];
         array[j] = temp;
     }
-
+    if (len === COLORS.length) {
+        return array;
+    }
     return array.splice(len);
 }
 
@@ -78,14 +109,15 @@ function assignColors() {
     for (let i = 0; i < COLORS.length; i++) {
         arr[arr.length] = i;
     }
-    // console.log(arr);
 
-    let random = shuffle(arr, COLORS.length - names.length);
-    // console.log(random);
+    let difference = COLORS.length - names.length;
+    let maxLength = difference > 0 ? difference : COLORS.length;
+
+    let random = shuffle(arr, maxLength);
 
     let indx = 0;
     for (let name of names) {
-        COLORS_DICT[name] = COLORS[random[indx]];
+        COLORS_DICT[name] = COLORS[random[ indx % random.length ]];
         indx += 1;
     }
 }
