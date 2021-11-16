@@ -78,11 +78,14 @@ const COLORS = [
 // Russian red #e66767
 
 const COLORS_DICT = {};
+let data;
+let names;
 
-const data = getAllBudgetsLineData();
-const names = data['names'];
+// const data = await getAllBudgetsLineData();
+// console.log(data);
+// const names = data['names'];
 
-console.log(names);
+// console.log(data);
 
 function shuffle(array, len) {
     var i = array.length,
@@ -186,10 +189,10 @@ function lineChart() {
     });
 }
 
-function pieChart() {
-    let data = getPieData();
-    let keys = data['keys'];
-    let values = data['values'];
+async function pieChart() {
+    let pieData = await getPieData();
+    let keys = pieData['keys'];
+    let values = pieData['values'];
 
     let colors = [];
     // console.log(keys);
@@ -353,8 +356,17 @@ function createPtagWithClass(classString) {
     return p;
 }
 
-function createCard(name, in_, out, net) {
-    let card = createDivWithClass('card bg-light-grey');
+function createCard(name, in_, out, net, strDate, daysBack) {
+    let card;
+    if (names.includes(name)) {
+        card = createDivWithClass('card bg-light-grey button-div');
+        card.onclick = () => {
+            location.href = `${BUDGET_URLS[name]}?currentDate=${strDate}&daysBack=${daysBack}`;
+        }
+    }
+    else {
+        card = createDivWithClass('card bg-light-grey');
+    }
 
     let cardHeader = createDivWithClass('card-header');
 
@@ -438,17 +450,23 @@ function createCard(name, in_, out, net) {
     return column3;
 }
 
-function netSpending(daysBack=30) {
-    let data = getNetSpending(daysBack);
+async function netSpending(daysBack=30) {
+    let spendingData = await getNetSpending(daysBack);
     // let dataKeys = Object.keys(data)
 
     let div = document.getElementById('net-spending');
     div.innerHTML = '';
 
+    let date = new Date();
+    let year = date.getFullYear();
+    let month = (date.getMonth() + 1).toString().padStart(2, '0');
+    let day = date.getDate().toString().padStart(2, '0');
+    let strDate = year + '-' + month + '-' + day;
+
     let count = 0;
     let row;
     for (let name of names) {
-        if (data[name]) {
+        if (spendingData[name]) {
             if (count % 4 === 0) {
                 if (row) {
                     div.appendChild(row);
@@ -459,11 +477,10 @@ function netSpending(daysBack=30) {
             if (name === 'allBudgets') {
                 name_ = 'All Budgets Combined';
             }
-            let card = createCard(name_, data[name]['in'], data[name]['out'], data[name]['net']);
+            let card = createCard(name_, spendingData[name]['in'], spendingData[name]['out'], spendingData[name]['net'], strDate, daysBack);
 
             row.appendChild(card);
             count += 1;
-            console.log(count);
         }
     }
     if (count % 4 !== 0) {
@@ -471,10 +488,25 @@ function netSpending(daysBack=30) {
     }
 }
 
+function onGraphChange(sel) {
+    // let sel = event.target;
+    // ele.selected = true;
+    // console.log(sel);
+    // console.log(sel.value);
+    // netSpending(sel.value);
+    console.log(sel);
+}
+
 // function calls
-assignColors();
-lineChart();
-pieChart();
-addButtons();
-netSpending();
-// allBudgetsLineChart();
+(async() => {
+    data = await getAllBudgetsLineData();
+    // console.log(data);
+    names = data['names'];
+
+    assignColors();
+    lineChart();
+    pieChart();
+    addButtons();
+    netSpending();
+
+})();

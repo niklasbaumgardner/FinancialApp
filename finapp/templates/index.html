@@ -71,7 +71,7 @@
                 <div class="row">
                     {% for budget in group %}
                         <div class="col-sm mt-5">
-                            <div class="card bg-dark text-white" onclick="location.href='{{ url_for('home.view_budget', id=budget.id) }}';" style="cursor: pointer;">
+                            <div class="card bg-dark text-white button-div" onclick="location.href='{{ url_for('home.view_budget', id=budget.id) }}';">
                                 <div class="card-body p-4 rounded-bottom">
                                     <p class="show-not-edit-{{ budget.id }} fs-4 text-white mb-0" style="height: 38px;">{{ budget.name }}</p>
                                     <form method="POST" id="budgetForm{{ budget.id }}" action="{{ url_for('home.edit_budget', id=budget.id) }}">

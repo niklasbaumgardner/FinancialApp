@@ -56,3 +56,7 @@
 .inline {
     display: inline-block;
 }
+
+.button-div {
+    cursor: pointer;
+}

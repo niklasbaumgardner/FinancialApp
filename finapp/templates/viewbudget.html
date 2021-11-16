@@ -2,7 +2,7 @@
 
 {% block title %}{{ budget.name }}{% endblock title %}
 
-{% block backButton %}<a href="/" class="btn btn-outline-primary me-5"> &#8249; Back</a>{% endblock backButton %}
+{% block backButton %}<a onclick="history.back()" class="btn btn-outline-primary me-5"> &#8249; Back</a>{% endblock backButton %}
 
 
 
@@ -225,13 +225,19 @@
                 <ul class="pagination">
                     {% if transactions.page > 1 %}
                         <li class="page-item">
-                            <a class="page-link" href="{{ url_for('home.view_budget', id=budget.id, page=transactions.page-1) }}" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
+                            {% if curr_date and days_back %}
+                                <a class="page-link" href="{{ url_for('home.view_budget', id=budget.id, page=transactions.page-1, currentDate=curr_date, daysBack=days_back) }}" aria-label="Next">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            {% else %}
+                                <a class="page-link" href="{{ url_for('home.view_budget', id=budget.id, page=transactions.page-1) }}" aria-label="Next">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            {% endif %}
                         </li>
                     {% else %}
                         <li class="page-item disabled">
-                            <a class="page-link" href="{{ url_for('home.view_budget', id=budget.id, page=transactions.page-1) }}" aria-label="Previous">
+                            <a class="page-link" aria-label="Previous">
                                 <span aria-hidden="true">&laquo;</span>
                             </a>
                         </li>
@@ -240,9 +246,15 @@
                         {% if page_num %}
 
                             {% if transactions.page == page_num %}
-                                <li class="page-item active"><a class="page-link" href="{{ url_for('home.view_budget', id=budget.id, page=page_num) }}">{{ page_num }}</a></li>
+                                <li class="page-item active"><a class="page-link">{{ page_num }}</a></li>
                             {% else %}
-                                <li class="page-item"><a class="page-link" href="{{ url_for('home.view_budget', id=budget.id, page=page_num) }}">{{ page_num }}</a></li>
+                                <li class="page-item">
+                                    {% if curr_date and days_back %}
+                                        <a class="page-link" href="{{ url_for('home.view_budget', id=budget.id, page=page_num, currentDate=curr_date, daysBack=days_back) }}">{{ page_num }}</a>
+                                    {% else %}
+                                        <a class="page-link" href="{{ url_for('home.view_budget', id=budget.id, page=page_num) }}">{{ page_num }}</a>
+                                    {% endif %}
+                                </li>
                             {% endif %}
 
 
@@ -250,15 +262,21 @@
                     {% endfor %}
                     {% if transactions.page == (transactions.total // transactions.per_page) + (transactions.total % transactions.per_page > 0) or transactions.total < 11 %}
                         <li class="page-item disabled">
-                            <a class="page-link" href="#" aria-label="Next">
+                            <a class="page-link" aria-label="Next">
                                 <span aria-hidden="true">&raquo;</span>
                             </a>
                         </li>
                     {% else %}
                         <li class="page-item">
-                            <a class="page-link" href="{{ url_for('home.view_budget', id=budget.id, page=transactions.page+1) }}" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
+                            {% if curr_date and days_back %}
+                                <a class="page-link" href="{{ url_for('home.view_budget', id=budget.id, page=transactions.page+1, currentDate=curr_date, daysBack=days_back) }}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            {% else %}
+                                <a class="page-link" href="{{ url_for('home.view_budget', id=budget.id, page=transactions.page+1) }}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            {% endif %}
                         </li>
                     {% endif %}
                 </ul>

@@ -28,7 +28,8 @@ def index():
 @home.route('/dashboard', methods=["GET"])
 @login_required
 def dashboard():
-    return render_template('dashboard.html')
+    budgets = get_budgets()
+    return render_template('dashboard.html', budgets=budgets)
 
 
 @home.route('/get_pie_data', methods=["GET"])
@@ -45,8 +46,16 @@ def get_pie_data():
 @home.route('/get_all_budgets_line_data', methods=["GET"])
 @login_required
 def get_all_budgets_line_data():
-    data, dates = all_budgets_net_worth()
-    dataNW, datesNW = net_worth()
+    date = request.args.get('currentDate')
+    days_back = request.args.get('daysBack')
+
+    if date:
+        curr_date = get_datetime(date)
+        date = curr_date - timedelta(days=int(days_back)) if days_back else None
+
+
+    data, dates = all_budgets_net_worth(date)
+    dataNW, datesNW = net_worth(date)
 
     names = ['allBudgets'] + [ k for k in data.keys() ]
 
@@ -62,9 +71,8 @@ def get_net_spending():
     days_back = request.args.get('daysBack')
     if date:
         curr_date = get_datetime(date)
-        days_back = int(days_back) if days_back else None
 
-        date = curr_date - timedelta(days=days_back) if days_back else None
+        date = curr_date - timedelta(days=int(days_back)) if days_back else None
 
     data = net_spending(date)
 
@@ -200,9 +208,24 @@ def edit_budget(id):
 def view_budget(id):
     page = request.args.get('page', 1, type=int)
 
+    curr_date_str = request.args.get('currentDate')
+    days_back = request.args.get('daysBack')
+
+    start_date = None
+    if curr_date_str:
+        curr_date = get_datetime(curr_date_str)
+
+        start_date = curr_date - timedelta(days=int(days_back)) if days_back else None
+
     budget = get_budget(id)
     budgets = get_budgets()
-    transactions = Transaction.query.filter_by(budget_id=budget.id, user_id=current_user.get_id()).order_by(Transaction.date.desc(), Transaction.id.desc()).paginate(page=page, per_page=10)
+
+    if start_date:
+        transactions = Transaction.query.filter(Transaction.budget_id==budget.id).filter(Transaction.user_id==current_user.get_id()).filter(Transaction.date>=start_date).order_by(Transaction.date.desc(), Transaction.id.desc()).paginate(page=page, per_page=10)
+        return render_template('viewbudget.html', budget=budget, transactions=transactions, round=round, strftime=datetime.strftime, budgets=budgets, str=str, format_to_money_string=format_to_money_string, curr_date=curr_date_str, days_back=days_back)
+
+    else:
+        transactions = Transaction.query.filter_by(budget_id=budget.id, user_id=current_user.get_id()).order_by(Transaction.date.desc(), Transaction.id.desc()).paginate(page=page, per_page=10)
 
     return render_template('viewbudget.html', budget=budget, transactions=transactions, round=round, strftime=datetime.strftime, budgets=budgets, str=str, format_to_money_string=format_to_money_string)
 
@@ -542,11 +565,11 @@ def get_data_dict(all_trans):
     return data
 
 
-def net_worth():
+def net_worth(start_date=None):
     all_budgets = get_budgets()
     all_trans = []
     for budget in all_budgets:
-        all_trans += get_transactions(budget.id)
+        all_trans += get_transactions(budget.id, start_date)
     all_trans.sort(key=lambda x: x.date)
 
     data = get_data_dict(all_trans)
@@ -571,14 +594,14 @@ def pie_data():
     return data
 
 
-def all_budgets_net_worth():
+def all_budgets_net_worth(start_date=None):
     # { budget name: { date: net worth } }
     all_budgets = get_budgets()
     temp = {}
     first = None
     last = None
     for budget in all_budgets:
-        b_trans = get_transactions(budget.id)
+        b_trans = get_transactions(budget.id, start_date)
         if b_trans:
             b_trans.sort(key=lambda x: x.date)
 
