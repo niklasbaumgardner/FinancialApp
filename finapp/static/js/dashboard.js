@@ -79,9 +79,10 @@ const COLORS = [
 
 const COLORS_DICT = {};
 
-const data = JSON.parse(getAllBudgetsLineData());
+const data = getAllBudgetsLineData();
+const names = data['names'];
 
-console.log(data);
+console.log(names);
 
 function shuffle(array, len) {
     var i = array.length,
@@ -103,7 +104,6 @@ function shuffle(array, len) {
 }
 
 function assignColors() {
-    let names = data['names'];
     
     let arr = [];
     for (let i = 0; i < COLORS.length; i++) {
@@ -123,7 +123,6 @@ function assignColors() {
 }
 
 function lineChart() {
-    // let data = JSON.parse(getNetWorth());
     let keys = data['keys'];
     let values = data['data']['allBudgets'];
 
@@ -188,7 +187,7 @@ function lineChart() {
 }
 
 function pieChart() {
-    let data = JSON.parse(getPieData());
+    let data = getPieData();
     let keys = data['keys'];
     let values = data['values'];
 
@@ -228,82 +227,6 @@ function pieChart() {
     });
 
 }
-
-// function allBudgetsLineChart() {
-//     let data = JSON.parse(getAllBudgetsLineData());
-//     // console.log(data);
-//     let names = data['names'];
-//     let keys = data['keys'];
-
-//     let allData = [];
-//     let index = 0;
-
-//     for (let name of names) {
-//         let temp = {
-//             label: name,
-//             data: data['data'][name],
-//             backgroundColor: CHART_COLORS_ARRAY[index % CHART_COLORS_ARRAY.length], //'rgba(40, 114, 251)',
-//             borderColor: CHART_COLORS_ARRAY[index % CHART_COLORS_ARRAY.length], //'rgba(40, 114, 251)',
-//             borderWidth: 2,
-//             color: 'rgba(255, 255, 255)',
-//         }
-//         allData[allData.length] = temp;
-//         index += 1;
-//     }
-
-//     // console.log(allData);
-
-//     const ctx = document.getElementById('allBudgetsLineChart').getContext('2d');
-//     const myChart = new Chart(ctx, {
-//         type: 'line',
-//         data: {
-//             labels: keys,
-//             datasets: allData,
-//         },
-//         options: {
-//             plugins: {
-//                 legend: {
-//                     labels: {
-//                         color: 'rgba(255, 255, 255)',
-//                     }
-//                 },
-//                 title: {
-//                     display: true,
-//                     text: 'Individual Budgets',
-//                     color: 'rgba(255, 255, 255)',
-//                 }
-//             },
-//             responsive: true,
-//             maintainAspectRatio: false,
-//             scales: {
-//                 y: {
-//                     beginAtZero: true,
-//                     labels: {
-//                         color: 'rgba(255, 255, 255)',
-//                     },
-//                     grid: {
-//                         color: 'rgba(255, 255, 255, .11)',
-//                     },
-//                     ticks: {
-//                         // Include a dollar sign in the ticks
-//                         callback: function(value, index, values) {
-//                             return '$' + value;
-//                         },
-//                         color: 'rgba(255, 255, 255, .79)',
-//                     }
-//                 },
-//                 x: {
-//                     grid: {
-//                         color: 'rgba(255, 255, 255, .11)',
-//                     },
-//                     ticks: {
-//                         color: 'rgba(255, 255, 255, .79)',
-//                     }
-//                 },
-//             }
-//         }
-//     });
-// }
 
 function addDataForBudget(name) {
     const chart = Chart.getChart('lineChart');
@@ -359,8 +282,6 @@ function toggleShowLine(event) {
 
 function addButtons() {
     let buttonGroup = document.getElementById('lineButtons');
-    // console.log(data);
-    let names = data['names'];
 
     for (let name of names) {
         // console.log(typeof(name), typeof(id));
@@ -414,9 +335,146 @@ function reAssignColors() {
 
 }
 
+function addClasses(ele, classes) {
+    for (let class_ of classes.trim().split(' ')) {
+        ele.classList.add(class_);
+    }
+}
+
+function createDivWithClass(classString) {
+    let div = document.createElement('div');
+    addClasses(div, classString);
+    return div;
+}
+
+function createPtagWithClass(classString) {
+    let p = document.createElement('p');
+    addClasses(p, classString);
+    return p;
+}
+
+function createCard(name, in_, out, net) {
+    let card = createDivWithClass('card bg-light-grey');
+
+    let cardHeader = createDivWithClass('card-header');
+
+    let row = createDivWithClass('row');
+
+    let col = createDivWithClass('col');
+
+    let p = createPtagWithClass('fs-3 m-0');
+    p.innerHTML = name;
+
+    col.appendChild(p);
+    row.appendChild(col);
+
+    let col1 = createDivWithClass('col');
+
+    let netSpending = createDivWithClass('text-end pt-1');
+
+    let p1 = createPtagWithClass('m-0');
+    p1.innerHTML = "Net Spending";
+
+    let class_list = 'fs-4 m-0 ';
+    if (net[0] === '-') {
+        class_list += 'text-danger';
+    }
+    else {
+        class_list += 'text-success';
+    }
+    let p2 = createPtagWithClass(class_list);
+    p2.innerHTML = net;
+
+    netSpending.appendChild(p1);
+    netSpending.appendChild(p2);
+
+    col1.appendChild(netSpending);
+
+    row.appendChild(col1);
+
+    cardHeader.appendChild(row);
+
+    card.appendChild(cardHeader);
+
+
+    let cardFooter = createDivWithClass('card-footer');
+
+    let row1 = createDivWithClass('row');
+
+    let col2 = createDivWithClass('col');
+
+    let p3 = createPtagWithClass('m-0');
+    p3.innerHTML = "Spent";
+    let p4 = createPtagWithClass('fs-5 m-0 text-danger');
+    p4.innerHTML = out;
+
+    col2.appendChild(p3);
+    col2.appendChild(p4);
+    row1.appendChild(col2);
+
+    let col3 = createDivWithClass('col');
+
+    let income = createDivWithClass('text-end');
+
+    let p5 = createPtagWithClass('m-0');
+    p5.innerHTML = "Income";
+    let p6 = createPtagWithClass('fs-5 m-0 text-success');
+    p6.innerHTML = in_;
+
+    income.appendChild(p5);
+    income.appendChild(p6);
+
+    col3.appendChild(income);
+
+    row1.appendChild(col3);
+
+    cardFooter.appendChild(row1);
+
+    card.appendChild(cardFooter);
+
+    let column3 = createDivWithClass('col-3');
+    column3.appendChild(card);
+
+    return column3;
+}
+
+function netSpending(daysBack=30) {
+    let data = getNetSpending(daysBack);
+    // let dataKeys = Object.keys(data)
+
+    let div = document.getElementById('net-spending');
+    div.innerHTML = '';
+
+    let count = 0;
+    let row;
+    for (let name of names) {
+        if (data[name]) {
+            if (count % 4 === 0) {
+                if (row) {
+                    div.appendChild(row);
+                }
+                row = createDivWithClass('row mb-5');
+            }
+            let name_ = name;
+            if (name === 'allBudgets') {
+                name_ = 'All Budgets Combined';
+            }
+            let card = createCard(name_, data[name]['in'], data[name]['out'], data[name]['net']);
+
+            row.appendChild(card);
+            count += 1;
+            console.log(count);
+        }
+    }
+    if (count % 4 !== 0) {
+        div.appendChild(row);
+    }
+}
+
 // function calls
 assignColors();
 lineChart();
 pieChart();
 addButtons();
+netSpending();
 // allBudgetsLineChart();

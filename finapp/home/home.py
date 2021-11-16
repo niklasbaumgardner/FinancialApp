@@ -59,9 +59,12 @@ def get_all_budgets_line_data():
 @login_required
 def get_net_spending():
     date = request.args.get('currentDate')
+    days_back = request.args.get('daysBack')
     if date:
-        date = get_datetime(date)
-        date = date - timedelta(days=30)
+        curr_date = get_datetime(date)
+        days_back = int(days_back) if days_back else None
+
+        date = curr_date - timedelta(days=days_back) if days_back else None
 
     data = net_spending(date)
 

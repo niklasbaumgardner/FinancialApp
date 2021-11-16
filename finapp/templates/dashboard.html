@@ -19,13 +19,21 @@
         var xmlHttp = new XMLHttpRequest();
         xmlHttp.open( "GET", url, false ); // false for synchronous request
         xmlHttp.send( null );
-        return xmlHttp.response;
+        return JSON.parse(xmlHttp.response);
     }
     function getPieData() {
         return getData("{{ url_for('home.get_pie_data') }}");
     }
     function getAllBudgetsLineData() {
         return getData("{{ url_for('home.get_all_budgets_line_data') }}");
+    }
+    function getNetSpending(daysBack=30) {
+        var date = new Date();
+        var year = date.getFullYear();
+        var month = (date.getMonth() + 1).toString().padStart(2, '0');
+        var day = date.getDate().toString().padStart(2, '0');
+        var strDate = year + '-' + month + '-' + day;
+        return getData("{{ url_for('home.get_net_spending') }}" + "?currentDate=" + strDate + "&daysBack=" + daysBack);
     }
 </script>
 
@@ -46,13 +54,13 @@
         </div>
     </div>
 
-    <div class="row h-100 py-12">
-        <div class="col mt-5 p-0 mr-24">
+    <div class="row h-100">
+        <div class="col mt-5 py-0 mr-24">
             <div id="pie-chart-div" class="card bg-dark p-5">
                 <canvas id="pieChart"></canvas>
             </div>
         </div>
-        <div class="col mt-5 p-0 ml-24">
+        <div class="col mt-5 py-0 ml-24">
             <div id="" class="card bg-dark p-5">
                 <!-- <canvas id="pieChart"></canvas> -->
                 <p class="text-white fs-1">More coming soon...</p>
@@ -60,10 +68,31 @@
         </div>
     </div>
 
-    <!-- <div class="row h-100 mt-5 py-12">
-        <div class="card bg-dark p-5">
-            <canvas id="allBudgetsLineChart"></canvas>
+    <div class="row py-5">
+        <div class="col">
+            <div class="card bg-dark">
+                <div class="card-header">
+                    <p class="fs-1 text-white">Spending in the last 
+                        <select id="spendingDays" class="form-select w-15 inline form-select-lg bg-light-grey" aria-label="Default select example">
+                            <option value="7">7 days</option>
+                            <option value="30" selected>30 days</option>
+                            <option value="60">60 days</option>
+                            <option value="90">90 days</option>
+                            <option value="">All time</option>
+                        </select>
+                    </p>
+                </div>
+                <div class="m-5" id="net-spending">
+                </div>
+            </div>
         </div>
-</div> -->
+
+    </div>
 <script src="/static/js/dashboard.js"></script>
+<script>
+    document.getElementById('spendingDays').addEventListener('change', (event) => {
+        console.log(event.target.value);
+        netSpending(event.target.value);
+    });
+</script>
 {% endblock content %}

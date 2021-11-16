@@ -44,3 +44,15 @@
 .w-40 {
     width: 40%;
 }
+
+.w-15 {
+    width: 15%;
+}
+
+.bg-light-grey {
+    background-color: rgb(208, 209, 210);
+}
+
+.inline {
+    display: inline-block;
+}
