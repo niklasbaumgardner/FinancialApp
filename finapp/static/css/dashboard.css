@@ -61,6 +61,10 @@
     cursor: pointer;
 }
 
-input.amount-input {
+input.amount-input-71 {
     min-width: 71px !important;
+}
+
+input.amount-input-86 {
+    min-width: 86px !important;
 }
