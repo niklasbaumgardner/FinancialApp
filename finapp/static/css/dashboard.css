@@ -60,3 +60,7 @@
 .button-div {
     cursor: pointer;
 }
+
+input.amount-input {
+    min-width: 71px !important;
+}
