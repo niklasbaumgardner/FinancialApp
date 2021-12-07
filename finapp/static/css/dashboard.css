@@ -68,3 +68,7 @@ input.amount-input-71 {
 input.amount-input-86 {
     min-width: 86px !important;
 }
+
+.overflowScroll-X {
+    overflow-x: scroll;
+}

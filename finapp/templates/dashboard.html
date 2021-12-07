@@ -17,7 +17,7 @@
 <script>
     const BUDGET_URLS = {};
     {% for budget in budgets %}
-        BUDGET_URLS["{{ budget.name }}"] = "{{ url_for('home.view_budget', id=budget.id) }}";
+        BUDGET_URLS["{{ budget.name }}".replace("&#39;", "'")] = "{{ url_for('home.view_budget', id=budget.id) }}";
     {% endfor %}
 
     function getData(url) {
@@ -74,9 +74,11 @@
                         <option value="" selected>All time</option>
                     </select>
                 </div> -->
-                <div id="lineButtons" class="btn-group my-3" role="group" aria-label="Basic checkbox toggle button group">
-                    <input type="checkbox" class="btn-check" id="allBudgets" checked>
-                    <label id="allBudgetsLabel" class="btn btn-outline-light" for="allBudgets">All Budgets</label>
+                <div class="overflowScroll-X">
+                    <div id="lineButtons" class="btn-group my-3" role="group" aria-label="Basic checkbox toggle button group">
+                        <input type="checkbox" class="btn-check" id="allBudgets" checked>
+                        <label id="allBudgetsLabel" class="btn btn-outline-light" for="allBudgets">All Budgets</label>
+                    </div>
                 </div>
                 <div class="text-end">
                     <button class="btn btn-outline-primary" onclick="reAssignColors()">Randomize colors</button>

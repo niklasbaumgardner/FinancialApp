@@ -444,7 +444,7 @@ function createCard(name, in_, out, net, strDate, daysBack) {
 
     card.appendChild(cardFooter);
 
-    let column3 = createDivWithClass('col-3');
+    let column3 = createDivWithClass('col-sm-3 mb-5');
     column3.appendChild(card);
 
     return column3;
@@ -471,7 +471,7 @@ async function netSpending(daysBack=30) {
                 if (row) {
                     div.appendChild(row);
                 }
-                row = createDivWithClass('row mb-5');
+                row = createDivWithClass('row');
             }
             let name_ = name;
             if (name === 'allBudgets') {
