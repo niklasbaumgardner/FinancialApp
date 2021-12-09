@@ -8,11 +8,8 @@
 
 
 {% block content %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.0/chart.min.js" integrity="sha512-GMGzUEevhWh8Tc/njS0bDpwgxdCJLQBWG3Z2Ct+JGOpVnEmjvNx6ts4v6A2XJf1HOrtOsfhv3hBKpK9kE5z8AQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.0/chart.js" integrity="sha512-CWVDkca3f3uAWgDNVzW+W4XJbiC3CH84P2aWZXj+DqI6PNbTzXbl1dIzEHeNJpYSn4B6U8miSZb/hCws7FnUZA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.0/helpers.esm.min.js" integrity="sha512-1b6IKdJzKvjUfXuATUJs0a4ti8sBZHY0DKZ1O1UCj3cpw+IEKxUwG2UtXNOjS5/JkqxQ2v5GUMFn62mtZyXAfA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@3.6.0/dist/chart.min.js"></script> -->
-<!-- <script src="https://cdn.jsdelivr.net/npm/chart.js@3.6.0/helpers/helpers.js"></script> -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.6.2/dist/chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0/dist/chartjs-plugin-datalabels.min.js"></script>
 
 <script>
     const BUDGET_URLS = {};
@@ -62,67 +59,116 @@
 
 <div class="container py-5 h-100">
     <div class="row h-100 py-12">
-        <div class="card bg-dark p-5">
-            <div>
-                <p class="text-white fs-2">Check the budgets you want to view</p>
-                <!-- <div class="text-end">
-                    <select id="budgetWorthDays" class="form-select w-15 inline bg-light-grey" aria-label="Default select example">
-                        <option value="7">7 days</option>
-                        <option value="30">30 days</option>
-                        <option value="60">60 days</option>
-                        <option value="90">90 days</option>
-                        <option value="" selected>All time</option>
-                    </select>
-                </div> -->
-                <div class="overflowScroll-X better-scroll">
-                    <div id="lineButtons" class="btn-group my-3" role="group" aria-label="Basic checkbox toggle button group">
-                        <input type="checkbox" class="btn-check" id="allBudgets" checked>
-                        <label id="allBudgetsLabel" class="btn btn-outline-light" for="allBudgets">All Budgets</label>
+        <div class="accordion px-0 bg-dark" id="accordionLine">
+            <div class="accordion-item bg-dark">
+                <p class="accordion-header bg-dark" id="headingOne">
+                    <button class="accordion-button bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        Budgets Line Graph
+                    </button>
+                </p>
+                <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionLine">
+                    <div class="accordion-body bg-dark">
+                        <div class="mx-5">
+                            <p class="text-white fs-2">Check the budgets you want to view</p>
+                            <div class="overflowScroll-X better-scroll">
+                                <div id="lineButtons" class="btn-group my-3" role="group" aria-label="Basic checkbox toggle button group">
+                                    <input type="checkbox" class="btn-check" id="allBudgets" checked>
+                                    <label id="allBudgetsLabel" class="btn btn-outline-light" for="allBudgets">All Budgets</label>
+                                </div>
+                            </div>
+                            <div class="text-end mt-3">
+                                <button class="btn btn-outline-primary" onclick="reAssignColors()">Randomize colors</button>
+                            </div>
+                        </div>
+                        <div class="mx-5 mb-5">
+                            <canvas id="lineChart"></canvas>
+                        </div>
                     </div>
                 </div>
-                <div class="text-end">
-                    <button class="btn btn-outline-primary" onclick="reAssignColors()">Randomize colors</button>
-                </div>
-            </div>
-            <div class="card-body">
-                <canvas id="lineChart"></canvas>
             </div>
         </div>
     </div>
 
     <div class="row h-100">
         <div class="col mt-5 py-0 mr-24">
-            <div id="pie-chart-div" class="card bg-dark p-5">
-                <canvas id="pieChart"></canvas>
+            <div class="accordion px-0 bg-dark" id="accordionPie">
+                <div class="accordion-item bg-dark">
+                    <p class="accordion-header bg-dark" id="headingTwo">
+                        <button class="accordion-button bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                            Budgets Pie Graph
+                        </button>
+                    </p>
+                    <div id="collapseTwo" class="accordion-collapse collapse show" aria-labelledby="headingTwo" data-bs-parent="#accordionPie">
+                        <div class="accordion-body bg-dark mb-5">
+                            <div class="row">
+                                <div class="col text-start">
+                                    <p class="text-white mb-1">Show percentages</p>
+                                    <label class="switch text-white">
+                                        <input id="showPercentage" type="checkbox">
+                                        <span class="slider round"></span>
+                                    </label>
+                                    <!-- <p class="text-white">Show percentages</p> -->
+                                    <!-- <input class="form-check-input btn-check" type="checkbox" value="" id="showPercentage">
+                                    <label class="form-check-label text-white" for="flexCheckDefault">
+                                        Show percentages
+                                    </label> -->
+                                </div>
+                                <div class="col text-end">
+                                    <button class="btn btn-outline-primary mt-1" onclick="reAssignColors()">Randomize colors</button>
+                                </div>
+                            </div>
+                            <canvas id="pieChart"></canvas>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="col mt-5 py-0 ml-24">
-            <div id="" class="card bg-dark p-5">
-                <!-- <canvas id="pieChart"></canvas> -->
-                <p class="text-white fs-1">More coming soon...</p>
+            <div class="accordion px-0 bg-dark" id="accordionTemp">
+                <div class="accordion-item bg-dark">
+                    <p class="accordion-header bg-dark" id="headingTemp">
+                        <button class="accordion-button bg-dark text-white collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTemp" aria-expanded="false" aria-controls="collapseTemp">
+                            More coming soon...
+                        </button>
+                    </p>
+                    <div id="collapseTemp" class="accordion-collapse collapse" aria-labelledby="headingTemp" data-bs-parent="#accordionTemp">
+                        <div class="accordion-body bg-dark mb-5">
+                            <p class="text-white fs-1">More coming soon...</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <div class="row py-5">
         <div class="col">
-            <div class="card bg-dark">
-                <div class="card-header">
-                    <p class="fs-1 text-white">Spending in the last 
-                        <select id="spendingDays" class="form-select mw-130 inline form-select-lg bg-light-grey" aria-label="Default select example">
-                            <option value="7">7 days</option>
-                            <option value="30" selected>30 days</option>
-                            <option value="60">60 days</option>
-                            <option value="90">90 days</option>
-                            <option value="">All time</option>
-                        </select>
+            <div class="accordion px-0 bg-dark" id="accordionNet">
+                <div class="accordion-item bg-dark">
+                    <p class="accordion-header bg-dark" id="headingTemp">
+                        <button class="accordion-button bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNet" aria-expanded="true" aria-controls="collapseNet">
+                            Net Spending
+                        </button>
                     </p>
-                </div>
-                <div class="m-5" id="net-spending">
+                    <div id="collapseNet" class="accordion-collapse collapse show" aria-labelledby="headingTemp" data-bs-parent="#accordionNet">
+                        <div class="accordion-body bg-dark">
+                            <p class="fs-1 text-white">Spending in the last
+                                <select id="spendingDays" class="form-select mw-130 inline form-select-lg bg-light-grey" aria-label="Default select example">
+                                    <option value="7">7 days</option>
+                                    <option value="30" selected>30 days</option>
+                                    <option value="60">60 days</option>
+                                    <option value="90">90 days</option>
+                                    <option value="">All time</option>
+                                </select>
+                            </p>
+
+                            <div class="" id="net-spending">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-
     </div>
 <script src="/static/js/dashboard.js"></script>
 <script>
@@ -133,6 +179,12 @@
         // console.log(sel.value);
         netSpending(sel.value);
     });
+
+    let toggle = document.getElementById('showPercentage');
+    toggle.onclick = function(event) {
+        console.log(event.target.checked);
+        togglePercentage(event.target.checked)
+    }
 
     // document.getElementById('budgetWorthDays').addEventListener('change', (event) => {
     //     onGraphChange(event.target);

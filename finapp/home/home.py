@@ -587,7 +587,7 @@ def pie_data():
     all_budgets = get_budgets()
     
     for budget in all_budgets:
-        total = transSum(get_transactions(budget.id))
+        total = budget.total
         if total > 0:
             data[budget.name] = total
 

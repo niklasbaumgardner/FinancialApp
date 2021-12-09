@@ -1,3 +1,9 @@
+// import {Chart} from 'chart.js';
+// import ChartDataLabels from 'chartjs-plugin-datalabels';
+// const Chart = window.Chart;
+const ChartDataLabels = window.ChartDataLabels;
+
+
 const CHART_COLORS = {
     red: 'rgb(255, 99, 132)',
     orange: 'rgb(255, 159, 64)',
@@ -200,8 +206,20 @@ async function pieChart() {
         colors.push(COLORS_DICT[name]);
     }
 
+    // let percentages = {
+    //     formatter: (value, ctx) => {
+    //         let sum = ctx.chart._metasets[0].total;
+    //         let percentage = (value * 100 / sum).toFixed(2) + "%";
+    //         return percentage;
+    //     },
+    //     color: 'rgb(0, 0, 0)',
+    // };
+
+    // percentages = showPercentages ? percentages : null;
+
     const ctx = document.getElementById('pieChart').getContext('2d');
     const myChart = new Chart(ctx, {
+        plugins: [ChartDataLabels],
         type: 'pie',
         data: {
             labels: keys,
@@ -220,19 +238,62 @@ async function pieChart() {
                 title: {
                     display: true,
                     text: 'Breakdown of budgets (Amount > 0)',
-                    color: 'rgba(255, 255, 255)',
-                }
+                    color: 'rgb(255, 255, 255)',
+                },
+                datalabels: null,
             },
             responsive: true,
             borderColor: 'rgba(0, 0, 0, .79)',
             color: 'rgba(255, 255, 255, .79)',
         }
     });
+}
 
+function togglePercentage(showPercentages) {
+    const ctx = document.getElementById('pieChart').getContext('2d');
+    let myChart = Chart.getChart('pieChart');
+
+    let percentages = {
+        formatter: (value, ctx) => {
+            let sum = ctx.chart._metasets[0].total;
+            let percentage = (value * 100 / sum).toFixed(2) + "%";
+            return percentage;
+        },
+        color: 'rgb(0, 0, 0)',
+    };
+    percentages = showPercentages ? percentages : null;
+
+    let options = {
+        plugins: {
+            legend: {
+                position: 'top',
+            },
+            title: {
+                display: true,
+                text: 'Breakdown of budgets (Amount > 0)',
+                color: 'rgb(255, 255, 255)',
+            },
+            datalabels: percentages,
+        },
+        responsive: true,
+        borderColor: 'rgba(0, 0, 0, .79)',
+        color: 'rgba(255, 255, 255, .79)',
+    }
+
+    let data = myChart.data;
+
+    myChart.destroy();
+
+    myChart = new Chart(ctx, {
+        plugins: [ChartDataLabels],
+        type: 'pie',
+        data: data,
+        options: options,
+    });
 }
 
 function addDataForBudget(name) {
-    const chart = Chart.getChart('lineChart');
+    const myChart = Chart.getChart('lineChart');
     let temp = {
         id: name,
         label: name,
@@ -242,24 +303,24 @@ function addDataForBudget(name) {
         borderWidth: 2,
         color: 'rgba(255, 255, 255)',
     }
-    chart.data.datasets.push(temp);
-    chart.update();
+    myChart.data.datasets.push(temp);
+    myChart.update();
 }
 
 function removeDataForBudget(name) {
-    const chart = Chart.getChart('lineChart');
+    const myChart = Chart.getChart('lineChart');
     // console.log(chart.data.datasets);
     // console.log(typeof(chart.data.datasets));
 
     let indx = 0;
-    for (let data of chart.data.datasets) {
+    for (let data of myChart.data.datasets) {
         if (data.id === name) {
-            chart.data.datasets.splice(indx, 1);
+            myChart.data.datasets.splice(indx, 1);
             break;
         }
         indx += 1;
     }
-    chart.update();
+    myChart.update();
 }
 
 
@@ -318,22 +379,22 @@ function reAssignColors() {
     for (let canvas of charts) {
         // console.log(canvas.id);
         let id = canvas.id;
-        const chart = Chart.getChart(id);
+        const myChart = Chart.getChart(id);
         if (id === "lineChart") {
             // console.log(chart.data.datasets);
-            for (let data of chart.data.datasets) {
+            for (let data of myChart.data.datasets) {
                 data.backgroundColor = COLORS_DICT[data.id];
                 data.borderColor = COLORS_DICT[data.id];
             }
         }
         else if (id === "pieChart") {
             let colors = [];
-            for (let name of chart.data.labels) {
+            for (let name of myChart.data.labels) {
                 colors.push(COLORS_DICT[name]);
             }
-            chart.data.datasets[0].backgroundColor = colors;
+            myChart.data.datasets[0].backgroundColor = colors;
         }
-        chart.update();
+        myChart.update();
     }
 
 }
