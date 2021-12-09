@@ -14,15 +14,11 @@ home = Blueprint('home', __name__)
 @home.route('/', methods=["GET"])
 @login_required
 def index():
-    temp = get_budgets()
+    active, inactive = get_budgets(True)
 
-    budgets = []
-    for i in range(0, len(temp), 3):
-        budgets.append(temp[i:i+3])
-    
-    total = round(sum([x.total for x in temp ]), 2)
+    total = round(sum([x.total for x in active + inactive ]), 2)
     format_to_money_string(total)
-    return render_template("index.html", budgets=budgets, round=round, total=format_to_money_string(total), format_to_money_string=format_to_money_string)
+    return render_template("index.html", budgets=[active, inactive], round=round, total=format_to_money_string(total), format_to_money_string=format_to_money_string)
 
 
 @home.route('/dashboard', methods=["GET"])
@@ -79,6 +75,23 @@ def get_net_spending():
     return data
 
 
+@home.route('/toggle_budget', methods=["GET"])
+@login_required
+def toggle_budget():
+    active = request.args.get('active')
+    id_ = request.args.get('id', 0, type=int)
+
+    if id_ != 0:
+        active = False if active == "false" else True
+        budget = get_budget(id_)
+        budget.is_active = active
+        db.session.commit()
+
+        return 'succes'
+
+    return 'fail'
+
+
 @home.route('/add_budget', methods=["POST"])
 @login_required
 def add_budget():
@@ -91,7 +104,7 @@ def add_budget():
     if name and amount is not None:
         duplicate = Budget.query.filter_by(name=name, user_id=current_user.get_id()).first()
         if not duplicate:
-            budg = Budget(name=name, total=0, user_id=current_user.get_id())
+            budg = Budget(name=name, total=0, user_id=current_user.get_id(), is_active=True)
             db.session.add(budg)
             db.session.commit()
 
@@ -358,10 +371,18 @@ def create_transaction(name, amount, date, budget_id):
     do_transaction(trans)
 
 
-def get_budgets():
-    budgets = Budget.query.filter_by(user_id=current_user.get_id()).all()
-    budgets.sort(key=lambda x: x.name.lower())
-    return budgets
+def get_budgets(separate=False):
+    if separate:
+        active = Budget.query.filter_by(user_id=current_user.get_id(), is_active=True).all()
+        inactive = Budget.query.filter_by(user_id=current_user.get_id(), is_active=False).all()
+        active.sort(key=lambda x: x.name.lower())
+        inactive.sort(key=lambda x: x.name.lower())
+
+        return active, inactive
+    else:
+        budgets = Budget.query.filter_by(user_id=current_user.get_id()).all()
+        budgets.sort(key=lambda x: x.name.lower())
+        return budgets
 
 
 def get_budget(id):

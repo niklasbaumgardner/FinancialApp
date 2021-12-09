@@ -7,6 +7,19 @@
 
 {% block content %}
 <script>
+    function sendToggle(id, active) {
+        return new Promise(function(resolve, reject) {
+            let xmlHttp = new XMLHttpRequest();
+            let url = "{{ url_for('home.toggle_budget') }}" + `?id=${id}&active=${active}`;
+            xmlHttp.open( "GET", url );
+            xmlHttp.onload = () => {
+                resolve(xmlHttp.response);
+            };
+            xmlHttp.send( null );
+
+        })
+    }
+
     function checkDuplicateBudget() {
         let existingBudgets = document.querySelectorAll('.existingBudgets');
         let name = document.getElementById('name').value;
@@ -19,11 +32,26 @@
                 return;
             }
         }
-        console.log(document.getElementById('newBudgetSubmit'));
         document.getElementById('name_error').hidden = true;
         document.getElementById('newBudgetSubmit').disabled = false;
-
     }
+
+    function checkDuplicateBudgetOnEdit(event) {
+        let existingBudgets = document.querySelectorAll('.existingBudgets');
+        let name = event.target.value;
+        console.log(name);
+        for (let budget of existingBudgets) {
+            // console.log(budget.innerHTML.trim(), name);
+            if (budget.innerHTML.trim() === name) {
+                document.getElementById('name_error_'+event.target.name).hidden = false;
+                document.getElementById(event.target.name).classList.add("disabled");
+                return;
+            }
+        }
+        document.getElementById('name_error_'+event.target.name).hidden = true;
+        document.getElementById(event.target.name).classList.remove("disabled");
+    }
+
     function add_new_budget() {
         document.getElementById('addNewBudgetModal').style.display = 'block';
     }
@@ -35,15 +63,18 @@
 
     function toggleEdit(id) {
         var hid = document.getElementsByClassName('show-edit-' + id);
-        console.log(hid);
+        // console.log(hid);
         for (var i = 0; i < hid.length; i++) {
             hid[i].hidden = !hid[i].hidden;
         }
         var notHid = document.getElementsByClassName('show-not-edit-' + id);
-        console.log(notHid);
+        // console.log(notHid);
         for (var i = 0; i < notHid.length; i++) {
-            console.log(i);
+            // console.log(i);
             notHid[i].hidden = !notHid[i].hidden;
+        }
+        for (let ele of document.querySelectorAll(".text-danger.fs-6")) {
+            ele.hidden = true;
         }
     }
 </script>
@@ -68,20 +99,36 @@
     {% if budgets %}
         <div class="container">
             {% for group in budgets %}
-                <div class="row">
+                <div class="row budget-row">
                     {% for budget in group %}
-                        <div class="col-sm mt-5">
+                        <div id="budget-{{ budget.id }}" class="col-sm-4 mt-5 budgets">
+                            <!-- onclick="location.href='{{ url_for('home.view_budget', id=budget.id) }}';" -->
                             <div class="card bg-dark text-white button-div" onclick="location.href='{{ url_for('home.view_budget', id=budget.id) }}';">
                                 <div class="card-body p-4 rounded-bottom">
-                                    <p class="show-not-edit-{{ budget.id }} fs-4 text-white mb-0" style="height: 38px;">{{ budget.name }}</p>
-                                    <form method="POST" id="budgetForm{{ budget.id }}" action="{{ url_for('home.edit_budget', id=budget.id) }}">
-                                        <input onclick="event.stopPropagation();"class="show-edit-{{ budget.id }} form-control w-75" name="editName{{ budget.id }}" type="text" value="{{ budget.name }}" hidden required>
-                                    </form>
+                                    <div class="row">
+                                        <div class="col text-start">
+                                            <p class="show-not-edit-{{ budget.id }} fs-4 text-white mb-0" style="height: 38px;">{{ budget.name }}</p>
+                                            <form method="POST" id="budgetForm{{ budget.id }}" action="{{ url_for('home.edit_budget', id=budget.id) }}">
+                                                <input onclick="event.stopPropagation();"class="show-edit-{{ budget.id }} form-control edit-name" name="editName{{ budget.id }}" type="text" value="{{ budget.name }}" autocomplete="niklas" hidden required>
+                                            </form>
+                                            <span id="name_error_editName{{ budget.id }}" class="text-danger fs-6" hidden>Budget name already exist. Choose another name.</span>
+                                        </div>
+                                        <div class="col text-end">
+                                            <p class="text-white mb-1">Active</p>
+                                            <label class="switch text-white">
+                                                <input class="activeState" type="checkbox" {% if budget.is_active %}checked{% endif %} onclick="toggleBudgetActive('{{ budget.id }}', event); event.stopPropagation();">
+                                                <span class="slider round" onclick="event.stopPropagation();"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <!-- <form method="POST" id="budgetForm{{ budget.id }}" action="{{ url_for('home.edit_budget', id=budget.id) }}">
+                                        <input onclick="event.stopPropagation();"class="show-edit-{{ budget.id }} form-control w-75 edit-name" name="editName{{ budget.id }}" type="text" value="{{ budget.name }}" hidden required>
+                                    </form> -->
                                     <p class="text-white mt-3">{{ format_to_money_string(round(budget.total, 2)) }}</p>
                                     <div class="d-flex justify-content-end">
                                         <div class="">
                                             <a class="show-not-edit-{{ budget.id }} btn btn-sm btn-outline-primary mx-3" href="javascript:void(0);" onclick="toggleEdit('{{ budget.id }}'); event.stopPropagation();">Edit</a>
-                                            <a class="show-edit-{{ budget.id }} btn btn-sm btn-primary mx-3" href="javascript:void(0);" onclick="document.getElementById('budgetForm{{ budget.id }}').submit(); event.stopPropagation();" hidden>Save</a>
+                                            <a class="show-edit-{{ budget.id }} btn btn-sm btn-primary mx-3" href="javascript:void(0);" onclick="document.getElementById('budgetForm{{ budget.id }}').submit(); event.stopPropagation();" id="editName{{ budget.id }}" hidden>Save</a>
                                         </div>
                                         <div class="">
                                             <a class="show-not-edit-{{ budget.id }} btn btn-sm btn-outline-danger" href="javascript:void(0);" onclick="delete_budget('{{ budget.id }}'); event.stopPropagation();">Delete</a>
@@ -90,51 +137,51 @@
                                     </div>
                                 </div>
                             </div>
-                            
-                        </div>
-
-                        <div id="id{{ budget.id }}" class="modal" style="display: none;">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <form method="POST" action="{{ url_for('home.delete_budget', b_id=budget.id) }}">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Delete budget {{ budget.name }} ?</h5>
-                                            <button onclick="document.getElementById('id{{ budget.id }}').style.display='none'" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <h6>Are you sure you want to delete this transaction?</h6>
-                                            <fieldset class="w3-center">
-                                                <h6 class="w3-left">Delete this budgets transactions:</h6>
-                                                <input class="form-check-input" type="radio" id="delete" name="new_budget" value="None" required>
-                                                <label class="" for="delete">&nbsp;Delete transations</label><br><br>
-                                                <h6 class="">Or transfer transactions to another budget:</h6>
-                                                {% for group in budgets %}
-                                                    {% for budg in group %}
-                                                        {% if budget.id != budg.id %}
-                                                            <input class="form-check-input" type="radio" id="{{ budg.name }}" name="new_budget" value="{{ budg.id }}">
-                                                            <label class="form-check-label" for="{{ budg.name }}">{{ budg.name }}</label><br>
-                                                        {% endif %}
-                                                    {% endfor %}
-                                                {% endfor %}
-                                            </fieldset>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <!-- <form method="POST" action="{{ url_for('home.delete_budget', b_id=budget.id) }}"> -->
-                                                <button onclick="document.getElementById('id{{ budget.id }}').style.display='none'" type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
-                                                <button type="submit" id="delete_button" class="btn btn-danger">Delete</button>
-                                                <!-- <button onclick="document.getElementById('id{{ budget.id }}').style.display='none'" type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button> -->
-                                            <!-- </form> -->
-                                        </div>
-
-                                    </form>
-
-                                </div>
-                            </div>
                         </div>
                     {% endfor %}
                 </div>
             {% endfor %}
         </div>
+        {% for group in budgets %}
+            {% for budget in group %}
+                <div id="id{{ budget.id }}" class="modal" style="display: none;">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form method="POST" action="{{ url_for('home.delete_budget', b_id=budget.id) }}">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Delete budget {{ budget.name }} ?</h5>
+                                    <button onclick="document.getElementById('id{{ budget.id }}').style.display='none'" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <h6>Are you sure you want to delete this transaction?</h6>
+                                    <fieldset class="w3-center">
+                                        <h6 class="w3-left">Delete this budgets transactions:</h6>
+                                        <input class="form-check-input" type="radio" id="delete" name="new_budget" value="None" required>
+                                        <label class="" for="delete">&nbsp;Delete transations</label><br><br>
+                                        <h6 class="">Or transfer transactions to another budget:</h6>
+                                        {% for group in budgets %}
+                                            {% for budg in group %}
+                                                {% if budget.id != budg.id %}
+                                                    <input class="form-check-input" type="radio" id="{{ budg.name }}" name="new_budget" value="{{ budg.id }}">
+                                                    <label class="form-check-label" for="{{ budg.name }}">{{ budg.name }}</label><br>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endfor %}
+                                    </fieldset>
+                                </div>
+                                <div class="modal-footer">
+                                    <!-- <form method="POST" action="{{ url_for('home.delete_budget', b_id=budget.id) }}"> -->
+                                        <button onclick="document.getElementById('id{{ budget.id }}').style.display='none'" type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                                        <button type="submit" id="delete_button" class="btn btn-danger">Delete</button>
+                                        <!-- <button onclick="document.getElementById('id{{ budget.id }}').style.display='none'" type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button> -->
+                                    <!-- </form> -->
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endfor %}
     {% else %}
         <h4>No budgets! Click <a href="{{ url_for('home.add_budget') }}">HERE</a> to add a budget.</h4>
     {% endif %}
@@ -157,7 +204,7 @@
                                 <label class="form-label" for="name">Budget Name</label>
                                 <input type="text" id="name" name="name" class="form-control" placeholder="Name" autocomplete="niklas" required/>
                                 <span id="name_error" class="text-danger" hidden>Budget name already exist. Choose another name.</span>
-                            
+
                             </div>
             
                             <div class="form-outline form-white mb-4">
@@ -210,9 +257,14 @@
         </div>
     </div>
 
+    <script src="/static/js/index.js"></script>
     <script>
         document.getElementById('date').valueAsDate = new Date();
         document.getElementById('name').addEventListener("input", checkDuplicateBudget);
+
+        for (let ele of document.querySelectorAll(".edit-name")) {
+            ele.addEventListener("input", checkDuplicateBudgetOnEdit);
+        }
     </script>
 
 {% endblock content %}

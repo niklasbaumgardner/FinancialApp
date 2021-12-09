@@ -18,6 +18,7 @@ class Budget(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     total = db.Column(db.Float, nullable=False)
     name = db.Column(db.String(60), nullable=False)
+    is_active = db.Column(db.Boolean, nullable=False)
 
     def __str__(self):
         return f"{self.name : <30s}|{self.total : >10.2f}"

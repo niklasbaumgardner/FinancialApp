@@ -101,12 +101,12 @@ button {
     box-shadow: none !important;
 }
 
- /* The switch - the box around the slider */
+/* The switch - the box around the slider */
 .switch {
     position: relative;
     display: inline-block;
-    width: 60px;
-    height: 34px;
+    width: 40px;
+    height: 22px;
 }
 
 /* Hide default HTML checkbox */
@@ -132,10 +132,10 @@ button {
 .slider:before {
     position: absolute;
     content: "";
-    height: 26px;
-    width: 26px;
-    left: 4px;
-    bottom: 4px;
+    height: 18px;
+    width: 18px;
+    left: 2px;
+    bottom: 2px;
     background-color: white;
     -webkit-transition: .4s;
     transition: .4s;
@@ -146,14 +146,14 @@ input:checked + .slider {
 }
 
 input:checked + .slider:before {
-    -webkit-transform: translateX(26px);
-    -ms-transform: translateX(26px);
-    transform: translateX(26px);
+    -webkit-transform: translateX(18px);
+    -ms-transform: translateX(18px);
+    transform: translateX(18px);
 }
 
 /* Rounded sliders */
 .slider.round {
-    border-radius: 34px;
+    border-radius: 22px;
 }
 
 .slider.round:before {
@@ -167,4 +167,9 @@ input:checked + .slider:before {
 
 .accordion-button::after {
     background-image: url("../images/accordian.svg") !important;
+}
+
+a.disabled {
+    pointer-events: none;
+    cursor: default;
 }
