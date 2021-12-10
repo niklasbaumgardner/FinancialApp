@@ -173,3 +173,7 @@ a.disabled {
     pointer-events: none;
     cursor: default;
 }
+
+.mw-68 {
+    max-width: 68px;
+}

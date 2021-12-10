@@ -505,13 +505,13 @@ function createCard(name, in_, out, net, strDate, daysBack) {
 
     card.appendChild(cardFooter);
 
-    let column3 = createDivWithClass('col-sm-3 mb-5');
+    let column3 = createDivWithClass('col-10 col-sm-8 col-md-5 col-lg-4 col-xl-3 mb-5');
     column3.appendChild(card);
 
     return column3;
 }
 
-async function netSpending(daysBack=30) {
+async function netSpending(daysBack=14) {
     let spendingData = await getNetSpending(daysBack);
     // let dataKeys = Object.keys(data)
 
@@ -525,15 +525,15 @@ async function netSpending(daysBack=30) {
     let strDate = year + '-' + month + '-' + day;
 
     let count = 0;
-    let row;
+    let row = document.getElementById('net-spending');
     for (let name of names) {
         if (spendingData[name]) {
-            if (count % 4 === 0) {
-                if (row) {
-                    div.appendChild(row);
-                }
-                row = createDivWithClass('row');
-            }
+            // if (count % 4 === 0) {
+            //     if (row) {
+            //         div.appendChild(row);
+            //     }
+            //     row = createDivWithClass('row');
+            // }
             let name_ = name;
             if (name === 'allBudgets') {
                 name_ = 'All Budgets Combined';
@@ -541,7 +541,6 @@ async function netSpending(daysBack=30) {
             let card = createCard(name_, spendingData[name]['in'], spendingData[name]['out'], spendingData[name]['net'], strDate, daysBack);
 
             row.appendChild(card);
-            count += 1;
         }
     }
     if (count % 4 !== 0) {

@@ -99,9 +99,9 @@
     {% if budgets %}
         <div class="container">
             {% for group in budgets %}
-                <div class="row budget-row">
+                <div class="row justify-content-center justify-content-lg-start budget-row mb-5">
                     {% for budget in group %}
-                        <div id="budget-{{ budget.id }}" class="col-sm-4 mt-5 budgets">
+                        <div id="budget-{{ budget.id }}" class="col-10 col-sm-8 col-md-5 col-lg-6 col-xl-4 mt-5 budgets">
                             <!-- onclick="location.href='{{ url_for('home.view_budget', id=budget.id) }}';" -->
                             <div class="card bg-dark text-white button-div" onclick="location.href='{{ url_for('home.view_budget', id=budget.id) }}';">
                                 <div class="card-body p-4 rounded-bottom">
@@ -113,7 +113,7 @@
                                             </form>
                                             <span id="name_error_editName{{ budget.id }}" class="text-danger fs-6" hidden>Budget name already exist. Choose another name.</span>
                                         </div>
-                                        <div class="col text-end">
+                                        <div class="col text-end mw-68">
                                             <p class="text-white mb-1">Active</p>
                                             <label class="switch text-white">
                                                 <input class="activeState" type="checkbox" {% if budget.is_active %}checked{% endif %} onclick="toggleBudgetActive('{{ budget.id }}', event); event.stopPropagation();">
