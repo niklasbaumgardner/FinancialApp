@@ -14,7 +14,7 @@ home = Blueprint('home', __name__)
 @home.route('/', methods=["GET"])
 @login_required
 def index():
-    active, inactive = get_budgets(True)
+    active, inactive = get_budgets(separate=True)
 
     total = round(sum([x.total for x in active + inactive ]), 2)
     format_to_money_string(total)
@@ -371,14 +371,24 @@ def create_transaction(name, amount, date, budget_id):
     do_transaction(trans)
 
 
-def get_budgets(separate=False):
-    if separate:
+def get_budgets(separate=False, active_only=False, inactive_only=False):
+    if active_only:
+        active = Budget.query.filter_by(user_id=current_user.get_id(), is_active=True).all()
+        active.sort(key=lambda x: x.name.lower())
+        return active
+
+    elif inactive_only:
+        inactive = Budget.query.filter_by(user_id=current_user.get_id(), is_active=False).all()
+        inactive.sort(key=lambda x: x.name.lower())
+        return inactive
+
+    elif separate:
         active = Budget.query.filter_by(user_id=current_user.get_id(), is_active=True).all()
         inactive = Budget.query.filter_by(user_id=current_user.get_id(), is_active=False).all()
         active.sort(key=lambda x: x.name.lower())
         inactive.sort(key=lambda x: x.name.lower())
-
         return active, inactive
+
     else:
         budgets = Budget.query.filter_by(user_id=current_user.get_id()).all()
         budgets.sort(key=lambda x: x.name.lower())
@@ -605,7 +615,7 @@ def net_worth(start_date=None):
 
 def pie_data():
     data = {}
-    all_budgets = get_budgets()
+    all_budgets = get_budgets(active_only=True)
     
     for budget in all_budgets:
         total = budget.total
@@ -617,7 +627,7 @@ def pie_data():
 
 def all_budgets_net_worth(start_date=None):
     # { budget name: { date: net worth } }
-    all_budgets = get_budgets()
+    all_budgets = get_budgets(active_only=True)
     temp = {}
     first = None
     last = None
@@ -674,7 +684,7 @@ def net_spending(start_date):
     total_in = 0
     total_out = 0
     total_net = 0
-    all_budgets = get_budgets()
+    all_budgets = get_budgets(active_only=True)
     for budget in all_budgets:
         b_trans = get_transactions(budget.id, start_date)
         if not b_trans:

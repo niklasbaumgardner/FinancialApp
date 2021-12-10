@@ -70,7 +70,7 @@ input.amount-input-86 {
 }
 
 .overflowScroll-X {
-    overflow-x: scroll;
+    overflow-x: auto;
 }
 
 .mw-130 {
@@ -87,7 +87,6 @@ input.amount-input-86 {
 .better-scroll::-webkit-scrollbar
 {
     width: 12px;
-    background-color: #F5F5F5;
 }
 
 .better-scroll::-webkit-scrollbar-thumb
