@@ -176,33 +176,33 @@ def budget_transaction():
     return redirect(url_for('home.view_budget', id=budget_id))
 
 
-@home.route('/transfer', methods=["GET"])
+@home.route('/transfer', methods=["GET", "POST"])
 @login_required
 def transfer():
+    if request.method == "POST":
+        name = request.form.get("name")
+        try:
+            amount = float(request.form.get('amount'))
+        except:
+            amount = None
+
+        str_date = request.form.get('date')
+        date = get_date(str_date)
+
+        source_budget = request.form.get('source_budget')
+        dest_budget = request.form.get('dest_budget')
+
+        if name and amount and source_budget and dest_budget:
+            # Not sure what to do here. Should name contain source/dest budget names?
+            # source_budget_name = get_budget(source_budget).name
+            # dest_tran_name = f'{name} from {source_budget_name}'
+            create_transaction(name=name, amount=-amount, date=date, budget_id=source_budget)
+            create_transaction(name=name, amount=amount, date=date, budget_id=dest_budget)
+
+        return redirect(url_for('home.index'))
+
     budgets = get_budgets()
     return render_template('transfer.html', budgets=budgets, str=str)
-
-
-@home.route('/budget_to_budget', methods=["POST"])
-@login_required
-def budget_to_budget():
-    name = request.form.get("name")
-    try:
-        amount = float(request.form.get('amount'))
-    except:
-        amount = None
-
-    str_date = request.form.get('date')
-    date = get_date(str_date)
-
-    source_budget = request.form.get('source_budget')
-    dest_budget = request.form.get('dest_budget')
-
-    if name and amount and source_budget and dest_budget:
-        create_transaction(name=name, amount=-amount, date=date, budget_id=source_budget)
-        create_transaction(name=name, amount=amount, date=date, budget_id=dest_budget)
-
-    return redirect(url_for('home.index'))
 
 
 @home.route('/edit_budget/<int:id>', methods=["POST"])
@@ -365,10 +365,11 @@ def format_to_money_string(number, include_minus=True):
     return f'${abs(number):,.2f}'
 
 def create_transaction(name, amount, date, budget_id):
-    trans = Transaction(name=name, budget_id=budget_id, user_id=current_user.get_id(), amount=amount, date=date)
-    db.session.add(trans)
-    db.session.commit()
-    do_transaction(trans)
+    if get_budget(budget_id):
+        trans = Transaction(name=name, budget_id=budget_id, user_id=current_user.get_id(), amount=amount, date=date)
+        db.session.add(trans)
+        db.session.commit()
+        do_transaction(trans)
 
 
 def get_budgets(separate=False, active_only=False, inactive_only=False):
@@ -396,8 +397,7 @@ def get_budgets(separate=False, active_only=False, inactive_only=False):
 
 
 def get_budget(id):
-    budget = Budget.query.filter_by(id=id, user_id=current_user.get_id()).first()
-    return budget
+    return Budget.query.filter_by(id=id, user_id=current_user.get_id()).first()
 
 
 def get_transactions(budget_id, start_date=None):

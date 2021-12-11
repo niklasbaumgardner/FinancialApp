@@ -44,13 +44,13 @@
 <div class="container py-5 h-100">
     <div class="row d-flex justify-content-center align-items-center h-100">
         <div class="col-sm col-md col-lg col-xl">
-            <div class="card bg-dark text-white" style="">
+            <div class="card bg-dark text-white">
                 <div class="card-header">
                     <div class="fs-4">Transfer Money</div>
                 </div>
                 <div id="input-card" class="card-body p-5">
                     <div id="paycheck" class="tab">
-                        <form action="{{ url_for('home.budget_to_budget') }}" method="POST">
+                        <form action="{{ url_for('home.transfer') }}" method="POST">
                             <input type="date" id="date" name="date" hidden>
                             <div class="row">
                                 <div class="col-sm ">
