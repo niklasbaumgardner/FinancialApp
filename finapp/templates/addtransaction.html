@@ -119,7 +119,7 @@
                                     </div>
                                     <div class="form-outline form-white mb-4">
                                         <label class="form-label" for="amount">Date</label>
-                                        <input class="form-control" type="date" id="date" name="date" required>
+                                        <input class="form-control mw-155" type="date" id="date" name="date" required>
                                     </div>
                                     <div class="form-outline form-white mb-4">
                                         <!-- <label class="form-label" for="amount"><h4>Paycheck Amount</h4></label>
@@ -248,7 +248,7 @@
         document.getElementById("paycheck_amount").addEventListener("input", checkPaycheck);
 
         {% for budget in budgets %}
-            document.getElementById("{{ budget.name }}{{ budget.id }}").addEventListener("input", checkPaycheck);
+            document.getElementById("{{ budget.name }}{{ budget.id }}".replace("&#39;", "'")).addEventListener("input", checkPaycheck);
         {% endfor %}
 
         var date = new Date();
