@@ -195,8 +195,8 @@ function lineChart() {
     });
 }
 
-async function pieChart() {
-    let pieData = await getPieData();
+async function pieChart(date='') {
+    let pieData = await getPieData(date);
     let keys = pieData['keys'];
     let values = pieData['values'];
 
@@ -206,16 +206,11 @@ async function pieChart() {
         colors.push(COLORS_DICT[name]);
     }
 
-    // let percentages = {
-    //     formatter: (value, ctx) => {
-    //         let sum = ctx.chart._metasets[0].total;
-    //         let percentage = (value * 100 / sum).toFixed(2) + "%";
-    //         return percentage;
-    //     },
-    //     color: 'rgb(0, 0, 0)',
-    // };
+    let tempChart = Chart.getChart('pieChart');
+    if (tempChart) {
+        tempChart.destroy();
+    }
 
-    // percentages = showPercentages ? percentages : null;
 
     const ctx = document.getElementById('pieChart').getContext('2d');
     const myChart = new Chart(ctx, {

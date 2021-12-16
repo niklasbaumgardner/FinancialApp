@@ -31,7 +31,11 @@ def dashboard():
 @home.route('/get_pie_data', methods=["GET"])
 @login_required
 def get_pie_data():
-    data = pie_data()
+    date = request.args.get('date')
+    if date:
+        date = get_datetime(date)
+
+    data = pie_data(date)
 
     keys = [ k for k in data.keys() ]
     values = [ v for v in data.values() ]
@@ -400,10 +404,12 @@ def get_budget(id):
     return Budget.query.filter_by(id=id, user_id=current_user.get_id()).first()
 
 
-def get_transactions(budget_id, start_date=None):
+def get_transactions(budget_id, start_date=None, end_date=None):
     transactions = Transaction.query.filter_by(budget_id=budget_id, user_id=current_user.get_id()).all()
     if start_date:
         return [ t for t in transactions if t.date >= start_date ]
+    if end_date:
+        return [ t for t in transactions if t.date <= end_date ]
     return transactions
 
 
@@ -613,14 +619,20 @@ def net_worth(start_date=None):
     return sum_per_date_list(first, last, step, data, dates), [ d.strftime("%m/%d/%Y") for d in dates ]
 
 
-def pie_data():
+def pie_data(date):
     data = {}
     all_budgets = get_budgets(active_only=True)
-    
-    for budget in all_budgets:
-        total = budget.total
-        if total > 0:
-            data[budget.name] = total
+
+    if date:
+        for budget in all_budgets:
+            total = sum(map(lambda x: x.amount, get_transactions(budget.id, end_date=date)))
+            if total > 0:
+                data[budget.name] = total
+    else:
+        for budget in all_budgets:
+            total = budget.total
+            if total > 0:
+                data[budget.name] = total
 
     return data
 

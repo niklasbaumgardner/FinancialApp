@@ -33,8 +33,14 @@
         // xmlHttp.send( null );
         // return JSON.parse(xmlHttp.response);
     }
-    async function getPieData() {
-        let result = await getData("{{ url_for('home.get_pie_data') }}");
+    async function getPieData(date='') {
+        let result;
+        if (date !== '') {
+            result = await getData("{{ url_for('home.get_pie_data') }}" + "?date=" + date);
+        }
+        else {
+            result = await getData("{{ url_for('home.get_pie_data') }}");
+        }
         return JSON.parse(result);
     }
     async function getAllBudgetsLineData(daysBack='') {
@@ -67,8 +73,8 @@
                     </button>
                 </p>
                 <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionLine">
-                    <div class="accordion-body bg-dark">
-                        <div class="mx-5">
+                    <div class="accordion-body bg-dark mx-5">
+                        <div class="">
                             <p class="text-white fs-2">Check the budgets you want to view</p>
                             <div class="overflowScroll-X better-scroll">
                                 <div id="lineButtons" class="btn-group my-3" role="group" aria-label="Basic checkbox toggle button group">
@@ -80,7 +86,7 @@
                                 <button class="btn btn-outline-primary" onclick="reAssignColors()">Randomize colors</button>
                             </div>
                         </div>
-                        <div class="mx-5 mb-5">
+                        <div class="mb-5">
                             <canvas id="lineChart"></canvas>
                         </div>
                     </div>
@@ -90,7 +96,7 @@
     </div>
 
     <div class="row h-100">
-        <div class="col mt-5 py-0 mr-24">
+        <div class="col mt-5 py-0 mw-900">
             <div class="accordion px-0 bg-dark" id="accordionPie">
                 <div class="accordion-item bg-dark">
                     <p class="accordion-header bg-dark" id="headingTwo">
@@ -99,31 +105,31 @@
                         </button>
                     </p>
                     <div id="collapseTwo" class="accordion-collapse collapse show" aria-labelledby="headingTwo" data-bs-parent="#accordionPie">
-                        <div class="accordion-body bg-dark mb-5">
-                            <div class="row">
-                                <div class="col text-start">
+                        <div class="accordion-body bg-dark mx-5 mb-5">
+                            <div class="row mb-5">
+                                <div class="col-4 text-start">
                                     <p class="text-white mb-1">Show percentages</p>
                                     <label class="switch text-white">
                                         <input id="showPercentage" type="checkbox">
                                         <span class="slider round"></span>
                                     </label>
-                                    <!-- <p class="text-white">Show percentages</p> -->
-                                    <!-- <input class="form-check-input btn-check" type="checkbox" value="" id="showPercentage">
-                                    <label class="form-check-label text-white" for="flexCheckDefault">
-                                        Show percentages
-                                    </label> -->
                                 </div>
-                                <div class="col text-end">
+                                <div class="col-4 text-end">
+                                    <input class="form-control mw-160" type="date" id="date">
+                                </div>
+                                <div class="col-4 text-end">
                                     <button class="btn btn-outline-primary mt-1" onclick="reAssignColors()">Randomize colors</button>
                                 </div>
                             </div>
-                            <canvas id="pieChart"></canvas>
+                            <div>
+                                <canvas id="pieChart"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col mt-5 py-0 ml-24">
+        <!-- <div class="col mt-5 py-0 ml-24">
             <div class="accordion px-0 bg-dark" id="accordionTemp">
                 <div class="accordion-item bg-dark">
                     <p class="accordion-header bg-dark" id="headingTemp">
@@ -138,7 +144,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 
     <div class="row py-5">
@@ -151,7 +157,7 @@
                         </button>
                     </p>
                     <div id="collapseNet" class="accordion-collapse collapse show" aria-labelledby="headingTemp" data-bs-parent="#accordionNet">
-                        <div class="accordion-body bg-dark">
+                        <div class="accordion-body bg-dark mx-5">
                             <p class="fs-1 text-white">Spending in the last
                                 <select id="spendingDays" class="form-select mw-130 inline form-select-lg bg-light-grey" aria-label="Default select example">
                                     <option value="7">7 days</option>
@@ -186,6 +192,23 @@
         console.log(event.target.checked);
         togglePercentage(event.target.checked)
     }
+
+    let pieDate = document.getElementById('date');
+
+    let date = new Date();
+    let ele = document.getElementById('date');
+    let year = date.getFullYear();
+    let month = (date.getMonth() + 1).toString().padStart(2, '0');
+    let day = date.getDate().toString().padStart(2, '0');
+    let strDate = year + '-' + month + '-' + day;
+
+    pieDate.value = strDate;
+
+    pieDate.onchange = (event) => {
+        pieChart(event.target.value);
+    }
+
+
 
     // document.getElementById('budgetWorthDays').addEventListener('change', (event) => {
     //     onGraphChange(event.target);
