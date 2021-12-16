@@ -415,13 +415,13 @@ function createPtagWithClass(classString) {
 function createCard(name, in_, out, net, strDate, daysBack) {
     let card;
     if (names.includes(name)) {
-        card = createDivWithClass('card bg-light-grey button-div');
+        card = createDivWithClass('card bg-lighter-grey button-div');
         card.onclick = () => {
             location.href = `${BUDGET_URLS[name]}?currentDate=${strDate}&daysBack=${daysBack}`;
         }
     }
     else {
-        card = createDivWithClass('card bg-light-grey');
+        card = createDivWithClass('card bg-lighter-grey');
     }
 
     let cardHeader = createDivWithClass('card-header');

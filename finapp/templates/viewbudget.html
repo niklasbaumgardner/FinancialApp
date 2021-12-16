@@ -131,10 +131,12 @@
                                         <div class="col text-white">
                                             <div class="d-flex justify-content-end">
                                                 <div class="fs-6">
+                                                    <!-- <span class="show-not-edit-{{ trans.id }}"><a class="show-not-edit-{{ trans.id }} no-underline p-0" href="javascript:void(0);" onclick="deleteTransaction('{{ trans.id }}')">delete <i class="material-icons fs-6">delete</i></a> | </span> -->
                                                     <span class="show-not-edit-{{ trans.id }}"><a class="show-not-edit-{{ trans.id }} no-underline p-0" href="javascript:void(0);" onclick="editTransaction('{{ trans.id }}')">edit <i class="material-icons fs-6">edit</i></a> | </span>
                                                     <a class="show-not-edit-{{ trans.id }} no-underline p-0" href="javascript:void(0);" onclick="moveTransaction('{{ trans.id }}')">move</a>
                                                     <a class="show-edit-{{ trans.id }} no-underline p-0" href="javascript:void(0);" onclick="document.getElementById('trans{{ trans.id }}').submit();" hidden>update</a>
                                                     |
+                                                    <!-- <a class="show-not-edit-{{ trans.id }} no-underline p-0" href="javascript:void(0);" onclick="editTransaction('{{ trans.id }}')">edit <i class="material-icons fs-6">edit</i></a> -->
                                                     <a class="show-not-edit-{{ trans.id }} no-underline p-0" href="javascript:void(0);" onclick="deleteTransaction('{{ trans.id }}')">delete <i class="material-icons fs-6">delete</i></a>
                                                     <a class="show-edit-{{ trans.id }} no-underline p-0" href="javascript:void(0);" onclick="cancelEdit('{{ trans.id }}')" hidden>cancel</a>
                                                 </div>
