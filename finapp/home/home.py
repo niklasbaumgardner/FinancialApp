@@ -120,9 +120,9 @@ def add_budget():
     return redirect(url_for('home.index'))
 
 
-@home.route('/add_transaction', methods=["GET"])
+@home.route('/add_paycheck', methods=["GET"])
 @login_required
-def add_transaction():
+def add_paycheck():
     budgets = get_budgets()
     prefills = get_prefill_paycheck()
     for k, v in prefills.items():
@@ -132,7 +132,7 @@ def add_transaction():
                     item.insert(1, budget.name)
                     break
 
-    return render_template("addtransaction.html", budgets=budgets, str=str, prefills=prefills, enumerate=enumerate, showPrefills=len(prefills)>0)
+    return render_template("addpaycheck.html", budgets=budgets, str=str, prefills=prefills, enumerate=enumerate, showPrefills=len(prefills)>0)
 
 
 @home.route('/paycheck', methods=["POST"])
