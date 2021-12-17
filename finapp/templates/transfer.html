@@ -42,55 +42,66 @@
 </script>
 
 <div class="container py-5 h-100">
-    <div class="row d-flex justify-content-center align-items-center h-100">
-        <div class="col-sm col-md col-lg col-xl">
-            <div class="card bg-dark text-white">
-                <div class="card-header">
-                    <div class="fs-4">Transfer Money</div>
-                </div>
-                <div id="input-card" class="card-body p-5">
-                    <div id="paycheck" class="tab">
-                        <form action="{{ url_for('home.transfer') }}" method="POST">
-                            <input type="date" id="date" name="date" hidden>
-                            <div class="row">
-                                <div class="col-sm ">
-                                    <div class="form-outline form-white mb-4">
-                                        <label class="form-label" for="name">Transfer Name</label>
-                                        <input class="validatePaycheck form-control" type="text" id="paycheckName" name="name" placeholder="Transfer Me" required autocomplete="niklas">
+    <div class="card bg-dark text-white border-0">
+        <div class="row">
+            <div class="col-lg-5 hidden-on-smaller-992">
+                <img src="/static/images/transfer.png" class="img-fluid rounded-start img-full" alt="Money image">
+            </div>
+            <div class="col-lg-7">
+                <div class="card-body p-5">
+                    <p class="card-title fs-2 mb-3">Transfer money</p>
+                    <form action="{{ url_for('home.transfer') }}" method="POST">
+                        <input type="date" id="date" name="date" hidden>
+                        <div class="row">
+                            <div class="col-sm-6 col-lg-12">
+                                <div class="row mb-4">
+                                    <div class="col-12 col-lg-6 mb-3">
+                                        <div class="form-outline form-white mb-4">
+                                            <label class="form-label" for="name">Transfer Name</label>
+                                            <input class="validatePaycheck form-control" type="text" id="paycheckName" name="name" placeholder="Transfer Me" required autocomplete="niklas">
+                                        </div>
                                     </div>
-                                    <div class="form-outline form-white mb-4">
-                                        <label class="form-label" for="amount">Amount</label>
-                                        <input class="validatePaycheck form-control" type="number" id="paycheck_amount" name="amount" placeholder="0.00" required autocomplete="niklas">
-                                    </div>
-                                </div>
-                                <div class="col-sm ">
-                                    <div class="form-outline form-white mb-4">
-                                        <label class="form-label" for="source_budget">Source budget</label>
-                                        <select class="form-select" name="source_budget" id="source_budget" onchange="remove_from_dest()" required>
-                                            <option value="">Please select</option>
-                                            {% for budget in budgets %}
-                                                <option class="source" id="source{{ budget.id }}" value="{{ budget.id }}">{{ str(budget) }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                    <div class="form-outline form-white mb-4">
-                                        <label class="form-label" for="dest_budget">Destination budget</label>
-                                        <select class="form-select" name="dest_budget" id="dest_budget" onchange="remove_from_source()" required>
-                                            <option value="">Please select</option>
-                                            {% for budget in budgets %}
-                                                <option class="dest" id="dest{{ budget.id }}" value="{{ budget.id }}">{{ str(budget) }}</option>
-                                            {% endfor %}
-                                        </select>
+                                    <div class="col-12 col-lg-6 mb-3">
+                                        <div class="form-outline form-white mb-4">
+                                            <label class="form-label" for="amount">Amount</label>
+                                            <input class="validatePaycheck form-control" type="number" id="paycheck_amount" name="amount" placeholder="0.00" required autocomplete="niklas">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-sm mt-5">
-                                    <input class="btn btn-primary" type="submit" value="Transfer">
+                            <div class="col-sm-6 col-lg-12">
+                                <div class="row mb-4">
+                                    <div class="col-12 col-lg-6 mb-3">
+                                        <div class="form-outline form-white mb-4">
+                                            <label class="form-label" for="source_budget">Source budget</label>
+                                            <select class="form-select" name="source_budget" id="source_budget" onchange="remove_from_dest()" required>
+                                                <option value="">Please select</option>
+                                                {% for budget in budgets %}
+                                                    <option class="source" id="source{{ budget.id }}" value="{{ budget.id }}">{{ str(budget) }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-lg-6 mb-3">
+                                        <div class="form-outline form-white mb-4">
+                                            <label class="form-label" for="dest_budget">Destination budget</label>
+                                            <select class="form-select" name="dest_budget" id="dest_budget" onchange="remove_from_source()" required>
+                                                <option value="">Please select</option>
+                                                {% for budget in budgets %}
+                                                    <option class="dest" id="dest{{ budget.id }}" value="{{ budget.id }}">{{ str(budget) }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </form>
-                    </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm">
+                                <input class="btn btn-primary" type="submit" value="Transfer">
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
