@@ -226,22 +226,24 @@
                             </h2>
                             <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
-                                    <ul name="existing_budgets" class="list-group" id="style-1" style="max-height: 200px;overflow-y: scroll;">
-                                        {% for group in budgets %}
-                                            {% for budget in group %}
-                                                <li class="list-group-item" >
-                                                    <div class="d-flex justify-content-between">
-                                                        <div class="existingBudgets">
-                                                            {{ budget.name }}
+                                    <div class=" better-scroll better-scroll-light" style="max-height: 200px;overflow-y: auto;">
+                                        <ul name="existing_budgets" class="list-group" id="style-1">
+                                            {% for group in budgets %}
+                                                {% for budget in group %}
+                                                    <li class="list-group-item" >
+                                                        <div class="d-flex justify-content-between">
+                                                            <div class="existingBudgets">
+                                                                {{ budget.name }}
+                                                            </div>
+                                                            <div>
+                                                                {{ round(budget.total, 2) }}
+                                                            </div>
                                                         </div>
-                                                        <div>
-                                                            {{ round(budget.total, 2) }}
-                                                        </div>
-                                                    </div>
-                                                </li>
+                                                    </li>
+                                                {% endfor %}
                                             {% endfor %}
-                                        {% endfor %}
-                                    </ul>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </div>

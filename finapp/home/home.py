@@ -602,6 +602,7 @@ def get_data_dict(all_trans):
     return data
 
 
+# returns list of date: net worth for all budgets combined
 def net_worth(start_date=None):
     all_budgets = get_budgets()
     all_trans = []
@@ -621,7 +622,8 @@ def net_worth(start_date=None):
 
 def pie_data(date):
     data = {}
-    all_budgets = get_budgets(active_only=True)
+    active_only = True if date else False
+    all_budgets = get_budgets(active_only=active_only)
 
     if date:
         for budget in all_budgets:
@@ -637,9 +639,10 @@ def pie_data(date):
     return data
 
 
+# returns list of date: net worth for each individual budget
 def all_budgets_net_worth(start_date=None):
     # { budget name: { date: net worth } }
-    all_budgets = get_budgets(active_only=True)
+    all_budgets = get_budgets()
     temp = {}
     first = None
     last = None
