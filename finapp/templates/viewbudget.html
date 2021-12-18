@@ -125,7 +125,7 @@
                                                 <p class="show-not-edit-{{ trans.id }} fs-6 text-white">
                                                     {{ format_to_money_string(trans.amount) }}
                                                 </p>
-                                                <input class="show-edit-{{ trans.id }} form-control w-25 amount-input-71" type="number" id="editAmount{{ trans.id }}" name="editAmount{{ trans.id }}" value="{{ trans.amount }}" autocomplete="niklas" hidden>
+                                                <input class="show-edit-{{ trans.id }} form-control w-25 amount-input-71" type="number" step=".01" id="editAmount{{ trans.id }}" name="editAmount{{ trans.id }}" value="{{ trans.amount }}" autocomplete="niklas" hidden>
                                             </div>
                                         </div>
                                         <div class="col text-white">
@@ -210,7 +210,7 @@
                                 </div>
                                 <div class="col">
                                     <div class="d-flex justify-content-center">
-                                        <input class="form-control w-25 amount-input-86" type="number" form="addTransaction" id="amount" name="amount" placeholder="0.00" autocomplete="niklas" required>
+                                        <input class="form-control w-25 amount-input-86" type="number" step=".01" form="addTransaction" id="amount" name="amount" placeholder="0.00" autocomplete="niklas" required>
                                     </div>
                                 </div>
                                 <div class="col text-white">
