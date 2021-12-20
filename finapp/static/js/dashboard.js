@@ -389,6 +389,13 @@ function reAssignColors() {
             }
             myChart.data.datasets[0].backgroundColor = colors;
         }
+        else if (id === "spendingChart") {
+            let colors = [];
+            for (let name of myChart.data.labels) {
+                colors.push(COLORS_DICT[name]);
+            }
+            myChart.data.datasets[0].backgroundColor = colors;
+        }
         myChart.update();
     }
 
@@ -552,6 +559,55 @@ function onGraphChange(sel) {
     console.log(sel);
 }
 
+async function spendingPerMonth(month, monthName) {
+    let spendData = await getMonthSpending(month);
+
+    let keys = spendData['keys'];
+    let values = spendData['values'];
+
+    let colors = [];
+    for (let name of keys) {
+        colors.push(COLORS_DICT[name]);
+    }
+
+    let tempChart = Chart.getChart('spendingChart');
+    if (tempChart) {
+        tempChart.destroy();
+    }
+
+    const ctx = document.getElementById('spendingChart').getContext('2d');
+    const myChart = new Chart(ctx, {
+        plugins: [ChartDataLabels],
+        type: 'pie',
+        data: {
+            labels: keys,
+            datasets: [{
+                data: values,
+                backgroundColor: colors,
+                color: 'rgba(255, 255, 255)',
+                hoverOffset: 4,
+            }]
+        },
+        options: {
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: `Spending for ${monthName}`,
+                    color: 'rgb(255, 255, 255)',
+                },
+                datalabels: null,
+            },
+            responsive: true,
+            borderColor: 'rgba(0, 0, 0, .79)',
+            color: 'rgba(255, 255, 255, .79)',
+        }
+    });
+
+}
+
 // function calls
 (async() => {
     data = await getAllBudgetsLineData();
@@ -563,5 +619,9 @@ function onGraphChange(sel) {
     pieChart();
     addButtons();
     netSpending();
+    let date = new Date();
+    let monthInt = date.getMonth() + 1;
+    let monthName = date.toLocaleString('default', { month: 'long' });
+    spendingPerMonth(monthInt, monthName);
 
 })();
