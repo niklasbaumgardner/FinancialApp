@@ -161,6 +161,10 @@ function lineChart() {
                     display: true,
                     text: 'Budgets',
                     color: 'rgba(255, 255, 255)',
+                    font: {
+                        size: 19,
+                        weight: "normal",
+                    },
                 }
             },
             responsive: true,
@@ -195,7 +199,7 @@ function lineChart() {
     });
 }
 
-async function pieChart(date='') {
+async function pieChart(date='', showPercentages=false) {
     let pieData = await getPieData(date);
     let keys = pieData['keys'];
     let values = pieData['values'];
@@ -210,6 +214,16 @@ async function pieChart(date='') {
     if (tempChart) {
         tempChart.destroy();
     }
+
+    let percentages = {
+        formatter: (value, ctx) => {
+            let sum = ctx.chart._metasets[0].total;
+            let percentage = (value * 100 / sum).toFixed(2) + "%";
+            return percentage;
+        },
+        color: 'rgb(0, 0, 0)',
+    };
+    percentages = showPercentages === "true" ? percentages : null;
 
 
     const ctx = document.getElementById('pieChart').getContext('2d');
@@ -234,8 +248,12 @@ async function pieChart(date='') {
                     display: true,
                     text: 'Breakdown of budgets (Amount > 0)',
                     color: 'rgb(255, 255, 255)',
+                    font: {
+                        size: 19,
+                        weight: "normal",
+                    },
                 },
-                datalabels: null,
+                datalabels: percentages,
             },
             responsive: true,
             borderColor: 'rgba(0, 0, 0, .79)',
@@ -267,6 +285,10 @@ function togglePercentage(showPercentages) {
                 display: true,
                 text: 'Breakdown of budgets (Amount > 0)',
                 color: 'rgb(255, 255, 255)',
+                font: {
+                    size: 19,
+                    weight: "normal",
+                },
             },
             datalabels: percentages,
         },
@@ -513,7 +535,7 @@ function createCard(name, in_, out, net, strDate, daysBack) {
     return column3;
 }
 
-async function netSpending(daysBack=14) {
+async function netSpending(daysBack="14") {
     let spendingData = await getNetSpending(daysBack);
     // let dataKeys = Object.keys(data)
 
@@ -565,6 +587,8 @@ async function spendingPerMonth(month, monthName) {
     let keys = spendData['keys'];
     let values = spendData['values'];
 
+    let total = values.reduce((a, b) => a + b, 0);
+
     let colors = [];
     for (let name of keys) {
         colors.push(COLORS_DICT[name]);
@@ -578,7 +602,7 @@ async function spendingPerMonth(month, monthName) {
     const ctx = document.getElementById('spendingChart').getContext('2d');
     const myChart = new Chart(ctx, {
         plugins: [ChartDataLabels],
-        type: 'pie',
+        type: 'doughnut',
         data: {
             labels: keys,
             datasets: [{
@@ -595,8 +619,12 @@ async function spendingPerMonth(month, monthName) {
                 },
                 title: {
                     display: true,
-                    text: `Spending for ${monthName}`,
+                    text: `You spent $${total} in ${monthName}`,
                     color: 'rgb(255, 255, 255)',
+                    font: {
+                        size: 19,
+                        weight: "normal",
+                    },
                 },
                 datalabels: null,
             },
@@ -616,12 +644,23 @@ async function spendingPerMonth(month, monthName) {
 
     assignColors();
     lineChart();
-    pieChart();
+    pieChart('', storage.getItem("showPercentage"));
     addButtons();
-    netSpending();
+    let temp = storage.getItem("spendingDays");
+    let days = temp ? temp : "14";
+    netSpending(days);
     let date = new Date();
     let monthInt = date.getMonth() + 1;
     let monthName = date.toLocaleString('default', { month: 'long' });
     spendingPerMonth(monthInt, monthName);
+
+    let arr = ["lineGraphButton", "pieChartButton", "spendingButton", "netSpendingButton"];
+    for (let id of arr) {
+        let collapsed = storage.getItem(id);
+        if (collapsed === "true") {
+            let btn = document.getElementById(id);
+            btn.click();
+        }
+    }
 
 })();

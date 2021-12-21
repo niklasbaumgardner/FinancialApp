@@ -85,7 +85,7 @@ def get_net_spending():
     if date:
         curr_date = get_datetime(date)
 
-        date = curr_date - timedelta(days=int(days_back)) if days_back else None
+        date = curr_date - timedelta(days=int(days_back)) if days_back != "All" else None
 
     data = net_spending(date)
 
