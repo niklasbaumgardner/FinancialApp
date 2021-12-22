@@ -572,15 +572,6 @@ async function netSpending(daysBack="14") {
     }
 }
 
-function onGraphChange(sel) {
-    // let sel = event.target;
-    // ele.selected = true;
-    // console.log(sel);
-    // console.log(sel.value);
-    // netSpending(sel.value);
-    console.log(sel);
-}
-
 async function spendingPerMonth(month, monthName) {
     let spendData = await getMonthSpending(month);
 
