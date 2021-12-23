@@ -610,7 +610,7 @@ async function spendingPerMonth(month, monthName) {
                 },
                 title: {
                     display: true,
-                    text: `You spent $${total} in ${monthName}`,
+                    text: `You spent $${total.toFixed(2)} in ${monthName}`,
                     color: 'rgb(255, 255, 255)',
                     font: {
                         size: 19,
