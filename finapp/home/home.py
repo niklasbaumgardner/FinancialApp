@@ -42,6 +42,19 @@ def get_pie_data():
 
     return { 'keys': keys, 'values': values }
 
+@home.route('/get_spending_for_month', methods=["GET"])
+@login_required
+def get_spending_for_month():
+    # month = request.args.get('month')
+    month = request.args.get('month', date.today().month, type=int)
+
+    data = spending_for_month(month)
+
+    keys = [ k for k in data.keys() ]
+    values = [ v for v in data.values() ]
+
+    return { 'keys': keys, 'values': values }
+
 
 @home.route('/get_all_budgets_line_data', methods=["GET"])
 @login_required
@@ -72,7 +85,7 @@ def get_net_spending():
     if date:
         curr_date = get_datetime(date)
 
-        date = curr_date - timedelta(days=int(days_back)) if days_back else None
+        date = curr_date - timedelta(days=int(days_back)) if days_back != "All" else None
 
     data = net_spending(date)
 
@@ -412,6 +425,10 @@ def get_transactions(budget_id, start_date=None, end_date=None):
         return [ t for t in transactions if t.date <= end_date ]
     return transactions
 
+def get_transactions_month(budget_id, month):
+    transactions = Transaction.query.filter(Transaction.budget_id==budget_id).filter(Transaction.user_id==current_user.get_id()).filter(Transaction.date.month==month).all()
+    return transactions
+
 
 def get_transaction(budget_id, trans_id):
     transactions = Transaction.query.filter_by(id=trans_id, budget_id=budget_id, user_id=current_user.get_id()).first()
@@ -636,6 +653,22 @@ def pie_data(date):
             if total > 0:
                 data[budget.name] = total
 
+    return data
+
+
+def spending_for_month(month):
+    all_budgets = get_budgets()
+    data = {}
+    currMonth = date.today().month
+    year = date.today().year
+    if month > currMonth:
+        year -= 1
+
+    for budg in all_budgets:
+        b_trans = sum([ t.amount for t in get_transactions(budg.id) if t.date.month == month and t.date.year == year and t.amount < 0 ]) * -1
+        # print(b_trans)
+        if (b_trans > 0):
+            data[budg.name] = round(b_trans, 2)
     return data
 
 

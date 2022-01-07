@@ -17,6 +17,8 @@
         BUDGET_URLS["{{ budget.name }}".replace("&#39;", "'")] = "{{ url_for('home.view_budget', id=budget.id) }}";
     {% endfor %}
 
+    const storage = window["localStorage"];
+
     function getData(url) {
         return new Promise(function(resolve, reject) {
             var xmlHttp = new XMLHttpRequest();
@@ -52,13 +54,17 @@
         let result = await getData("{{ url_for('home.get_all_budgets_line_data') }}" + "?currentDate=" + strDate + "&daysBack=" + daysBack);
         return JSON.parse(result);
     }
-    async function getNetSpending(daysBack=30) {
+    async function getNetSpending(daysBack="14") {
         let date = new Date();
         let year = date.getFullYear();
         let month = (date.getMonth() + 1).toString().padStart(2, '0');
         let day = date.getDate().toString().padStart(2, '0');
         let strDate = year + '-' + month + '-' + day;
         let result = await getData("{{ url_for('home.get_net_spending') }}" + "?currentDate=" + strDate + "&daysBack=" + daysBack);
+        return JSON.parse(result);
+    }
+    async function getMonthSpending(month) {
+        let result = await getData("{{ url_for('home.get_spending_for_month') }}" + "?month=" + month);
         return JSON.parse(result);
     }
 </script>
@@ -68,7 +74,7 @@
         <div class="accordion px-0 bg-dark" id="accordionLine">
             <div class="accordion-item bg-dark">
                 <p class="accordion-header bg-dark" id="headingOne">
-                    <button class="accordion-button bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    <button class="accordion-button bg-dark text-white" id="lineGraphButton" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                         Budgets Line Graph
                     </button>
                 </p>
@@ -96,11 +102,11 @@
     </div>
 
     <div class="row h-100">
-        <div class="col mt-5 py-0 mw-900">
+        <div class="col-12 col-lg-6 mt-5 py-0 mw-900">
             <div class="accordion px-0 bg-dark" id="accordionPie">
                 <div class="accordion-item bg-dark">
                     <p class="accordion-header bg-dark" id="headingTwo">
-                        <button class="accordion-button bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                        <button class="accordion-button bg-dark text-white" id="pieChartButton" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
                             Budgets Pie Graph
                         </button>
                     </p>
@@ -115,7 +121,7 @@
                                     </label>
                                 </div>
                                 <div class="col-4 text-end">
-                                    <input class="form-control mw-160" type="date" id="date">
+                                    <input class="form-control mw-160 bg-light-grey" type="date" id="date">
                                 </div>
                                 <div class="col-4 text-end">
                                     <button class="btn btn-outline-primary mt-1" onclick="reAssignColors()">Randomize colors</button>
@@ -129,22 +135,55 @@
                 </div>
             </div>
         </div>
-        <!-- <div class="col mt-5 py-0 ml-24">
-            <div class="accordion px-0 bg-dark" id="accordionTemp">
+        <div class="col-12 col-lg-6 mt-5 py-0 mw-900">
+            <div class="accordion px-0 bg-dark" id="accordionMonth">
                 <div class="accordion-item bg-dark">
-                    <p class="accordion-header bg-dark" id="headingTemp">
-                        <button class="accordion-button bg-dark text-white collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTemp" aria-expanded="false" aria-controls="collapseTemp">
-                            More coming soon...
+                    <p class="accordion-header bg-dark" id="headingThree">
+                        <button class="accordion-button bg-dark text-white" id="spendingButton" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
+                            Spending for month
                         </button>
                     </p>
-                    <div id="collapseTemp" class="accordion-collapse collapse" aria-labelledby="headingTemp" data-bs-parent="#accordionTemp">
-                        <div class="accordion-body bg-dark mb-5">
-                            <p class="text-white fs-1">More coming soon...</p>
+                    <div id="collapseThree" class="accordion-collapse collapse show" aria-labelledby="headingThree" data-bs-parent="#accordionMonth">
+                        <div class="accordion-body bg-dark mx-5 mb-5">
+                            <div class="row mb-3">
+                                <!-- <div class="col-4 text-start">
+                                    <p class="text-white mb-1">Show percentages</p>
+                                    <label class="switch text-white">
+                                        <input id="showPercentage" type="checkbox">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+                                <div class="col-4 text-end">
+                                    <input class="form-control mw-160" type="date" id="date">
+                                </div> -->
+                                <p class="fs-3 text-white">Spending for month
+                                    <select id="spendingMonths" class="form-select mw-130 inline bg-light-grey" aria-label="Default select example">
+                                        <option value="1">January</option>
+                                        <option value="2">February</option>
+                                        <option value="3">March</option>
+                                        <option value="4">April</option>
+                                        <option value="5">May</option>
+                                        <option value="6">June</option>
+                                        <option value="7">July</option>
+                                        <option value="8">August</option>
+                                        <option value="9">September</option>
+                                        <option value="10">October</option>
+                                        <option value="11">November</option>
+                                        <option value="12">December</option>
+                                    </select>
+                                </p>
+                                <!-- <div class="col-4 text-end">
+                                    <button class="btn btn-outline-primary mt-1" onclick="reAssignColors()">Randomize colors</button>
+                                </div> -->
+                            </div>
+                            <div>
+                                <canvas id="spendingChart"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div> -->
+        </div>
     </div>
 
     <div class="row py-5">
@@ -152,7 +191,7 @@
             <div class="accordion px-0 bg-dark" id="accordionNet">
                 <div class="accordion-item bg-dark">
                     <p class="accordion-header bg-dark" id="headingTemp">
-                        <button class="accordion-button bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNet" aria-expanded="true" aria-controls="collapseNet">
+                        <button class="accordion-button bg-dark text-white" id="netSpendingButton" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNet" aria-expanded="true" aria-controls="collapseNet">
                             Net Spending
                         </button>
                     </p>
@@ -161,11 +200,11 @@
                             <p class="fs-1 text-white">Spending in the last
                                 <select id="spendingDays" class="form-select mw-130 inline form-select-lg bg-light-grey" aria-label="Default select example">
                                     <option value="7">7 days</option>
-                                    <option value="14" selected>14 days</option>
+                                    <option value="14">14 days</option>
                                     <option value="30">30 days</option>
                                     <option value="60">60 days</option>
                                     <option value="90">90 days</option>
-                                    <option value="">All time</option>
+                                    <option value="All">All time</option>
                                 </select>
                             </p>
 
@@ -179,17 +218,17 @@
     </div>
 <script src="/static/js/dashboard.js"></script>
 <script>
-    document.getElementById('spendingDays').addEventListener('change', (event) => {
+    let spending = document.getElementById('spendingDays');
+    spending.addEventListener('change', (event) => {
         let sel = event.target;
-        // ele.selected = true;
-        // console.log(sel);
-        // console.log(sel.value);
+        storage.setItem("spendingDays", sel.value);
         netSpending(sel.value);
     });
 
     let toggle = document.getElementById('showPercentage');
     toggle.onclick = function(event) {
         console.log(event.target.checked);
+        storage.setItem("showPercentage", `${event.target.checked}`);
         togglePercentage(event.target.checked)
     }
 
@@ -208,10 +247,32 @@
         pieChart(event.target.value);
     }
 
+    let monthInt = date.getMonth() + 1;
+    let select = document.getElementById('spendingMonths');
+    select.value = monthInt;
 
+    select.addEventListener('change', event => {
+        let date = new Date(2000, event.target.value-1, 1);
+        let monthName = date.toLocaleString('default', { month: 'long' });
+        spendingPerMonth(event.target.value, monthName);
+    });
 
-    // document.getElementById('budgetWorthDays').addEventListener('change', (event) => {
-    //     onGraphChange(event.target);
-    // });
+    let accordions = document.querySelectorAll(".accordion-button");
+    for (let accord of accordions) {
+        accord.onclick = event => {
+            let id = event.target.id;
+            let temp = event.target.classList.contains('collapsed');
+            storage.setItem(id, temp);
+        }
+    }
+
+    if (storage.getItem("showPercentage") === "true") {
+        toggle.checked = true;
+    }
+
+    if (storage.getItem("spendingDays")) {
+        spending.value = storage.getItem("spendingDays");
+    }
+
 </script>
 {% endblock content %}
