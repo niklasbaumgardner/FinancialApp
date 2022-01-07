@@ -131,9 +131,22 @@ function assignColors() {
     }
 }
 
+function fixValues(oldValues, keys=data['keys']) {
+    let newValues = {};
+    for (let k of keys) {
+        let temp = oldValues[k];
+        if (temp != undefined) {
+            newValues[k] = temp;
+        }
+    }
+    return newValues;
+}
+
 function lineChart() {
     let keys = data['keys'];
     let values = data['data']['allBudgets'];
+
+    let newValues = fixValues(values);
 
     const ctx = document.getElementById('lineChart').getContext('2d');
     const myChart = new Chart(ctx, {
@@ -143,7 +156,7 @@ function lineChart() {
             datasets: [{
                 id: 'allBudgets',
                 label: 'All Budgets',
-                data: values,
+                data: newValues,
                 backgroundColor: COLORS_DICT['allBudgets'],
                 borderColor: COLORS_DICT['allBudgets'],
                 borderWidth: 2,
@@ -292,7 +305,7 @@ function addDataForBudget(name) {
     let temp = {
         id: name,
         label: name,
-        data: data['data'][name],
+        data: fixValues(data['data'][name]),
         backgroundColor: COLORS_DICT[name], //'rgba(40, 114, 251)',
         borderColor: COLORS_DICT[name], //'rgba(40, 114, 251)',
         borderWidth: 2,
