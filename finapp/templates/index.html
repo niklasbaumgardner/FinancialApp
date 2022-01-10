@@ -158,14 +158,17 @@
                                         <input class="form-check-input" type="radio" id="delete" name="new_budget" value="None" required>
                                         <label class="" for="delete">&nbsp;Delete transations</label><br><br>
                                         <h6 class="">Or transfer transactions to another budget:</h6>
-                                        {% for group in budgets %}
-                                            {% for budg in group %}
-                                                {% if budget.id != budg.id %}
-                                                    <input class="form-check-input" type="radio" id="{{ budg.name }}" name="new_budget" value="{{ budg.id }}">
-                                                    <label class="form-check-label" for="{{ budg.name }}">{{ budg.name }}</label><br>
-                                                {% endif %}
+                                        <div class="form-check">
+                                            {% for group in budgets %}
+                                                {% for budg in group %}
+                                                    {% if budget.id != budg.id %}
+                                                        <input class="form-check-input" type="radio" id="{{ budg.name }}" name="new_budget" value="{{ budg.id }}">
+                                                        <label class="form-check-label" for="{{ budg.name }}">{{ budg.name }}</label><br>
+                                                    {% endif %}
+                                                {% endfor %}
                                             {% endfor %}
-                                        {% endfor %}
+
+                                        </div>
                                     </fieldset>
                                 </div>
                                 <div class="modal-footer">

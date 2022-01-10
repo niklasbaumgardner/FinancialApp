@@ -17,45 +17,51 @@
     function fillvalues(id, totalAmount) {
         document.getElementById('previousPaycheckModal').style.display='none';
 
-        var table = document.getElementById(id);
-        var list = [];
-        for (var r = 1; r < table.rows.length - 1; r++) {
-            var name = table.rows[r].cells[0].innerHTML;
-            var id = table.rows[r].cells[1].id;
-            var amount = table.rows[r].cells[1].innerHTML;
-            var temp = [name + id, amount];
+        let table = document.getElementById(id);
+        let list = [];
+        for (let r = 1; r < table.rows.length - 1; r++) {
+            let name = table.rows[r].cells[0].innerHTML;
+            let id = table.rows[r].cells[1].id;
+            let amount = table.rows[r].cells[1].innerHTML;
+            let temp = [name + id, amount];
             list[list.length] = temp;
         }
-        
-        document.getElementById('paycheck_amount').value = totalAmount;
 
-        for (var i = 0; i < list.length; i++) {
-            var input = document.getElementById(list[i][0]);
+        for (let i = 0; i < list.length; i++) {
+            let input = document.getElementById(list[i][0]);
             // console.log(input);
             input.value = list[i][1];
         }
-        checkPaycheck();
+
+        let isPercentage = document.getElementById('isPercentage').value === "True";
+        if (isPercentage) {
+            checkPaycheckPercentage();
+        }
+        else {
+            document.getElementById('paycheck_amount').value = totalAmount;
+            checkPaycheck();
+        }
     }
 
     function openPreviousPaycheckModal() {
         document.getElementById('previousPaycheckModal').style.display = 'block';
     }
 
-    function checkPaycheck(e) {
-        var amountValid = false;
-        var nameValid = false;
-        var submitBtn = document.getElementById('paycheckBtn');
+    function checkPaycheck() {
+        let amountValid = false;
+        let nameValid = false;
+        let submitBtn = document.getElementById('paycheckBtn');
         submitBtn.disabled = true;
 
-        var name = document.getElementById('paycheckName').value;
+        let name = document.getElementById('paycheckName').value;
         console.log(name);
-        var total = document.getElementById('paycheck_amount').value;
+        let total = document.getElementById('paycheck_amount').value;
         console.log(total);
         // prefillBudgets(total);
         if (total !== null) {
-            var budgets = document.getElementsByClassName('all-budgets');
-            var b_total = 0;
-            for (var i = 0; i < budgets.length; i++) {
+            let budgets = document.getElementsByClassName('all-budgets');
+            let b_total = 0;
+            for (let i = 0; i < budgets.length; i++) {
                 b_total += Number(budgets[i].value);
             }
             total = parseFloat(total).toFixed(2);
@@ -65,15 +71,15 @@
 
             if (b_total == total) {
                 submitBtn.disabled = false;
-                var total_error = document.getElementById('amount_error');
+                let total_error = document.getElementById('amount_error');
                 total_error.classList.add('display-none');
                 amountValid = true;
             }
             else {
                 console.log('here');
                 submitBtn.disabled = true;
-                var total_error = document.getElementById('amount_error');
-                total_error.innerHTML = `Paycheck Amount (${total}) does not equal combined budget amount (${b_total}).`;
+                let total_error = document.getElementById('amount_error');
+                total_error.innerHTML = `Paycheck Amount ($${total}) does not equal combined budget amount ($${b_total}).`;
                 total_error.classList.remove('display-none');
             }
         }
@@ -81,17 +87,120 @@
             // show error
             console.log('here');
             submitBtn.disabled = true;
-            var name_error = document.getElementById('name_error');
+            let name_error = document.getElementById('name_error');
             name_error.classList.remove('display-none');
         }
         else {
-            var name_error = document.getElementById('name_error');
+            let name_error = document.getElementById('name_error');
             name_error.classList.add('display-none');
             nameValid = true;
         }
 
         if (nameValid && amountValid) {
             submitBtn.disabled = false;
+        }
+    }
+
+    function checkPaycheckPercentage() {
+        let amountValid = false;
+        let nameValid = false;
+        let submitBtn = document.getElementById('paycheckBtn');
+        submitBtn.disabled = true;
+
+        let name = document.getElementById('paycheckName').value;
+        let paycheckAmount = document.getElementById('paycheck_amount').value;
+        console.log(name);
+        let total = 100;
+        console.log(total);
+        // prefillBudgets(total);
+        if (total !== null) {
+            let budgets = document.getElementsByClassName('all-budgets');
+            let b_total = 0;
+            for (let b of budgets) {
+                let temp = Number(b.value);
+                b_total += temp;
+                let p = b.parentElement.parentElement.querySelector("p");
+                p.innerHTML = "$" + Number(paycheckAmount).toFixed(2) * temp / 100;
+            }
+            total = parseFloat(total).toFixed(2);
+            b_total = parseFloat(b_total).toFixed(2);
+            console.log(total);
+            console.log(b_total);
+
+            if (b_total == total) {
+                submitBtn.disabled = false;
+                let total_error = document.getElementById('amount_error');
+                total_error.classList.add('display-none');
+                amountValid = true;
+            }
+            else {
+                console.log('here');
+                submitBtn.disabled = true;
+                let total_error = document.getElementById('amount_error');
+                total_error.innerHTML = `Budgets breakdown (${b_total}%) does not add up too 100%.`;
+                total_error.classList.remove('display-none');
+            }
+        }
+        if (name === null || name === '') {
+            // show error
+            console.log('here');
+            submitBtn.disabled = true;
+            let name_error = document.getElementById('name_error');
+            name_error.classList.remove('display-none');
+        }
+        else {
+            let name_error = document.getElementById('name_error');
+            name_error.classList.add('display-none');
+            nameValid = true;
+        }
+
+        if (nameValid && amountValid) {
+            submitBtn.disabled = false;
+        }
+    }
+
+    function toggleBudgetBreakdown() {
+        let isPercentage = document.getElementById('isPercentage');
+        let budgets = document.getElementsByClassName('all-budgets');
+        let budgetsLi = document.getElementsByClassName('all-budgets-li');
+
+        if (isPercentage.value === "True") {
+            isPercentage.value = "";
+            document.getElementById("paycheckName").addEventListener("input", checkPaycheck);
+            document.getElementById("paycheck_amount").addEventListener("input", checkPaycheck);
+            for (let b of budgets) {
+                b.addEventListener("input", checkPaycheck);
+                b.placeholder = "$0.00";
+            }
+            for (let b of budgetsLi) {
+                let p = b.querySelector("p");
+                p.classList.add('display-none');
+            }
+            checkPaycheck();
+        }
+        else {
+            isPercentage.value = "True";
+            document.getElementById("paycheckName").addEventListener("input", checkPaycheckPercentage);
+            document.getElementById("paycheck_amount").addEventListener("input", checkPaycheckPercentage);
+            for (let b of budgets) {
+                b.addEventListener("input", checkPaycheckPercentage);
+                b.placeholder = "0.00%";
+            }
+            for (let b of budgetsLi) {
+                let p = b.querySelector("p");
+                p.classList.remove('display-none');
+            }
+            checkPaycheckPercentage();
+        }
+
+        let accordionItems = document.getElementsByClassName('accordion-item');
+        for (let item of accordionItems) {
+            if (item.classList.contains('display-none')) {
+                item.classList.remove('display-none');
+            }
+            else {
+                item.classList.add('display-none');
+            }
         }
     }
 
@@ -115,11 +224,17 @@
                                 </div>
                                 <div class="form-outline form-white mb-4">
                                     <label class="form-label" for="amount">Paycheck Amount</label>
-                                    <input class="validatePaycheck form-control" type="number" step=".01" id="paycheck_amount" name="amount" placeholder="0.00" autocomplete="niklas" required>
+                                    <input class="validatePaycheck form-control" type="number" step=".01" id="paycheck_amount" name="amount" placeholder="$0.00" autocomplete="niklas" required>
                                 </div>
                                 <div class="form-outline form-white mb-4">
                                     <label class="form-label" for="amount">Date</label>
-                                    <input class="form-control mw-160" type="date" id="date" name="date" required>
+                                    <input class="form-control w-160" type="date" id="date" name="date" required>
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" value="" id="isPercentage" name="isPercentage" onclick="toggleBudgetBreakdown()">
+                                    <label class="form-check-label" for="isPercentage">
+                                        Use percentages for breakdown
+                                    </label>
                                 </div>
                                 <div class="form-outline form-white mb-4">
                                     <!-- <label class="form-label" for="amount"><h4>Paycheck Amount</h4></label>
@@ -133,9 +248,20 @@
                                 <label class="form-label" for="existing_courses">Existing Budgets</label>
                                 <ul name="existing_courses" class="list-group better-scroll" id="style-1" style="max-height: 400px;overflow-y: scroll;">
                                     {% for budget in budgets %}
-                                        <li class="list-group-item">
-                                            <label class="form-label fs-6" for="{{ budget.name }}{{ budget.id }}">{{ budget.name }}</label>
-                                            <input class="validatePaycheck all-budgets form-control mw-160 px-3" type="number" step=".01" id="{{ budget.name }}{{ budget.id }}" name="{{ budget.name }}{{ budget.id }}" placeholder="0.00" autocomplete="niklas">
+                                        <li class="list-group-item all-budgets-li">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <label class="form-label fs-6" for="{{ budget.name }}{{ budget.id }}">{{ budget.name }}</label>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-8">
+                                                    <input class="validatePaycheck all-budgets form-control mw-160 px-3" type="number" step=".01" id="{{ budget.name }}{{ budget.id }}" name="{{ budget.name }}{{ budget.id }}" placeholder="$0.00" autocomplete="niklas">
+                                                </div>
+                                                <div class="col-4">
+                                                    <p class="display-none mt-2 mb-0" id="{{ budget.id }}_amount"></p>
+                                                </div>
+                                            </div>
                                         </li>
                                     {% endfor %}
                                 </ul>
@@ -167,7 +293,7 @@
                 <div class="modal-body">
                     <div class="accordion" id="accordionExample">
                         {% for i, (k, v) in enumerate(prefills.items()) %}
-                            <div class="accordion-item">
+                            <div class="accordion-item{% if k == 100.0 %} display-none{% endif %}">
                                 <h2 class="accordion-header" id="heading{{ i }}">
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ i }}" aria-expanded="true" aria-controls="collapse{{ i }}">
                                         Total Amount: {{ k }}
@@ -250,12 +376,12 @@
             document.getElementById("{{ budget.name }}{{ budget.id }}".replace("&#39;", "'")).addEventListener("input", checkPaycheck);
         {% endfor %}
 
-        var date = new Date();
-        var ele = document.getElementById('date');
-        var year = date.getFullYear();
-        var month = (date.getMonth() + 1).toString().padStart(2, '0');
-        var day = date.getDate().toString().padStart(2, '0');
-        var strDate = year + '-' + month + '-' + day;
+        let date = new Date();
+        let ele = document.getElementById('date');
+        let year = date.getFullYear();
+        let month = (date.getMonth() + 1).toString().padStart(2, '0');
+        let day = date.getDate().toString().padStart(2, '0');
+        let strDate = year + '-' + month + '-' + day;
         ele.valueAsDate = date;
         ele.value = strDate;
     </script>

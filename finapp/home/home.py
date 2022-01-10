@@ -155,19 +155,31 @@ def paycheck():
 
     name = request.form.get("name")
     amount = request.form.get('amount')
+    is_percentage = request.form.get("isPercentage")
+
+    is_percentage = True if is_percentage == "True" else False
+
     if name and amount:
+        total_amount = 100 if is_percentage else amount
+        temp = {}
         for budget in budgets:
             try:
                 b_amt = float(request.form.get(budget.name + str(budget.id)))
                 if b_amt:
                     str_date = request.form.get('date')
                     date = get_date(str_date)
-                    create_transaction(name=name, amount=b_amt, date=date, budget_id=budget.id)
+                    if is_percentage:
+                        temp[budget.id] = [b_amt, name, date]
+                    else:
+                        create_transaction(name=name, amount=b_amt, date=date, budget_id=budget.id)
             except:
                 b_amt = 0
 
-            prefill = PaycheckPrefill(budget_id=budget.id, user_id=current_user.get_id(), total_amount=amount, amount=b_amt)
+            prefill = PaycheckPrefill(budget_id=budget.id, user_id=current_user.get_id(), total_amount=total_amount, amount=b_amt)
             do_prefill(prefill)
+
+        if is_percentage:
+            confirmBudgetsForPercentages(temp, float(amount))
 
     return redirect(url_for('home.index'))
 
@@ -554,6 +566,28 @@ def get_datetime(str_date):
     return datetime(int(year), int(month), int(day))
 
 
+def confirmBudgetsForPercentages(dic, amount):
+    total = 0
+    for k, v in dic.items():
+        temp_total = round(v[0] * amount / 100, 2)
+        v.append(temp_total)
+        total += temp_total
+    rmdr = amount - total
+
+    if abs(rmdr) < (len(dic) / 100):
+        for k, v in dic.items():
+            if rmdr > 0:
+                rmdr -= .01
+                v[-1] += .01
+            elif rmdr < 0:
+                rmdr += .01
+                v[-1] -= .01
+            create_transaction(name=v[1], amount=v[-1], date=v[2], budget_id=k)
+            return True
+
+    else:
+        return False
+
 def transSum(lst):
     total = 0
 
@@ -561,6 +595,7 @@ def transSum(lst):
         total += t.amount
     
     return total
+
 
 def get_dates(first, last):
     num_day = last - first

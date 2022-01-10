@@ -27,10 +27,7 @@ def login():
         user = User.query.filter_by(email=email).first()
 
         if user and bcrypt.check_password_hash(user.password, password):
-            try:
-                remember = bool(remember)
-            except:
-                remember = False
+            remember = True if remember == "True" else False
             login_user(user, remember=remember)
             goto = request.args.get('next', '').strip('/')
             print(email, "next", goto)
