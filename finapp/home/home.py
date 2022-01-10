@@ -225,8 +225,8 @@ def transfer():
             # Not sure what to do here. Should name contain source/dest budget names?
             # source_budget_name = get_budget(source_budget).name
             # dest_tran_name = f'{name} from {source_budget_name}'
-            create_transaction(name=name, amount=-amount, date=date, budget_id=source_budget)
-            create_transaction(name=name, amount=amount, date=date, budget_id=dest_budget)
+            create_transaction(name=name, amount=-amount, date=date, budget_id=source_budget, is_transfer=True)
+            create_transaction(name=name, amount=amount, date=date, budget_id=dest_budget, is_transfer=True)
 
         return redirect(url_for('home.index'))
 
@@ -393,9 +393,9 @@ def format_to_money_string(number, include_minus=True):
         return f'-${abs(number):,.2f}'
     return f'${abs(number):,.2f}'
 
-def create_transaction(name, amount, date, budget_id):
+def create_transaction(name, amount, date, budget_id, is_transfer=False):
     if get_budget(budget_id):
-        trans = Transaction(name=name, budget_id=budget_id, user_id=current_user.get_id(), amount=amount, date=date)
+        trans = Transaction(name=name, budget_id=budget_id, user_id=current_user.get_id(), amount=amount, date=date, is_transfer=is_transfer)
         db.session.add(trans)
         db.session.commit()
         do_transaction(trans)
@@ -429,16 +429,21 @@ def get_budget(id):
     return Budget.query.filter_by(id=id, user_id=current_user.get_id()).first()
 
 
-def get_transactions(budget_id, start_date=None, end_date=None):
+def get_transactions(budget_id, start_date=None, end_date=None, include_transfers=True):
     transactions = Transaction.query.filter_by(budget_id=budget_id, user_id=current_user.get_id()).all()
+    if not include_transfers:
+        transactions = [ t for t in transactions if t.is_transfer is not True ]
     if start_date:
-        return [ t for t in transactions if t.date >= start_date ]
+        transactions = [ t for t in transactions if t.date >= start_date ]
     if end_date:
-        return [ t for t in transactions if t.date <= end_date ]
+        transactions = [ t for t in transactions if t.date <= end_date ]
+
     return transactions
 
-def get_transactions_month(budget_id, month):
+def get_transactions_month(budget_id, month, include_transfers=True):
     transactions = Transaction.query.filter(Transaction.budget_id==budget_id).filter(Transaction.user_id==current_user.get_id()).filter(Transaction.date.month==month).all()
+    if not include_transfers:
+        transactions = [ t for t in transactions if t.is_transfer is not True ]
     return transactions
 
 
@@ -700,7 +705,7 @@ def spending_for_month(month):
         year -= 1
 
     for budg in all_budgets:
-        b_trans = sum([ t.amount for t in get_transactions(budg.id) if t.date.month == month and t.date.year == year and t.amount < 0 ]) * -1
+        b_trans = sum([ t.amount for t in get_transactions(budg.id, include_transfers=False) if t.date.month == month and t.date.year == year and t.amount < 0 ]) * -1
         # print(b_trans)
         if (b_trans > 0):
             data[budg.name] = round(b_trans, 2)
@@ -769,7 +774,7 @@ def net_spending(start_date):
     total_net = 0
     all_budgets = get_budgets(active_only=True)
     for budget in all_budgets:
-        b_trans = get_transactions(budget.id, start_date)
+        b_trans = get_transactions(budget.id, start_date, include_transfers=False)
         if not b_trans:
             continue
         in_, out, net = in_out_net(b_trans)

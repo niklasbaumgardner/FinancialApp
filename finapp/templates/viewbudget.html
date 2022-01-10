@@ -115,8 +115,17 @@
                                                 <div class="d-flex flex-column">
                                                     <p class="show-not-edit-{{ trans.id }} fs-5 my-0 text-white ">{{ trans.name }}</p>
                                                     <input class="show-edit-{{ trans.id }} form-control mb-2" type="text" id="editName{{ trans.id }}" name="editName{{ trans.id }}" value="{{ trans.name }}" autocomplete="niklas" hidden>
-                                                    <span class="show-not-edit-{{ trans.id }} fs-75 text-white-50">{{ trans.date.strftime("%B %d, %Y") }}</span>
-                                                    <input class="show-edit-{{ trans.id }} form-control w-75" type="date" id="editDate{{ trans.id }}" name="editDate{{ trans.id }}" value="{{ trans.date.strftime('%Y-%m-%d') }}" hidden>
+                                                    <div class="row text-white-50">
+                                                        <div class="col-12 {% if trans.is_transfer %}{% endif %}">
+                                                            <span class="show-not-edit-{{ trans.id }} fs-75">{{ trans.date.strftime("%B %d, %Y") }}</span>
+                                                            <input class="show-edit-{{ trans.id }} form-control w-75" type="date" id="editDate{{ trans.id }}" name="editDate{{ trans.id }}" value="{{ trans.date.strftime('%Y-%m-%d') }}" hidden>
+                                                        </div>
+                                                        {% if trans.is_transfer %}
+                                                            <div class="col-12 text-info-50 show-not-edit-{{ trans.id }}">
+                                                                <span class="fs-75">Transfer</span>
+                                                            </div>
+                                                        {% endif %}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

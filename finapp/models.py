@@ -30,6 +30,7 @@ class Transaction(db.Model):
     name = db.Column(db.String(60), nullable=False)
     amount = db.Column(db.Float, nullable=False)
     date = db.Column(db.DateTime, nullable=False)
+    is_transfer = db.Column(db.Boolean, nullable=True)
 
 class PaycheckPrefill(db.Model):
     id = db.Column(db.Integer, primary_key=True)
