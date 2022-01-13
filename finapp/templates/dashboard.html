@@ -101,83 +101,73 @@
         </div>
     </div>
 
-    <div class="row h-100">
-        <div class="col-12 col-lg-6 mt-5 py-0 mw-900">
-            <div class="accordion px-0 bg-dark" id="accordionPie">
-                <div class="accordion-item bg-dark">
-                    <p class="accordion-header bg-dark" id="headingTwo">
-                        <button class="accordion-button bg-dark text-white" id="pieChartButton" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-                            Budgets Pie Graph
-                        </button>
-                    </p>
-                    <div id="collapseTwo" class="accordion-collapse collapse show" aria-labelledby="headingTwo" data-bs-parent="#accordionPie">
-                        <div class="accordion-body bg-dark mx-5 mb-5">
-                            <div class="row mb-5">
-                                <div class="col-4 text-start">
-                                    <p class="text-white mb-1">Show percentages</p>
-                                    <label class="switch text-white">
-                                        <input id="showPercentage" type="checkbox">
-                                        <span class="slider round"></span>
-                                    </label>
+    <div class="row pt-5">
+        <div class="pie-donut-grid">
+            <div class="pie-grid">
+                <div class="accordion px-0 bg-dark" id="accordionPie">
+                    <div class="accordion-item bg-dark">
+                        <p class="accordion-header bg-dark" id="headingTwo">
+                            <button class="accordion-button bg-dark text-white" id="pieChartButton" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                                Budgets Pie Graph
+                            </button>
+                        </p>
+                        <div id="collapseTwo" class="accordion-collapse collapse show" aria-labelledby="headingTwo" data-bs-parent="#accordionPie">
+                            <div class="accordion-body bg-dark mx-5 mb-5">
+                                <div class="row mb-5">
+                                    <div class="col-4 text-start">
+                                        <p class="text-white mb-1">Show percentages</p>
+                                        <label class="switch text-white">
+                                            <input id="showPercentage" type="checkbox">
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </div>
+                                    <div class="col-4 text-end">
+                                        <input class="form-control w-160 bg-light-grey" type="date" id="date">
+                                    </div>
+                                    <div class="col-4 text-end">
+                                        <button class="btn btn-outline-primary mt-1" onclick="reAssignColors()">Randomize colors</button>
+                                    </div>
                                 </div>
-                                <div class="col-4 text-end">
-                                    <input class="form-control w-160 bg-light-grey" type="date" id="date">
+                                <div>
+                                    <canvas id="pieChart"></canvas>
                                 </div>
-                                <div class="col-4 text-end">
-                                    <button class="btn btn-outline-primary mt-1" onclick="reAssignColors()">Randomize colors</button>
-                                </div>
-                            </div>
-                            <div>
-                                <canvas id="pieChart"></canvas>
                             </div>
                         </div>
                     </div>
                 </div>
+
             </div>
-        </div>
-        <div class="col-12 col-lg-6 mt-5 py-0 mw-900">
-            <div class="accordion px-0 bg-dark" id="accordionMonth">
-                <div class="accordion-item bg-dark">
-                    <p class="accordion-header bg-dark" id="headingThree">
-                        <button class="accordion-button bg-dark text-white" id="spendingButton" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
-                            Spending for month
-                        </button>
-                    </p>
-                    <div id="collapseThree" class="accordion-collapse collapse show" aria-labelledby="headingThree" data-bs-parent="#accordionMonth">
-                        <div class="accordion-body bg-dark mx-5 mb-5">
-                            <div class="row mb-3">
-                                <!-- <div class="col-4 text-start">
-                                    <p class="text-white mb-1">Show percentages</p>
-                                    <label class="switch text-white">
-                                        <input id="showPercentage" type="checkbox">
-                                        <span class="slider round"></span>
-                                    </label>
+            <div class="donut-grid">
+                <div class="accordion px-0 bg-dark" id="accordionMonth">
+                    <div class="accordion-item bg-dark">
+                        <p class="accordion-header bg-dark" id="headingThree">
+                            <button class="accordion-button bg-dark text-white" id="spendingButton" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
+                                Spending for month
+                            </button>
+                        </p>
+                        <div id="collapseThree" class="accordion-collapse collapse show" aria-labelledby="headingThree" data-bs-parent="#accordionMonth">
+                            <div class="accordion-body bg-dark mx-5 mb-5">
+                                <div class="row mb-3">
+                                    <p class="fs-3 text-white">Spending for month
+                                        <select id="spendingMonths" class="form-select mw-130 inline bg-light-grey" aria-label="Default select example">
+                                            <option value="1">January</option>
+                                            <option value="2">February</option>
+                                            <option value="3">March</option>
+                                            <option value="4">April</option>
+                                            <option value="5">May</option>
+                                            <option value="6">June</option>
+                                            <option value="7">July</option>
+                                            <option value="8">August</option>
+                                            <option value="9">September</option>
+                                            <option value="10">October</option>
+                                            <option value="11">November</option>
+                                            <option value="12">December</option>
+                                        </select>
+                                    </p>
                                 </div>
-                                <div class="col-4 text-end">
-                                    <input class="form-control mw-160" type="date" id="date">
-                                </div> -->
-                                <p class="fs-3 text-white">Spending for month
-                                    <select id="spendingMonths" class="form-select mw-130 inline bg-light-grey" aria-label="Default select example">
-                                        <option value="1">January</option>
-                                        <option value="2">February</option>
-                                        <option value="3">March</option>
-                                        <option value="4">April</option>
-                                        <option value="5">May</option>
-                                        <option value="6">June</option>
-                                        <option value="7">July</option>
-                                        <option value="8">August</option>
-                                        <option value="9">September</option>
-                                        <option value="10">October</option>
-                                        <option value="11">November</option>
-                                        <option value="12">December</option>
-                                    </select>
-                                </p>
-                                <!-- <div class="col-4 text-end">
-                                    <button class="btn btn-outline-primary mt-1" onclick="reAssignColors()">Randomize colors</button>
-                                </div> -->
-                            </div>
-                            <div>
-                                <canvas id="spendingChart"></canvas>
+                                <div>
+                                    <canvas id="spendingChart"></canvas>
+                                </div>
                             </div>
                         </div>
                     </div>

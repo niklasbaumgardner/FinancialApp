@@ -228,3 +228,31 @@ input[type=number] {
 .text-info-50 {
     color: rgba(13, 203, 240, .5);
 }
+
+.pie-grid {
+    grid-area: pie;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.donut-grid {
+    grid-area: donut;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.pie-donut-grid {
+    max-width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template:
+            'pie'
+            'donut';
+    gap: 48px;
+}
+
+@media (min-width: 1200px) {
+    .pie-donut-grid {
+        grid-template: 'pie donut';
+    }
+}
