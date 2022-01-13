@@ -29,11 +29,11 @@
 
         for (let i = 0; i < list.length; i++) {
             let input = document.getElementById(list[i][0]);
-            // console.log(input);
             input.value = list[i][1];
         }
 
         let isPercentage = document.getElementById('isPercentage').value === "True";
+        console.log(isPercentage);
         if (isPercentage) {
             checkPaycheckPercentage();
         }
@@ -48,15 +48,14 @@
     }
 
     function checkPaycheck() {
+        console.log('in dollar');
         let amountValid = false;
         let nameValid = false;
         let submitBtn = document.getElementById('paycheckBtn');
         submitBtn.disabled = true;
 
         let name = document.getElementById('paycheckName').value;
-        console.log(name);
         let total = document.getElementById('paycheck_amount').value;
-        console.log(total);
         // prefillBudgets(total);
         if (total !== null) {
             let budgets = document.getElementsByClassName('all-budgets');
@@ -66,8 +65,6 @@
             }
             total = parseFloat(total).toFixed(2);
             b_total = parseFloat(b_total).toFixed(2);
-            console.log(total);
-            console.log(b_total);
 
             if (b_total == total) {
                 submitBtn.disabled = false;
@@ -76,7 +73,6 @@
                 amountValid = true;
             }
             else {
-                console.log('here');
                 submitBtn.disabled = true;
                 let total_error = document.getElementById('amount_error');
                 total_error.innerHTML = `Paycheck Amount ($${total}) does not equal combined budget amount ($${b_total}).`;
@@ -85,7 +81,6 @@
         }
         if (name === null || name === '') {
             // show error
-            console.log('here');
             submitBtn.disabled = true;
             let name_error = document.getElementById('name_error');
             name_error.classList.remove('display-none');
@@ -102,6 +97,7 @@
     }
 
     function checkPaycheckPercentage() {
+        console.log('in percentage');
         let amountValid = false;
         let nameValid = false;
         let submitBtn = document.getElementById('paycheckBtn');
@@ -109,9 +105,7 @@
 
         let name = document.getElementById('paycheckName').value;
         let paycheckAmount = document.getElementById('paycheck_amount').value;
-        console.log(name);
         let total = 100;
-        console.log(total);
         // prefillBudgets(total);
         if (total !== null) {
             let budgets = document.getElementsByClassName('all-budgets');
@@ -124,8 +118,6 @@
             }
             total = parseFloat(total).toFixed(2);
             b_total = parseFloat(b_total).toFixed(2);
-            console.log(total);
-            console.log(b_total);
 
             if (b_total == total) {
                 submitBtn.disabled = false;
@@ -134,7 +126,6 @@
                 amountValid = true;
             }
             else {
-                console.log('here');
                 submitBtn.disabled = true;
                 let total_error = document.getElementById('amount_error');
                 total_error.innerHTML = `Budgets breakdown (${b_total}%) does not add up too 100%.`;
@@ -143,7 +134,6 @@
         }
         if (name === null || name === '') {
             // show error
-            console.log('here');
             submitBtn.disabled = true;
             let name_error = document.getElementById('name_error');
             name_error.classList.remove('display-none');
@@ -164,12 +154,18 @@
         let budgets = document.getElementsByClassName('all-budgets');
         let budgetsLi = document.getElementsByClassName('all-budgets-li');
 
+        let name = document.getElementById("paycheckName");
+        let amount = document.getElementById("paycheck_amount");
+
         if (isPercentage.value === "True") {
             isPercentage.value = "";
-            document.getElementById("paycheckName").addEventListener("input", checkPaycheck);
-            document.getElementById("paycheck_amount").addEventListener("input", checkPaycheck);
+            name.addEventListener("input", checkPaycheck);
+            name.removeEventListener("input", checkPaycheckPercentage);
+            amount.addEventListener("input", checkPaycheck);
+            amount.removeEventListener("input", checkPaycheckPercentage);
             for (let b of budgets) {
                 b.addEventListener("input", checkPaycheck);
+                b.removeEventListener("input", checkPaycheckPercentage);
                 b.placeholder = "$0.00";
             }
             for (let b of budgetsLi) {
@@ -180,10 +176,13 @@
         }
         else {
             isPercentage.value = "True";
-            document.getElementById("paycheckName").addEventListener("input", checkPaycheckPercentage);
-            document.getElementById("paycheck_amount").addEventListener("input", checkPaycheckPercentage);
+            name.addEventListener("input", checkPaycheckPercentage);
+            name.removeEventListener("input", checkPaycheck);
+            amount.addEventListener("input", checkPaycheckPercentage);
+            amount.removeEventListener("input", checkPaycheck);
             for (let b of budgets) {
                 b.addEventListener("input", checkPaycheckPercentage);
+                b.removeEventListener("input", checkPaycheck);
                 b.placeholder = "0.00%";
             }
             for (let b of budgetsLi) {
