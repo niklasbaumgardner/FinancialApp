@@ -55,11 +55,13 @@ function removeElement(id) {
     return ele;
 }
 
-function toggleBudgetActive(id, event) {
+async function toggleBudgetActive(id, event) {
     let active = event.target.checked;
     const strId = `budget-${id}`;
 
     sendToggle(id, active);
+
+    await new Promise(r => setTimeout(r, 500));
 
     if (active) {
         let index = INACTIVE.findIndex((element) => element[0] == strId);
