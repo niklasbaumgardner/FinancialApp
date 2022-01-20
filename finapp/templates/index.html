@@ -80,7 +80,7 @@
 </script>
     <div class="container my-5">
         <div class="row justify-content-between mx-0">
-            <div class="col-auto me-auto">
+            <div class="col-auto me-auto px-0">
                 <div class="fw-bold text-white fs-1">
                     Welcome
                 </div>
@@ -88,7 +88,7 @@
                     Your total of all budgets is {{ total }}
                 </div>
             </div>
-            <div class="col-auto pt-5 me-auto" style="margin-right: 0px !important;">
+            <div class="col-auto pt-5 me-auto px-0" style="margin-right: 0px !important;">
                 <button class="btn btn-outline-light" onclick="add_new_budget()">Add New Budget</button>
             </div>
         </div>
@@ -97,19 +97,21 @@
     {% if budgets %}
         <div class="container">
             {% for group in budgets %}
-                <div class="index-grid mb-5 pb-5">
+                <div class=" index-grid mb-5 pb-5 budget-row">
                     {% for budget in group %}
-                        <div id="budget-{{ budget.id }}" class="grid-item col-10 col-sm-8 col-md-5 col-lg-6 col-xl-4 budgets">
+                        <div id="budget-{{ budget.id }}" class="grid-item budgets">
                             <!-- onclick="location.href='{{ url_for('home.view_budget', id=budget.id) }}';" -->
                             <div class="card bg-dark text-white button-div" onclick="location.href='{{ url_for('home.view_budget', id=budget.id) }}';">
                                 <div class="card-body p-4 rounded-bottom">
                                     <div class="row">
                                         <div class="col text-start">
-                                            <p class="show-not-edit-{{ budget.id }} fs-4 text-white mb-0" style="height: 38px;">{{ budget.name }}</p>
-                                            <form method="POST" id="budgetForm{{ budget.id }}" action="{{ url_for('home.edit_budget', id=budget.id) }}">
-                                                <input onclick="event.stopPropagation();"class="show-edit-{{ budget.id }} form-control edit-name" name="editName{{ budget.id }}" type="text" value="{{ budget.name }}" autocomplete="niklas" hidden required>
-                                            </form>
-                                            <span id="name_error_editName{{ budget.id }}" class="text-danger fs-6" hidden>Budget name already exist. Choose another name.</span>
+                                            <div class="d-flex flex-column">
+                                                <p class="show-not-edit-{{ budget.id }} fs-4 text-white mb-0" style="">{{ budget.name }}</p>
+                                                <form method="POST" id="budgetForm{{ budget.id }}" action="{{ url_for('home.edit_budget', id=budget.id) }}">
+                                                    <input onclick="event.stopPropagation();"class="show-edit-{{ budget.id }} form-control edit-name" name="editName{{ budget.id }}" type="text" value="{{ budget.name }}" autocomplete="niklas" hidden required>
+                                                </form>
+                                                <span id="name_error_editName{{ budget.id }}" class="text-danger fs-6" hidden>Budget name already exist. Choose another name.</span>
+                                            </div>
                                         </div>
                                         <div class="col text-end mw-70">
                                             <p class="text-white mb-1">Active</p>
