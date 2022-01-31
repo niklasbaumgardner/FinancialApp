@@ -34,3 +34,29 @@
         grid-template-columns: 400px 400px 400px;
     }
 }
+
+/* .welcome-grid {
+    display: grid;
+    grid-template:
+        "welcome-text"
+        "welcome-button";
+}
+
+.welcome-text {
+    grid-area: welcome-text;
+    width: 100%;
+}
+
+.welcome-button {
+    grid-area: welcome-button;
+    width: 147px;
+    align-items: end;
+}
+
+@media (min-width: 800px) {
+    .welcome-grid {
+        grid-template:
+        "welcome-text none"
+        "welcome-text welcome-button";
+    }
+} */
