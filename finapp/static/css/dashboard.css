@@ -244,7 +244,7 @@ input[type=number] {
 .pie-donut-grid {
     max-width: 100%;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     grid-template:
             'pie'
             'donut';
@@ -253,6 +253,7 @@ input[type=number] {
 
 @media (min-width: 1200px) {
     .pie-donut-grid {
+        grid-template-columns: 50% 50% !important;
         grid-template: 'pie donut';
     }
 }
