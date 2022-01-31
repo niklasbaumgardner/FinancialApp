@@ -28,6 +28,14 @@ def dashboard():
     return render_template('dashboard.html', budgets=budgets)
 
 
+@home.route('/get_budget_name', methods={"GET"})
+@login_required
+def get_budget_name():
+    names = [ b.name for b in get_budgets() ] + ['allBudgets']
+
+    return { 'names': names }
+
+
 @home.route('/get_pie_data', methods=["GET"])
 @login_required
 def get_pie_data():
@@ -45,7 +53,6 @@ def get_pie_data():
 @home.route('/get_spending_for_month', methods=["GET"])
 @login_required
 def get_spending_for_month():
-    # month = request.args.get('month')
     month = request.args.get('month', date.today().month, type=int)
 
     data = spending_for_month(month)
@@ -196,7 +203,7 @@ def budget_transaction():
 
     str_date = request.form.get('date')
     date = get_date(str_date)
-    
+
     budget_id = request.form.get('budget')
 
     if name and amount and budget_id:
@@ -222,9 +229,6 @@ def transfer():
         dest_budget = request.form.get('dest_budget')
 
         if name and amount and source_budget and dest_budget:
-            # Not sure what to do here. Should name contain source/dest budget names?
-            # source_budget_name = get_budget(source_budget).name
-            # dest_tran_name = f'{name} from {source_budget_name}'
             create_transaction(name=name, amount=-amount, date=date, budget_id=source_budget, is_transfer=True)
             create_transaction(name=name, amount=amount, date=date, budget_id=dest_budget, is_transfer=True)
 
@@ -286,9 +290,8 @@ def edit_transaction(b_id, t_id):
             trans.name = new_name
         if new_amount:
             trans.amount = new_amount
-        
+
         new_date = get_date(new_date)
-        
 
         if not same_day(new_date, trans.date):
             trans.date = new_date
@@ -715,7 +718,7 @@ def spending_for_month(month):
 # returns list of date: net worth for each individual budget
 def all_budgets_net_worth(start_date=None):
     # { budget name: { date: net worth } }
-    all_budgets = get_budgets()
+    all_budgets = get_budgets(active_only=True)
     temp = {}
     first = None
     last = None

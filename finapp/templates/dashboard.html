@@ -19,21 +19,16 @@
 
     const storage = window["localStorage"];
 
-    function getData(url) {
+    async function getData(url) {
         return new Promise(function(resolve, reject) {
             var xmlHttp = new XMLHttpRequest();
-            xmlHttp.open( "GET", url ); // false for synchronous request
+            xmlHttp.open( "GET", url );
             xmlHttp.onload = () => {
                 resolve(xmlHttp.response);
             };
             xmlHttp.send( null );
-            // return JSON.parse(xmlHttp.response);
 
         })
-        // var xmlHttp = new XMLHttpRequest();
-        // xmlHttp.open( "GET", url, false ); // false for synchronous request
-        // xmlHttp.send( null );
-        // return JSON.parse(xmlHttp.response);
     }
     async function getPieData(date='') {
         let result;
@@ -65,6 +60,10 @@
     }
     async function getMonthSpending(month) {
         let result = await getData("{{ url_for('home.get_spending_for_month') }}" + "?month=" + month);
+        return JSON.parse(result);
+    }
+    async function getAllBudgetNames() {
+        let result = await getData("{{ url_for('home.get_budget_name') }}");
         return JSON.parse(result);
     }
 </script>

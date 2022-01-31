@@ -379,7 +379,7 @@ function addButtons() {
 
     for (let name of names) {
         // console.log(typeof(name), typeof(id));
-        if (name === 'allBudgets') {
+        if (name === 'allBudgets' || !data['names'].includes(name)) {
             continue;
         }
         let input = document.createElement('input');
@@ -642,9 +642,11 @@ async function spendingPerMonth(month, monthName) {
 
 // function calls
 (async() => {
+    names = await getAllBudgetNames();
+    names = names['names'];
+
     data = await getAllBudgetsLineData();
     // console.log(data);
-    names = data['names'];
 
     assignColors();
     lineChart();
