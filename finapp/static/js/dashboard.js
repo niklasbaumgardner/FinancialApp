@@ -370,8 +370,6 @@ function toggleShowLine(event) {
     else {
         removeDataForBudget(name);
     }
-
-
 }
 
 function addButtons() {

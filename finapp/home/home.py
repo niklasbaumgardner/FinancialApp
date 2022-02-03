@@ -31,7 +31,7 @@ def dashboard():
 @home.route('/get_budget_name', methods={"GET"})
 @login_required
 def get_budget_name():
-    names = [ b.name for b in get_budgets() ] + ['allBudgets']
+    names = ['allBudgets'] + [ b.name for b in get_budgets() ]
 
     return { 'names': names }
 
@@ -267,7 +267,7 @@ def view_budget(id):
     budgets = get_budgets()
 
     if start_date:
-        transactions = Transaction.query.filter(Transaction.budget_id==budget.id).filter(Transaction.user_id==current_user.get_id()).filter(Transaction.date>=start_date).order_by(Transaction.date.desc(), Transaction.id.desc()).paginate(page=page, per_page=10)
+        transactions = Transaction.query.filter(Transaction.budget_id==budget.id).filter(Transaction.user_id==current_user.get_id()).filter(Transaction.date>start_date).order_by(Transaction.date.desc(), Transaction.id.desc()).paginate(page=page, per_page=10)
         return render_template('viewbudget.html', budget=budget, transactions=transactions, round=round, strftime=datetime.strftime, budgets=budgets, str=str, format_to_money_string=format_to_money_string, curr_date=curr_date_str, days_back=days_back)
 
     else:

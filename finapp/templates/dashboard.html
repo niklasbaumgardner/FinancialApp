@@ -55,6 +55,9 @@
         let month = (date.getMonth() + 1).toString().padStart(2, '0');
         let day = date.getDate().toString().padStart(2, '0');
         let strDate = year + '-' + month + '-' + day;
+        if (daysBack === "thisMonth") {
+            daysBack = date.getDate();
+        }
         let result = await getData("{{ url_for('home.get_net_spending') }}" + "?currentDate=" + strDate + "&daysBack=" + daysBack);
         return JSON.parse(result);
     }
@@ -174,8 +177,9 @@
                     </p>
                     <div id="collapseNet" class="accordion-collapse collapse show" aria-labelledby="headingTemp" data-bs-parent="#accordionNet">
                         <div class="accordion-body bg-dark">
-                            <p class="fs-1 text-white">Spending in the last
-                                <select id="spendingDays" class="form-select mw-130 inline form-select-lg bg-light-grey" aria-label="Default select example">
+                            <p class="fs-3 text-white">Spending in the last
+                                <select id="spendingDays" class="form-select mw-130 inline bg-light-grey" aria-label="Default select example">
+                                    <option id="thisMonth">This month</option>
                                     <option value="7">7 days</option>
                                     <option value="14">14 days</option>
                                     <option value="30">30 days</option>
@@ -199,13 +203,21 @@
                 5: "May", 6: "June",  7: "July", 8: "August", 9: "September",
                 10: "October", 11: "November", 12: "December"};
 
+    // onChange handler for spending last X days
     let spending = document.getElementById('spendingDays');
     spending.addEventListener('change', (event) => {
         let sel = event.target;
-        storage.setItem("spendingDays", sel.value);
+        console.log(sel.options.selectedIndex);
+        if (sel.options.selectedIndex === 0) {
+            storage.setItem("spendingDays", "thisMonth");
+        }
+        else {
+            storage.setItem("spendingDays", sel.value);
+        }
         netSpending(sel.value);
     });
 
+    // onclick handler for showing percentage for pie chart
     let toggle = document.getElementById('showPercentage');
     toggle.onclick = function(event) {
         console.log(event.target.checked);
@@ -228,6 +240,7 @@
         pieChart(event.target.value);
     }
 
+    // sort the donut months
     let monthInt = date.getMonth() + 1;
     let select = document.getElementById('spendingMonths');
     select.value = monthInt;
@@ -245,12 +258,17 @@
         value -= 1;
     }
 
+    // Set This month value to the date of the month
+    document.getElementById("thisMonth").value = date.getDate();
+
+    // The change handler for the month spending donut
     select.addEventListener('change', event => {
         let date = new Date(2000, event.target.value-1, 1);
         let monthName = date.toLocaleString('default', { month: 'long' });
         spendingPerMonth(event.target.value, monthName);
     });
 
+    // store the accordian state for next use
     let accordions = document.querySelectorAll(".accordion-button");
     for (let accord of accordions) {
         accord.onclick = event => {
@@ -260,12 +278,20 @@
         }
     }
 
+    // Show the percentage if storage says so
     if (storage.getItem("showPercentage") === "true") {
         toggle.checked = true;
     }
 
+    // set spending days according to storage
     if (storage.getItem("spendingDays")) {
-        spending.value = storage.getItem("spendingDays");
+        let spendingDays = storage.getItem("spendingDays");
+        if (spendingDays === "thisMonth") {
+            spending.value = date.getDate();
+        }
+        else {
+            spending.value = storage.getItem("spendingDays");
+        }
     }
 
 </script>
