@@ -650,10 +650,15 @@ async function spendingPerMonth(month, monthName) {
     lineChart();
     pieChart('', storage.getItem("showPercentage"));
     addButtons();
-    let temp = storage.getItem("spendingDays");
-    let days = temp ? temp : "14";
-    netSpending(days);
     let date = new Date();
+    let days = storage.getItem("spendingDays");
+    if (days && days === "thisMonth") {
+        days = `${date.getDate()}`;
+    }
+    else if (!days) {
+        days = "14";
+    }
+    netSpending(days);
     let monthInt = date.getMonth() + 1;
     let monthName = date.toLocaleString('default', { month: 'long' });
     spendingPerMonth(monthInt, monthName);

@@ -284,15 +284,26 @@
     }
 
     // set spending days according to storage
-    if (storage.getItem("spendingDays")) {
-        let spendingDays = storage.getItem("spendingDays");
-        if (spendingDays === "thisMonth") {
-            spending.value = date.getDate();
-        }
-        else {
-            spending.value = storage.getItem("spendingDays");
-        }
+    let spendingDays = storage.getItem("spendingDays");
+    if (spendingDays === "thisMonth") {
+        spending.value = date.getDate();
     }
+    else if (!spendingDays) {
+        spending.value = spendingDays;
+    }
+    else {
+        spending.value = "14";
+    }
+    // spending.value = "14";
+    // if (storage.getItem("spendingDays")) {
+    //     let spendingDays = storage.getItem("spendingDays");
+    //     if (spendingDays === "thisMonth") {
+    //         spending.value = date.getDate();
+    //     }
+    //     else {
+    //         spending.value = storage.getItem("spendingDays");
+    //     }
+    // }
 
 </script>
 {% endblock content %}
