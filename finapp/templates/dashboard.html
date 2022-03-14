@@ -259,7 +259,9 @@
     }
 
     // Set This month value to the date of the month
-    document.getElementById("thisMonth").value = date.getDate();
+    let thisMonthOption = document.getElementById("thisMonth");
+    let today = date.getDate();
+    thisMonthOption.value = today;
 
     // The change handler for the month spending donut
     select.addEventListener('change', event => {
@@ -286,7 +288,7 @@
     // set spending days according to storage
     let spendingDays = storage.getItem("spendingDays");
     if (spendingDays === "thisMonth") {
-        spending.value = date.getDate();
+        spending.value = today;
     }
     else if (!spendingDays) {
         spending.value = spendingDays;
