@@ -8,6 +8,8 @@
 
 {% block content %}
 <script>
+    const storage = window["localStorage"];
+
     function deleteTransaction(t_id) {
         document.getElementById('delete_id' + t_id).style.display = 'block';
     }
@@ -87,11 +89,31 @@
     }
 </script>
     <div class="container pb-5 pt-5">
-        <div class="fw-bold text-white fs-1">
-            {{ budget.name }}
-        </div>
-        <div class="fs-4 mb-0 subhead text-white-50">
-            Total: {{ format_to_money_string(round(budget.total, 2)) }}
+        <div class="row">
+            <div class="col-auto me-auto">
+                <div class="fw-bold text-white fs-1">
+                    {{ budget.name }}
+                </div>
+                <div class="fs-4 mb-0 subhead text-white-50">
+                    Total: {{ format_to_money_string(round(budget.total, 2)) }}
+                </div>
+            </div>
+            <div class="col-auto align-self-end fs-5 text-white">
+                Transaction input at
+                <div id="transactionTopBottomToggle" class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                    <input type="radio" class="btn-check" name="btnradio" id="top" autocomplete="off">
+                    <label class="btn btn-sm btn-outline-light" for="top">Top</label>
+
+                    <input type="radio" class="btn-check" name="btnradio" id="bottom" autocomplete="off">
+                    <label class="btn btn-sm btn-outline-light" for="bottom">Bottom</label>
+                </div>
+                <!-- <div id="lineButtons" class="btn-group my-3" role="group" aria-label="Basic radio toggle button group">
+                    <input type="radio" class="btn-check" id="top" checked>
+                    <label id="topLabel" class="btn btn-outline-light" for="top">Top</label>
+                    <input type="me-auto" class="btn-check" id="bottom">
+                    <label id="bottomLabel" class="btn btn-outline-light" for="bottom">Bottom</label>
+                </div> -->
+            </div>
         </div>
     </div>
 
@@ -101,7 +123,7 @@
                 <p class="fs-3 text-white">Your Transaction's</p>
             </div>
             <div class="card-body bg-dark">
-                <ul class="list-group">
+                <ul id="transactionList" class="list-group">
                     {% for trans in transactions.items %}
                         <form method="POST" id="trans{{ trans.id }}" action="{{ url_for('home.edit_transaction', b_id=budget.id, t_id=trans.id) }}">
                             <input id="page" name="page" value="{{ transactions.page }}" hidden>
@@ -204,7 +226,7 @@
                             </div>
                         </div>
                     {% endfor %}
-                    <li class="list-group-item mb-2 bg-dark border-0">
+                    <li id="transactionInput" class="list-group-item pb-2 bg-dark border-0">
                         <div class="row">
                             <div class="col">
                                 <div class="d-flex">
@@ -294,6 +316,52 @@
 
 
     <script>
+        function moveTransactionInputTo(location) {
+            // pass
+            let transactionInput = document.querySelector("#transactionInput");
+            transactionInput.remove();
+
+            let transactionForms = document.querySelectorAll("#transactionList > form");
+            let lastTransaction = transactionForms[transactionForms.length - 1].querySelector("li");
+            lastTransaction.classList.toggle("border-bottom-0");
+
+            let transactionList = document.querySelector("#transactionList");
+
+            if (location === "top") {
+                let firstTransaction = document.querySelector("#transactionList > form");
+                transactionList.insertBefore(transactionInput, firstTransaction);
+                transactionInput.classList.add("border-start-0", "border-top-0", "border-end-0", "border-transparent");
+                transactionInput.classList.remove("border-0");
+            }
+            else if (location === "bottom") {
+                transactionList.appendChild(transactionInput);
+                transactionInput.classList.remove("border-start-0", "border-top-0", "border-end-0", "border-transparent");
+                transactionInput.classList.add("border-0");
+            }
+        }
+
+        function topBottomTransactionToggle(event) {
+            let location = event.target.id;
+            moveTransactionInputTo(location);
+            storage.setItem("transactionInputLocation", location);
+
+        }
+
+        let topButton = document.querySelector("#top");
+        topButton.addEventListener("click", topBottomTransactionToggle);
+
+        let bottomButton = document.querySelector("#bottom");
+        bottomButton.addEventListener("click", topBottomTransactionToggle);
+
+        let transactionInputLocation = storage.getItem("transactionInputLocation");
+        if (transactionInputLocation === "top") {
+            topButton.checked = true;
+            moveTransactionInputTo("top");
+        }
+        else {
+            bottomButton.checked = true;
+        }
+
         document.getElementById("name").addEventListener("keyup", checkInput);
         document.getElementById("amount").addEventListener("keyup", checkInput);
         let date = new Date();
