@@ -20,13 +20,13 @@
     const storage = window["localStorage"];
 
     async function getData(url) {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             var xmlHttp = new XMLHttpRequest();
-            xmlHttp.open( "GET", url );
+            xmlHttp.open("GET", url);
             xmlHttp.onload = () => {
                 resolve(xmlHttp.response);
             };
-            xmlHttp.send( null );
+            xmlHttp.send(null);
 
         })
     }
@@ -90,9 +90,9 @@
                                     <label id="allBudgetsLabel" class="btn btn-outline-light" for="allBudgets">All Budgets</label>
                                 </div>
                             </div>
-                            <div class="text-end mt-3">
+                            <!-- <div class="text-end mt-3">
                                 <button class="btn btn-outline-primary" onclick="reAssignColors()">Randomize colors</button>
-                            </div>
+                            </div> -->
                         </div>
                         <div class="mb-5">
                             <canvas id="lineChart"></canvas>
@@ -199,9 +199,11 @@
     </div>
 <script src="/static/js/dashboard.js"></script>
 <script>
-    const months = {1: "January", 2: "February", 3: "March", 4: "April",
-                5: "May", 6: "June",  7: "July", 8: "August", 9: "September",
-                10: "October", 11: "November", 12: "December"};
+    const months = {
+        1: "January", 2: "February", 3: "March", 4: "April",
+        5: "May", 6: "June", 7: "July", 8: "August", 9: "September",
+        10: "October", 11: "November", 12: "December"
+    };
 
     // onChange handler for spending last X days
     let spending = document.getElementById('spendingDays');
@@ -265,7 +267,7 @@
 
     // The change handler for the month spending donut
     select.addEventListener('change', event => {
-        let date = new Date(2000, event.target.value-1, 1);
+        let date = new Date(2000, event.target.value - 1, 1);
         let monthName = date.toLocaleString('default', { month: 'long' });
         spendingPerMonth(event.target.value, monthName);
     });

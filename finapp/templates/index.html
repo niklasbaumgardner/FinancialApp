@@ -144,7 +144,7 @@
         </div>
         {% for group in budgets %}
             {% for budget in group %}
-                <div id="id{{ budget.id }}" class="modal" style="display: none;">
+                <div id="id{{ budget.id }}" class="modal">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <form method="POST" action="{{ url_for('home.delete_budget', b_id=budget.id) }}">
@@ -188,7 +188,7 @@
         <h4>No budgets! Click <a href="{{ url_for('home.add_budget') }}">HERE</a> to add a budget.</h4>
     {% endif %}
 
-    <div id="addNewBudgetModal" class="modal" style="display: none;">
+    <div id="addNewBudgetModal" class="modal">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">

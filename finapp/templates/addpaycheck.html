@@ -282,7 +282,7 @@
 
 
 {% if showPrefills %}
-    <div id="previousPaycheckModal" class="modal" style="display: none;">
+    <div id="previousPaycheckModal" class="modal">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -331,7 +331,7 @@
                                 </div>
                             </div>
 
-                            <div id="delete{{ k }}" class="modal" style="display: none;">
+                            <div id="delete{{ k }}" class="modal">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <form method="POST" action="{{ url_for('home.delete_prefill', amount=k) }}">
