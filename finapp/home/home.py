@@ -437,7 +437,7 @@ def get_transactions(budget_id, start_date=None, end_date=None, include_transfer
     if not include_transfers:
         transactions = [ t for t in transactions if t.is_transfer is not True ]
     if start_date:
-        transactions = [ t for t in transactions if t.date >= start_date ]
+        transactions = [ t for t in transactions if t.date > start_date ]
     if end_date:
         transactions = [ t for t in transactions if t.date <= end_date ]
 
