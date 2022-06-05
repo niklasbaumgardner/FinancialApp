@@ -234,7 +234,7 @@ def transfer():
 
         return redirect(url_for('home.index'))
 
-    budgets = get_budgets()
+    budgets = get_budgets(active_only=True)
     return render_template('transfer.html', budgets=budgets, str=str)
 
 
@@ -264,7 +264,7 @@ def view_budget(id):
         start_date = curr_date - timedelta(days=int(days_back)) if days_back else None
 
     budget = get_budget(id)
-    budgets = get_budgets()
+    budgets = get_budgets(active_only=True)
 
     if start_date:
         transactions = Transaction.query.filter(Transaction.budget_id==budget.id).filter(Transaction.user_id==current_user.get_id()).filter(Transaction.date>start_date).order_by(Transaction.date.desc(), Transaction.id.desc()).paginate(page=page, per_page=10)
