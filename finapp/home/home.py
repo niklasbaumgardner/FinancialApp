@@ -374,7 +374,7 @@ def delete_prefill(amount):
     for prefill in prefills:
         delete_prefill(prefill.id)
 
-    return redirect(url_for('home.add_transaction'))
+    return redirect(url_for('home.add_paycheck'))
 
 
 
