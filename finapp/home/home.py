@@ -366,7 +366,7 @@ def delete_budget(b_id):
     return redirect(url_for('home.index'))
 
 
-@home.route('/delete_prefill/<float:amount>', methods=["POST"])
+@home.route('/delete_prefill/<float:amount>', methods=["GET"])
 @login_required
 def delete_prefill(amount):
     prefills = get_prefills_by_amount(amount)
@@ -374,7 +374,7 @@ def delete_prefill(amount):
     for prefill in prefills:
         delete_prefill(prefill.id)
 
-    return redirect(url_for('home.add_paycheck'))
+    return { "success": True }
 
 
 
