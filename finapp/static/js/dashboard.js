@@ -452,12 +452,12 @@ function createPtagWithClass(classString) {
     return p;
 }
 
-function createCard(name, in_, out, net, strDate, daysBack) {
+function createCard(name, in_, out, net, month) {
     let card;
     if (names.includes(name)) {
         card = createDivWithClass('card bg-lighter-grey button-div');
         card.onclick = () => {
-            location.href = `${BUDGET_URLS[name]}?currentDate=${strDate}&daysBack=${daysBack}`;
+            location.href = `${BUDGET_URLS[name]}?month=${month}`;
         }
     }
     else {
@@ -546,18 +546,18 @@ function createCard(name, in_, out, net, strDate, daysBack) {
     return column3;
 }
 
-async function netSpending(daysBack="14") {
-    let spendingData = await getNetSpending(daysBack);
+async function netSpending(month) {
+    let spendingData = await getNetSpending(month);
     // let dataKeys = Object.keys(data)
 
     let div = document.getElementById('net-spending');
     div.innerHTML = '';
 
-    let date = new Date();
-    let year = date.getFullYear();
-    let month = (date.getMonth() + 1).toString().padStart(2, '0');
-    let day = date.getDate().toString().padStart(2, '0');
-    let strDate = year + '-' + month + '-' + day;
+    // let date = new Date();
+    // let year = date.getFullYear();
+    // let month = (date.getMonth() + 1).toString().padStart(2, '0');
+    // let day = date.getDate().toString().padStart(2, '0');
+    // let strDate = year + '-' + month + '-' + day;
 
     let count = 0;
     let row = document.getElementById('net-spending');
@@ -573,7 +573,7 @@ async function netSpending(daysBack="14") {
             if (name === 'allBudgets') {
                 name_ = 'All Budgets Combined';
             }
-            let card = createCard(name_, spendingData[name]['in'], spendingData[name]['out'], spendingData[name]['net'], strDate, daysBack);
+            let card = createCard(name_, spendingData[name]['in'], spendingData[name]['out'], spendingData[name]['net'], month);
 
             row.appendChild(card);
         }
@@ -650,18 +650,10 @@ async function spendingPerMonth(month, monthName) {
     lineChart();
     pieChart('', storage.getItem("showPercentage"));
     addButtons();
-    let date = new Date();
-    let days = storage.getItem("spendingDays");
-    if (days && days === "thisMonth") {
-        days = `${date.getDate()}`;
-    }
-    else if (!days) {
-        days = "14";
-    }
-    netSpending(days);
     let monthInt = date.getMonth() + 1;
     let monthName = date.toLocaleString('default', { month: 'long' });
     spendingPerMonth(monthInt, monthName);
+    netSpending(monthInt);
 
     let arr = ["lineGraphButton", "pieChartButton", "spendingButton", "netSpendingButton"];
     for (let id of arr) {

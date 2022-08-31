@@ -49,16 +49,8 @@
         let result = await getData("{{ url_for('home.get_all_budgets_line_data') }}" + "?currentDate=" + strDate + "&daysBack=" + daysBack);
         return JSON.parse(result);
     }
-    async function getNetSpending(daysBack="14") {
-        let date = new Date();
-        let year = date.getFullYear();
-        let month = (date.getMonth() + 1).toString().padStart(2, '0');
-        let day = date.getDate().toString().padStart(2, '0');
-        let strDate = year + '-' + month + '-' + day;
-        if (daysBack === "thisMonth") {
-            daysBack = date.getDate();
-        }
-        let result = await getData("{{ url_for('home.get_net_spending') }}" + "?currentDate=" + strDate + "&daysBack=" + daysBack);
+    async function getNetSpending(month) {
+        let result = await getData("{{ url_for('home.get_net_spending_for_month') }}" + "?month=" + month);
         return JSON.parse(result);
     }
     async function getMonthSpending(month) {
@@ -179,13 +171,13 @@
                         <div class="accordion-body bg-dark">
                             <p class="fs-3 text-white">Spending in the last
                                 <select id="spendingDays" class="form-select mw-130 inline bg-light-grey" aria-label="Default select example">
-                                    <option id="thisMonth">This month</option>
+                                    <!-- <option id="thisMonth">This month</option>
                                     <option value="7">7 days</option>
                                     <option value="14">14 days</option>
                                     <option value="30">30 days</option>
                                     <option value="60">60 days</option>
                                     <option value="90">90 days</option>
-                                    <option value="All">All time</option>
+                                    <option value="All">All time</option> -->
                                 </select>
                             </p>
 
@@ -206,18 +198,18 @@
     };
 
     // onChange handler for spending last X days
-    let spending = document.getElementById('spendingDays');
-    spending.addEventListener('change', (event) => {
-        let sel = event.target;
-        console.log(sel.options.selectedIndex);
-        if (sel.options.selectedIndex === 0) {
-            storage.setItem("spendingDays", "thisMonth");
-        }
-        else {
-            storage.setItem("spendingDays", sel.value);
-        }
-        netSpending(sel.value);
-    });
+    // let spending = document.getElementById('spendingDays');
+    // spending.addEventListener('change', (event) => {
+    //     let sel = event.target;
+    //     console.log(sel.options.selectedIndex);
+    //     if (sel.options.selectedIndex === 0) {
+    //         storage.setItem("spendingDays", "thisMonth");
+    //     }
+    //     else {
+    //         storage.setItem("spendingDays", sel.value);
+    //     }
+    //     netSpending(sel.value);
+    // });
 
     // onclick handler for showing percentage for pie chart
     let toggle = document.getElementById('showPercentage');
@@ -244,32 +236,38 @@
 
     // sort the donut months
     let monthInt = date.getMonth() + 1;
-    let select = document.getElementById('spendingMonths');
-    select.value = monthInt;
+    let pieSelect = document.getElementById('spendingMonths');
+    let budgetSelect = document.getElementById("spendingDays")
+    pieSelect.value = monthInt;
+    budgetSelect.value = monthInt;
     let value = monthInt;
     for (let i = 0; i < 12; i++) {
         if (value < 1) {
             value += 12;
         }
-        let option = document.createElement("option");
-        option.value = value;
-        option.innerText = months[value];
+        let option1 = document.createElement("option");
+        option1.value = value;
+        option1.innerText = months[value];
 
-        select.appendChild(option);
+        pieSelect.appendChild(option1);
+
+        let option2 = document.createElement("option");
+        option2.value = value;
+        option2.innerText = months[value];
+        budgetSelect.appendChild(option2);
 
         value -= 1;
     }
 
-    // Set This month value to the date of the month
-    let thisMonthOption = document.getElementById("thisMonth");
-    let today = date.getDate();
-    thisMonthOption.value = today;
-
     // The change handler for the month spending donut
-    select.addEventListener('change', event => {
+    pieSelect.addEventListener('change', event => {
         let date = new Date(2000, event.target.value - 1, 1);
         let monthName = date.toLocaleString('default', { month: 'long' });
         spendingPerMonth(event.target.value, monthName);
+    });
+
+    budgetSelect.addEventListener('change', event => {
+        netSpending(event.target.value);
     });
 
     // store the accordian state for next use
@@ -288,16 +286,16 @@
     }
 
     // set spending days according to storage
-    let spendingDays = storage.getItem("spendingDays");
-    if (spendingDays === "thisMonth") {
-        spending.value = today;
-    }
-    else if (!spendingDays) {
-        spending.value = spendingDays;
-    }
-    else {
-        spending.value = "14";
-    }
+    // let spendingDays = storage.getItem("spendingDays");
+    // if (spendingDays === "thisMonth") {
+    //     spending.value = today;
+    // }
+    // else if (!spendingDays) {
+    //     spending.value = spendingDays;
+    // }
+    // else {
+    //     spending.value = "14";
+    // }
     // spending.value = "14";
     // if (storage.getItem("spendingDays")) {
     //     let spendingDays = storage.getItem("spendingDays");
