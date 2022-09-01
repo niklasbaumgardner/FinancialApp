@@ -201,9 +201,6 @@
 
     <script>
         function moveTransactionInputTo(location) {
-            if (!location) {
-                location = "bottom";
-            }
             let transactionInput = document.querySelector("#transactionInput");
             transactionInput.remove();
 
@@ -220,7 +217,7 @@
                 transactionInput.classList.add("border-start-0", "border-top-0", "border-end-0", "border-transparent");
                 transactionInput.classList.remove("border-0");
             }
-            else if (location === "bottom") {
+            else {
                 transactionList.appendChild(transactionInput);
                 transactionInput.classList.remove("border-start-0", "border-top-0", "border-end-0", "border-transparent");
                 transactionInput.classList.add("border-0");
