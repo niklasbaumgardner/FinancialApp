@@ -200,7 +200,10 @@
 
 
     <script>
-        function moveTransactionInputTo(location="bottom") {
+        function moveTransactionInputTo(location) {
+            if (!location) {
+                location = "bottom";
+            }
             let transactionInput = document.querySelector("#transactionInput");
             transactionInput.remove();
 
