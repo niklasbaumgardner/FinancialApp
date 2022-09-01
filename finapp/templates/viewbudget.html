@@ -199,7 +199,7 @@
 
 
 
-    <script>
+    <script defer>
         function moveTransactionInputTo(location) {
             // pass
             let transactionInput = document.querySelector("#transactionInput");
@@ -230,37 +230,34 @@
             storage.setItem("transactionInputLocation", location);
         }
 
-        document.addEventListener("DOMContentLoaded", function(){
-            const pagination = new Pagination(ele_array);
+        const pagination = new Pagination(ele_array);
 
-            let topButton = document.querySelector("#top");
-            topButton.addEventListener("click", topBottomTransactionToggle);
+        let topButton = document.querySelector("#top");
+        topButton.addEventListener("click", topBottomTransactionToggle);
 
-            let bottomButton = document.querySelector("#bottom");
-            bottomButton.addEventListener("click", topBottomTransactionToggle);
+        let bottomButton = document.querySelector("#bottom");
+        bottomButton.addEventListener("click", topBottomTransactionToggle);
 
-            document.getElementById("name").addEventListener("keyup", checkInput);
-            document.getElementById("amount").addEventListener("keyup", checkInput);
-            let date = new Date();
-            let ele = document.getElementById('date');
-            let year = date.getFullYear();
-            let month = (date.getMonth() + 1).toString().padStart(2, '0');
-            let day = date.getDate().toString().padStart(2, '0');
-            let strDate = year + '-' + month + '-' + day;
-            ele.valueAsDate = date;
-            ele.value = strDate;
+        document.getElementById("name").addEventListener("keyup", checkInput);
+        document.getElementById("amount").addEventListener("keyup", checkInput);
+        let date = new Date();
+        let ele = document.getElementById('date');
+        let year = date.getFullYear();
+        let month = (date.getMonth() + 1).toString().padStart(2, '0');
+        let day = date.getDate().toString().padStart(2, '0');
+        let strDate = year + '-' + month + '-' + day;
+        ele.valueAsDate = date;
+        ele.value = strDate;
 
-            let transactionInputLocation = storage.getItem("transactionInputLocation");
-            if (transactionInputLocation === "top") {
-                topButton.checked = true;
-                moveTransactionInputTo("top");
-            }
-            else {
-                bottomButton.checked = true;
-                moveTransactionInputTo("bottom");
-            }
-
-        });
+        let transactionInputLocation = storage.getItem("transactionInputLocation");
+        if (transactionInputLocation === "top") {
+            topButton.checked = true;
+            moveTransactionInputTo("top");
+        }
+        else {
+            bottomButton.checked = true;
+            moveTransactionInputTo("bottom");
+        }
     </script>
 
 {% endblock content %}
