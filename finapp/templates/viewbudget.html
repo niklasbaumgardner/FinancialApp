@@ -201,9 +201,10 @@
 
     <script>
         function moveTransactionInputTo(location) {
-            // pass
+            console.log(location);
             let transactionInput = document.querySelector("#transactionInput");
             transactionInput.remove();
+            console.log(transactionInput);
 
             let transactionForms = document.querySelectorAll("#transactionList > form");
             let lastTransaction = transactionForms[transactionForms.length - 1].querySelector("li");
