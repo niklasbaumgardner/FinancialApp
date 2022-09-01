@@ -5,7 +5,6 @@ from finapp.models import User, Budget, Transaction, PaycheckPrefill
 from finapp.extensions import db
 from datetime import datetime, timedelta, date
 from pytz import timezone
-from flask_sqlalchemy import Pagination
 
 
 home = Blueprint('home', __name__)
@@ -258,12 +257,12 @@ def view_budget(id):
     if month:
         month = int(month)
         transactions = get_transactions_for_month(budget_id=budget.id, month=month)
-        print(page)
-        transactions = Pagination(query=None, page=page, per_page=10, total=len(transactions), items=transactions)
+        # transactions = Pagination(query=None, page=page, per_page=10, total=len(transactions), items=transactions)
         return render_template('viewbudget.html', budget=budget, transactions=transactions, round=round, strftime=datetime.strftime, budgets=budgets, str=str, format_to_money_string=format_to_money_string)
 
     else:
-        transactions = Transaction.query.filter_by(budget_id=budget.id, user_id=current_user.get_id()).order_by(Transaction.date.desc(), Transaction.id.desc()).paginate(page=page, per_page=10)
+        transactions = get_transactions(budget_id=budget.id)
+        # transactions = Transaction.query.filter_by(budget_id=budget.id, user_id=current_user.get_id()).paginate(page=page, per_page=10)
 
     return render_template('viewbudget.html', budget=budget, transactions=transactions, round=round, strftime=datetime.strftime, budgets=budgets, str=str, format_to_money_string=format_to_money_string)
 
@@ -425,7 +424,7 @@ def get_budget(id):
 
 
 def get_transactions(budget_id, start_date=None, end_date=None, include_transfers=True):
-    transactions = Transaction.query.filter_by(budget_id=budget_id, user_id=current_user.get_id()).all()
+    transactions = Transaction.query.filter_by(budget_id=budget_id, user_id=current_user.get_id()).order_by(Transaction.date.desc(), Transaction.id.desc()).all()
     if not include_transfers:
         transactions = [ t for t in transactions if t.is_transfer is not True ]
     if start_date:
@@ -439,10 +438,10 @@ def get_transactions_for_month(budget_id, month, include_transfers=True, query=T
     year=date.today().year
 
     current_month = date.today().month
-    if current_month > month:
+    if current_month < month:
         year -=1
 
-    transactions = Transaction.query.filter(Transaction.budget_id==budget_id).filter(Transaction.user_id==current_user.get_id()).all()
+    transactions = Transaction.query.filter(Transaction.budget_id==budget_id).filter(Transaction.user_id==current_user.get_id()).order_by(Transaction.date.desc(), Transaction.id.desc()).all()
     transactions = [ t for t in transactions if t.date.month == month and t.date.year == year]
     # if not query:
     #     return transactions

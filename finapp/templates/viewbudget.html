@@ -7,86 +7,63 @@
 
 
 {% block content %}
+<script src="/static/js/viewbudget.js"></script>
 <script>
-    const storage = window["localStorage"];
 
-    function deleteTransaction(t_id) {
-        document.getElementById('delete_id' + t_id).style.display = 'block';
-    }
+    const parser = new DOMParser();
+    const ele_array = [];
+    {% for trans in transactions %}
+        ele_array.push(parser.parseFromString(`
+        <form method="POST" id="trans{{ trans.id }}" action="{{ url_for('home.edit_transaction', b_id=budget.id, t_id=trans.id) }}">
+            <input id="page" name="page" value="{{ transactions.page }}" hidden>
+            <li class="list-group-item bg-dark border-start-0 border-top-0 border-end-0 border-transparent ">
+                <div class="row">
+                    <div class="col">
+                        <div class="d-flex">
+                            <div class="d-flex flex-column">
+                                <p class="show-not-edit-{{ trans.id }} fs-5 my-0 text-white ">{{ trans.name }}</p>
+                                <input class="show-edit-{{ trans.id }} form-control mb-2" type="text" id="editName{{ trans.id }}" name="editName{{ trans.id }}" value="{{ trans.name }}" autocomplete="niklas" hidden>
+                                <div class="row text-white-50">
+                                    <div class="col-12 {% if trans.is_transfer %}{% endif %}">
+                                        <span class="show-not-edit-{{ trans.id }} fs-75">{{ trans.date.strftime("%B %d, %Y") }}</span>
+                                        <input class="show-edit-{{ trans.id }} form-control w-75" type="date" id="editDate{{ trans.id }}" name="editDate{{ trans.id }}" value="{{ trans.date.strftime('%Y-%m-%d') }}" hidden>
+                                    </div>
+                                    {% if trans.is_transfer %}
+                                        <div class="col-12 text-info-50 show-not-edit-{{ trans.id }}">
+                                            <span class="fs-75">Transfer</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="d-flex justify-content-center">
+                            <p class="show-not-edit-{{ trans.id }} fs-6 text-white">
+                                {{ format_to_money_string(trans.amount) }}
+                            </p>
+                            <input class="show-edit-{{ trans.id }} form-control w-25 amount-input-71" type="number" step=".01" id="editAmount{{ trans.id }}" name="editAmount{{ trans.id }}" value="{{ trans.amount }}" autocomplete="niklas" hidden>
+                        </div>
+                    </div>
+                    <div class="col text-white">
+                        <div class="d-flex justify-content-end">
+                            <div class="fs-6">
+                                <!-- <span class="show-not-edit-{{ trans.id }}"><a class="show-not-edit-{{ trans.id }} no-underline p-0" href="javascript:void(0);" onclick="deleteTransaction('{{ trans.id }}')">delete <i class="material-icons fs-6">delete</i></a> | </span> -->
+                                <span class="show-not-edit-{{ trans.id }}"><a class="show-not-edit-{{ trans.id }} no-underline p-0" href="javascript:void(0);" onclick="editTransaction('{{ trans.id }}')">edit <i class="material-icons fs-6">edit</i></a> | </span>
+                                <a class="show-not-edit-{{ trans.id }} no-underline p-0" href="javascript:void(0);" onclick="moveTransaction('{{ trans.id }}')">move</a>
+                                <a class="show-edit-{{ trans.id }} no-underline p-0" href="javascript:void(0);" onclick="document.getElementById('trans{{ trans.id }}').submit();" hidden>update</a>
+                                |
+                                <!-- <a class="show-not-edit-{{ trans.id }} no-underline p-0" href="javascript:void(0);" onclick="editTransaction('{{ trans.id }}')">edit <i class="material-icons fs-6">edit</i></a> -->
+                                <a class="show-not-edit-{{ trans.id }} no-underline p-0" href="javascript:void(0);" onclick="deleteTransaction('{{ trans.id }}')">delete <i class="material-icons fs-6">delete</i></a>
+                                <a class="show-edit-{{ trans.id }} no-underline p-0" href="javascript:void(0);" onclick="cancelEdit('{{ trans.id }}')" hidden>cancel</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </form>`, "text/html").body.children[0]);
+    {% endfor %}
 
-    function moveTransaction(t_id) {
-        document.getElementById('move_id' + t_id).style.display = 'block';
-    }
-
-    function editTransaction(id) {
-        var hid = document.getElementsByClassName('show-edit-' + id);
-        console.log(hid);
-        for (var i = 0; i < hid.length; i++) {
-
-            hid[i].hidden = false;
-        }
-        var notHid = document.getElementsByClassName('show-not-edit-' + id);
-        console.log(notHid);
-        for (var i = 0; i < notHid.length; i++) {
-            console.log(i);
-            notHid[i].hidden = true;
-        }
-    }
-
-    function cancelEdit(id) {
-        var hid = document.getElementsByClassName('show-edit-' + id);
-        for (var i = 0; i < hid.length; i++) {
-            hid[i].hidden = true;
-        }
-        var notHid = document.getElementsByClassName('show-not-edit-' + id);
-        for (var i = 0; i < notHid.length; i++) {
-            notHid[i].hidden = false;
-        }
-    }
-
-    function checkInput() {
-        var name = document.getElementById("name").value;
-        var amount = document.getElementById("amount").value;
-        console.log(name == '', name);
-        console.log(amount);
-        if (name !== '' && amount !== '') {
-            if (!isNaN(amount)) {
-                // success
-                var btn = document.getElementById('transSubmit');
-                btn.disabled = false;
-                var nameEle = document.getElementById('name');
-                // name.className.replace(' w3-border-red', '');
-                if (nameEle.classList.contains("w3-border-red")) {
-                    nameEle.classList.remove("w3-border-red");
-                }
-                var amountEle = document.getElementById('amount');
-                if (amountEle.classList.contains("w3-border-red")) {
-                    amountEle.classList.remove("w3-border-red");
-                }
-                return;
-            }
-            else {
-                var amountEle = document.getElementById('amount');
-                if (!amountEle.classList.contains("w3-border-red")) {
-                    amountEle.classList.add("w3-border-red");
-                }
-            }
-        }
-        if (name == '') {
-            var nameEle = document.getElementById('name');
-            if (!nameEle.classList.contains("w3-border-red")) {
-                nameEle.classList.add("w3-border-red");
-            }
-        }
-        if (amount === '') {
-            var amountEle = document.getElementById('amount');
-            if (!amountEle.classList.contains("w3-border-red")) {
-                amountEle.classList.add("w3-border-red");
-            }
-        }
-        var btn = document.getElementById('transSubmit');
-        btn.disabled = true;
-    }
 </script>
     <div class="container pb-5 pt-3">
         <div class="row">
@@ -124,108 +101,6 @@
             </div>
             <div class="card-body bg-dark">
                 <ul id="transactionList" class="list-group">
-                    {% for trans in transactions.items %}
-                        <form method="POST" id="trans{{ trans.id }}" action="{{ url_for('home.edit_transaction', b_id=budget.id, t_id=trans.id) }}">
-                            <input id="page" name="page" value="{{ transactions.page }}" hidden>
-                            <li class="list-group-item bg-dark border-start-0 border-top-0 border-end-0 border-transparent ">
-                                <div class="row">
-                                    <div class="col">
-                                        <div class="d-flex">
-                                            <div class="d-flex flex-column">
-                                                <p class="show-not-edit-{{ trans.id }} fs-5 my-0 text-white ">{{ trans.name }}</p>
-                                                <input class="show-edit-{{ trans.id }} form-control mb-2" type="text" id="editName{{ trans.id }}" name="editName{{ trans.id }}" value="{{ trans.name }}" autocomplete="niklas" hidden>
-                                                <div class="row text-white-50">
-                                                    <div class="col-12 {% if trans.is_transfer %}{% endif %}">
-                                                        <span class="show-not-edit-{{ trans.id }} fs-75">{{ trans.date.strftime("%B %d, %Y") }}</span>
-                                                        <input class="show-edit-{{ trans.id }} form-control w-75" type="date" id="editDate{{ trans.id }}" name="editDate{{ trans.id }}" value="{{ trans.date.strftime('%Y-%m-%d') }}" hidden>
-                                                    </div>
-                                                    {% if trans.is_transfer %}
-                                                        <div class="col-12 text-info-50 show-not-edit-{{ trans.id }}">
-                                                            <span class="fs-75">Transfer</span>
-                                                        </div>
-                                                    {% endif %}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="d-flex justify-content-center">
-                                            <p class="show-not-edit-{{ trans.id }} fs-6 text-white">
-                                                {{ format_to_money_string(trans.amount) }}
-                                            </p>
-                                            <input class="show-edit-{{ trans.id }} form-control w-25 amount-input-71" type="number" step=".01" id="editAmount{{ trans.id }}" name="editAmount{{ trans.id }}" value="{{ trans.amount }}" autocomplete="niklas" hidden>
-                                        </div>
-                                    </div>
-                                    <div class="col text-white">
-                                        <div class="d-flex justify-content-end">
-                                            <div class="fs-6">
-                                                <!-- <span class="show-not-edit-{{ trans.id }}"><a class="show-not-edit-{{ trans.id }} no-underline p-0" href="javascript:void(0);" onclick="deleteTransaction('{{ trans.id }}')">delete <i class="material-icons fs-6">delete</i></a> | </span> -->
-                                                <span class="show-not-edit-{{ trans.id }}"><a class="show-not-edit-{{ trans.id }} no-underline p-0" href="javascript:void(0);" onclick="editTransaction('{{ trans.id }}')">edit <i class="material-icons fs-6">edit</i></a> | </span>
-                                                <a class="show-not-edit-{{ trans.id }} no-underline p-0" href="javascript:void(0);" onclick="moveTransaction('{{ trans.id }}')">move</a>
-                                                <a class="show-edit-{{ trans.id }} no-underline p-0" href="javascript:void(0);" onclick="document.getElementById('trans{{ trans.id }}').submit();" hidden>update</a>
-                                                |
-                                                <!-- <a class="show-not-edit-{{ trans.id }} no-underline p-0" href="javascript:void(0);" onclick="editTransaction('{{ trans.id }}')">edit <i class="material-icons fs-6">edit</i></a> -->
-                                                <a class="show-not-edit-{{ trans.id }} no-underline p-0" href="javascript:void(0);" onclick="deleteTransaction('{{ trans.id }}')">delete <i class="material-icons fs-6">delete</i></a>
-                                                <a class="show-edit-{{ trans.id }} no-underline p-0" href="javascript:void(0);" onclick="cancelEdit('{{ trans.id }}')" hidden>cancel</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-                        </form>
-                        <div id="delete_id{{ trans.id }}" class="modal" style="display: none;">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Delete transaction {{ trans.name }} ?</h5>
-                                        <button onclick="document.getElementById('delete_id{{ trans.id }}').style.display='none'" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <p>Are you sure you want to delete this transaction?</p>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <form method="POST" action="{{ url_for('home.delete_transaction', b_id=budget.id, t_id=trans.id) }}">
-                                            <button type="submit" id="delete_button" class="btn btn-danger">Delete</button>
-                                            <button onclick="document.getElementById('delete_id{{ trans.id }}').style.display='none'" type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div id="move_id{{ trans.id }}" class="modal" style="display: none;">
-                            <div class="modal-dialog">\
-                                <form method="POST" action="{{ url_for('home.move_transaction', sb_id=budget.id, t_id=trans.id) }}">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Move transaction {{ trans.name }} ?</h5>
-                                            <button onclick="document.getElementById('move_id{{ trans.id }}').style.display='none'" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <p>Which budget would you like to move this transaction to?</p>
-
-                                            <div class="form-outline form-white mb-4">
-                                                <label for="new_budget">Select budget:</label>
-                                                <select class="form-select form-select-sm w-75" name="new_budget" id="new_budget" required>
-                                                    {% for budg in budgets %}
-                                                        {% if budget.id != budg.id %}
-                                                            <option class="" value="{{ budg.id }}">{{ str(budg) }}</option>
-                                                        {% endif %}
-                                                    {% endfor %}
-                                                </select>
-
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="submit" id="" class="btn btn-primary">Move</button>
-                                            <button onclick="document.getElementById('move_id{{ trans.id }}').style.display='none'" type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
-                                        </div>
-                                    </div>
-
-                                </form>
-
-                            </div>
-                        </div>
-                    {% endfor %}
                     <li id="transactionInput" class="list-group-item pb-2 bg-dark border-0">
                         <div class="row">
                             <div class="col">
@@ -253,69 +128,82 @@
         </div>
         <nav aria-label="...">
             <ul class="pagination">
-                {% if transactions.page > 1 %}
-                    <li class="page-item">
-                        {% if curr_date and days_back %}
-                            <a class="page-link" href="{{ url_for('home.view_budget', id=budget.id, page=transactions.page-1, currentDate=curr_date, daysBack=days_back) }}" aria-label="Next">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        {% else %}
-                            <a class="page-link" href="{{ url_for('home.view_budget', id=budget.id, page=transactions.page-1) }}" aria-label="Next">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        {% endif %}
-                    </li>
-                {% else %}
-                    <li class="page-item disabled">
-                        <a class="page-link" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
-                    </li>
-                {% endif %}
-                {% for page_num in transactions.iter_pages(left_edge=0, right_edge=0, left_current=2, right_current=3) %}
-                    {% if page_num %}
-
-                        {% if transactions.page == page_num %}
-                            <li class="page-item active"><a class="page-link">{{ page_num }}</a></li>
-                        {% else %}
-                            <li class="page-item">
-                                {% if curr_date and days_back %}
-                                    <a class="page-link" href="{{ url_for('home.view_budget', id=budget.id, page=page_num, currentDate=curr_date, daysBack=days_back) }}">{{ page_num }}</a>
-                                {% else %}
-                                    <a class="page-link" href="{{ url_for('home.view_budget', id=budget.id, page=page_num) }}">{{ page_num }}</a>
-                                {% endif %}
-                            </li>
-                        {% endif %}
-
-
-                    {% endif %}
-                {% endfor %}
-                {% if transactions.page == (transactions.total // transactions.per_page) + (transactions.total % transactions.per_page > 0) or transactions.total < 11 %}
-                    <li class="page-item disabled">
-                        <a class="page-link" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
-                    </li>
-                {% else %}
-                    <li class="page-item">
-                        {% if curr_date and days_back %}
-                            <a class="page-link" href="{{ url_for('home.view_budget', id=budget.id, page=transactions.page+1, currentDate=curr_date, daysBack=days_back) }}" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        {% else %}
-                            <a class="page-link" href="{{ url_for('home.view_budget', id=budget.id, page=transactions.page+1) }}" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        {% endif %}
-                    </li>
-                {% endif %}
+                <li id="prev" class="page-item">
+                    <button class="page-link">
+                        <span aria-hidden="true">&laquo;</span>
+                    </button>
+                </li>
+                <li id="next" class="page-item">
+                    <button class="page-link">
+                        <span aria-hidden="true">&raquo;</span>
+                    </button>
+                </li>
             </ul>
         </nav>
     </div>
 
+    {% for trans in transactions %}
+        <div id="delete_id{{ trans.id }}" class="modal" style="display: none;">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Delete transaction {{ trans.name }} ?</h5>
+                        <button onclick="document.getElementById('delete_id{{ trans.id }}').style.display='none'" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete this transaction?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <form method="POST" action="{{ url_for('home.delete_transaction', b_id=budget.id, t_id=trans.id) }}">
+                            <button type="submit" id="delete_button" class="btn btn-danger">Delete</button>
+                            <button onclick="document.getElementById('delete_id{{ trans.id }}').style.display='none'" type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="move_id{{ trans.id }}" class="modal" style="display: none;">
+            <div class="modal-dialog">\
+                <form method="POST" action="{{ url_for('home.move_transaction', sb_id=budget.id, t_id=trans.id) }}">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Move transaction {{ trans.name }} ?</h5>
+                            <button onclick="document.getElementById('move_id{{ trans.id }}').style.display='none'" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Which budget would you like to move this transaction to?</p>
+
+                            <div class="form-outline form-white mb-4">
+                                <label for="new_budget">Select budget:</label>
+                                <select class="form-select form-select-sm w-75" name="new_budget" id="new_budget" required>
+                                    {% for budg in budgets %}
+                                        {% if budget.id != budg.id %}
+                                            <option class="" value="{{ budg.id }}">{{ str(budg) }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" id="" class="btn btn-primary">Move</button>
+                            <button onclick="document.getElementById('move_id{{ trans.id }}').style.display='none'" type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    {% endfor %}
+
 
 
     <script>
+
+        const pagination = new Pagination(ele_array);
+
+
         function moveTransactionInputTo(location) {
             // pass
             let transactionInput = document.querySelector("#transactionInput");
@@ -323,7 +211,7 @@
 
             let transactionForms = document.querySelectorAll("#transactionList > form");
             let lastTransaction = transactionForms[transactionForms.length - 1].querySelector("li");
-            lastTransaction.classList.toggle("border-bottom-0");
+            lastTransaction.classList.toggle("border-bottom-0", location === "top");
 
             let transactionList = document.querySelector("#transactionList");
 
@@ -344,7 +232,6 @@
             let location = event.target.id;
             moveTransactionInputTo(location);
             storage.setItem("transactionInputLocation", location);
-
         }
 
         let topButton = document.querySelector("#top");
@@ -352,15 +239,6 @@
 
         let bottomButton = document.querySelector("#bottom");
         bottomButton.addEventListener("click", topBottomTransactionToggle);
-
-        let transactionInputLocation = storage.getItem("transactionInputLocation");
-        if (transactionInputLocation === "top") {
-            topButton.checked = true;
-            moveTransactionInputTo("top");
-        }
-        else {
-            bottomButton.checked = true;
-        }
 
         document.getElementById("name").addEventListener("keyup", checkInput);
         document.getElementById("amount").addEventListener("keyup", checkInput);
@@ -372,6 +250,18 @@
         let strDate = year + '-' + month + '-' + day;
         ele.valueAsDate = date;
         ele.value = strDate;
+
+        let transactionInputLocation = storage.getItem("transactionInputLocation");
+        if (transactionInputLocation === "top") {
+            topButton.checked = true;
+            moveTransactionInputTo("top");
+        }
+        else {
+            bottomButton.checked = true;
+            moveTransactionInputTo("bottom");
+        }
+
+
     </script>
 
 {% endblock content %}
