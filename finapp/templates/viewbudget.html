@@ -231,8 +231,10 @@
             storage.setItem("transactionInputLocation", location);
         }
 
-        window.onload = () => {
+        window.onload = async () => {
             const pagination = new Pagination(ele_array);
+            let temp = await pagination.init();
+            console.log(temp);
 
             let topButton = document.querySelector("#top");
             topButton.addEventListener("click", topBottomTransactionToggle);

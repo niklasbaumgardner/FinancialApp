@@ -11,14 +11,15 @@ class Pagination {
         this.transactionContainer = document.getElementById("transactionList");
         this.prevButton = document.getElementById("prev");
         this.nextButton = document.getElementById("next");
-        this.init();
+        // this.init();
     }
 
-    init() {
+    async init() {
         this.prevButton.onclick = () => this.onPrevClick();
         this.nextButton.onclick = () => this.onNextClick();
         this.allPageButtons = this.createPageButtons();
         this.setCurrentPage(1 * this.getPageNumberFromURL());
+        return true;
     }
 
     get numPages() {
