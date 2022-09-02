@@ -200,6 +200,8 @@
 
 
     <script>
+        const pagination = new Pagination(ele_array);
+
         function moveTransactionInputTo(location) {
             let transactionInput = document.querySelector("#transactionInput");
             transactionInput.remove();
@@ -229,8 +231,6 @@
             moveTransactionInputTo(location);
             storage.setItem("transactionInputLocation", location);
         }
-
-        const pagination = new Pagination(ele_array);
 
         let topButton = document.querySelector("#top");
         topButton.addEventListener("click", topBottomTransactionToggle);

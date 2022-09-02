@@ -35,7 +35,7 @@ class Pagination {
 
     get endIndex() {
         if (this.currentPage === this.numPages) {
-            return this.numTransactions - 1;
+            return this.numTransactions % (PER_PAGE + 1);
         }
         return this.startIndex + PER_PAGE;
     }
