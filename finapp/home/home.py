@@ -778,7 +778,7 @@ def net_spending(month):
     total_in = 0
     total_out = 0
     total_net = 0
-    all_budgets = get_budgets(active_only=True)
+    all_budgets = get_budgets()
     for budget in all_budgets:
         b_trans = get_transactions_for_month(budget.id, month=month, include_transfers=False)
         if not b_trans:
