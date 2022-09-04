@@ -208,7 +208,7 @@
                                 <span id="name_error" class="text-danger" hidden>Budget name already exist. Choose another name.</span>
 
                             </div>
-            
+
                             <div class="form-outline form-white mb-4">
                                 <label class="form-label" for="amount">Starting Amount</label>
                                 <input type="number" step=".01" id="amount" name="amount" class="form-control" placeholder="Amount" autocomplete="niklas" required/>
@@ -262,16 +262,8 @@
     </div>
 
     <script src="/static/js/index.js"></script>
+    <script src="/static/js/setdate.js"></script>
     <script>
-        let date = new Date();
-        let ele = document.getElementById('date');
-        let year = date.getFullYear();
-        let month = (date.getMonth() + 1).toString().padStart(2, '0');
-        let day = date.getDate().toString().padStart(2, '0');
-        let strDate = year + '-' + month + '-' + day;
-        ele.valueAsDate = date;
-        ele.value = strDate;
-
         document.getElementById('name').addEventListener("input", checkDuplicateBudget);
 
         for (let ele of document.querySelectorAll(".edit-name")) {

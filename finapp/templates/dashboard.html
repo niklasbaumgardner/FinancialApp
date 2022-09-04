@@ -190,6 +190,7 @@
         </div>
     </div>
 <script src="/static/js/dashboard.js"></script>
+<script src="/static/js/setdate.js"></script>
 <script>
     const months = {
         1: "January", 2: "February", 3: "March", 4: "April",
@@ -220,13 +221,6 @@
     }
 
     let pieDate = document.getElementById('date');
-
-    let date = new Date();
-    let ele = document.getElementById('date');
-    let year = date.getFullYear();
-    let month = (date.getMonth() + 1).toString().padStart(2, '0');
-    let day = date.getDate().toString().padStart(2, '0');
-    let strDate = year + '-' + month + '-' + day;
 
     pieDate.value = strDate;
 
