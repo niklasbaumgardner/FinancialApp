@@ -170,7 +170,7 @@ class Pagination {
 
     addTransactionsToContainer() {
         for (let i = this.startIndex; i < this.endIndex; i++) {
-            this.transactionContainer.appendChild(this.t_array[i]);
+            this.transactionContainer.appendChild(this.t_array[i].renderElement());
         }
         moveTransactionInputTo(storage.getItem("transactionInputLocation"));
     }

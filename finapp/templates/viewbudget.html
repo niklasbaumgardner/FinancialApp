@@ -8,60 +8,19 @@
 
 {% block content %}
 <script src="/static/js/viewbudget.js"></script>
+<script src="/static/js/transaction.js"></script>
 <script>
 
     const parser = new DOMParser();
-    const ele_array = [];
+    const transactionArray = [];
+    let temp;
     {% for trans in transactions %}
-        ele_array.push(parser.parseFromString(`
-        <form method="POST" id="trans{{ trans.id }}" action="{{ url_for('home.edit_transaction', b_id=budget.id, t_id=trans.id) }}">
-            <input id="page" name="page" value="{{ transactions.page }}" hidden>
-            <li class="list-group-item bg-dark border-start-0 border-top-0 border-end-0 border-transparent ">
-                <div class="row">
-                    <div class="col">
-                        <div class="d-flex">
-                            <div class="d-flex flex-column">
-                                <p class="show-not-edit-{{ trans.id }} fs-5 my-0 text-white ">{{ trans.name }}</p>
-                                <input class="show-edit-{{ trans.id }} form-control mb-2" type="text" id="editName{{ trans.id }}" name="editName{{ trans.id }}" value="{{ trans.name }}" autocomplete="niklas" hidden>
-                                <div class="row text-white-50">
-                                    <div class="col-12 {% if trans.is_transfer %}{% endif %}">
-                                        <span class="show-not-edit-{{ trans.id }} fs-75">{{ trans.date.strftime("%B %d, %Y") }}</span>
-                                        <input class="show-edit-{{ trans.id }} form-control w-75" type="date" id="editDate{{ trans.id }}" name="editDate{{ trans.id }}" value="{{ trans.date.strftime('%Y-%m-%d') }}" hidden>
-                                    </div>
-                                    {% if trans.is_transfer %}
-                                        <div class="col-12 text-info-50 show-not-edit-{{ trans.id }}">
-                                            <span class="fs-75">Transfer</span>
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="d-flex justify-content-center">
-                            <p class="show-not-edit-{{ trans.id }} fs-6 text-white">
-                                {{ format_to_money_string(trans.amount) }}
-                            </p>
-                            <input class="show-edit-{{ trans.id }} form-control w-25 amount-input-71" type="number" step=".01" id="editAmount{{ trans.id }}" name="editAmount{{ trans.id }}" value="{{ trans.amount }}" autocomplete="niklas" hidden>
-                        </div>
-                    </div>
-                    <div class="col text-white">
-                        <div class="d-flex justify-content-end">
-                            <div class="fs-6">
-                                <!-- <span class="show-not-edit-{{ trans.id }}"><a class="show-not-edit-{{ trans.id }} no-underline p-0" href="javascript:void(0);" onclick="deleteTransaction('{{ trans.id }}')">delete <i class="material-icons fs-6">delete</i></a> | </span> -->
-                                <span class="show-not-edit-{{ trans.id }}"><a class="show-not-edit-{{ trans.id }} no-underline p-0" href="javascript:void(0);" onclick="editTransaction('{{ trans.id }}')">edit <i class="material-icons fs-6">edit</i></a> | </span>
-                                <a class="show-not-edit-{{ trans.id }} no-underline p-0" href="javascript:void(0);" onclick="moveTransaction('{{ trans.id }}')">move</a>
-                                <a class="show-edit-{{ trans.id }} no-underline p-0" href="javascript:void(0);" onclick="document.getElementById('trans{{ trans.id }}').submit();" hidden>update</a>
-                                |
-                                <!-- <a class="show-not-edit-{{ trans.id }} no-underline p-0" href="javascript:void(0);" onclick="editTransaction('{{ trans.id }}')">edit <i class="material-icons fs-6">edit</i></a> -->
-                                <a class="show-not-edit-{{ trans.id }} no-underline p-0" href="javascript:void(0);" onclick="deleteTransaction('{{ trans.id }}')">delete <i class="material-icons fs-6">delete</i></a>
-                                <a class="show-edit-{{ trans.id }} no-underline p-0" href="javascript:void(0);" onclick="cancelEdit('{{ trans.id }}')" hidden>cancel</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </li>
-        </form>`, "text/html").body.children[0]);
+        temp = new Transaction(
+            "{{ trans.id }}", "{{ trans.name }}", "{{ trans.amount }}", "{{ format_to_money_string(trans.amount) }}",
+            "{{ trans.date.strftime('%Y-%m-%d') }}", "{{ trans.is_transfer }}", "{{ budget.id }}",
+            "{{ url_for('home.edit_transaction', b_id=budget.id, t_id=trans.id) }}"
+        );
+        transactionArray.push(temp);
     {% endfor %}
 
 </script>
@@ -106,7 +65,7 @@
                             <div class="col">
                                 <div class="d-flex">
                                     <div class="d-flex flex-column">
-                                        <input class="form-control mb-2" type="text" form="addTransaction" id="name" name="name" placeholder="Spent too much?" autocomplete="niklas" required>
+                                        <input tabindex="0" class="form-control mb-2" type="text" form="addTransaction" id="name" name="name" placeholder="Spent too much?" autocomplete="niklas" required>
                                         <input class="form-control w-75" type="date" form="addTransaction" id="date" name="date" required>
                                     </div>
                                 </div>
@@ -201,7 +160,7 @@
 
     <script src="/static/js/setdate.js"></script>
     <script>
-        const pagination = new Pagination(ele_array);
+        const pagination = new Pagination(transactionArray);
 
         function moveTransactionInputTo(location) {
             let transactionInput = document.querySelector("#transactionInput");
