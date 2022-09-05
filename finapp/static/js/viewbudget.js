@@ -35,7 +35,7 @@ class Pagination {
 
     get endIndex() {
         if (this.currentPage === this.numPages) {
-            return this.numTransactions % (PER_PAGE + 1);
+            return this.startIndex + this.numTransactions % PER_PAGE;
         }
         return this.startIndex + PER_PAGE;
     }
@@ -165,12 +165,14 @@ class Pagination {
     getPageNumberFromURL() {
         let urlParams = new URLSearchParams(window.location.search);
         let page = urlParams.get("page");
+        console.log(page);
         return page ? page : 1;
     }
 
     addTransactionsToContainer() {
+        console.log(this.startIndex, this.endIndex);
         for (let i = this.startIndex; i < this.endIndex; i++) {
-            this.transactionContainer.appendChild(this.t_array[i].renderElement());
+            this.transactionContainer.appendChild(this.t_array[i]);
         }
         moveTransactionInputTo(storage.getItem("transactionInputLocation"));
     }
@@ -185,6 +187,11 @@ class Pagination {
     updatePage() {
         this.clearTransactionContainer();
         this.addTransactionsToContainer();
+
+        let allPageNumberInputs = document.querySelectorAll(".page-number");
+        for (let input of allPageNumberInputs) {
+            input.setAttribute("value", this.currentPage);
+        }
     }
 
     onPrevClick() {

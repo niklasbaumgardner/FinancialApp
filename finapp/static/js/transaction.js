@@ -35,11 +35,13 @@ class Transaction {
       action: this.editURL,
       method: "POST",
     });
-    this.pageInput = this.createElement({
+    this.element.appendChild(this.createElement({
       type: "input",
-      id: "page",
+      classString: "page-number",
+      name: "page",
+      inputType: "number",
       hidden: true,
-    });
+    }));
     let li = this.createElement({
       type: "li",
       classString:

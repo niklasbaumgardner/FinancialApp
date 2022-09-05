@@ -274,6 +274,7 @@ def edit_transaction(b_id, t_id):
     new_amount = request.form.get(f'editAmount{t_id}')
     new_date = request.form.get(f'editDate{t_id}')
     page = request.form.get('page')
+    page = page if page else 1
 
     trans = get_transaction(b_id, t_id)
     if trans:
@@ -314,6 +315,8 @@ def move_transaction(sb_id, t_id):
 @home.route('/delete_transaction/<int:b_id>/<int:t_id>', methods=["POST"])
 @login_required
 def delete_transaction(b_id, t_id):
+    page = request.form.get("page")
+    page = page if page else 1
     trans = get_transaction(b_id, t_id)
     if trans:
         db.session.delete(trans)
@@ -321,7 +324,7 @@ def delete_transaction(b_id, t_id):
 
         update_budget(b_id)
 
-    return redirect(url_for('home.view_budget', id=b_id))
+    return redirect(url_for('home.view_budget', id=b_id, page=page))
 
 
 @home.route('/delete_budget/<int:b_id>', methods=["POST"])

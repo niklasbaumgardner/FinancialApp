@@ -20,7 +20,7 @@
             "{{ trans.date.strftime('%Y-%m-%d') }}", "{{ trans.is_transfer }}", "{{ budget.id }}",
             "{{ url_for('home.edit_transaction', b_id=budget.id, t_id=trans.id) }}"
         );
-        transactionArray.push(temp);
+        transactionArray.push(temp.renderElement());
     {% endfor %}
 
 </script>
@@ -114,6 +114,7 @@
                     </div>
                     <div class="modal-footer">
                         <form method="POST" action="{{ url_for('home.delete_transaction', b_id=budget.id, t_id=trans.id) }}">
+                            <input class="page-number" name="page" type="number" value="1" hidden/>
                             <button type="submit" id="delete_button" class="btn btn-danger">Delete</button>
                             <button onclick="document.getElementById('delete_id{{ trans.id }}').style.display='none'" type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
                         </form>
@@ -124,6 +125,7 @@
         <div id="move_id{{ trans.id }}" class="modal" style="display: none;">
             <div class="modal-dialog">\
                 <form method="POST" action="{{ url_for('home.move_transaction', sb_id=budget.id, t_id=trans.id) }}">
+                    <input class="page-number" name="page" type="number" value="1" hidden/>
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title">Move transaction {{ trans.name }} ?</h5>
