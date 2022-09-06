@@ -20,7 +20,7 @@
             "{{ trans.date.strftime('%Y-%m-%d') }}", "{{ trans.is_transfer }}", "{{ budget.id }}",
             "{{ url_for('home.edit_transaction', b_id=budget.id, t_id=trans.id) }}"
         );
-        transactionArray.push(temp.renderElement());
+        transactionArray.push(temp);
     {% endfor %}
 
 </script>

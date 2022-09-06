@@ -24,7 +24,6 @@ class Transaction {
   }
 
   renderElement() {
-    // pass
     if (this.created) {
       return this.element;
     }
