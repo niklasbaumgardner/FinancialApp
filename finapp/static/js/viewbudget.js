@@ -6,6 +6,7 @@ const PER_PAGE = 10;
 class Pagination {
     #BUTTONS_VISIBLE = 5;
     constructor(transactions, numTransactions, currentPage, numPages) {
+        this.currentRequests = {};
         this.visibleButtons = [];
         this.pageMap = {};
         this.numTransactions = numTransactions;
@@ -153,7 +154,13 @@ class Pagination {
 
     async addTransactionsToContainer() {
         if (!this.pageMap[this.currentPage]) {
-            let data = await getPageData(this.currentPage);
+            let data;
+            if (this.currentRequests[this.currentPage]) {
+                data = await this.currentRequests[this.currentPage];
+                this.currentRequests[this.currentPage] = null;
+            } else {
+                data = await getPageData(this.currentPage);
+            }
             this.pageMap[this.currentPage] = this.getTransactionArray(data);
         }
         for (let transaction of this.pageMap[this.currentPage]) {
@@ -210,13 +217,13 @@ class Pagination {
 
     async getPageDataForPotentialPages() {
         for (let pageNum of this.visibleButtons) {
-            if (this.pageMap[pageNum]) {
+            if (this.pageMap[pageNum] || this.currentRequests[pageNum]) {
                 continue;
             }
 
-            let data = await getPageData(pageNum);
+            let request = getPageData(pageNum);
 
-            this.pageMap[pageNum] = this.getTransactionArray(data);
+            this.currentRequests[pageNum] = request;
         }
     }
 
