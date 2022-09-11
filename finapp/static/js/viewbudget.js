@@ -201,8 +201,7 @@ class Pagination {
         let data = JSON.parse(stringData);
         let newTransactionArray = [];
         for (let t of data.transactions) {
-            let arr = t.split(",");
-            let transaction = new Transaction(...arr);
+            let transaction = new Transaction(...t);
             newTransactionArray.push(transaction);
         }
 
