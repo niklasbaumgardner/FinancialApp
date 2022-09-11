@@ -1,5 +1,79 @@
 "use strict";
 
+function createElement(options) {
+  if (!options.type) {
+    options.type = "div";
+  }
+
+  let ele = document.createElement(options.type);
+
+  if (options.id) {
+    ele.id = options.id;
+  }
+
+  if (options.classString) {
+    ele.classList.add(...options.classString.split(" "));
+  }
+
+  if (options.href) {
+    ele.href = options.href;
+  }
+
+  if (options.onclick) {
+    ele.onclick = options.onclick;
+  }
+
+  if (options.content) {
+    ele.textContent = options.content;
+  }
+
+  if (options.action) {
+    ele.action = options.action;
+  }
+
+  if (options.name) {
+    ele.name = options.name;
+  }
+
+  if (options.hidden) {
+    ele.hidden = true;
+  }
+
+  if (options.value) {
+    ele.value = options.value;
+  }
+
+  if (options.autocomplete) {
+    ele.autocomplete = options.autocomplete;
+  }
+
+  if (options.step) {
+    ele.step = options.step;
+  }
+
+  if (options.innerHTML) {
+    ele.innerHTML = options.innerHTML;
+  }
+
+  if (options.inputType) {
+    ele.type = options.inputType;
+  }
+
+  if (options.method) {
+    ele.method = options.method;
+  }
+
+  if (options.required) {
+    ele.required = options.required;
+  }
+
+  if (options.for) {
+    ele.for = options.for;
+  }
+
+  return ele;
+}
+
 class Transaction {
   constructor(
     id,
@@ -21,6 +95,9 @@ class Transaction {
     this.editURL = editURL;
     this.created = false;
     this.element = null;
+
+    this.deleteModal = new DeleteModal(this);
+    this.moveModal = new MoveModal(this);
   }
 
   renderElement() {
@@ -28,40 +105,42 @@ class Transaction {
       return this.element;
     }
 
-    this.element = this.createElement({
+    this.element = createElement({
       type: "form",
       id: `trans${this.id}`,
       action: this.editURL,
       method: "POST",
     });
-    this.element.appendChild(this.createElement({
-      type: "input",
-      classString: "page-number",
-      name: "page",
-      inputType: "number",
-      hidden: true,
-    }));
-    let li = this.createElement({
+    this.element.appendChild(
+      createElement({
+        type: "input",
+        classString: "page-number",
+        name: "page",
+        inputType: "number",
+        hidden: true,
+      })
+    );
+    let li = createElement({
       type: "li",
       classString:
         "list-group-item bg-dark border-start-0 border-top-0 border-end-0 border-transparent",
     });
     this.element.appendChild(li);
 
-    let rowDiv = this.createElement({ classString: "row" });
+    let rowDiv = createElement({ classString: "row" });
     li.appendChild(rowDiv);
 
-    let colDiv1 = this.createElement({ classString: "col" });
+    let colDiv1 = createElement({ classString: "col" });
     rowDiv.appendChild(colDiv1);
 
-    let div2 = this.createElement({ classString: "d-flex" });
+    let div2 = createElement({ classString: "d-flex" });
     colDiv1.appendChild(div2);
 
-    let div3 = this.createElement({ classString: "f-flex flex-column" });
+    let div3 = createElement({ classString: "f-flex flex-column" });
     div2.appendChild(div3);
 
     div3.appendChild(
-      this.createElement({
+      createElement({
         type: "p",
         classString: `show-not-edit-${this.id} fs-5 my-0 text-white`,
         content: this.name,
@@ -69,7 +148,7 @@ class Transaction {
     );
 
     div3.appendChild(
-      this.createElement({
+      createElement({
         type: "input",
         id: `editName${this.id}`,
         classString: `show-edit-${this.id} form-control mb-2`,
@@ -81,14 +160,14 @@ class Transaction {
       })
     );
 
-    let div4 = this.createElement({ classString: "row text-white-50" });
+    let div4 = createElement({ classString: "row text-white-50" });
     div3.appendChild(div4);
 
-    let div5 = this.createElement({ classString: "col-12" });
+    let div5 = createElement({ classString: "col-12" });
     div4.appendChild(div5);
 
     div5.appendChild(
-      this.createElement({
+      createElement({
         type: "span",
         classString: `show-not-edit-${this.id} fs-75`,
         content: this.date,
@@ -96,7 +175,7 @@ class Transaction {
     );
 
     div5.appendChild(
-      this.createElement({
+      createElement({
         type: "input",
         id: `editDate${this.id}`,
         name: `editDate${this.id}`,
@@ -108,13 +187,13 @@ class Transaction {
     );
 
     if (this.isTransfer) {
-      let transferDiv = this.createElement({
+      let transferDiv = createElement({
         classString: `col-12 text-info-50 show-not-edit-${this.id}`,
       });
       div5.appendChild(transferDiv);
 
       transferDiv.appendChild(
-        this.createElement({
+        createElement({
           type: "span",
           classString: "fs-75",
           content: "Transer",
@@ -122,16 +201,16 @@ class Transaction {
       );
     }
 
-    let colDiv2 = this.createElement({ classString: "col" });
+    let colDiv2 = createElement({ classString: "col" });
     rowDiv.appendChild(colDiv2);
 
-    let div6 = this.createElement({
+    let div6 = createElement({
       classString: "d-flex justify-content-center",
     });
     colDiv2.appendChild(div6);
 
     div6.appendChild(
-      this.createElement({
+      createElement({
         type: "p",
         classString: `show-not-edit-${this.id} fs-6 text-white`,
         content: this.stringAmount,
@@ -139,7 +218,7 @@ class Transaction {
     );
 
     div6.appendChild(
-      this.createElement({
+      createElement({
         type: "input",
         id: `editAmount${this.id}`,
         name: `editAmount${this.id}`,
@@ -152,15 +231,15 @@ class Transaction {
       })
     );
 
-    let colDiv3 = this.createElement({ classString: "col text-white" });
+    let colDiv3 = createElement({ classString: "col text-white" });
     rowDiv.appendChild(colDiv3);
 
-    let div7 = this.createElement({
+    let div7 = createElement({
       classString: "d-flex justify-content-end",
     });
     colDiv3.appendChild(div7);
 
-    let div8 = this.createElement({
+    let div8 = createElement({
       classList: "fs-6",
       innerHTML: `
         <span class="show-not-edit-${this.id}">
@@ -178,11 +257,11 @@ class Transaction {
     div7.appendChild(div8);
 
     // TODO: create everything inside div6 dynamically
-    // let span = this.createElement({
+    // let span = createElement({
     //   classString: `show-not-edit-${this.id}`,
     // });
 
-    // let a = this.createElement({
+    // let a = createElement({
     //   type: "a",
     //   classString: `show-not-edit-${this.id} no-underline p-0`,
     //   href: "javascript:void(0);",
@@ -190,72 +269,247 @@ class Transaction {
     //   innerHTML: "",
     // });
 
+    this.deleteModal.renderElement();
+    this.moveModal.renderElement();
+
     return this.element;
   }
+}
 
-  createElement(options) {
-    if (!options.type) {
-      options.type = "div";
+class DeleteModal {
+  constructor(transaction) {
+    //
+    this.transaction = transaction;
+    this.created = false;
+    this.element = null;
+  }
+
+  renderElement() {
+    if (this.created) {
+      return;
     }
 
-    let ele = document.createElement(options.type);
+    this.element = createElement({
+      id: `deleteTransaction${this.transaction.id}`,
+      classString: "modal",
+      style: "display:none;",
+    });
 
-    if (options.id) {
-      ele.id = options.id;
+    let div1 = createElement({ classString: "modal-dialog" });
+    this.element.appendChild(div1);
+
+    let div2 = createElement({ classString: "modal-content" });
+    div1.appendChild(div2);
+
+    let div3 = createElement({ classString: "modal-header" });
+    div2.appendChild(div3);
+
+    div3.appendChild(
+      createElement({
+        type: "h5",
+        classString: "modal-title",
+        content: `Delete transaction ${this.transaction.name} ?`,
+      })
+    );
+
+    div3.appendChild(
+      createElement({
+        type: "button",
+        onclick: () => {
+          this.element.style.display = "none";
+        },
+        classString: "btn-close",
+      })
+    );
+
+    let div4 = createElement({ classString: "modal-body" });
+    div2.appendChild(div4);
+
+    div4.appendChild(
+      createElement({
+        type: "p",
+        content: "Are you sure you want to delete this transaction?",
+      })
+    );
+
+    let div5 = createElement({ classString: "modal-footer" });
+    div2.appendChild(div5);
+
+    let form = createElement({
+      type: "form",
+      method: "POST",
+      action: DELETE_TRANSACTION_URL + this.transaction.id,
+    });
+    div5.appendChild(form);
+
+    form.appendChild(
+      createElement({
+        type: "input",
+        classString: "page-number",
+        name: "page",
+        inputType: "number",
+        value: 1,
+        hidden: true,
+      })
+    );
+
+    form.appendChild(
+      createElement({
+        type: "button",
+        inputType: "submit",
+        classString: "btn btn-danger me-1",
+        content: "Delete",
+      })
+    );
+
+    form.appendChild(
+      createElement({
+        type: "button",
+        onclick: () => {
+          this.element.style.display = "none";
+        },
+        inputType: "button",
+        classString: "btn btn-outline-secondary",
+        content: "Cancel",
+      })
+    );
+
+    this.parentElement = document.getElementById("deleteModals");
+    this.parentElement.appendChild(this.element);
+
+    this.created = true;
+  }
+}
+
+class MoveModal {
+  constructor(transaction) {
+    //
+    this.transaction = transaction;
+    this.created = false;
+    this.element = null;
+  }
+
+  renderElement() {
+    if (this.created) {
+      return;
     }
 
-    if (options.classString) {
-      ele.classList.add(...options.classString.split(" "));
+    this.element = createElement({
+      id: `moveTransaction${this.transaction.id}`,
+      classString: "modal",
+      style: "display:none;",
+    });
+
+    let div1 = createElement({ classString: "modal-dialog" });
+    this.element.appendChild(div1);
+
+    let form = createElement({
+      type: "form",
+      method: "POST",
+      action: MOVE_TRANSACTION_URL + this.transaction.id,
+    });
+    div1.appendChild(form);
+
+    form.appendChild(
+      createElement({
+        type: "input",
+        classString: "page-number",
+        name: "page",
+        inputType: "number",
+        value: 1,
+        hidden: true,
+      })
+    );
+
+    let div2 = createElement({ classString: "modal-content" });
+    form.appendChild(div2);
+
+    let div3 = createElement({ classString: "modal-header" });
+    div2.appendChild(div3);
+
+    div3.appendChild(
+      createElement({
+        type: "h5",
+        classString: "modal-title",
+        content: `Move transaction ${this.transaction.name} ?`,
+      })
+    );
+
+    div3.appendChild(
+      createElement({
+        type: "button",
+        onclick: () => {
+          this.element.style.display = "none";
+        },
+        inputType: "button",
+        classString: "btn-close",
+      })
+    );
+
+    let div4 = createElement({ classString: "modal-body" });
+    div2.appendChild(div4);
+
+    div4.appendChild(
+      createElement({
+        type: "p",
+        content: "Which budget would you like to move this transaction to?",
+      })
+    );
+
+    let div5 = createElement({ classString: "form-outline form-white mb-4" });
+    div4.appendChild(div5);
+
+    div5.appendChild(
+      createElement({
+        type: "label",
+        for: "new_budget",
+        content: "Select budget:",
+      })
+    );
+
+    let select = createElement({
+      type: "select",
+      id: "new_budget",
+      classString: "form-select form-select-sm w-75",
+      name: "new_budget",
+    });
+    div5.appendChild(select);
+
+    for (let budg of budgetsArray) {
+      let tempOption = createElement({
+        type: "option",
+        value: budg.id,
+        content: budg.budgetString,
+      });
+
+      select.appendChild(tempOption);
     }
 
-    if (options.href) {
-      ele.href = options.href;
-    }
+    let div6 = createElement({ classString: "modal-footer" });
+    div2.appendChild(div6);
 
-    if (options.onclick) {
-      ele.onclick = options.onclick();
-    }
+    div6.appendChild(
+      createElement({
+        type: "button",
+        inputType: "submit",
+        classString: "btn btn-primary me-1",
+        content: "Move",
+      })
+    );
 
-    if (options.content) {
-      ele.textContent = options.content;
-    }
+    div6.appendChild(
+      createElement({
+        type: "button",
+        onclick: () => {
+          this.element.style.display = "none";
+        },
+        inputType: "button",
+        classString: "btn btn-outline-secondary",
+        content: "Cancel",
+      })
+    );
 
-    if (options.action) {
-      ele.action = options.action;
-    }
-
-    if (options.name) {
-      ele.name = options.name;
-    }
-
-    if (options.hidden) {
-      ele.hidden = true;
-    }
-
-    if (options.value) {
-      ele.value = options.value;
-    }
-
-    if (options.autocomplete) {
-      ele.autocomplete = options.autocomplete;
-    }
-
-    if (options.step) {
-      ele.step = options.step;
-    }
-
-    if (options.innerHTML) {
-      ele.innerHTML = options.innerHTML;
-    }
-
-    if (options.inputType) {
-      ele.type = options.inputType;
-    }
-
-    if (options.method) {
-      ele.method = options.method;
-    }
-
-    return ele;
+    this.parentElement = document.getElementById("moveModals");
+    this.parentElement.appendChild(this.element);
   }
 }

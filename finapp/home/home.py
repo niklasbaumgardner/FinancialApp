@@ -244,6 +244,28 @@ def edit_budget(id):
     return redirect(url_for('home.index'))
 
 
+@home.route('/get_page/<int:budget_id>')
+@login_required
+def get_page(budget_id):
+    page = request.args.get('page', -1, type=int)
+
+    if page < 1:
+        return { "sucess": False }
+
+    month = request.args.get('month')
+
+    if month:
+        month = int(month)
+        transactions, total, page, num_pages = get_transactions_for_month(budget_id=budget_id, month=month, page=page, paginate=True)
+
+    else:
+        transactions, total, page, num_pages = get_transactions(budget_id=budget_id, page=page, paginate=True)
+
+    transactions = jsify_transactions(transactions)
+
+    return { "page": page, "transactions": transactions }
+
+
 @home.route('/view_budget/<int:id>')
 @login_required
 def view_budget(id):
@@ -254,17 +276,19 @@ def view_budget(id):
     budget = get_budget(id)
     budgets = get_budgets(active_only=True)
 
+    date = datetime.today()
+
     if month:
         month = int(month)
-        transactions = get_transactions_for_month(budget_id=budget.id, month=month)
+        transactions, total, page, num_pages = get_transactions_for_month(budget_id=budget.id, month=month, page=page, paginate=True)
         # transactions = Pagination(query=None, page=page, per_page=10, total=len(transactions), items=transactions)
-        return render_template('viewbudget.html', budget=budget, transactions=transactions, round=round, strftime=datetime.strftime, budgets=budgets, str=str, format_to_money_string=format_to_money_string)
+        # return render_template('viewbudget.html', budget=budget, transactions=transactions, round=round, strftime=datetime.strftime, budgets=budgets, str=str, format_to_money_string=format_to_money_string)
 
     else:
-        transactions = get_transactions(budget_id=budget.id)
+        transactions, total, page, num_pages = get_transactions(budget_id=budget.id, page=page, paginate=True)
         # transactions = Transaction.query.filter_by(budget_id=budget.id, user_id=current_user.get_id()).paginate(page=page, per_page=10)
 
-    return render_template('viewbudget.html', budget=budget, transactions=transactions, round=round, strftime=datetime.strftime, budgets=budgets, str=str, format_to_money_string=format_to_money_string)
+    return render_template('viewbudget.html', budget=budget, transactions=transactions, round=round, strftime=datetime.strftime, budgets=budgets, str=str, format_to_money_string=format_to_money_string, total=total, page=page, num_pages=num_pages)
 
 
 @home.route('/edit_transaction/<int:b_id>/<int:t_id>', methods=["POST"])
@@ -426,33 +450,61 @@ def get_budget(id):
     return Budget.query.filter_by(id=id, user_id=current_user.get_id()).first()
 
 
-def get_transactions(budget_id, start_date=None, end_date=None, include_transfers=True):
-    transactions = Transaction.query.filter_by(budget_id=budget_id, user_id=current_user.get_id()).order_by(Transaction.date.desc(), Transaction.id.desc()).all()
-    if not include_transfers:
-        transactions = [ t for t in transactions if t.is_transfer is not True ]
-    if start_date:
-        transactions = [ t for t in transactions if t.date > start_date ]
-    if end_date:
-        transactions = [ t for t in transactions if t.date <= end_date ]
+def get_transactions(budget_id, start_date=None, end_date=None, include_transfers=True, page=1, paginate=False):
+    if paginate:
+        transactions = Transaction.query.filter(Transaction.budget_id==budget_id, Transaction.user_id==current_user.get_id()).order_by(Transaction.date.desc(), Transaction.id.desc())
+        if not include_transfers:
+            transactions = transactions.filter(Transaction.is_transfer!=True)
+
+        if start_date:
+            transactions = transactions.filter(Transaction.date>=start_date)
+
+        if end_date:
+            transactions = transactions.filter(Transaction.date<=end_date)
+
+        transactions = transactions.paginate(page=page, per_page=10)
+
+        return transactions.items, transactions.total, transactions.page, transactions.pages
+
+
+    else:
+        transactions = Transaction.query.filter_by(budget_id=budget_id, user_id=current_user.get_id()).order_by(Transaction.date.desc(), Transaction.id.desc()).all()
+        if not include_transfers:
+            transactions = [ t for t in transactions if t.is_transfer is not True ]
+        if start_date:
+            transactions = [ t for t in transactions if t.date > start_date ]
+        if end_date:
+            transactions = [ t for t in transactions if t.date <= end_date ]
 
     return transactions
 
-def get_transactions_for_month(budget_id, month, include_transfers=True, query=True):
+def get_transactions_for_month(budget_id, month, include_transfers=True, page=1, paginate=False):
     year=date.today().year
 
     current_month = date.today().month
     if current_month < month:
         year -=1
 
-    transactions = Transaction.query.filter(Transaction.budget_id==budget_id).filter(Transaction.user_id==current_user.get_id()).order_by(Transaction.date.desc(), Transaction.id.desc()).all()
-    transactions = [ t for t in transactions if t.date.month == month and t.date.year == year]
+    if paginate:
+        transactions = Transaction.query.filter(Transaction.budget_id==budget_id, Transaction.user_id==current_user.get_id(), Transaction.date.month==month, Transaction.date.year==year).order_by(Transaction.date.desc(), Transaction.id.desc())
+
+        if not include_transfers:
+            transactions = transactions.filter(Transaction.is_transfer!=True)
+
+        transactions = transactions.paginate(page=page, per_page=10)
+
+        return transactions.items, transactions.total, transactions.page, transactions.pages
+
+    else:
+        transactions = Transaction.query.filter(Transaction.budget_id==budget_id).filter(Transaction.user_id==current_user.get_id()).order_by(Transaction.date.desc(), Transaction.id.desc()).all()
+        transactions = [ t for t in transactions if t.date.month == month and t.date.year == year]
     # if not query:
     #     return transactions
     # else:
     #     transactions = transactions.all()
 
-    if not include_transfers:
-        transactions = [ t for t in transactions if t.is_transfer is not True ]
+        if not include_transfers:
+            transactions = [ t for t in transactions if t.is_transfer is not True ]
     return transactions
 
 
@@ -505,7 +557,7 @@ def get_prefill_paycheck():
             prefill_dict[prefill.total_amount].append(temp)
         except:
             prefill_dict[prefill.total_amount] = [temp]
-    
+
     return prefill_dict
 
 
@@ -795,4 +847,12 @@ def net_spending(month):
     return data
 
 
+def jsify_transactions(transactions):
+    t_list = []
+
+    for t in transactions:
+        temp = f"{t.id},{t.name},{t.amount},{format_to_money_string(t.amount)},{t.date.strftime('%Y-%m-%d')},{t.is_transfer},{t.budget_id},{url_for('home.edit_transaction', b_id=t.budget_id, t_id=t.id)}"
+        t_list.append(temp)
+
+    return t_list
 

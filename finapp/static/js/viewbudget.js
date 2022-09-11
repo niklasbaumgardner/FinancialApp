@@ -5,39 +5,25 @@ const PER_PAGE = 10;
 
 class Pagination {
     #BUTTONS_VISIBLE = 5;
-    constructor(ele_array) {
+    constructor(transactions, numTransactions, currentPage, numPages) {
         this.visibleButtons = [];
-        this.t_array = ele_array;
+        this.pageMap = {};
+        this.numTransactions = numTransactions;
+        this.numPages = numPages;
+
+        this.pageMap[currentPage] = transactions;
+
         this.transactionContainer = document.getElementById("transactionList");
         this.prevButton = document.getElementById("prev");
         this.nextButton = document.getElementById("next");
-        this.init();
+        this.init(currentPage);
     }
 
-    init() {
+    init(currentPage) {
         this.prevButton.onclick = () => this.onPrevClick();
         this.nextButton.onclick = () => this.onNextClick();
         this.allPageButtons = this.createPageButtons();
-        this.setCurrentPage(1 * this.getPageNumberFromURL());
-    }
-
-    get numPages() {
-        return Math.ceil(this.t_array.length / PER_PAGE);
-    }
-
-    get numTransactions() {
-        return this.t_array.length;
-    }
-
-    get startIndex() {
-        return PER_PAGE * (this.currentPage - 1);
-    }
-
-    get endIndex() {
-        if (this.currentPage === this.numPages) {
-            return this.startIndex + this.numTransactions % PER_PAGE;
-        }
-        return this.startIndex + PER_PAGE;
+        this.setCurrentPage(1 * currentPage);
     }
 
     createPageButtons() {
@@ -101,6 +87,7 @@ class Pagination {
 
         this.updatePage();
         this.updatePageButtons();
+        this.getPageDataForPotentialPages();
     }
 
     clearPageButtons() {
@@ -155,6 +142,8 @@ class Pagination {
             button.classList.toggle("active", i + 1 === this.currentPage);
             buttonsListEle.insertBefore(button, this.nextButton);
         }
+
+        this.visibleButtons = arr;
     }
 
     updatePageButtons() {
@@ -162,17 +151,13 @@ class Pagination {
         this.updateVisibleButtons();
     }
 
-    getPageNumberFromURL() {
-        let urlParams = new URLSearchParams(window.location.search);
-        let page = urlParams.get("page");
-        console.log(page);
-        return page ? page : 1;
-    }
-
-    addTransactionsToContainer() {
-        console.log(this.startIndex, this.endIndex);
-        for (let i = this.startIndex; i < this.endIndex; i++) {
-            this.transactionContainer.appendChild(this.t_array[i].renderElement());
+    async addTransactionsToContainer() {
+        if (!this.pageMap[this.pageMap]) {
+            let data = await getPageData(this.currentPage);
+            this.pageMap[this.currentPage] = this.getTransactionArray(data);
+        }
+        for (let transaction of this.pageMap[this.currentPage]) {
+            this.transactionContainer.appendChild(transaction.renderElement());
         }
         moveTransactionInputTo(storage.getItem("transactionInputLocation"));
     }
@@ -212,14 +197,38 @@ class Pagination {
         this.setCurrentPage(this.currentPage + 1);
     }
 
+    getTransactionArray(stringData) {
+        let data = JSON.parse(stringData);
+        let newTransactionArray = [];
+        for (let t of data.transactions) {
+            let arr = t.split(",");
+            let transaction = new Transaction(...arr);
+            newTransactionArray.push(transaction);
+        }
+
+        return newTransactionArray;
+    }
+
+    async getPageDataForPotentialPages() {
+        for (let pageNum of this.visibleButtons) {
+            if (this.pageMap[pageNum]) {
+                continue;
+            }
+
+            let data = await getPageData(pageNum);
+
+            this.pageMap[pageNum] = this.getTransactionArray(data);
+        }
+    }
+
 }
 
 function deleteTransaction(t_id) {
-    document.getElementById('delete_id' + t_id).style.display = 'block';
+    document.getElementById('deleteTransaction' + t_id).style.display = 'block';
 }
 
 function moveTransaction(t_id) {
-    document.getElementById('move_id' + t_id).style.display = 'block';
+    document.getElementById('moveTransaction' + t_id).style.display = 'block';
 }
 
 function editTransaction(id) {

@@ -7,9 +7,28 @@
 
 
 {% block content %}
+<script>
+    const GET_PAGE_URL = "{{ url_for('home.get_page', budget_id=budget.id) }}";
+    const MOVE_TRANSACTION_URL = "{{ url_for('home.move_transaction', sb_id=budget.id, t_id=0) }}".slice(0, -1);
+    const DELETE_TRANSACTION_URL = "{{ url_for('home.delete_transaction', b_id=budget.id, t_id=0) }}".slice(0, -1);
+    const budgetsArray = [];
+    async function getPageData(pageNum) {
+        return new Promise(function (resolve, reject) {
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.open("GET", GET_PAGE_URL + `?page=${pageNum}`);
+            xmlHttp.onload = () => {
+                resolve(xmlHttp.response);
+            };
+            xmlHttp.send(null);
+        })
+    }
+</script>
 <script src="/static/js/viewbudget.js"></script>
 <script src="/static/js/transaction.js"></script>
 <script>
+    const TOTAL_TRANSACTIONS = {{ total }};
+    const CURRENT_PAGE = {{ page }};
+    const NUM_PAGES = {{ num_pages }};
 
     const parser = new DOMParser();
     const transactionArray = [];
@@ -22,6 +41,12 @@
         );
         transactionArray.push(temp);
     {% endfor %}
+
+    {% for budg in budgets %}
+        temp = { id: "{{ budg.id }}", budgetString: "{{ str(budg) }}" };
+        budgetsArray.push(temp);
+    {% endfor %}
+
 
 </script>
     <div class="container pb-5 pt-3">
@@ -101,68 +126,13 @@
         </nav>
     </div>
 
-    {% for trans in transactions %}
-        <div id="delete_id{{ trans.id }}" class="modal" style="display: none;">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Delete transaction {{ trans.name }} ?</h5>
-                        <button onclick="document.getElementById('delete_id{{ trans.id }}').style.display='none'" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Are you sure you want to delete this transaction?</p>
-                    </div>
-                    <div class="modal-footer">
-                        <form method="POST" action="{{ url_for('home.delete_transaction', b_id=budget.id, t_id=trans.id) }}">
-                            <input class="page-number" name="page" type="number" value="1" hidden/>
-                            <button type="submit" id="delete_button" class="btn btn-danger">Delete</button>
-                            <button onclick="document.getElementById('delete_id{{ trans.id }}').style.display='none'" type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div id="move_id{{ trans.id }}" class="modal" style="display: none;">
-            <div class="modal-dialog">\
-                <form method="POST" action="{{ url_for('home.move_transaction', sb_id=budget.id, t_id=trans.id) }}">
-                    <input class="page-number" name="page" type="number" value="1" hidden/>
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Move transaction {{ trans.name }} ?</h5>
-                            <button onclick="document.getElementById('move_id{{ trans.id }}').style.display='none'" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <p>Which budget would you like to move this transaction to?</p>
-
-                            <div class="form-outline form-white mb-4">
-                                <label for="new_budget">Select budget:</label>
-                                <select class="form-select form-select-sm w-75" name="new_budget" id="new_budget" required>
-                                    {% for budg in budgets %}
-                                        {% if budget.id != budg.id %}
-                                            <option class="" value="{{ budg.id }}">{{ str(budg) }}</option>
-                                        {% endif %}
-                                    {% endfor %}
-                                </select>
-
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" id="" class="btn btn-primary">Move</button>
-                            <button onclick="document.getElementById('move_id{{ trans.id }}').style.display='none'" type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
-                        </div>
-                    </div>
-
-                </form>
-
-            </div>
-        </div>
-    {% endfor %}
-
+    <div id="moveModals"></div>
+    <div id="deleteModals"></div>
 
 
     <script src="/static/js/setdate.js"></script>
     <script>
-        const pagination = new Pagination(transactionArray);
+        const pagination = new Pagination(transactionArray, TOTAL_TRANSACTIONS, CURRENT_PAGE, NUM_PAGES);
 
         function moveTransactionInputTo(location) {
             let transactionInput = document.querySelector("#transactionInput");
@@ -206,11 +176,9 @@
         let transactionInputLocation = storage.getItem("transactionInputLocation");
         if (transactionInputLocation === "top") {
             topButton.checked = true;
-            moveTransactionInputTo("top");
         }
         else {
             bottomButton.checked = true;
-            moveTransactionInputTo("bottom");
         }
     </script>
 
