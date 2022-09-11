@@ -152,7 +152,7 @@ class Pagination {
     }
 
     async addTransactionsToContainer() {
-        if (!this.pageMap[this.pageMap]) {
+        if (!this.pageMap[this.currentPage]) {
             let data = await getPageData(this.currentPage);
             this.pageMap[this.currentPage] = this.getTransactionArray(data);
         }
