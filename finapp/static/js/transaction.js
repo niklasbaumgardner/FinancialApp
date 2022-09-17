@@ -71,6 +71,14 @@ function createElement(options) {
     ele.for = options.for;
   }
 
+  if (options.onpointerdown) {
+    ele.onpointerdown = options.onpointerdown;
+  }
+
+  if (options.onpointerup) {
+    ele.onpointerup = options.onpointerup;
+  }
+
   return ele;
 }
 
@@ -110,6 +118,12 @@ class Transaction {
       id: `trans${this.id}`,
       action: this.editURL,
       method: "POST",
+      onpointerdown: () => {
+        this.handelPointerDown();
+      },
+      onpointerup: () => {
+        this.handlePointerUp();
+      },
     });
     this.element.appendChild(
       createElement({
@@ -273,6 +287,19 @@ class Transaction {
     this.moveModal.renderElement();
 
     return this.element;
+  }
+
+  handelPointerDown() {
+    this.pointerDownTime = new Date().getTime();
+  }
+
+  handlePointerUp() {
+    let currentTime = new Date().getTime();
+    console.log("Time elapsed:", currentTime - this.pointerDownTime);
+    if (currentTime - this.pointerDownTime > 799) {
+      document.getElementById("name").value = this.name;
+      document.getElementById("amount").value = this.amount;
+    }
   }
 }
 
