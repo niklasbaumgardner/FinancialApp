@@ -4,7 +4,7 @@ from flask_login import login_user, current_user, logout_user, login_required
 from finapp.models import User, Budget, Transaction, PaycheckPrefill
 from finapp.extensions import db
 from datetime import datetime, timedelta, date
-from pytz import timezone
+from sqlalchemy import extract
 
 
 home = Blueprint('home', __name__)
@@ -451,60 +451,47 @@ def get_budget(id):
 
 
 def get_transactions(budget_id, start_date=None, end_date=None, include_transfers=True, page=1, paginate=False):
-    if paginate:
-        transactions = Transaction.query.filter(Transaction.budget_id==budget_id, Transaction.user_id==current_user.get_id()).order_by(Transaction.date.desc(), Transaction.id.desc())
-        if not include_transfers:
+    transactions = Transaction.query.filter(Transaction.budget_id==budget_id, Transaction.user_id==current_user.get_id()).order_by(Transaction.date.desc(), Transaction.id.desc())
+
+    if not include_transfers:
             transactions = transactions.filter(Transaction.is_transfer!=True)
 
-        if start_date:
-            transactions = transactions.filter(Transaction.date>=start_date)
+    if start_date:
+        transactions = transactions.filter(Transaction.date>=start_date)
 
-        if end_date:
-            transactions = transactions.filter(Transaction.date<=end_date)
+    if end_date:
+        transactions = transactions.filter(Transaction.date<=end_date)
 
+    if paginate:
         transactions = transactions.paginate(page=page, per_page=10)
-
         return transactions.items, transactions.total, transactions.page, transactions.pages
-
-
     else:
-        transactions = Transaction.query.filter_by(budget_id=budget_id, user_id=current_user.get_id()).order_by(Transaction.date.desc(), Transaction.id.desc()).all()
-        if not include_transfers:
-            transactions = [ t for t in transactions if t.is_transfer is not True ]
-        if start_date:
-            transactions = [ t for t in transactions if t.date > start_date ]
-        if end_date:
-            transactions = [ t for t in transactions if t.date <= end_date ]
+        transactions = transactions.all()
 
     return transactions
 
 def get_transactions_for_month(budget_id, month, include_transfers=True, page=1, paginate=False):
-    year=date.today().year
+    year = date.today().year
 
     current_month = date.today().month
     if current_month < month:
         year -=1
 
-    if paginate:
-        transactions = Transaction.query.filter(Transaction.budget_id==budget_id, Transaction.user_id==current_user.get_id(), Transaction.date.month==month, Transaction.date.year==year).order_by(Transaction.date.desc(), Transaction.id.desc())
+    transactions = Transaction.query.filter(
+            Transaction.budget_id==budget_id,
+            Transaction.user_id==current_user.get_id(),
+            extract("month", Transaction.date)==month,
+            extract("year", Transaction.date)==year).order_by(Transaction.date.desc(), Transaction.id.desc())
 
-        if not include_transfers:
+    if not include_transfers:
             transactions = transactions.filter(Transaction.is_transfer!=True)
 
+    if paginate:
         transactions = transactions.paginate(page=page, per_page=10)
-
         return transactions.items, transactions.total, transactions.page, transactions.pages
-
     else:
-        transactions = Transaction.query.filter(Transaction.budget_id==budget_id).filter(Transaction.user_id==current_user.get_id()).order_by(Transaction.date.desc(), Transaction.id.desc()).all()
-        transactions = [ t for t in transactions if t.date.month == month and t.date.year == year]
-    # if not query:
-    #     return transactions
-    # else:
-    #     transactions = transactions.all()
+        transactions = transactions.all()
 
-        if not include_transfers:
-            transactions = [ t for t in transactions if t.is_transfer is not True ]
     return transactions
 
 
