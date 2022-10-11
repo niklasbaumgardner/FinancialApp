@@ -12,10 +12,15 @@
     const MOVE_TRANSACTION_URL = "{{ url_for('home.move_transaction', sb_id=budget.id, t_id=0) }}".slice(0, -1);
     const DELETE_TRANSACTION_URL = "{{ url_for('home.delete_transaction', b_id=budget.id, t_id=0) }}".slice(0, -1);
     const budgetsArray = [];
+    const params = new URLSearchParams(window.location.search);
     async function getPageData(pageNum) {
         return new Promise(function (resolve, reject) {
-            var xmlHttp = new XMLHttpRequest();
-            xmlHttp.open("GET", GET_PAGE_URL + `?page=${pageNum}`);
+            let xmlHttp = new XMLHttpRequest();
+            let url = GET_PAGE_URL + `?page=${pageNum}`;
+            if (params.has("month")) {
+                url += `&month=${params.get("month")}`;
+            }
+            xmlHttp.open("GET", url);
             xmlHttp.onload = () => {
                 resolve(xmlHttp.response);
             };
