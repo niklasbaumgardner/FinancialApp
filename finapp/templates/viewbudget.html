@@ -144,8 +144,10 @@
             transactionInput.remove();
 
             let transactionForms = document.querySelectorAll("#transactionList > form");
-            let lastTransaction = transactionForms[transactionForms.length - 1].querySelector("li");
-            lastTransaction.classList.toggle("border-bottom-0", location === "top");
+            if (transactionForms.length > 0) {
+                let lastTransaction = transactionForms[transactionForms.length - 1].querySelector("li");
+                lastTransaction.classList.toggle("border-bottom-0", location === "top");
+            }
 
             let transactionList = document.querySelector("#transactionList");
             console.log(transactionList);
