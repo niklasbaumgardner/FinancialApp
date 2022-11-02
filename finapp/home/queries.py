@@ -140,7 +140,7 @@ def get_transactions(
     ).order_by(Transaction.date.desc(), Transaction.id.desc())
 
     if not include_transfers:
-        transactions = transactions.filter(Transaction.is_transfer != True)
+        transactions = transactions.filter((Transaction.is_transfer==False) | (Transaction.is_transfer==None))
 
     if start_date:
         transactions = transactions.filter(Transaction.date >= start_date)
@@ -179,7 +179,7 @@ def get_transactions_for_month(
     ).order_by(Transaction.date.desc(), Transaction.id.desc())
 
     if not include_transfers:
-        transactions = transactions.filter(Transaction.is_transfer != True)
+        transactions = transactions.filter((Transaction.is_transfer==False) | (Transaction.is_transfer==None))
 
     if paginate:
         transactions = transactions.paginate(page=page, per_page=10)
