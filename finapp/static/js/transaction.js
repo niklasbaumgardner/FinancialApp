@@ -290,16 +290,20 @@ class Transaction {
   }
 
   handelPointerDown() {
-    this.pointerDownTime = new Date().getTime();
+    this.isPointerDown = true;
+    setTimeout(() => { this.handleHoldingPointerDown(); }, 800);
+  }
+
+  handleHoldingPointerDown() {
+    if (this.isPointerDown) {
+      document.getElementById("name").value = this.name;
+      document.getElementById("amount").value = this.amount;
+      checkInput()
+    }
   }
 
   handlePointerUp() {
-    let currentTime = new Date().getTime();
-    console.log("Time elapsed:", currentTime - this.pointerDownTime);
-    if (currentTime - this.pointerDownTime > 799) {
-      document.getElementById("name").value = this.name;
-      document.getElementById("amount").value = this.amount;
-    }
+    this.isPointerDown = false;
   }
 }
 
