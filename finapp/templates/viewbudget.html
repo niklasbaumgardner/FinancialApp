@@ -107,7 +107,10 @@
                             </div>
                             <div class="col text-white">
                                 <div class="d-flex justify-content-end">
-                                    <form id="addTransaction" method="POST" action="{{ url_for('home.budget_transaction') }}"><input name="budget" value="{{ budget.id }}" hidden><input class="btn btn-primary" id="transSubmit" type="submit" value="Add Transaction" disabled></form>
+                                    <form id="addTransaction" method="POST" action="{{ url_for('home.budget_transaction') }}">
+                                        <input name="budget" value="{{ budget.id }}" hidden>
+                                        <input class="btn btn-primary" id="transSubmit" type="submit" value="Add Transaction" disabled>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -177,8 +180,10 @@
         let bottomButton = document.querySelector("#bottom");
         bottomButton.addEventListener("click", topBottomTransactionToggle);
 
-        document.getElementById("name").addEventListener("keyup", checkInput);
-        document.getElementById("amount").addEventListener("keyup", checkInput);
+        document.getElementById("name").addEventListener("input", checkInput);
+        document.getElementById("amount").addEventListener("input", checkInput);
+        document.getElementById("name").addEventListener("change", checkInput);
+        document.getElementById("amount").addEventListener("change", checkInput);
 
         let transactionInputLocation = storage.getItem("transactionInputLocation");
         if (transactionInputLocation === "top") {
