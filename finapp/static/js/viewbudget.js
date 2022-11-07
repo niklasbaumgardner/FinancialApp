@@ -227,38 +227,6 @@ class Pagination {
   }
 }
 
-function deleteTransaction(t_id) {
-  document.getElementById("deleteTransaction" + t_id).style.display = "block";
-}
-
-function moveTransaction(t_id) {
-  document.getElementById("moveTransaction" + t_id).style.display = "block";
-}
-
-function editTransaction(id) {
-  let hid = document.getElementsByClassName("show-edit-" + id);
-
-  for (let i = 0; i < hid.length; i++) {
-    hid[i].hidden = false;
-  }
-  let notHid = document.getElementsByClassName("show-not-edit-" + id);
-
-  for (let i = 0; i < notHid.length; i++) {
-    notHid[i].hidden = true;
-  }
-}
-
-function cancelEdit(id) {
-  let hid = document.getElementsByClassName("show-edit-" + id);
-  for (let i = 0; i < hid.length; i++) {
-    hid[i].hidden = true;
-  }
-  let notHid = document.getElementsByClassName("show-not-edit-" + id);
-  for (let i = 0; i < notHid.length; i++) {
-    notHid[i].hidden = false;
-  }
-}
-
 function checkInput() {
   let name = document.getElementById("name").value;
   let amount = document.getElementById("amount").value;

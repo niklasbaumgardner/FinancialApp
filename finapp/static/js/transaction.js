@@ -39,7 +39,7 @@ function createElement(options) {
     ele.hidden = true;
   }
 
-  if (options.value) {
+  if (options.value !== undefined) {
     ele.value = options.value;
   }
 
@@ -119,7 +119,7 @@ class Transaction {
 
     this.element = createElement({
       type: "form",
-      id: `trans${this.id}`,
+      id: `transaction-${this.id}`,
       action: this.editURL,
       method: "POST",
       onpointerdown: () => {
@@ -260,35 +260,84 @@ class Transaction {
     });
     colDiv3.appendChild(div7);
 
-    let div8 = createElement({
-      classList: "fs-6",
-      innerHTML: `
-        <span class="show-not-edit-${this.id}">
-          <a class="show-not-edit-${this.id} no-underline p-0" href="javascript:void(0);" onclick="editTransaction('${this.id}')">
-            edit <i class="material-icons fs-6">edit</i>
-          </a> | </span>
-        <a class="show-not-edit-${this.id} no-underline p-0" href="javascript:void(0);" onclick="moveTransaction('${this.id}')">move</a>
-        <a class="show-edit-${this.id} no-underline p-0" href="javascript:void(0);" onclick="document.getElementById('trans${this.id}').submit();" hidden>update</a>
-        |
-        <a class="show-not-edit-${this.id} no-underline p-0" href="javascript:void(0);" onclick="deleteTransaction('${this.id}')">
-          delete <i class="material-icons fs-6">delete</i>
-        </a>
-        <a class="show-edit-${this.id} no-underline p-0" href="javascript:void(0);" onclick="cancelEdit('${this.id}')" hidden>cancel</a>`,
+    this.showNotEdit = createElement({
+      type: "span",
     });
-    div7.appendChild(div8);
+    div7.appendChild(this.showNotEdit);
 
-    // TODO: create everything inside div6 dynamically
-    // let span = createElement({
-    //   classString: `show-not-edit-${this.id}`,
-    // });
+    let editButton = createElement({
+      type: "button",
+      classString: "btn btn-link padding-1-4",
+      content: "edit",
+      onclick: event => {
+        this.handleEditTransaction(event);
+      },
+    });
+    this.showNotEdit.appendChild(editButton);
 
-    // let a = createElement({
-    //   type: "a",
-    //   classString: `show-not-edit-${this.id} no-underline p-0`,
-    //   href: "javascript:void(0);",
-    //   onclick: () => { editTransaction(this.id) },
-    //   innerHTML: "",
-    // });
+    let separator = createElement({
+      type: "span",
+      content: "|",
+    });
+    this.showNotEdit.appendChild(separator);
+
+    let moveButton = createElement({
+      type: "button",
+      classString: "btn btn-link padding-1-4",
+      content: "move",
+      onclick: event => {
+        this.handleMoveTransaction(event);
+      },
+    });
+    this.showNotEdit.appendChild(moveButton);
+
+    separator = createElement({
+      type: "span",
+      content: "|",
+    });
+    this.showNotEdit.appendChild(separator);
+
+    let deleteButton = createElement({
+      type: "button",
+      classString: "btn btn-link padding-1-4",
+      content: "delete",
+      onclick: event => {
+        this.handleDeleteTransaction(event);
+      },
+    });
+    this.showNotEdit.appendChild(deleteButton);
+
+    this.showEdit = createElement({
+      type: "span",
+      hidden: true,
+    });
+    div7.appendChild(this.showEdit);
+
+    let updateButton = createElement({
+      type: "button",
+      classString: "btn btn-link padding-1-4",
+      content: "update",
+      onclick: event => {
+        this.handleUpdateTransaction(event);
+      },
+    });
+    this.showEdit.appendChild(updateButton);
+
+    separator = createElement({
+      type: "span",
+      content: "|",
+    });
+    this.showEdit.appendChild(separator);
+
+    let cancelButton = createElement({
+      type: "button",
+      classString: "btn btn-link padding-1-4",
+      content: "cancel",
+      onclick: event => {
+        this.handleCancelEditTransaction(event);
+      },
+    });
+    this.showEdit.appendChild(cancelButton);
 
     this.deleteModal.renderElement();
     this.moveModal.renderElement();
@@ -298,14 +347,16 @@ class Transaction {
 
   handelPointerDown() {
     this.isPointerDown = true;
-    setTimeout(() => { this.handleHoldingPointerDown(); }, 800);
+    setTimeout(() => {
+      this.handleHoldingPointerDown();
+    }, 800);
   }
 
   handleHoldingPointerDown() {
     if (this.isPointerDown) {
       document.getElementById("name").value = this.name;
       document.getElementById("amount").value = this.amount;
-      checkInput()
+      checkInput();
     }
   }
 
@@ -316,6 +367,47 @@ class Transaction {
   handlePointerCancel() {
     this.isPointerDown = false;
   }
+
+  handleEditTransaction(event) {
+    event.preventDefault();
+    this.showNotEdit.hidden = true;
+    for (let ele of this.element.getElementsByClassName(`show-not-edit-${this.id}`)) {
+      ele.hidden = true;
+    }
+
+    this.showEdit.hidden = false;
+    for (let ele of this.element.getElementsByClassName(`show-edit-${this.id}`)) {
+      ele.hidden = false;
+    }
+  }
+
+  handleMoveTransaction(event) {
+    event.preventDefault();
+    this.moveModal.show();
+  }
+
+  handleDeleteTransaction(event) {
+    event.preventDefault();
+    this.deleteModal.show();
+  }
+
+  handleUpdateTransaction(event) {
+    event.preventDefault();
+    this.element.submit();
+  }
+
+  handleCancelEditTransaction(event) {
+    event.preventDefault();
+    this.showNotEdit.hidden = false;
+    for (let ele of this.element.getElementsByClassName(`show-not-edit-${this.id}`)) {
+      ele.hidden = false;
+    }
+
+    this.showEdit.hidden = true;
+    for (let ele of this.element.getElementsByClassName(`show-edit-${this.id}`)) {
+      ele.hidden = true;
+    }
+  }
 }
 
 class DeleteModal {
@@ -324,6 +416,14 @@ class DeleteModal {
     this.transaction = transaction;
     this.created = false;
     this.element = null;
+  }
+
+  show() {
+    this.element.style.display = "block";
+  }
+
+  hide() {
+    this.element.style.display = "none";
   }
 
   renderElement() {
@@ -358,7 +458,7 @@ class DeleteModal {
       createElement({
         type: "button",
         onclick: () => {
-          this.element.style.display = "none";
+          this.hide();
         },
         classString: "btn-close",
       })
@@ -408,7 +508,7 @@ class DeleteModal {
       createElement({
         type: "button",
         onclick: () => {
-          this.element.style.display = "none";
+          this.hide();
         },
         inputType: "button",
         classString: "btn btn-outline-secondary",
@@ -429,6 +529,14 @@ class MoveModal {
     this.transaction = transaction;
     this.created = false;
     this.element = null;
+  }
+
+  show() {
+    this.element.style.display = "block";
+  }
+
+  hide() {
+    this.element.style.display = "none";
   }
 
   renderElement() {
@@ -481,7 +589,7 @@ class MoveModal {
       createElement({
         type: "button",
         onclick: () => {
-          this.element.style.display = "none";
+          this.hide();
         },
         inputType: "button",
         classString: "btn-close",
@@ -543,7 +651,7 @@ class MoveModal {
       createElement({
         type: "button",
         onclick: () => {
-          this.element.style.display = "none";
+          this.hide();
         },
         inputType: "button",
         classString: "btn btn-outline-secondary",
