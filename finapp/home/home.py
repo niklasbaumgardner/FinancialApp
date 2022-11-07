@@ -363,7 +363,7 @@ def get_budget_name():
 def get_pie_data():
     date = request.args.get("date")
     if date:
-        date = helpers.get_datetime(date)
+        date = helpers.get_date_from_string(date)
 
     data = helpers.pie_data(date)
 
@@ -393,7 +393,7 @@ def get_all_budgets_line_data():
     days_back = request.args.get("daysBack")
 
     if date:
-        curr_date = helpers.get_datetime(date)
+        curr_date = helpers.get_date_from_string(date)
         date = curr_date - timedelta(days=int(days_back)) if days_back else None
 
     data, dates = helpers.all_budgets_net_worth(date)

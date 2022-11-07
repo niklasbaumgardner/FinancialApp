@@ -2,7 +2,7 @@ from finapp.models import User, Budget, Transaction, PaycheckPrefill
 from finapp.extensions import db
 from sqlalchemy import extract
 from flask_login import current_user
-from datetime import datetime, timedelta, date
+from datetime import date
 
 ## Budget queries
 ##

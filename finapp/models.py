@@ -31,7 +31,7 @@ class Transaction(db.Model):
     budget_id = db.Column(db.Integer, db.ForeignKey("budget.id"), nullable=False)
     name = db.Column(db.String(60), nullable=False)
     amount = db.Column(db.Float, nullable=False)
-    date = db.Column(db.DateTime, nullable=False)
+    date = db.Column(db.Date, nullable=False)
     is_transfer = db.Column(db.Boolean, nullable=True)
 
 

@@ -19,12 +19,6 @@ def get_date_from_string(str_date):
     return date(int(year), int(month), int(day))
 
 
-def get_datetime(str_date):
-    year, month, day = str_date.strip().split("-")
-
-    return datetime(int(year), int(month), int(day))
-
-
 def transSum(lst):
     total = 0
 
