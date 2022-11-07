@@ -79,6 +79,10 @@ function createElement(options) {
     ele.onpointerup = options.onpointerup;
   }
 
+  if (options.onpointercancel) {
+    ele.onpointercancel = options.onpointercancel;
+  }
+
   return ele;
 }
 
@@ -123,6 +127,9 @@ class Transaction {
       },
       onpointerup: () => {
         this.handlePointerUp();
+      },
+      onpointercancel: () => {
+        this.handlePointerCancel();
       },
     });
     this.element.appendChild(
@@ -303,6 +310,10 @@ class Transaction {
   }
 
   handlePointerUp() {
+    this.isPointerDown = false;
+  }
+
+  handlePointerCancel() {
     this.isPointerDown = false;
   }
 }
