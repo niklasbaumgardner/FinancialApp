@@ -132,15 +132,16 @@ class Transaction {
         this.handlePointerCancel();
       },
     });
-    this.element.appendChild(
-      createElement({
-        type: "input",
-        classString: "page-number",
-        name: "page",
-        inputType: "number",
-        hidden: true,
-      })
-    );
+
+    this.pageInput = createElement({
+      type: "input",
+      classString: "page-number",
+      name: "page",
+      inputType: "number",
+      hidden: true,
+    });
+    this.element.appendChild(this.pageInput);
+
     let li = createElement({
       type: "li",
       classString:
@@ -393,6 +394,7 @@ class Transaction {
 
   handleUpdateTransaction(event) {
     event.preventDefault();
+    this.pageInput.value = pagination.currentPage;
     this.element.submit();
   }
 
