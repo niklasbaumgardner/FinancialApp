@@ -98,7 +98,7 @@ class Transaction {
     editURL
   ) {
     this.id = id;
-    this.name = name;
+    this.name = name.replace("&#39;", "'");
     this.amount = amount;
     this.stringAmount = stringAmount;
     this.date = date;
