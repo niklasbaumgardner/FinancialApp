@@ -307,14 +307,12 @@ def delete_budget(b_id):
     # move or delete the transactions
     new_budget = queries.get_budget(new_budget_id)
     if new_budget:
-        print("if")
         transactions = queries.get_transactions(b_id)
         for t in transactions:
             queries._update_transaction(
                 transaction=t, b_id=b_id, new_b_id=new_budget.id
             )
     else:
-        print("else")
         transactions = queries.get_transactions(b_id)
         for trans in transactions:
             queries._delete_transaction(trans, b_id)
