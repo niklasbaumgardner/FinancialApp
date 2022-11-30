@@ -215,12 +215,12 @@ def net_worth(start_date=None):
     all_budgets = queries.get_budgets()
     all_trans = []
     for budget in all_budgets:
-        all_trans += queries.get_transactions(budget.id, start_date)
+        all_trans += queries.get_transactions(budget.id)
     all_trans.sort(key=lambda x: x.date)
 
     data = get_data_dict(all_trans)
 
-    first = all_trans[0].date
+    first = start_date
     last = all_trans[-1].date
     dates, step = get_dates_for_range(first, last)
     # print(first, last, dates)

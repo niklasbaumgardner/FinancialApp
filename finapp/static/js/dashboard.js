@@ -1,6 +1,3 @@
-// import {Chart} from 'chart.js';
-// import ChartDataLabels from 'chartjs-plugin-datalabels';
-// const Chart = window.Chart;
 const ChartDataLabels = window.ChartDataLabels;
 
 const CHART_COLORS = {
@@ -83,8 +80,392 @@ const COLORS = [
 // Russian red #e66767
 
 const COLORS_DICT = {};
-let data;
 let names;
+
+class ChartHandler {
+  constructor() {
+    this.init();
+  }
+
+  async init() {
+    let response = await getAllBudgetsLineData();
+
+    this.names = (await getAllBudgetNames()).names;
+
+    this.data = response.data;
+    this.keys = response.keys;
+
+    setLineBudgetStartDate(this.keys[0]);
+    this.assignColors();
+    this.createOrUpdateLineChart();
+    this.createOrUpdatePieChart("", storage.getItem("showPercentage"));
+    this.addLineChartButtons();
+    let monthInt = date.getMonth() + 1;
+    let monthName = date.toLocaleString("default", { month: "long" });
+    this.spendingPerMonth(monthInt, monthName);
+    netSpending(monthInt, this.names);
+
+    let arr = [
+      "lineGraphButton",
+      "pieChartButton",
+      "spendingButton",
+      "netSpendingButton",
+    ];
+    for (let id of arr) {
+      let collapsed = storage.getItem(id);
+      if (collapsed === "true") {
+        let btn = document.getElementById(id);
+        btn.click();
+      }
+    }
+  }
+
+  get startDate() {
+    return this.keys[0];
+  }
+
+  fixValues(oldValues) {
+    let newValues = {};
+    for (let k of this.keys) {
+      let temp = oldValues[k];
+      if (temp != undefined) {
+        newValues[k] = temp;
+      }
+    }
+    return newValues;
+  }
+
+  createOrUpdateLineChart() {
+    let values = this.data.allBudgets;
+  
+    let fixedValues = this.fixValues(values);
+
+    if (this.lineChart) {
+      this.lineChart.destroy();
+    }
+  
+    const ctx = document.getElementById("lineChart").getContext("2d");
+    this.lineChart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: this.keys,
+        datasets: [
+          {
+            id: "allBudgets",
+            label: "All Budgets",
+            data: fixedValues,
+            backgroundColor: COLORS_DICT["allBudgets"],
+            borderColor: COLORS_DICT["allBudgets"],
+            borderWidth: 2,
+            color: "rgba(255, 255, 255)",
+          },
+        ],
+      },
+      options: {
+        plugins: {
+          legend: {
+            labels: {
+              color: "rgba(255, 255, 255)",
+            },
+          },
+          title: {
+            display: true,
+            text: "Budgets",
+            color: "rgba(255, 255, 255)",
+            font: {
+              size: 19,
+              weight: "normal",
+            },
+          },
+        },
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            labels: {
+              color: "rgba(255, 255, 255)",
+            },
+            grid: {
+              color: "rgba(255, 255, 255, .11)",
+            },
+            ticks: {
+              // Include a dollar sign in the ticks
+              callback: function (value, index, values) {
+                return "$" + value;
+              },
+              color: "rgba(255, 255, 255, .79)",
+            },
+          },
+          x: {
+            grid: {
+              color: "rgba(255, 255, 255, .11)",
+            },
+            ticks: {
+              color: "rgba(255, 255, 255, .79)",
+            },
+          },
+        },
+      },
+    });
+  }
+
+  addDataForLineChart(name) {
+    let temp = {
+      id: name,
+      label: name,
+      data: this.fixValues(this.data[name]),
+      backgroundColor: COLORS_DICT[name], //'rgba(40, 114, 251)',
+      borderColor: COLORS_DICT[name], //'rgba(40, 114, 251)',
+      borderWidth: 2,
+      color: "rgba(255, 255, 255)",
+    };
+    this.lineChart.data.datasets.push(temp);
+    this.lineChart.update();
+  }
+  
+  removeDataForLineChart(name) {
+    let indx = 0;
+    for (let data of this.lineChart.data.datasets) {
+      if (data.id === name) {
+        this.lineChart.data.datasets.splice(indx, 1);
+        break;
+      }
+      indx += 1;
+    }
+    this.lineChart.update();
+  }
+
+  async createOrUpdatePieChart(date = "", showPercentages = false) {
+    let pieData = await getPieData(date);
+    let keys = pieData["keys"];
+    let values = pieData["values"];
+  
+    let colors = [];
+    // console.log(keys);
+    for (let name of keys) {
+      colors.push(COLORS_DICT[name]);
+    }
+
+    if (this.pieChart) {
+      this.pieChart.destroy();
+    }
+  
+    let percentages = {
+      formatter: (value, ctx) => {
+        let sum = ctx.chart._metasets[0].total;
+        let percentage = ((value * 100) / sum).toFixed(2) + "%";
+        return percentage;
+      },
+      color: "rgb(0, 0, 0)",
+    };
+    percentages = showPercentages === "true" ? percentages : null;
+  
+    const ctx = document.getElementById("pieChart").getContext("2d");
+    this.pieChart = new Chart(ctx, {
+      plugins: [ChartDataLabels],
+      type: "pie",
+      data: {
+        labels: keys,
+        datasets: [
+          {
+            data: values,
+            backgroundColor: colors,
+            color: "rgba(255, 255, 255)",
+            hoverOffset: 4,
+          },
+        ],
+      },
+      options: {
+        plugins: {
+          legend: {
+            position: "top",
+          },
+          title: {
+            display: true,
+            text: "Breakdown of budgets (Amount > 0)",
+            color: "rgb(255, 255, 255)",
+            font: {
+              size: 19,
+              weight: "normal",
+            },
+          },
+          datalabels: percentages,
+        },
+        responsive: true,
+        borderColor: "rgba(0, 0, 0, .79)",
+        color: "rgba(255, 255, 255, .79)",
+      },
+    });
+  }
+
+  togglePercentagePieChart(showPercentages) {
+    const ctx = document.getElementById("pieChart").getContext("2d");
+  
+    let percentages = {
+      formatter: (value, ctx) => {
+        let sum = ctx.chart._metasets[0].total;
+        let percentage = ((value * 100) / sum).toFixed(2) + "%";
+        return percentage;
+      },
+      color: "rgb(0, 0, 0)",
+    };
+    percentages = showPercentages ? percentages : null;
+  
+    let options = {
+      plugins: {
+        legend: {
+          position: "top",
+        },
+        title: {
+          display: true,
+          text: "Breakdown of budgets (Amount > 0)",
+          color: "rgb(255, 255, 255)",
+          font: {
+            size: 19,
+            weight: "normal",
+          },
+        },
+        datalabels: percentages,
+      },
+      responsive: true,
+      borderColor: "rgba(0, 0, 0, .79)",
+      color: "rgba(255, 255, 255, .79)",
+    };
+  
+    let data = this.pieChart.data;
+  
+    this.pieChart.destroy();
+  
+    this.pieChart = new Chart(ctx, {
+      plugins: [ChartDataLabels],
+      type: "pie",
+      data: data,
+      options: options,
+    });
+  }
+
+  async spendingPerMonth(month, monthName) {
+    let spendData = await getMonthSpending(month);
+  
+    let keys = spendData["keys"];
+    let values = spendData["values"];
+  
+    let total = values.reduce((a, b) => a + b, 0);
+  
+    let colors = [];
+    for (let name of keys) {
+      colors.push(COLORS_DICT[name]);
+    }
+  
+    let tempChart = Chart.getChart("spendingChart");
+    if (tempChart) {
+      tempChart.destroy();
+    }
+  
+    const ctx = document.getElementById("spendingChart").getContext("2d");
+    this.spendingChart = new Chart(ctx, {
+      plugins: [ChartDataLabels],
+      type: "doughnut",
+      data: {
+        labels: keys,
+        datasets: [
+          {
+            data: values,
+            backgroundColor: colors,
+            color: "rgba(255, 255, 255)",
+            hoverOffset: 4,
+          },
+        ],
+      },
+      options: {
+        plugins: {
+          legend: {
+            position: "top",
+          },
+          title: {
+            display: true,
+            text: `You spent $${total.toFixed(2)} in ${monthName}`,
+            color: "rgb(255, 255, 255)",
+            font: {
+              size: 19,
+              weight: "normal",
+            },
+          },
+          datalabels: null,
+        },
+        responsive: true,
+        borderColor: "rgba(0, 0, 0, .79)",
+        color: "rgba(255, 255, 255, .79)",
+      },
+    });
+  }
+
+  addLineChartButtons() {
+    let buttonGroup = document.getElementById("lineButtons");
+  
+    for (let name of this.names) {
+      // console.log(typeof(name), typeof(id));
+      if (name === "allBudgets" || !Object.keys(this.data).includes(name)) {
+        continue;
+      }
+      let input = document.createElement("input");
+      input.type = "checkbox";
+      input.classList.add("btn-check");
+      input.id = name;
+  
+      let label = document.createElement("label");
+      label.setAttribute("for", name);
+      label.innerHTML = name;
+      label.classList.add("btn");
+      label.classList.add("btn-outline-light");
+  
+      label.addEventListener("click", event => { this.toggleShowLine(event); });
+
+      buttonGroup.appendChild(input);
+      buttonGroup.appendChild(label);
+    }
+  
+    document
+      .getElementById("allBudgetsLabel")
+      .addEventListener("click", event => { this.toggleShowLine(event); });
+  }
+
+  assignColors() {
+    let arr = [];
+    for (let i = 0; i < COLORS.length; i++) {
+      arr[arr.length] = i;
+    }
+  
+    let difference = COLORS.length - this.names.length;
+    let maxLength = difference > 0 ? difference : COLORS.length;
+
+    let random = shuffle(arr, maxLength);
+  
+    let indx = 0;
+    for (let name of this.names) {
+      COLORS_DICT[name] = COLORS[random[indx % random.length]];
+      indx += 1;
+    }
+  }
+
+  toggleShowLine(event) {
+    // event.preventDefault();
+    let label = event.target;
+    // label.blur();
+    // console.log(label);
+    let name = label.getAttribute("for");
+    let checked = document.getElementById(name).checked;
+    // console.log(name);
+    // console.log(checked);
+  
+    if (!checked) {
+      this.addDataForLineChart(name);
+    } else {
+      this.removeDataForLineChart(name);
+    }
+  }
+}
 
 // const data = await getAllBudgetsLineData();
 // console.log(data);
@@ -109,296 +490,6 @@ function shuffle(array, len) {
     return array;
   }
   return array.splice(len);
-}
-
-function assignColors() {
-  let arr = [];
-  for (let i = 0; i < COLORS.length; i++) {
-    arr[arr.length] = i;
-  }
-
-  let difference = COLORS.length - names.length;
-  let maxLength = difference > 0 ? difference : COLORS.length;
-
-  let random = shuffle(arr, maxLength);
-
-  let indx = 0;
-  for (let name of names) {
-    COLORS_DICT[name] = COLORS[random[indx % random.length]];
-    indx += 1;
-  }
-}
-
-function fixValues(oldValues, keys = data["keys"]) {
-  let newValues = {};
-  for (let k of keys) {
-    let temp = oldValues[k];
-    if (temp != undefined) {
-      newValues[k] = temp;
-    }
-  }
-  return newValues;
-}
-
-function lineChart() {
-  let keys = data["keys"];
-  let values = data["data"]["allBudgets"];
-
-  let newValues = fixValues(values);
-
-  const ctx = document.getElementById("lineChart").getContext("2d");
-  const myChart = new Chart(ctx, {
-    type: "line",
-    data: {
-      labels: keys,
-      datasets: [
-        {
-          id: "allBudgets",
-          label: "All Budgets",
-          data: newValues,
-          backgroundColor: COLORS_DICT["allBudgets"],
-          borderColor: COLORS_DICT["allBudgets"],
-          borderWidth: 2,
-          color: "rgba(255, 255, 255)",
-        },
-      ],
-    },
-    options: {
-      plugins: {
-        legend: {
-          labels: {
-            color: "rgba(255, 255, 255)",
-          },
-        },
-        title: {
-          display: true,
-          text: "Budgets",
-          color: "rgba(255, 255, 255)",
-          font: {
-            size: 19,
-            weight: "normal",
-          },
-        },
-      },
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        y: {
-          beginAtZero: true,
-          labels: {
-            color: "rgba(255, 255, 255)",
-          },
-          grid: {
-            color: "rgba(255, 255, 255, .11)",
-          },
-          ticks: {
-            // Include a dollar sign in the ticks
-            callback: function (value, index, values) {
-              return "$" + value;
-            },
-            color: "rgba(255, 255, 255, .79)",
-          },
-        },
-        x: {
-          grid: {
-            color: "rgba(255, 255, 255, .11)",
-          },
-          ticks: {
-            color: "rgba(255, 255, 255, .79)",
-          },
-        },
-      },
-    },
-  });
-}
-
-async function pieChart(date = "", showPercentages = false) {
-  let pieData = await getPieData(date);
-  let keys = pieData["keys"];
-  let values = pieData["values"];
-
-  let colors = [];
-  // console.log(keys);
-  for (let name of keys) {
-    colors.push(COLORS_DICT[name]);
-  }
-
-  let tempChart = Chart.getChart("pieChart");
-  if (tempChart) {
-    tempChart.destroy();
-  }
-
-  let percentages = {
-    formatter: (value, ctx) => {
-      let sum = ctx.chart._metasets[0].total;
-      let percentage = ((value * 100) / sum).toFixed(2) + "%";
-      return percentage;
-    },
-    color: "rgb(0, 0, 0)",
-  };
-  percentages = showPercentages === "true" ? percentages : null;
-
-  const ctx = document.getElementById("pieChart").getContext("2d");
-  const myChart = new Chart(ctx, {
-    plugins: [ChartDataLabels],
-    type: "pie",
-    data: {
-      labels: keys,
-      datasets: [
-        {
-          data: values,
-          backgroundColor: colors,
-          color: "rgba(255, 255, 255)",
-          hoverOffset: 4,
-        },
-      ],
-    },
-    options: {
-      plugins: {
-        legend: {
-          position: "top",
-        },
-        title: {
-          display: true,
-          text: "Breakdown of budgets (Amount > 0)",
-          color: "rgb(255, 255, 255)",
-          font: {
-            size: 19,
-            weight: "normal",
-          },
-        },
-        datalabels: percentages,
-      },
-      responsive: true,
-      borderColor: "rgba(0, 0, 0, .79)",
-      color: "rgba(255, 255, 255, .79)",
-    },
-  });
-}
-
-function togglePercentage(showPercentages) {
-  const ctx = document.getElementById("pieChart").getContext("2d");
-  let myChart = Chart.getChart("pieChart");
-
-  let percentages = {
-    formatter: (value, ctx) => {
-      let sum = ctx.chart._metasets[0].total;
-      let percentage = ((value * 100) / sum).toFixed(2) + "%";
-      return percentage;
-    },
-    color: "rgb(0, 0, 0)",
-  };
-  percentages = showPercentages ? percentages : null;
-
-  let options = {
-    plugins: {
-      legend: {
-        position: "top",
-      },
-      title: {
-        display: true,
-        text: "Breakdown of budgets (Amount > 0)",
-        color: "rgb(255, 255, 255)",
-        font: {
-          size: 19,
-          weight: "normal",
-        },
-      },
-      datalabels: percentages,
-    },
-    responsive: true,
-    borderColor: "rgba(0, 0, 0, .79)",
-    color: "rgba(255, 255, 255, .79)",
-  };
-
-  let data = myChart.data;
-
-  myChart.destroy();
-
-  myChart = new Chart(ctx, {
-    plugins: [ChartDataLabels],
-    type: "pie",
-    data: data,
-    options: options,
-  });
-}
-
-function addDataForBudget(name) {
-  const myChart = Chart.getChart("lineChart");
-  let temp = {
-    id: name,
-    label: name,
-    data: fixValues(data["data"][name]),
-    backgroundColor: COLORS_DICT[name], //'rgba(40, 114, 251)',
-    borderColor: COLORS_DICT[name], //'rgba(40, 114, 251)',
-    borderWidth: 2,
-    color: "rgba(255, 255, 255)",
-  };
-  myChart.data.datasets.push(temp);
-  myChart.update();
-}
-
-function removeDataForBudget(name) {
-  const myChart = Chart.getChart("lineChart");
-  // console.log(chart.data.datasets);
-  // console.log(typeof(chart.data.datasets));
-
-  let indx = 0;
-  for (let data of myChart.data.datasets) {
-    if (data.id === name) {
-      myChart.data.datasets.splice(indx, 1);
-      break;
-    }
-    indx += 1;
-  }
-  myChart.update();
-}
-
-function toggleShowLine(event) {
-  // event.preventDefault();
-  let label = event.target;
-  // label.blur();
-  // console.log(label);
-  let name = label.getAttribute("for");
-  let checked = document.getElementById(name).checked;
-  // console.log(name);
-  // console.log(checked);
-
-  if (!checked) {
-    addDataForBudget(name);
-  } else {
-    removeDataForBudget(name);
-  }
-}
-
-function addButtons() {
-  let buttonGroup = document.getElementById("lineButtons");
-
-  for (let name of names) {
-    // console.log(typeof(name), typeof(id));
-    if (name === "allBudgets" || !data["names"].includes(name)) {
-      continue;
-    }
-    let input = document.createElement("input");
-    input.type = "checkbox";
-    input.classList.add("btn-check");
-    input.id = name;
-
-    let label = document.createElement("label");
-    label.setAttribute("for", name);
-    label.innerHTML = name;
-    label.classList.add("btn");
-    label.classList.add("btn-outline-light");
-
-    label.addEventListener("click", toggleShowLine);
-
-    buttonGroup.appendChild(input);
-    buttonGroup.appendChild(label);
-  }
-
-  document
-    .getElementById("allBudgetsLabel")
-    .addEventListener("click", toggleShowLine);
 }
 
 function reAssignColors() {
@@ -450,7 +541,7 @@ function createPtagWithClass(classString) {
   return p;
 }
 
-function createCard(name, in_, out, net, month) {
+function createCard(name, in_, out, net, month, names) {
   let card;
   if (names.includes(name)) {
     card = createDivWithClass("card bg-lighter-grey button-div");
@@ -543,7 +634,7 @@ function createCard(name, in_, out, net, month) {
   return column3;
 }
 
-async function netSpending(month) {
+async function netSpending(month, names) {
   let spendingData = await getNetSpending(month);
   // let dataKeys = Object.keys(data)
 
@@ -575,7 +666,8 @@ async function netSpending(month) {
         spendingData[name]["in"],
         spendingData[name]["out"],
         spendingData[name]["net"],
-        month
+        month,
+        names
       );
 
       row.appendChild(card);
@@ -586,90 +678,44 @@ async function netSpending(month) {
   }
 }
 
-async function spendingPerMonth(month, monthName) {
-  let spendData = await getMonthSpending(month);
-
-  let keys = spendData["keys"];
-  let values = spendData["values"];
-
-  let total = values.reduce((a, b) => a + b, 0);
-
-  let colors = [];
-  for (let name of keys) {
-    colors.push(COLORS_DICT[name]);
-  }
-
-  let tempChart = Chart.getChart("spendingChart");
-  if (tempChart) {
-    tempChart.destroy();
-  }
-
-  const ctx = document.getElementById("spendingChart").getContext("2d");
-  const myChart = new Chart(ctx, {
-    plugins: [ChartDataLabels],
-    type: "doughnut",
-    data: {
-      labels: keys,
-      datasets: [
-        {
-          data: values,
-          backgroundColor: colors,
-          color: "rgba(255, 255, 255)",
-          hoverOffset: 4,
-        },
-      ],
-    },
-    options: {
-      plugins: {
-        legend: {
-          position: "top",
-        },
-        title: {
-          display: true,
-          text: `You spent $${total.toFixed(2)} in ${monthName}`,
-          color: "rgb(255, 255, 255)",
-          font: {
-            size: 19,
-            weight: "normal",
-          },
-        },
-        datalabels: null,
-      },
-      responsive: true,
-      borderColor: "rgba(0, 0, 0, .79)",
-      color: "rgba(255, 255, 255, .79)",
-    },
-  });
+function setLineBudgetStartDate(string) {
+  let [month, day, year] = string.split("/");
+  let date = new Date(year, month - 1, day);
+  let startDate = document.getElementById("startDate");
+  let strDate = year + '-' + month + '-' + day;
+  startDate.valueAsDate = date;
+  startDate.value = strDate;
 }
 
 // function calls
-(async () => {
-  names = await getAllBudgetNames();
-  names = names["names"];
+// (async () => {
+  // names = await getAllBudgetNames();
+  // names = names["names"];
 
-  data = await getAllBudgetsLineData();
-  // console.log(data);
+  // data = await getAllBudgetsLineData();
+  // // console.log(data);
 
-  assignColors();
-  lineChart();
-  pieChart("", storage.getItem("showPercentage"));
-  addButtons();
-  let monthInt = date.getMonth() + 1;
-  let monthName = date.toLocaleString("default", { month: "long" });
-  spendingPerMonth(monthInt, monthName);
-  netSpending(monthInt);
+  // setLineBudgetStartDate(data);
+  // assignColors();
+  // lineChart(data);
+  // pieChart("", storage.getItem("showPercentage"));
+  // addButtons();
+  // let monthInt = date.getMonth() + 1;
+  // let monthName = date.toLocaleString("default", { month: "long" });
+  // spendingPerMonth(monthInt, monthName);
+  // netSpending(monthInt);
 
-  let arr = [
-    "lineGraphButton",
-    "pieChartButton",
-    "spendingButton",
-    "netSpendingButton",
-  ];
-  for (let id of arr) {
-    let collapsed = storage.getItem(id);
-    if (collapsed === "true") {
-      let btn = document.getElementById(id);
-      btn.click();
-    }
-  }
-})();
+  // let arr = [
+  //   "lineGraphButton",
+  //   "pieChartButton",
+  //   "spendingButton",
+  //   "netSpendingButton",
+  // ];
+  // for (let id of arr) {
+  //   let collapsed = storage.getItem(id);
+  //   if (collapsed === "true") {
+  //     let btn = document.getElementById(id);
+  //     btn.click();
+  //   }
+  // }
+// })();

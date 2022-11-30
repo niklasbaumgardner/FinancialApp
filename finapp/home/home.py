@@ -387,15 +387,14 @@ def get_spending_for_month():
 @home.route("/get_all_budgets_line_data", methods=["GET"])
 @login_required
 def get_all_budgets_line_data():
-    date = request.args.get("currentDate")
-    days_back = request.args.get("daysBack")
+    start_date = request.args.get("startDate")
+    if start_date:
+        start_date = helpers.get_date_from_string(start_date)
 
-    if date:
-        curr_date = helpers.get_date_from_string(date)
-        date = curr_date - timedelta(days=int(days_back)) if days_back else None
-
-    data, dates = helpers.all_budgets_net_worth(date)
-    dataNW, datesNW = helpers.net_worth(date)
+    data, dates = helpers.all_budgets_net_worth(start_date)
+    month, day, year = dates[0].split("/")
+    actualStartDate = date(int(year), int(month), int(day))
+    dataNW, datesNW = helpers.net_worth(actualStartDate)
 
     names = ["allBudgets"] + [k for k in data.keys()]
 

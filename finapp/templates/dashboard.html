@@ -40,13 +40,8 @@
         }
         return JSON.parse(result);
     }
-    async function getAllBudgetsLineData(daysBack='') {
-        let date = new Date();
-        let year = date.getFullYear();
-        let month = (date.getMonth() + 1).toString().padStart(2, '0');
-        let day = date.getDate().toString().padStart(2, '0');
-        let strDate = year + '-' + month + '-' + day;
-        let result = await getData("{{ url_for('home.get_all_budgets_line_data') }}" + "?currentDate=" + strDate + "&daysBack=" + daysBack);
+    async function getAllBudgetsLineData(startDate='') {
+        let result = await getData("{{ url_for('home.get_all_budgets_line_data') }}" + "?startDate=" + startDate);
         return JSON.parse(result);
     }
     async function getNetSpending(month) {
@@ -76,6 +71,7 @@
                     <div class="accordion-body bg-dark">
                         <div class="">
                             <p class="text-white fs-2">Check the budgets you want to view</p>
+                            <p class="text-white">Start date: <input class="" type="date" id="startDate"></p>
                             <div class="overflowScroll-X better-scroll">
                                 <div id="lineButtons" class="btn-group my-3 px-2" role="group" aria-label="Basic checkbox toggle button group">
                                     <input type="checkbox" class="btn-check" id="allBudgets" checked>
@@ -198,6 +194,8 @@
         10: "October", 11: "November", 12: "December"
     };
 
+    const chartHandler = new ChartHandler();
+
     // onChange handler for spending last X days
     // let spending = document.getElementById('spendingDays');
     // spending.addEventListener('change', (event) => {
@@ -300,6 +298,29 @@
     //         spending.value = storage.getItem("spendingDays");
     //     }
     // }
+
+    let startDate = document.getElementById("startDate");
+    startDate.addEventListener("input", async event => {
+        let date = event.target.value;
+        let currentStartDate = chartHandler.startDate;
+        let dateArray = date.split("-");
+        let currentStartDateSet = new Set(currentStartDate.split("/"));
+        let datesEqual = dateArray.every(ele => currentStartDateSet.has(ele));
+        console.log(datesEqual);
+        if (datesEqual) {
+            return;
+        }
+
+        let response = await getAllBudgetsLineData(event.target.value);
+        chartHandler.data = response.data;
+        chartHandler.keys = response.keys;
+
+        let newStartDate = chartHandler.startDate;
+
+        chartHandler.createOrUpdateLineChart();
+
+        setLineBudgetStartDate(newStartDate);
+    })
 
 </script>
 {% endblock content %}
