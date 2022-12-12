@@ -112,7 +112,7 @@
                                         </label>
                                     </div>
                                     <div class="col-4 text-end">
-                                        <input class="form-control w-160 bg-light-grey" type="date" id="date">
+                                        <input class="form-control w-160" type="date" id="date">
                                     </div>
                                     <!-- <div class="col-4 text-end">
                                         <button class="btn btn-outline-primary mt-1" onclick="reAssignColors()">Randomize colors</button>
@@ -240,7 +240,6 @@
         let option1 = document.createElement("option");
         option1.value = value;
         option1.innerText = months[value];
-
         pieSelect.appendChild(option1);
 
         let option2 = document.createElement("option");
@@ -251,15 +250,24 @@
         value -= 1;
     }
 
+    let ytdOption1 = document.createElement("option");
+    ytdOption1.value = "ytd";
+    ytdOption1.innerText = "YTD";
+    pieSelect.appendChild(ytdOption1);
+
+    let ytdOption2 = document.createElement("option");
+    ytdOption2.value = "ytd";
+    ytdOption2.innerText = "YTD";
+    budgetSelect.appendChild(ytdOption2);
+
     // The change handler for the month spending donut
     pieSelect.addEventListener('change', event => {
-        let date = new Date(2000, event.target.value - 1, 1);
-        let monthName = date.toLocaleString('default', { month: 'long' });
-        spendingPerMonth(event.target.value, monthName);
+        let monthName = event.target.children[event.target.selectedIndex].textContent
+        chartHandler.spendingPerMonth(event.target.value, monthName);
     });
 
     budgetSelect.addEventListener('change', event => {
-        netSpending(event.target.value);
+        chartHandler.netSpending(event.target.value);
     });
 
     // store the accordian state for next use

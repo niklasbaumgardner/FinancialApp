@@ -103,7 +103,7 @@ class ChartHandler {
     let monthInt = date.getMonth() + 1;
     let monthName = date.toLocaleString("default", { month: "long" });
     this.spendingPerMonth(monthInt, monthName);
-    netSpending(monthInt, this.names);
+    this.netSpending(monthInt);
 
     let arr = [
       "lineGraphButton",
@@ -401,6 +401,37 @@ class ChartHandler {
     });
   }
 
+  async netSpending(month) {
+    let spendingData = await getNetSpending(month);
+  
+    let div = document.getElementById("net-spending");
+    div.innerHTML = "";
+
+    let count = 0;
+    let row = document.getElementById("net-spending");
+    for (let name of this.names) {
+      if (spendingData[name]) {
+        let name_ = name;
+        if (name === "allBudgets") {
+          name_ = "All Budgets Combined";
+        }
+        let card = createCard(
+          name_,
+          spendingData[name]["in"],
+          spendingData[name]["out"],
+          spendingData[name]["net"],
+          month,
+          this.names
+        );
+  
+        row.appendChild(card);
+      }
+    }
+    if (count % 4 !== 0) {
+      div.appendChild(row);
+    }
+  }
+
   addLineChartButtons() {
     let buttonGroup = document.getElementById("lineButtons");
   
@@ -632,50 +663,6 @@ function createCard(name, in_, out, net, month, names) {
   column3.appendChild(card);
 
   return column3;
-}
-
-async function netSpending(month, names) {
-  let spendingData = await getNetSpending(month);
-  // let dataKeys = Object.keys(data)
-
-  let div = document.getElementById("net-spending");
-  div.innerHTML = "";
-
-  // let date = new Date();
-  // let year = date.getFullYear();
-  // let month = (date.getMonth() + 1).toString().padStart(2, '0');
-  // let day = date.getDate().toString().padStart(2, '0');
-  // let strDate = year + '-' + month + '-' + day;
-
-  let count = 0;
-  let row = document.getElementById("net-spending");
-  for (let name of names) {
-    if (spendingData[name]) {
-      // if (count % 4 === 0) {
-      //     if (row) {
-      //         div.appendChild(row);
-      //     }
-      //     row = createDivWithClass('row');
-      // }
-      let name_ = name;
-      if (name === "allBudgets") {
-        name_ = "All Budgets Combined";
-      }
-      let card = createCard(
-        name_,
-        spendingData[name]["in"],
-        spendingData[name]["out"],
-        spendingData[name]["net"],
-        month,
-        names
-      );
-
-      row.appendChild(card);
-    }
-  }
-  if (count % 4 !== 0) {
-    div.appendChild(row);
-  }
 }
 
 function setLineBudgetStartDate(string) {

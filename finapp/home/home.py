@@ -341,6 +341,7 @@ def delete_prefill(amount):
 
 ## Endpoints for the dashboard
 
+
 @home.route("/dashboard", methods=["GET"])
 @login_required
 def dashboard():
@@ -374,7 +375,12 @@ def get_pie_data():
 @home.route("/get_spending_for_month", methods=["GET"])
 @login_required
 def get_spending_for_month():
-    month = request.args.get("month", date.today().month, type=int)
+    month = request.args.get("month")
+    if month != "ytd":
+        try:
+            month = int(month)
+        except:
+            month = date.today().month
 
     data = helpers.spending_for_month(month)
 
@@ -406,7 +412,12 @@ def get_all_budgets_line_data():
 @home.route("/get_net_spending_for_month", methods=["GET"])
 @login_required
 def get_net_spending_for_month():
-    month = request.args.get("month", date.today().month, type=int)
+    month = request.args.get("month")
+    if month != "ytd":
+        try:
+            month = int(month)
+        except:
+            month = date.today().month
 
     data = helpers.net_spending(month)
 

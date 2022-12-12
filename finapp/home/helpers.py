@@ -91,15 +91,22 @@ def in_out_net(trans):
 
 
 def net_spending(month):
+    if month == "ytd":
+        start_date = date(date.today().year, 1, 1)
     data = {}
     total_in = 0
     total_out = 0
     total_net = 0
     all_budgets = queries.get_budgets()
     for budget in all_budgets:
-        b_trans = queries.get_transactions_for_month(
-            budget.id, month=month, include_transfers=False
-        )
+        if month == "ytd":
+            b_trans = queries.get_transactions(
+                budget_id=budget.id, start_date=start_date, include_transfers=False
+            )
+        else:
+            b_trans = queries.get_transactions_for_month(
+                budget.id, month=month, include_transfers=False
+            )
         if not b_trans:
             continue
         in_, out, net = in_out_net(b_trans)
@@ -161,26 +168,27 @@ def all_budgets_net_worth(start_date=None):
 
 
 def spending_for_month(month):
+    if month == "ytd":
+        start_date = date(date.today().year, 1, 1)
+    else:
+        currMonth = date.today().month
+        year = date.today().year
+        if month > currMonth:
+            year -= 1
+
     all_budgets = queries.get_budgets()
     data = {}
-    currMonth = date.today().month
-    year = date.today().year
-    if month > currMonth:
-        year -= 1
 
     for budg in all_budgets:
-        b_trans = (
-            sum(
-                [
-                    t.amount
-                    for t in queries.get_transactions_for_month(
-                        budg.id, month=month, include_transfers=False
-                    )
-                    if t.date.year == year and t.amount < 0
-                ]
+        if month == "ytd":
+            temp_trans = queries.get_transactions(
+                budget_id=budg.id, start_date=start_date, include_transfers=False
             )
-            * -1
-        )
+        else:
+            temp_trans = queries.get_transactions_for_month(
+                budg.id, month=month, include_transfers=False
+            )
+        b_trans = sum([t.amount for t in temp_trans if t.amount < 0]) * -1
         # print(b_trans)
         if b_trans > 0:
             data[budg.name] = round(b_trans, 2)
