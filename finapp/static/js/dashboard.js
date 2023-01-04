@@ -95,7 +95,8 @@ class ChartHandler {
     this.data = response.data;
     this.keys = response.keys;
 
-    setLineBudgetStartDate(this.keys[0]);
+    this.minDate = setLineBudgetStartDate(this.keys[0], true);
+    addOptionsToNetspending(this.minDate);
     this.assignColors();
     this.createOrUpdateLineChart();
     this.createOrUpdatePieChart("", storage.getItem("showPercentage"));
@@ -103,7 +104,6 @@ class ChartHandler {
     let monthInt = date.getMonth() + 1;
     let monthName = date.toLocaleString("default", { month: "long" });
     this.spendingPerMonth(monthInt, monthName);
-    this.netSpending(monthInt);
 
     let arr = [
       "lineGraphButton",
@@ -137,13 +137,13 @@ class ChartHandler {
 
   createOrUpdateLineChart() {
     let values = this.data.allBudgets;
-  
+
     let fixedValues = this.fixValues(values);
 
     if (this.lineChart) {
       this.lineChart.destroy();
     }
-  
+
     const ctx = document.getElementById("lineChart").getContext("2d");
     this.lineChart = new Chart(ctx, {
       type: "line",
@@ -223,7 +223,7 @@ class ChartHandler {
     this.lineChart.data.datasets.push(temp);
     this.lineChart.update();
   }
-  
+
   removeDataForLineChart(name) {
     let indx = 0;
     for (let data of this.lineChart.data.datasets) {
@@ -240,7 +240,7 @@ class ChartHandler {
     let pieData = await getPieData(date);
     let keys = pieData["keys"];
     let values = pieData["values"];
-  
+
     let colors = [];
     // console.log(keys);
     for (let name of keys) {
@@ -250,7 +250,7 @@ class ChartHandler {
     if (this.pieChart) {
       this.pieChart.destroy();
     }
-  
+
     let percentages = {
       formatter: (value, ctx) => {
         let sum = ctx.chart._metasets[0].total;
@@ -260,7 +260,7 @@ class ChartHandler {
       color: "rgb(0, 0, 0)",
     };
     percentages = showPercentages === "true" ? percentages : null;
-  
+
     const ctx = document.getElementById("pieChart").getContext("2d");
     this.pieChart = new Chart(ctx, {
       plugins: [ChartDataLabels],
@@ -301,7 +301,7 @@ class ChartHandler {
 
   togglePercentagePieChart(showPercentages) {
     const ctx = document.getElementById("pieChart").getContext("2d");
-  
+
     let percentages = {
       formatter: (value, ctx) => {
         let sum = ctx.chart._metasets[0].total;
@@ -311,7 +311,7 @@ class ChartHandler {
       color: "rgb(0, 0, 0)",
     };
     percentages = showPercentages ? percentages : null;
-  
+
     let options = {
       plugins: {
         legend: {
@@ -332,11 +332,11 @@ class ChartHandler {
       borderColor: "rgba(0, 0, 0, .79)",
       color: "rgba(255, 255, 255, .79)",
     };
-  
+
     let data = this.pieChart.data;
-  
+
     this.pieChart.destroy();
-  
+
     this.pieChart = new Chart(ctx, {
       plugins: [ChartDataLabels],
       type: "pie",
@@ -347,22 +347,22 @@ class ChartHandler {
 
   async spendingPerMonth(month, monthName) {
     let spendData = await getMonthSpending(month);
-  
+
     let keys = spendData["keys"];
     let values = spendData["values"];
-  
+
     let total = values.reduce((a, b) => a + b, 0);
-  
+
     let colors = [];
     for (let name of keys) {
       colors.push(COLORS_DICT[name]);
     }
-  
+
     let tempChart = Chart.getChart("spendingChart");
     if (tempChart) {
       tempChart.destroy();
     }
-  
+
     const ctx = document.getElementById("spendingChart").getContext("2d");
     this.spendingChart = new Chart(ctx, {
       plugins: [ChartDataLabels],
@@ -401,13 +401,12 @@ class ChartHandler {
     });
   }
 
-  async netSpending(month) {
-    let spendingData = await getNetSpending(month);
-  
+  async netSpending(value) {
+    let spendingData = await getNetSpending(value);
+
     let div = document.getElementById("net-spending");
     div.innerHTML = "";
 
-    let count = 0;
     let row = document.getElementById("net-spending");
     for (let name of this.names) {
       if (spendingData[name]) {
@@ -423,18 +422,15 @@ class ChartHandler {
           month,
           this.names
         );
-  
+
         row.appendChild(card);
       }
-    }
-    if (count % 4 !== 0) {
-      div.appendChild(row);
     }
   }
 
   addLineChartButtons() {
     let buttonGroup = document.getElementById("lineButtons");
-  
+
     for (let name of this.names) {
       // console.log(typeof(name), typeof(id));
       if (name === "allBudgets" || !Object.keys(this.data).includes(name)) {
@@ -444,22 +440,26 @@ class ChartHandler {
       input.type = "checkbox";
       input.classList.add("btn-check");
       input.id = name;
-  
+
       let label = document.createElement("label");
       label.setAttribute("for", name);
       label.innerHTML = name;
       label.classList.add("btn");
       label.classList.add("btn-outline-light");
-  
-      label.addEventListener("click", event => { this.toggleShowLine(event); });
+
+      label.addEventListener("click", (event) => {
+        this.toggleShowLine(event);
+      });
 
       buttonGroup.appendChild(input);
       buttonGroup.appendChild(label);
     }
-  
+
     document
       .getElementById("allBudgetsLabel")
-      .addEventListener("click", event => { this.toggleShowLine(event); });
+      .addEventListener("click", (event) => {
+        this.toggleShowLine(event);
+      });
   }
 
   assignColors() {
@@ -467,12 +467,12 @@ class ChartHandler {
     for (let i = 0; i < COLORS.length; i++) {
       arr[arr.length] = i;
     }
-  
+
     let difference = COLORS.length - this.names.length;
     let maxLength = difference > 0 ? difference : COLORS.length;
 
     let random = shuffle(arr, maxLength);
-  
+
     let indx = 0;
     for (let name of this.names) {
       COLORS_DICT[name] = COLORS[random[indx % random.length]];
@@ -489,7 +489,7 @@ class ChartHandler {
     let checked = document.getElementById(name).checked;
     // console.log(name);
     // console.log(checked);
-  
+
     if (!checked) {
       this.addDataForLineChart(name);
     } else {
@@ -665,44 +665,108 @@ function createCard(name, in_, out, net, month, names) {
   return column3;
 }
 
-function setLineBudgetStartDate(string) {
+function setLineBudgetStartDate(string, setAsMin = false) {
   let [month, day, year] = string.split("/");
   let date = new Date(year, month - 1, day);
   let startDate = document.getElementById("startDate");
-  let strDate = year + '-' + month + '-' + day;
+  let strDate = year + "-" + month + "-" + day;
   startDate.valueAsDate = date;
   startDate.value = strDate;
+
+  if (setAsMin) {
+    startDate.min = strDate;
+    return date;
+  }
+}
+
+function createOptionElement(string, month, year, ytd, selected = false) {
+  let option = document.createElement("option");
+  let obj = { month, year, ytd };
+  option.value = JSON.stringify(obj);
+  option.innerText = string;
+  option.selected = selected;
+  return option;
+}
+
+function getOptionsFromStartDate(startDate) {
+  let endDate = new Date();
+  let startYear = startDate.getFullYear();
+  let endYear = endDate.getFullYear();
+
+  let options = [];
+
+  for (let year = startYear; year <= endYear; year++) {
+    let startMonth = year === startYear ? startDate.getMonth() + 1 : 1;
+    let endMonth = year === endYear ? endDate.getMonth() + 1 : 12;
+
+    for (let month = startMonth; month <= endMonth; month++) {
+      let string =
+        year === endYear ? `${months[month]}` : `${months[month]} ${year}`;
+      let option = createOptionElement(
+        string,
+        month,
+        year,
+        false,
+        month === endMonth && year === endYear
+      );
+      options.push(option);
+    }
+    options.push(
+      createOptionElement(
+        year === endYear ? "YTD" : `All of ${year}`,
+        null,
+        year,
+        true
+      )
+    );
+  }
+  options = options.reverse();
+
+  return options;
+}
+
+function addOptionsToNetspending(minDate) {
+  let netSpendingSelect = document.getElementById("netSpendingOptions");
+  let options = getOptionsFromStartDate(minDate);
+
+  for (let option of options) {
+    netSpendingSelect.appendChild(option);
+    if (option.selected) {
+      netSpendingSelect.value = option.value;
+      netSpendingSelect.dispatchEvent(new Event("input"));
+    }
+  }
 }
 
 // function calls
 // (async () => {
-  // names = await getAllBudgetNames();
-  // names = names["names"];
+// names = await getAllBudgetNames();
+// names = names["names"];
 
-  // data = await getAllBudgetsLineData();
-  // // console.log(data);
+// data = await getAllBudgetsLineData();
+// // console.log(data);
 
-  // setLineBudgetStartDate(data);
-  // assignColors();
-  // lineChart(data);
-  // pieChart("", storage.getItem("showPercentage"));
-  // addButtons();
-  // let monthInt = date.getMonth() + 1;
-  // let monthName = date.toLocaleString("default", { month: "long" });
-  // spendingPerMonth(monthInt, monthName);
-  // netSpending(monthInt);
+// setLineBudgetStartDate(data);
+// assignColors();
+// lineChart(data);
+// pieChart("", storage.getItem("showPercentage"));
+// addButtons();
+// let monthInt = date.getMonth() + 1;
+// let monthName = date.toLocaleString("default", { month: "long" });
+// spendingPerMonth(monthInt, monthName);
+// netSpending(monthInt);
 
-  // let arr = [
-  //   "lineGraphButton",
-  //   "pieChartButton",
-  //   "spendingButton",
-  //   "netSpendingButton",
-  // ];
-  // for (let id of arr) {
-  //   let collapsed = storage.getItem(id);
-  //   if (collapsed === "true") {
-  //     let btn = document.getElementById(id);
-  //     btn.click();
-  //   }
-  // }
+// let arr = [
+//   "lineGraphButton",
+//   "pieChartButton",
+//   "spendingButton",
+//   "netSpendingButton",
+// ];
+// for (let id of arr) {
+//   let collapsed = storage.getItem(id);
+//   if (collapsed === "true") {
+//     let btn = document.getElementById(id);
+//     btn.click();
+//   }
+// }
 // })();

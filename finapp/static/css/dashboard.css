@@ -85,6 +85,10 @@ input.amount-input-86 {
     max-width: 130px;
 }
 
+.mw-170 {
+    max-width: 170px;
+}
+
 .better-scroll::-webkit-scrollbar {
     width: 15px;
 }

@@ -412,13 +412,10 @@ def get_all_budgets_line_data():
 @home.route("/get_net_spending_for_month", methods=["GET"])
 @login_required
 def get_net_spending_for_month():
-    month = request.args.get("month")
-    if month != "ytd":
-        try:
-            month = int(month)
-        except:
-            month = date.today().month
+    month = request.args.get("month", 0, type=int)
+    year = request.args.get("year", 0, type=int)
+    ytd = request.args.get("ytd") == "true"
 
-    data = helpers.net_spending(month)
+    data = helpers.net_spending(month, year, ytd)
 
     return data

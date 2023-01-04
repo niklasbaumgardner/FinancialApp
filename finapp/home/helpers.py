@@ -90,22 +90,20 @@ def in_out_net(trans):
     return in_, out, net
 
 
-def net_spending(month):
-    if month == "ytd":
-        start_date = date(date.today().year, 1, 1)
+def net_spending(month, year, ytd):
     data = {}
     total_in = 0
     total_out = 0
     total_net = 0
     all_budgets = queries.get_budgets()
     for budget in all_budgets:
-        if month == "ytd":
-            b_trans = queries.get_transactions(
-                budget_id=budget.id, start_date=start_date, include_transfers=False
+        if ytd:
+            b_trans = queries.get_transactions_for_year(
+                budget_id=budget.id, year=year, include_transfers=False
             )
         else:
             b_trans = queries.get_transactions_for_month(
-                budget.id, month=month, include_transfers=False
+                budget.id, month=month, year=year, include_transfers=False
             )
         if not b_trans:
             continue

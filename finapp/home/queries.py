@@ -140,7 +140,9 @@ def get_transactions(
     ).order_by(Transaction.date.desc(), Transaction.id.desc())
 
     if not include_transfers:
-        transactions = transactions.filter((Transaction.is_transfer==False) | (Transaction.is_transfer==None))
+        transactions = transactions.filter(
+            (Transaction.is_transfer == False) | (Transaction.is_transfer == None)
+        )
 
     if start_date:
         transactions = transactions.filter(Transaction.date >= start_date)
@@ -163,9 +165,10 @@ def get_transactions(
 
 
 def get_transactions_for_month(
-    budget_id, month, include_transfers=True, page=1, paginate=False
+    budget_id, month, year=None, include_transfers=True, page=1, paginate=False
 ):
-    year = date.today().year
+    if not year:
+        year = date.today().year
 
     current_month = date.today().month
     if current_month < month:
@@ -179,7 +182,37 @@ def get_transactions_for_month(
     ).order_by(Transaction.date.desc(), Transaction.id.desc())
 
     if not include_transfers:
-        transactions = transactions.filter((Transaction.is_transfer==False) | (Transaction.is_transfer==None))
+        transactions = transactions.filter(
+            (Transaction.is_transfer == False) | (Transaction.is_transfer == None)
+        )
+
+    if paginate:
+        transactions = transactions.paginate(page=page, per_page=10)
+        return (
+            transactions.items,
+            transactions.total,
+            transactions.page,
+            transactions.pages,
+        )
+    else:
+        transactions = transactions.all()
+
+    return transactions
+
+
+def get_transactions_for_year(
+    budget_id, year, include_transfers=True, page=1, paginate=False
+):
+    transactions = Transaction.query.filter(
+        Transaction.budget_id == budget_id,
+        Transaction.user_id == current_user.get_id(),
+        extract("year", Transaction.date) == year,
+    ).order_by(Transaction.date.desc(), Transaction.id.desc())
+
+    if not include_transfers:
+        transactions = transactions.filter(
+            (Transaction.is_transfer == False) | (Transaction.is_transfer == None)
+        )
 
     if paginate:
         transactions = transactions.paginate(page=page, per_page=10)
