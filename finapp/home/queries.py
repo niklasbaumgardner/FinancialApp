@@ -170,10 +170,6 @@ def get_transactions_for_month(
     if not year:
         year = date.today().year
 
-    current_month = date.today().month
-    if current_month < month:
-        year -= 1
-
     transactions = Transaction.query.filter(
         Transaction.budget_id == budget_id,
         Transaction.user_id == current_user.get_id(),

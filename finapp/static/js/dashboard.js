@@ -419,7 +419,6 @@ class ChartHandler {
           spendingData[name]["in"],
           spendingData[name]["out"],
           spendingData[name]["net"],
-          month,
           this.names
         );
 
@@ -572,12 +571,14 @@ function createPtagWithClass(classString) {
   return p;
 }
 
-function createCard(name, in_, out, net, month, names) {
+function createCard(name, in_, out, net, names) {
   let card;
   if (names.includes(name)) {
     card = createDivWithClass("card bg-lighter-grey button-div");
     card.onclick = () => {
-      location.href = `${BUDGET_URLS[name]}?month=${month}`;
+      let value = document.getElementById("netSpendingOptions").value;
+      let object = JSON.parse(value);
+      location.href = `${BUDGET_URLS[name]}?month=${object.month}&year=${object.year}&ytd=${object.ytd}`;
     };
   } else {
     card = createDivWithClass("card bg-lighter-grey");

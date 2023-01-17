@@ -207,14 +207,20 @@ def get_page(budget_id):
     if page < 1:
         return {"sucess": False}
 
-    month = request.args.get("month")
+    month = request.args.get("month", 0, type=int)
+    year = request.args.get("year", 0, type=int)
+    ytd = request.args.get("ytd") == "true"
 
-    if month:
-        month = int(month)
-        transactions, total, page, num_pages = queries.get_transactions_for_month(
-            budget_id=budget_id, month=month, page=page, paginate=True
+    print(month, year, ytd)
+
+    if ytd:
+        transactions, total, page, num_pages = queries.get_transactions_for_year(
+            budget_id=budget_id, year=year, page=page, paginate=True
         )
-
+    elif month:
+        transactions, total, page, num_pages = queries.get_transactions_for_month(
+            budget_id=budget_id, month=month, year=year, page=page, paginate=True
+        )
     else:
         transactions, total, page, num_pages = queries.get_transactions(
             budget_id=budget_id, page=page, paginate=True
@@ -230,17 +236,21 @@ def get_page(budget_id):
 def view_budget(id):
     page = request.args.get("page", 1, type=int)
 
-    month = request.args.get("month")
+    month = request.args.get("month", 0, type=int)
+    year = request.args.get("year", 0, type=int)
+    ytd = request.args.get("ytd") == "true"
 
     budget = queries.get_budget(id)
     budgets = queries.get_budgets(active_only=True)
 
-    if month:
-        month = int(month)
-        transactions, total, page, num_pages = queries.get_transactions_for_month(
-            budget_id=budget.id, month=month, page=page, paginate=True
+    if ytd:
+        transactions, total, page, num_pages = queries.get_transactions_for_year(
+            budget_id=budget.id, year=year, page=page, paginate=True
         )
-
+    elif month:
+        transactions, total, page, num_pages = queries.get_transactions_for_month(
+            budget_id=budget.id, month=month, year=year, page=page, paginate=True
+        )
     else:
         transactions, total, page, num_pages = queries.get_transactions(
             budget_id=budget.id, page=page, paginate=True
@@ -375,14 +385,11 @@ def get_pie_data():
 @home.route("/get_spending_for_month", methods=["GET"])
 @login_required
 def get_spending_for_month():
-    month = request.args.get("month")
-    if month != "ytd":
-        try:
-            month = int(month)
-        except:
-            month = date.today().month
+    month = request.args.get("month", 0, type=int)
+    year = request.args.get("year", 0, type=int)
+    ytd = request.args.get("ytd") == "true"
 
-    data = helpers.spending_for_month(month)
+    data = helpers.spending_for_month(month, year, ytd)
 
     keys = [k for k in data.keys()]
     values = [v for v in data.values()]

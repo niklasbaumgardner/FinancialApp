@@ -16,10 +16,7 @@
     async function getPageData(pageNum) {
         return new Promise(function (resolve, reject) {
             let xmlHttp = new XMLHttpRequest();
-            let url = GET_PAGE_URL + `?page=${pageNum}`;
-            if (params.has("month")) {
-                url += `&month=${params.get("month")}`;
-            }
+            let url = GET_PAGE_URL + `?page=${pageNum}&month=${params.get("month")}&year=${params.get("year")}&ytd=${params.get("ytd")}`;
             xmlHttp.open("GET", url);
             xmlHttp.onload = () => {
                 resolve(xmlHttp.response);
