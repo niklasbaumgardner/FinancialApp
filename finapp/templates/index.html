@@ -81,10 +81,10 @@
     <div class="container mb-5 mt-3">
         <div class="row justify-content-between mx-0">
             <div class="col-auto me-auto px-0">
-                <div class="fw-bold text-white fs-1">
+                <div class="fw-bold fs-1">
                     Welcome
                 </div>
-                <div class="fs-4 mb-0 subhead text-white-50">
+                <div class="fs-4 mb-0 subhead">
                     Your total of all budgets is {{ total }}
                 </div>
             </div>
@@ -101,12 +101,12 @@
                     {% for budget in group %}
                         <div id="budget-{{ budget.id }}" class="grid-item budgets">
                             <!-- onclick="location.href='{{ url_for('home.view_budget', id=budget.id) }}';" -->
-                            <div class="card bg-dark text-white button-div" onclick="location.href='{{ url_for('home.view_budget', id=budget.id) }}';">
+                            <div class="card button-div" onclick="location.href='{{ url_for('home.view_budget', id=budget.id) }}';">
                                 <div class="card-body p-4 rounded-bottom">
                                     <div class="row">
                                         <div class="col text-start">
                                             <div class="d-flex flex-column">
-                                                <p class="show-not-edit-{{ budget.id }} fs-4 text-white mb-0" style="">{{ budget.name }}</p>
+                                                <p class="show-not-edit-{{ budget.id }} fs-4 mb-0">{{ budget.name }}</p>
                                                 <form method="POST" id="budgetForm{{ budget.id }}" action="{{ url_for('home.edit_budget', id=budget.id) }}">
                                                     <input onclick="event.stopPropagation();"class="show-edit-{{ budget.id }} form-control edit-name" name="editName{{ budget.id }}" type="text" value="{{ budget.name }}" autocomplete="niklas" hidden required>
                                                 </form>
@@ -114,8 +114,8 @@
                                             </div>
                                         </div>
                                         <div class="col text-end mw-70">
-                                            <p class="text-white mb-1">Active</p>
-                                            <label class="switch text-white">
+                                            <p class="mb-1">Active</p>
+                                            <label class="switch">
                                                 <input class="activeState" type="checkbox" {% if budget.is_active %}checked{% endif %} onclick="toggleBudgetActive('{{ budget.id }}', event); event.stopPropagation();">
                                                 <span class="slider round" onclick="event.stopPropagation();"></span>
                                             </label>
@@ -124,7 +124,7 @@
                                     <!-- <form method="POST" id="budgetForm{{ budget.id }}" action="{{ url_for('home.edit_budget', id=budget.id) }}">
                                         <input onclick="event.stopPropagation();"class="show-edit-{{ budget.id }} form-control w-75 edit-name" name="editName{{ budget.id }}" type="text" value="{{ budget.name }}" hidden required>
                                     </form> -->
-                                    <p class="text-white mt-3">{{ format_to_money_string(round(budget.total, 2)) }}</p>
+                                    <p class="mt-3">{{ format_to_money_string(round(budget.total, 2)) }}</p>
                                     <div class="d-flex justify-content-end">
                                         <div class="">
                                             <a class="show-not-edit-{{ budget.id }} btn btn-sm btn-outline-danger mx-3" href="javascript:void(0);" onclick="delete_budget('{{ budget.id }}'); event.stopPropagation();">Delete</a>
@@ -202,14 +202,14 @@
         
                             <!-- <h2 class="card-title">Add Budget</h2>
                             <br> -->
-                            <div class="form-outline form-white mb-4">
+                            <div class="form-outline mb-4">
                                 <label class="form-label" for="name">Budget Name</label>
                                 <input type="text" id="name" name="name" class="form-control" placeholder="Name" autocomplete="niklas" required/>
                                 <span id="name_error" class="text-danger" hidden>Budget name already exist. Choose another name.</span>
 
                             </div>
 
-                            <div class="form-outline form-white mb-4">
+                            <div class="form-outline mb-4">
                                 <label class="form-label" for="amount">Starting Amount</label>
                                 <input type="number" step=".01" id="amount" name="amount" class="form-control" placeholder="Amount" autocomplete="niklas" required/>
                             

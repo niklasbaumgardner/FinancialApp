@@ -42,7 +42,7 @@
 </script>
 
 <div class="container py-5 h-100">
-    <div class="card bg-dark text-white border-0">
+    <div class="card border-0">
         <div class="row">
             <div class="col-lg-5 hidden-on-smaller-992">
                 <img src="/static/images/transfer.png" class="img-fluid rounded-start img-full" alt="Money image">
@@ -56,13 +56,13 @@
                             <div class="col-sm-6 col-lg-12">
                                 <div class="row mb-4">
                                     <div class="col-12 col-lg-6 mb-3">
-                                        <div class="form-outline form-white mb-4">
+                                        <div class="form-outline mb-4">
                                             <label class="form-label" for="name">Transfer Name</label>
                                             <input class="validatePaycheck form-control" type="text" id="paycheckName" name="name" placeholder="Transfer Me" required autocomplete="niklas">
                                         </div>
                                     </div>
                                     <div class="col-12 col-lg-6 mb-3">
-                                        <div class="form-outline form-white mb-4">
+                                        <div class="form-outline mb-4">
                                             <label class="form-label" for="amount">Amount</label>
                                             <input class="validatePaycheck form-control" type="number"step=".01" id="paycheck_amount" name="amount" placeholder="0.00" required autocomplete="niklas">
                                         </div>
@@ -72,7 +72,7 @@
                             <div class="col-sm-6 col-lg-12">
                                 <div class="row mb-4">
                                     <div class="col-12 col-lg-6 mb-3">
-                                        <div class="form-outline form-white mb-4">
+                                        <div class="form-outline mb-4">
                                             <label class="form-label" for="source_budget">Source budget</label>
                                             <select class="form-select" name="source_budget" id="source_budget" onchange="remove_from_dest()" required>
                                                 <option value="">Please select</option>
@@ -83,7 +83,7 @@
                                         </div>
                                     </div>
                                     <div class="col-12 col-lg-6 mb-3">
-                                        <div class="form-outline form-white mb-4">
+                                        <div class="form-outline mb-4">
                                             <label class="form-label" for="dest_budget">Destination budget</label>
                                             <select class="form-select" name="dest_budget" id="dest_budget" onchange="remove_from_source()" required>
                                                 <option value="">Please select</option>

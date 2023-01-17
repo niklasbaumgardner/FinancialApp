@@ -53,14 +53,6 @@
     width: 15%;
 }
 
-.bg-light-grey {
-    background-color: rgb(208, 209, 210);
-}
-
-.bg-lighter-grey {
-    background-color: rgb(242, 243, 244);
-}
-
 .inline {
     display: inline-block;
 }

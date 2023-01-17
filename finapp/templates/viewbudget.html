@@ -54,14 +54,14 @@
     <div class="container pb-5 pt-3">
         <div class="row">
             <div class="col-auto me-auto">
-                <div class="fw-bold text-white fs-1">
+                <div class="fw-bold fs-1">
                     {{ budget.name }}
                 </div>
-                <div class="fs-4 mb-0 subhead text-white-50">
+                <div class="fs-4 mb-0 subhead">
                     Total: {{ format_to_money_string(round(budget.total, 2)) }}
                 </div>
             </div>
-            <div class="col-auto align-self-end fs-5 text-white">
+            <div class="col-auto align-self-end fs-5">
                 Transaction input at
                 <div id="transactionTopBottomToggle" class="btn-group" role="group" aria-label="Basic radio toggle button group">
                     <input type="radio" class="btn-check" name="btnradio" id="top" autocomplete="off">
@@ -81,13 +81,13 @@
     </div>
 
     <div class="container">
-        <div class="card h-100 mb-4 bg-dark">
-            <div class="card-header pb-0 px-3 bg-dark">
-                <p class="fs-3 text-white">Your Transaction's</p>
+        <div class="card h-100 mb-4">
+            <div class="card-header pb-0 px-3">
+                <p class="fs-3">Your Transaction's</p>
             </div>
-            <div class="card-body bg-dark">
+            <div class="card-body">
                 <ul id="transactionList" class="list-group">
-                    <li id="transactionInput" class="list-group-item pb-2 bg-dark border-0">
+                    <li id="transactionInput" class="list-group-item pb-2 border-0">
                         <div class="row">
                             <div class="col">
                                 <div class="d-flex">
@@ -102,7 +102,7 @@
                                     <input class="form-control w-25 amount-input-86" type="number" step=".01" form="addTransaction" id="amount" name="amount" placeholder="0.00" autocomplete="niklas" required>
                                 </div>
                             </div>
-                            <div class="col text-white">
+                            <div class="col">
                                 <div class="d-flex justify-content-end">
                                     <form id="addTransaction" method="POST" action="{{ url_for('home.budget_transaction') }}">
                                         <input name="budget" value="{{ budget.id }}" hidden>

@@ -145,7 +145,7 @@ class Transaction {
     let li = createElement({
       type: "li",
       classString:
-        "list-group-item bg-dark border-start-0 border-top-0 border-end-0 border-transparent",
+        "list-group-item border-start-0 border-top-0 border-end-0 border-transparent",
     });
     this.element.appendChild(li);
 
@@ -164,7 +164,7 @@ class Transaction {
     div3.appendChild(
       createElement({
         type: "p",
-        classString: `show-not-edit-${this.id} fs-5 my-0 text-white`,
+        classString: `show-not-edit-${this.id} fs-5 my-0`,
         content: this.name,
       })
     );
@@ -182,7 +182,7 @@ class Transaction {
       })
     );
 
-    let div4 = createElement({ classString: "row text-white-50" });
+    let div4 = createElement({ classString: "row" });
     div3.appendChild(div4);
 
     let div5 = createElement({ classString: "col-12" });
@@ -234,7 +234,7 @@ class Transaction {
     div6.appendChild(
       createElement({
         type: "p",
-        classString: `show-not-edit-${this.id} fs-6 text-white`,
+        classString: `show-not-edit-${this.id} fs-6`,
         content: this.stringAmount,
       })
     );
@@ -253,7 +253,7 @@ class Transaction {
       })
     );
 
-    let colDiv3 = createElement({ classString: "col text-white" });
+    let colDiv3 = createElement({ classString: "col" });
     rowDiv.appendChild(colDiv3);
 
     let div7 = createElement({
@@ -608,7 +608,7 @@ class MoveModal {
       })
     );
 
-    let div5 = createElement({ classString: "form-outline form-white mb-4" });
+    let div5 = createElement({ classString: "form-outline mb-4" });
     div4.appendChild(div5);
 
     div5.appendChild(

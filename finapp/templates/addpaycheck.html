@@ -239,8 +239,7 @@
 
 </script>
 <div class="container py-5 h-100">
-    <div class="card bg-dark text-white border-0">
-
+    <div class="card border-0">
         <div class="row">
             <div class="col-lg-5 hidden-on-smaller-992">
                 <img src="/static/images/money-large.png" class="img-fluid rounded-start img-full" alt="Money image">
@@ -251,15 +250,15 @@
                     <form action="{{ url_for('home.paycheck') }}" method="POST">
                         <div class="row">
                             <div class="col-sm">
-                                <div class="form-outline form-white mb-4">
+                                <div class="form-outline mb-4">
                                     <label class="form-label" for="name">Paycheck Name</label>
                                     <input class="validatePaycheck form-control" type="text" id="paycheckName" name="name" placeholder="I'm rich!" autocomplete="niklas" required>
                                 </div>
-                                <div class="form-outline form-white mb-4">
+                                <div class="form-outline mb-4">
                                     <label class="form-label" for="amount">Paycheck Amount</label>
                                     <input class="validatePaycheck form-control" type="number" step=".01" id="paycheck_amount" name="amount" placeholder="$0.00" autocomplete="niklas" required>
                                 </div>
-                                <div class="form-outline form-white mb-4">
+                                <div class="form-outline mb-4">
                                     <label class="form-label" for="amount">Date</label>
                                     <input class="form-control w-160" type="date" id="date" name="date" required>
                                 </div>
@@ -269,7 +268,7 @@
                                         Use percentages for breakdown
                                     </label>
                                 </div>
-                                <div class="form-outline form-white mb-4">
+                                <div class="form-outline mb-4">
                                     <!-- <label class="form-label" for="amount"><h4>Paycheck Amount</h4></label>
                                     <input class="validatePaycheck form-control" type="text" id="paycheck_amount" name="amount" placeholder="Paycheck Amount" required> -->
                                     {% if showPrefills %}
@@ -304,7 +303,7 @@
                             <div class="col-sm mt-5">
                                 <p id="name_error" class="text-danger display-none">Paycheck Name is invalid<br></p>
                                 <p id="amount_error" class="text-danger display-none"><br></p>
-                                <input id="paycheckBtn" class="btn btn-primary " type="submit" value="Add Transaction" disabled>
+                                <input id="paycheckBtn" class="btn btn-primary" type="submit" value="Add Transaction" disabled>
                             </div>
                         </div>
                     </form>
@@ -334,16 +333,16 @@
                                 </h2>
                                 <div id="collapse{{ i }}" class="accordion-collapse collapse" aria-labelledby="heading{{ i }}" data-bs-parent="#accordionExample">
                                     <div class="accordion-body">
-                                        <table id="table{{ i }}" class="table table-secondary">
+                                        <table id="table{{ i }}" class="table">
                                             <thead>
-                                                <tr class="table-secondary">
+                                                <tr>
                                                     <th scope="col">Budget Name</th>
                                                     <th scope="col">Amount</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 {% for budget in v %}
-                                                    <tr class="table-secondary">
+                                                    <tr>
                                                         <td>{{ budget[1] }}</td>
                                                         <td id={{ budget[0] }}>{{ budget[2] }}</td>
                                                     </tr>
@@ -355,7 +354,7 @@
                                             <div class="col-auto me-auto">
                                                 <button onclick="delete_prefill('delete{{ k }}')" class="btn btn-outline-danger">Delete</button>
                                             </div>
-                                            <div class="col-auto ">
+                                            <div class="col-auto">
                                                 <button onclick="fillvalues('table{{ i }}', {{ k }});" class="btn btn-primary">Select this previous amount</button>
                                             </div>
                                         </div>

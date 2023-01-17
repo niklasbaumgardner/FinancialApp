@@ -574,14 +574,14 @@ function createPtagWithClass(classString) {
 function createCard(name, in_, out, net, names) {
   let card;
   if (names.includes(name)) {
-    card = createDivWithClass("card bg-lighter-grey button-div");
+    card = createDivWithClass("card button-div");
     card.onclick = () => {
       let value = document.getElementById("netSpendingOptions").value;
       let object = JSON.parse(value);
       location.href = `${BUDGET_URLS[name]}?month=${object.month}&year=${object.year}&ytd=${object.ytd}`;
     };
   } else {
-    card = createDivWithClass("card bg-lighter-grey");
+    card = createDivWithClass("card");
   }
 
   let cardHeader = createDivWithClass("card-header");

@@ -61,18 +61,18 @@
 
 <div class="container py-5 h-100">
     <div class="row h-100 py-12">
-        <div class="accordion px-0 bg-dark" id="accordionLine">
-            <div class="accordion-item bg-dark">
-                <p class="accordion-header bg-dark" id="headingOne">
-                    <button class="accordion-button bg-dark text-white" id="lineGraphButton" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+        <div class="accordion px-0" id="accordionLine">
+            <div class="accordion-item">
+                <p class="accordion-header" id="headingOne">
+                    <button class="accordion-button" id="lineGraphButton" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                         Budgets Line Graph
                     </button>
                 </p>
                 <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionLine">
-                    <div class="accordion-body bg-dark">
-                        <div class="">
-                            <p class="text-white fs-2">Check the budgets you want to view</p>
-                            <p class="text-white">Start date: <input class="" type="date" id="startDate"></p>
+                    <div class="accordion-body">
+                        <div>
+                            <p class="fs-2">Check the budgets you want to view</p>
+                            <p>Start date: <input type="date" id="startDate"></p>
                             <div class="overflowScroll-X better-scroll">
                                 <div id="lineButtons" class="btn-group my-3 px-2" role="group" aria-label="Basic checkbox toggle button group">
                                     <input type="checkbox" class="btn-check" id="allBudgets" checked>
@@ -95,19 +95,19 @@
     <div class="row pt-5">
         <div class="pie-donut-grid">
             <div class="pie-grid">
-                <div class="accordion px-0 bg-dark" id="accordionPie">
-                    <div class="accordion-item bg-dark">
-                        <p class="accordion-header bg-dark" id="headingTwo">
-                            <button class="accordion-button bg-dark text-white" id="pieChartButton" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                <div class="accordion px-0" id="accordionPie">
+                    <div class="accordion-item">
+                        <p class="accordion-header" id="headingTwo">
+                            <button class="accordion-button" id="pieChartButton" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
                                 Budgets Pie Graph
                             </button>
                         </p>
                         <div id="collapseTwo" class="accordion-collapse collapse show" aria-labelledby="headingTwo" data-bs-parent="#accordionPie">
-                            <div class="accordion-body bg-dark mb-5">
+                            <div class="accordion-body mb-5">
                                 <div class="row mb-5">
                                     <div class="col-4 text-start">
-                                        <p class="text-white mb-1">Show percentages</p>
-                                        <label class="switch text-white">
+                                        <p class="mb-1">Show percentages</p>
+                                        <label class="switch">
                                             <input id="showPercentage" type="checkbox">
                                             <span class="slider round"></span>
                                         </label>
@@ -129,18 +129,18 @@
 
             </div>
             <div class="donut-grid">
-                <div class="accordion px-0 bg-dark" id="accordionMonth">
-                    <div class="accordion-item bg-dark">
-                        <p class="accordion-header bg-dark" id="headingThree">
-                            <button class="accordion-button bg-dark text-white" id="spendingButton" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
+                <div class="accordion px-0" id="accordionMonth">
+                    <div class="accordion-item">
+                        <p class="accordion-header" id="headingThree">
+                            <button class="accordion-button" id="spendingButton" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
                                 Spending for month
                             </button>
                         </p>
                         <div id="collapseThree" class="accordion-collapse collapse show" aria-labelledby="headingThree" data-bs-parent="#accordionMonth">
-                            <div class="accordion-body bg-dark mb-5">
+                            <div class="accordion-body mb-5">
                                 <div class="row mb-3">
-                                    <p class="fs-3 text-white">Spending for month
-                                        <select id="spendingMonths" class="form-select mw-130 inline bg-light-grey" aria-label="Default select example">
+                                    <p class="fs-3">Spending for month
+                                        <select id="spendingMonths" class="form-select mw-130 inline" aria-label="Default select example">
                                         </select>
                                     </p>
                                 </div>
@@ -157,17 +157,17 @@
 
     <div class="row py-5">
         <div class="col">
-            <div class="accordion px-0 bg-dark" id="accordionNet">
-                <div class="accordion-item bg-dark">
-                    <p class="accordion-header bg-dark" id="headingTemp">
-                        <button class="accordion-button bg-dark text-white" id="netSpendingButton" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNet" aria-expanded="true" aria-controls="collapseNet">
+            <div class="accordion px-0" id="accordionNet">
+                <div class="accordion-item">
+                    <p class="accordion-header" id="headingTemp">
+                        <button class="accordion-button" id="netSpendingButton" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNet" aria-expanded="true" aria-controls="collapseNet">
                             Net Spending
                         </button>
                     </p>
                     <div id="collapseNet" class="accordion-collapse collapse show" aria-labelledby="headingTemp" data-bs-parent="#accordionNet">
-                        <div class="accordion-body bg-dark">
-                            <p class="fs-3 text-white">Spending in
-                                <select id="netSpendingOptions" class="form-select mw-170 inline bg-light-grey" aria-label="Default select example">
+                        <div class="accordion-body">
+                            <p class="fs-3">Spending in
+                                <select id="netSpendingOptions" class="form-select mw-170 inline" aria-label="Default select example">
                                     <!-- <option id="thisMonth">This month</option>
                                     <option value="7">7 days</option>
                                     <option value="14">14 days</option>

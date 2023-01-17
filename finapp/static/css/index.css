@@ -44,32 +44,10 @@
     background-color: rgb(99, 99, 99);
 }
 
-/* .welcome-grid {
-    display: grid;
-    grid-template:
-        "welcome-text"
-        "welcome-button";
-}
-
-.welcome-text {
-    grid-area: welcome-text;
-    width: 100%;
-}
-
-.welcome-button {
-    grid-area: welcome-button;
-    width: 147px;
-    align-items: end;
-}
-
-@media (min-width: 800px) {
-    .welcome-grid {
-        grid-template:
-        "welcome-text none"
-        "welcome-text welcome-button";
-    }
-} */
-
 .padding-1-4 {
     padding: 1px 4px;
+}
+
+input {
+    color-scheme: dark;
 }
