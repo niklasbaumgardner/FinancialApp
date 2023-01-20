@@ -1,53 +1,77 @@
+.alert-absolute {
+  position: absolute;
+  z-index: 1;
+  max-width: 500px;
+  margin: -50px -0.25rem 0 -0.25rem;
+}
+
+.display-block {
+  display: block !important;
+}
+
+.gradient-custom {
+  /* fallback for old browsers */
+  background: #6a11cb;
+
+  /* Chrome 10-25, Safari 5.1-6 */
+  background: -webkit-linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1));
+
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: linear-gradient(to right, rgba(170, 17, 222, 1), rgba(37, 117, 252, 1));
+
+  background-size: cover;
+}
+
 .index-grid {
-    display: grid;
-    column-gap: 48px;
-    row-gap: 48px;
-    grid-template-columns: 1fr;
+  display: grid;
+  column-gap: 48px;
+  row-gap: 48px;
+  grid-template-columns: 1fr;
 }
 
 @media (min-width: 576px) {
-    .index-grid {
-        grid-template-columns: 234px 234px;
-    }
+  .index-grid {
+    grid-template-columns: 234px 234px;
+  }
 }
 
 @media (min-width: 768px) {
-    .index-grid {
-        grid-template-columns: 324px 324px;
-    }
+  .index-grid {
+    grid-template-columns: 324px 324px;
+  }
 }
 
 @media (min-width: 992px) {
-    .index-grid {
-        grid-template-columns: 280px 280px 280px;
-    }
+  .index-grid {
+    grid-template-columns: 280px 280px 280px;
+  }
 }
 
 @media (min-width: 1200px) {
-    .index-grid {
-        grid-template-columns: 341px 341px 341px;
-    }
+  .index-grid {
+    grid-template-columns: 341px 341px 341px;
+  }
 }
 
 @media (min-width: 1400px) {
-    .index-grid {
-        grid-template-columns: 400px 400px 400px;
-    }
+  .index-grid {
+    grid-template-columns: 400px 400px 400px;
+  }
 }
 
 .modal {
-    display: none;
-    background-color: rgb(0, 0, 0, .8);
+  display: none;
+  background-color: rgb(0, 0, 0, 0.8);
 }
 
 .bg-light-dark {
-    background-color: rgb(99, 99, 99);
+  background-color: rgb(99, 99, 99);
 }
 
 .padding-1-4 {
-    padding: 1px 4px;
+  padding: 1px 4px;
 }
 
 input {
-    color-scheme: dark;
+  color-scheme: dark;
 }

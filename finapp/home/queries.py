@@ -1,4 +1,4 @@
-from finapp.models import User, Budget, Transaction, PaycheckPrefill
+from finapp.models import Budget, Transaction, PaycheckPrefill
 from finapp.extensions import db
 from sqlalchemy import extract
 from flask_login import current_user
