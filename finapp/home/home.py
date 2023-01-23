@@ -208,8 +208,6 @@ def get_page(budget_id):
     year = request.args.get("year", 0, type=int)
     ytd = request.args.get("ytd") == "true"
 
-    print(month, year, ytd)
-
     if ytd:
         transactions, total, page, num_pages = queries.get_transactions_for_year(
             budget_id=budget_id, year=year, page=page, paginate=True
