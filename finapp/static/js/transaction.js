@@ -192,7 +192,7 @@ class Transaction {
       createElement({
         type: "span",
         classString: `show-not-edit-${this.id} fs-75`,
-        content: this.date,
+        content: this.dateAsString,
       })
     );
 
@@ -409,6 +409,12 @@ class Transaction {
     for (let ele of this.element.getElementsByClassName(`show-edit-${this.id}`)) {
       ele.hidden = true;
     }
+  }
+
+  get dateAsString() {
+    let date = new Date(this.date + "T00:00:00");
+    let options = { month: "long", day: "numeric", year: "numeric" };
+    return date.toLocaleDateString("en-US", options);
   }
 }
 

@@ -34,15 +34,11 @@
 
     const parser = new DOMParser();
     const transactionArray = [];
-    let temp;
-    {% for trans in transactions %}
-        temp = new Transaction(
-            {{ trans.id }}, "{{ trans.name }}", {{ trans.amount }}, "{{ format_to_money_string(trans.amount) }}",
-            "{{ trans.date.strftime('%B %d, %Y') }}", "{{ trans.is_transfer }}", {{ budget.id }},
-            "{{ url_for('home.edit_transaction', b_id=budget.id, t_id=trans.id) }}"
-        );
-        transactionArray.push(temp);
-    {% endfor %}
+    const transactionsPy = {{ transactions|tojson }};
+    for (let t of transactionsPy) {
+        let transaction = new Transaction(...t);
+        transactionArray.push(transaction);
+    }
 
     {% for budg in budgets %}
         temp = { id: "{{ budg.id }}", budgetString: "{{ str(budg) }}" };

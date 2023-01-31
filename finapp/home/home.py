@@ -251,6 +251,8 @@ def view_budget(id):
             budget_id=budget.id, page=page, paginate=True
         )
 
+    transactions = helpers.jsify_transactions(transactions)
+
     return render_template(
         "viewbudget.html",
         budget=budget,

@@ -67,7 +67,7 @@ def jsify_transactions(transactions):
             t.name,
             t.amount,
             format_to_money_string(t.amount),
-            t.date.strftime("%B %d, %Y"),
+            t.date.strftime("%Y-%m-%d"),
             t.is_transfer,
             t.budget_id,
             url_for("home.edit_transaction", b_id=t.budget_id, t_id=t.id),
