@@ -220,7 +220,7 @@
     toggle.onclick = function(event) {
         console.log(event.target.checked);
         storage.setItem("showPercentage", `${event.target.checked}`);
-        togglePercentage(event.target.checked)
+        chartHandler.togglePercentagePieChart(event.target.checked)
     }
 
     let pieDate = document.getElementById('date');
