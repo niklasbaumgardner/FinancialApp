@@ -1,3 +1,5 @@
+"use strict";
+
 const ChartDataLabels = window.ChartDataLabels;
 
 const CHART_COLORS = {

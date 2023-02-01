@@ -270,7 +270,7 @@ class Transaction {
       type: "button",
       classString: "btn btn-link padding-1-4",
       content: "edit",
-      onclick: event => {
+      onclick: (event) => {
         this.handleEditTransaction(event);
       },
     });
@@ -286,7 +286,7 @@ class Transaction {
       type: "button",
       classString: "btn btn-link padding-1-4",
       content: "move",
-      onclick: event => {
+      onclick: (event) => {
         this.handleMoveTransaction(event);
       },
     });
@@ -302,7 +302,7 @@ class Transaction {
       type: "button",
       classString: "btn btn-link padding-1-4",
       content: "delete",
-      onclick: event => {
+      onclick: (event) => {
         this.handleDeleteTransaction(event);
       },
     });
@@ -318,7 +318,7 @@ class Transaction {
       type: "button",
       classString: "btn btn-link padding-1-4",
       content: "update",
-      onclick: event => {
+      onclick: (event) => {
         this.handleUpdateTransaction(event);
       },
     });
@@ -334,7 +334,7 @@ class Transaction {
       type: "button",
       classString: "btn btn-link padding-1-4",
       content: "cancel",
-      onclick: event => {
+      onclick: (event) => {
         this.handleCancelEditTransaction(event);
       },
     });
@@ -372,12 +372,16 @@ class Transaction {
   handleEditTransaction(event) {
     event.preventDefault();
     this.showNotEdit.hidden = true;
-    for (let ele of this.element.getElementsByClassName(`show-not-edit-${this.id}`)) {
+    for (let ele of this.element.getElementsByClassName(
+      `show-not-edit-${this.id}`
+    )) {
       ele.hidden = true;
     }
 
     this.showEdit.hidden = false;
-    for (let ele of this.element.getElementsByClassName(`show-edit-${this.id}`)) {
+    for (let ele of this.element.getElementsByClassName(
+      `show-edit-${this.id}`
+    )) {
       ele.hidden = false;
     }
   }
@@ -401,12 +405,16 @@ class Transaction {
   handleCancelEditTransaction(event) {
     event.preventDefault();
     this.showNotEdit.hidden = false;
-    for (let ele of this.element.getElementsByClassName(`show-not-edit-${this.id}`)) {
+    for (let ele of this.element.getElementsByClassName(
+      `show-not-edit-${this.id}`
+    )) {
       ele.hidden = false;
     }
 
     this.showEdit.hidden = true;
-    for (let ele of this.element.getElementsByClassName(`show-edit-${this.id}`)) {
+    for (let ele of this.element.getElementsByClassName(
+      `show-edit-${this.id}`
+    )) {
       ele.hidden = true;
     }
   }
