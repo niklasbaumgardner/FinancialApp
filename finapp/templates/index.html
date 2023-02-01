@@ -173,8 +173,8 @@
                                 </div>
                                 <div class="modal-footer">
                                     <!-- <form method="POST" action="{{ url_for('home.delete_budget', b_id=budget.id) }}"> -->
-                                        <button type="submit" id="delete_button" class="btn btn-danger">Delete budget</button>
-                                        <button onclick="document.getElementById('id{{ budget.id }}').style.display='none'" type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                                        <button type="submit" id="delete_button" class="btn btn-danger col w-50">Delete budget</button>
+                                        <button onclick="document.getElementById('id{{ budget.id }}').style.display='none'" type="button" class="btn btn-outline-secondary col w-50" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
                                         <!-- <button onclick="document.getElementById('id{{ budget.id }}').style.display='none'" type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button> -->
                                     <!-- </form> -->
                                 </div>
@@ -254,8 +254,8 @@
 
                 </div>
                 <div class="modal-footer">
-                    <input id="newBudgetSubmit" type="submit" form="addNewBudgetForm" class="btn btn-primary" value="Add Budget" disabled/>
-                    <button onclick="document.getElementById('addNewBudgetModal').style.display='none'" type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                    <button id="newBudgetSubmit" type="submit" form="addNewBudgetForm" class="btn btn-primary col w-50" disabled>Add budget</button>
+                    <button onclick="document.getElementById('addNewBudgetModal').style.display='none'" type="button" class="btn btn-outline-secondary col w-50" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
                 </div>
             </div>
         </div>

@@ -271,13 +271,13 @@
                                     <!-- <label class="form-label" for="amount"><h4>Paycheck Amount</h4></label>
                                     <input class="validatePaycheck form-control" type="text" id="paycheck_amount" name="amount" placeholder="Paycheck Amount" required> -->
                                     {% if showPrefills %}
-                                        <button type="button" class="btn btn-outline-primary text-wrap" onclick="openPreviousPaycheckModal()">Copy amounts from previous paycheck</button>
+                                        <button type="button" class="btn btn-outline-primary text-wrap w-100" onclick="openPreviousPaycheckModal()">Copy amounts from previous paycheck</button>
                                     {% endif %}
                                 </div>
                             </div>
                             <div class="col-sm">
-                                <label class="form-label" for="existing_courses">Existing Budgets</label>
-                                <ul name="existing_courses" class="list-group better-scroll" id="style-1" style="max-height: 400px;overflow-y: scroll;">
+                                <label class="form-label" for="existing_courses">Budgets</label>
+                                <ul name="existing_courses" class="list-group better-scroll border" id="style-1" style="max-height: 400px;overflow-y: scroll;">
                                     {% for budget in budgets %}
                                         <li class="list-group-item all-budgets-li">
                                             <div class="row">
@@ -299,10 +299,10 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-sm mt-5">
-                                <p id="name_error" class="text-danger display-none">Paycheck Name is invalid<br></p>
-                                <p id="amount_error" class="text-danger display-none"><br></p>
-                                <input id="paycheckBtn" class="btn btn-primary" type="submit" value="Add Transaction" disabled>
+                            <div class="mt-5">
+                                <button id="paycheckBtn" class="btn btn-primary w-100" type="submit" disabled>Add paycheck</button>
+                                <div id="name_error" class="text-danger display-none invalid-feedback">Paycheck Name is invalid<br></div>
+                                <div id="amount_error" class="text-danger display-none invalid-feedback"><br></div>
                             </div>
                         </div>
                     </form>
@@ -348,16 +348,14 @@
                                                 <tr>
                                             </tbody>
                                         </table>
-                                        <div class="row justify-content-between">
-                                            <div class="col-auto me-auto">
-                                                <button onclick="delete_prefill('delete{{ k }}')" class="btn btn-outline-danger">Delete</button>
+                                        <div class="row">
+                                            <div class="col-5 p-1">
+                                                <button onclick="delete_prefill('delete{{ k }}')" class="btn btn-outline-danger w-100">Delete</button>
                                             </div>
-                                            <div class="col-auto">
-                                                <button onclick="fillvalues('table{{ i }}', {{ k }});" class="btn btn-primary">Select this previous amount</button>
+                                            <div class="col-7 p-1">
+                                                <button onclick="fillvalues('table{{ i }}', {{ k }});" class="btn btn-primary w-100">Select this previous amount</button>
                                             </div>
                                         </div>
-                                        <!-- <button onclick="fillvalues('table{{ i }}', {{ k }});" class="btn btn-primary">Select this previous amount</button>
-                                        <button onclick="fillvalues('table{{ i }}', {{ k }});" class="btn btn-outline-danger">Delete</button> -->
                                     </div>
                                 </div>
                             </div>
@@ -387,7 +385,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                        <button onclick="document.getElementById('previousPaycheckModal').style.display='none'" type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                    <button onclick="document.getElementById('previousPaycheckModal').style.display='none'" type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
                 </div>
             </div>
         </div>
