@@ -35,10 +35,6 @@ function findNewIndex(id, name, active) {
   return arr.length;
 }
 
-function getActiveRows() {
-  let rows = document.querySelectorAll(".budget-row");
-}
-
 function addToActive(index, ele) {
   let activeRow = document.querySelectorAll(".budget-row")[0];
   activeRow.insertBefore(ele, activeRow.children[index]);
@@ -94,6 +90,4 @@ async function toggleBudgetActive(id, event) {
 }
 
 // function calls
-(async () => {
-  categorizeBudgets();
-})();
+categorizeBudgets();

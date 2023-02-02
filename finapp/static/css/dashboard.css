@@ -138,9 +138,10 @@ button {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #ccc;
-  -webkit-transition: .4s;
-  transition: .4s;
+  background-color: transparent;
+  -webkit-transition: .3s;
+  transition: .3s;
+  outline: 1px solid #595c5f;
 }
 
 .slider:before {
@@ -150,16 +151,20 @@ button {
   width: 18px;
   left: 2px;
   bottom: 2px;
-  background-color: white;
-  -webkit-transition: .4s;
-  transition: .4s;
+  background-color: #595c5f;
+  -webkit-transition: .3s;
+  transition: .3s;
 }
 
-input:checked+.slider {
+input:checked + .slider:before {
+  background-color: #fff;
+}
+
+input:checked + .slider {
   background-color: #0d6efd;
 }
 
-input:checked+.slider:before {
+input:checked + .slider:before {
   -webkit-transform: translateX(18px);
   -ms-transform: translateX(18px);
   transform: translateX(18px);
