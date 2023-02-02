@@ -98,14 +98,11 @@ class ChartHandler {
     this.keys = response.keys;
 
     this.minDate = setLineBudgetStartDate(this.keys[0], true);
-    addOptionsToNetspending(this.minDate);
+    addOptionsToNetspendingAndSpendingForMonth(this.minDate);
     this.assignColors();
     this.createOrUpdateLineChart();
     this.createOrUpdatePieChart("", storage.getItem("showPercentage"));
     this.addLineChartButtons();
-    let monthInt = date.getMonth() + 1;
-    let monthName = date.toLocaleString("default", { month: "long" });
-    this.spendingPerMonth(monthInt, monthName);
 
     let arr = [
       "lineGraphButton",
@@ -368,7 +365,7 @@ class ChartHandler {
     const ctx = document.getElementById("spendingChart").getContext("2d");
     this.spendingChart = new Chart(ctx, {
       plugins: [ChartDataLabels],
-      type: "doughnut",
+      type: "bar",
       data: {
         labels: keys,
         datasets: [
@@ -383,7 +380,7 @@ class ChartHandler {
       options: {
         plugins: {
           legend: {
-            position: "top",
+            display: false,
           },
           title: {
             display: true,
@@ -692,6 +689,21 @@ function createOptionElement(string, month, year, ytd, selected = false) {
 }
 
 function getOptionsFromStartDate(startDate) {
+  const months = {
+    1: "January",
+    2: "February",
+    3: "March",
+    4: "April",
+    5: "May",
+    6: "June",
+    7: "July",
+    8: "August",
+    9: "September",
+    10: "October",
+    11: "November",
+    12: "December",
+  };
+
   let endDate = new Date();
   let startYear = startDate.getFullYear();
   let endYear = endDate.getFullYear();
@@ -728,48 +740,30 @@ function getOptionsFromStartDate(startDate) {
   return options;
 }
 
-function addOptionsToNetspending(minDate) {
+function addOptionsToNetspendingAndSpendingForMonth(minDate) {
   let netSpendingSelect = document.getElementById("netSpendingOptions");
   let options = getOptionsFromStartDate(minDate);
 
   for (let option of options) {
-    netSpendingSelect.appendChild(option);
     if (option.selected) {
+      netSpendingSelect.appendChild(option);
       netSpendingSelect.value = option.value;
       netSpendingSelect.dispatchEvent(new Event("input"));
+    } else {
+      netSpendingSelect.appendChild(option);
+    }
+  }
+
+  let spendingForMonthSelect = document.getElementById("spendingMonths");
+  options = getOptionsFromStartDate(minDate);
+
+  for (let option of options) {
+    if (option.selected) {
+      spendingForMonthSelect.appendChild(option);
+      spendingForMonthSelect.value = option.value;
+      spendingForMonthSelect.dispatchEvent(new Event("input"));
+    } else {
+      spendingForMonthSelect.appendChild(option);
     }
   }
 }
-
-// function calls
-// (async () => {
-// names = await getAllBudgetNames();
-// names = names["names"];
-
-// data = await getAllBudgetsLineData();
-// // console.log(data);
-
-// setLineBudgetStartDate(data);
-// assignColors();
-// lineChart(data);
-// pieChart("", storage.getItem("showPercentage"));
-// addButtons();
-// let monthInt = date.getMonth() + 1;
-// let monthName = date.toLocaleString("default", { month: "long" });
-// spendingPerMonth(monthInt, monthName);
-// netSpending(monthInt);
-
-// let arr = [
-//   "lineGraphButton",
-//   "pieChartButton",
-//   "spendingButton",
-//   "netSpendingButton",
-// ];
-// for (let id of arr) {
-//   let collapsed = storage.getItem(id);
-//   if (collapsed === "true") {
-//     let btn = document.getElementById(id);
-//     btn.click();
-//   }
-// }
-// })();

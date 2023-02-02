@@ -49,8 +49,9 @@
         let result = await getData(`{{ url_for('home.get_net_spending_for_month') }}?month=${object.month}&year=${object.year}&ytd=${object.ytd}`);
         return JSON.parse(result);
     }
-    async function getMonthSpending(month) {
-        let result = await getData("{{ url_for('home.get_spending_for_month') }}" + "?month=" + month);
+    async function getMonthSpending(value) {
+        let object = JSON.parse(value);
+        let result = await getData(`{{ url_for('home.get_spending_for_month') }}?month=${object.month}&year=${object.year}&ytd=${object.ytd}`);
         return JSON.parse(result);
     }
     async function getAllBudgetNames() {
@@ -188,12 +189,6 @@
 <script src="/static/js/dashboard.js"></script>
 <script src="/static/js/setdate.js"></script>
 <script>
-    const months = {
-        1: "January", 2: "February", 3: "March", 4: "April",
-        5: "May", 6: "June", 7: "July", 8: "August", 9: "September",
-        10: "October", 11: "November", 12: "December"
-    };
-
     let budgetSelect = document.getElementById("netSpendingOptions");
     budgetSelect.addEventListener('input', event => {
         chartHandler.netSpending(event.target.value);
@@ -231,30 +226,9 @@
         pieChart(event.target.value);
     }
 
-    // sort the donut months
-    let monthInt = date.getMonth() + 1;
     let pieSelect = document.getElementById('spendingMonths');
-    pieSelect.value = monthInt;
-    let value = monthInt;
-    for (let i = 0; i < 12; i++) {
-        if (value < 1) {
-            value += 12;
-        }
-        let option1 = document.createElement("option");
-        option1.value = value;
-        option1.innerText = months[value];
-        pieSelect.appendChild(option1);
-
-        value -= 1;
-    }
-
-    let ytdOption1 = document.createElement("option");
-    ytdOption1.value = "ytd";
-    ytdOption1.innerText = "YTD";
-    pieSelect.appendChild(ytdOption1);
-
     // The change handler for the month spending donut
-    pieSelect.addEventListener('change', event => {
+    pieSelect.addEventListener('input', event => {
         let monthName = event.target.children[event.target.selectedIndex].textContent
         chartHandler.spendingPerMonth(event.target.value, monthName);
     });
