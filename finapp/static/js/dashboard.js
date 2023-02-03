@@ -347,10 +347,7 @@ class ChartHandler {
   async spendingPerMonth(month, monthName) {
     let spendData = await getMonthSpending(month);
 
-    let keys = spendData["keys"];
-    let values = spendData["values"];
-
-    let total = values.reduce((a, b) => a + b, 0);
+    let keys = Object.keys(spendData);
 
     let colors = [];
     for (let name of keys) {
@@ -362,6 +359,16 @@ class ChartHandler {
       tempChart.destroy();
     }
 
+    let expenses = [];
+    let income = [];
+
+    for (let [k, v] of Object.entries(spendData)) {
+      expenses.push(v.expenses);
+      income.push(v.income);
+    }
+
+    console.log(expenses, income);
+
     const ctx = document.getElementById("spendingChart").getContext("2d");
     this.spendingChart = new Chart(ctx, {
       plugins: [ChartDataLabels],
@@ -370,21 +377,34 @@ class ChartHandler {
         labels: keys,
         datasets: [
           {
-            data: values,
-            backgroundColor: colors,
+            label: "Expenses",
+            data: expenses,
+            borderColor: CHART_COLORS.red,
+            borderWidth: 2,
+            backgroundColor: "rgba(255, 99, 132, .5)",
             color: "rgba(255, 255, 255)",
             hoverOffset: 4,
+            stack: "stack 0",
+          },
+          {
+            label: "Income",
+            data: income,
+            borderColor: CHART_COLORS.green,
+            borderWidth: 2,
+            backgroundColor: "rgba(75, 192, 192, .5)",
+            color: "rgba(255, 255, 255)",
+            hoverOffset: 4,
+            stack: "stack 0",
           },
         ],
       },
       options: {
         plugins: {
           legend: {
-            display: false,
+            display: true,
           },
           title: {
             display: true,
-            text: `You spent $${total.toFixed(2)} in ${monthName}`,
             color: "rgb(255, 255, 255)",
             font: {
               size: 19,
@@ -395,7 +415,20 @@ class ChartHandler {
         },
         responsive: true,
         borderColor: "rgba(0, 0, 0, .79)",
-        color: "rgba(255, 255, 255, .79)",
+        color: "rgba(255, 255, 255, .99)",
+        scales: {
+          y: {
+            stacked: false,
+            ticks: {
+              color: "white",
+            },
+          },
+          x: {
+            ticks: {
+              color: "white",
+            },
+          }
+        }
       },
     });
   }
@@ -600,7 +633,7 @@ function createCard(name, in_, out, net, names) {
   let netSpending = createDivWithClass("text-end pt-1");
 
   let p1 = createPtagWithClass("m-0");
-  p1.innerHTML = "Net Spending";
+  p1.innerHTML = "Net income";
 
   let class_list = "fs-4 m-0 ";
   if (net[0] === "-") {
@@ -629,7 +662,7 @@ function createCard(name, in_, out, net, names) {
   let col2 = createDivWithClass("col");
 
   let p3 = createPtagWithClass("m-0");
-  p3.innerHTML = "Spent";
+  p3.innerHTML = "Expenses";
   let p4 = createPtagWithClass("fs-5 m-0 text-danger");
   p4.innerHTML = out;
 

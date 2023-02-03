@@ -388,10 +388,7 @@ def get_spending_for_month():
 
     data = helpers.spending_for_month(month, year, ytd)
 
-    keys = [k for k in data.keys()]
-    values = [v for v in data.values()]
-
-    return {"keys": keys, "values": values}
+    return data
 
 
 @home.route("/get_all_budgets_line_data", methods=["GET"])

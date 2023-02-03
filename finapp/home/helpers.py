@@ -180,10 +180,11 @@ def spending_for_month(month, year, ytd):
             temp_trans = queries.get_transactions_for_month(
                 budget_id=budg.id, month=month, year=year, include_transfers=False
             )
-        b_trans = sum([t.amount for t in temp_trans if t.amount < 0]) * -1
+        expenses = sum([t.amount for t in temp_trans if t.amount < 0]) * -1
+        income = sum([t.amount for t in temp_trans if t.amount > 0])
 
-        if b_trans > 0:
-            data[budg.name] = round(b_trans, 2)
+        if expenses != 0 or income != 0:
+            data[budg.name] = { "expenses": round(expenses, 2), "income": round(income, 2) }
     return data
 
 
