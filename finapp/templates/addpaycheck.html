@@ -8,6 +8,7 @@
 
 {% block content %}
 
+<script src="/static/js/addpaycheckHelpers.js"></script>
 <script>
     function sendRequest(url) {
         return new Promise(function (resolve, reject) {
@@ -21,227 +22,11 @@
         })
     }
 
-    async function deleteRequest(event, id, amount, url) {
-        let button = event.target;
-        if (button.tagName !== "BUTTON") {
-            button = button.parentElement;
-        }
-
-        let message = button.querySelector(".value");
-        message.hidden = true;
-
-        let spinner = button.querySelector(".spinner");
-        spinner.hidden = false;
-
-        let loading = button.querySelector(".loading");
-        loading.hidden = false;
-
-        let response = await sendRequest(url);
-        console.log(response);
-
-        document.getElementById(id).remove();
-
-        document.getElementById(`prefill${amount}`).remove();
-    }
-
-    function delete_prefill(id) {
-        document.getElementById(id).style.display = 'block';
-    }
-
-    function fillvalues(id, totalAmount) {
-        document.getElementById('previousPaycheckModal').style.display='none';
-
-        let table = document.getElementById(id);
-        let list = [];
-        for (let r = 1; r < table.rows.length - 1; r++) {
-            let name = table.rows[r].cells[0].innerHTML;
-            let id = table.rows[r].cells[1].id;
-            let amount = table.rows[r].cells[1].innerHTML;
-            let temp = [name + id, amount];
-            list[list.length] = temp;
-        }
-
-        for (let i = 0; i < list.length; i++) {
-            let input = document.getElementById(list[i][0]);
-            input.value = list[i][1];
-        }
-
-        let isPercentage = document.getElementById('isPercentage').value === "True";
-        console.log(isPercentage);
-        if (isPercentage) {
-            checkPaycheckPercentage();
-        }
-        else {
-            document.getElementById('paycheck_amount').value = totalAmount;
-            checkPaycheck();
-        }
-    }
-
-    function openPreviousPaycheckModal() {
-        document.getElementById('previousPaycheckModal').style.display = 'block';
-    }
-
-    function checkPaycheck() {
-        console.log('in dollar');
-        let amountValid = false;
-        let nameValid = false;
-        let submitBtn = document.getElementById('paycheckBtn');
-        submitBtn.disabled = true;
-
-        let name = document.getElementById('paycheckName').value;
-        let total = document.getElementById('paycheck_amount').value;
-        // prefillBudgets(total);
-        if (total !== null) {
-            let budgets = document.getElementsByClassName('all-budgets');
-            let b_total = 0;
-            for (let i = 0; i < budgets.length; i++) {
-                b_total += Number(budgets[i].value);
-            }
-            total = parseFloat(total).toFixed(2);
-            b_total = parseFloat(b_total).toFixed(2);
-
-            if (b_total == total) {
-                submitBtn.disabled = false;
-                let total_error = document.getElementById('amount_error');
-                total_error.classList.add('display-none');
-                amountValid = true;
-            }
-            else {
-                submitBtn.disabled = true;
-                let total_error = document.getElementById('amount_error');
-                total_error.innerHTML = `Paycheck Amount ($${total}) does not equal combined budget amount ($${b_total}).`;
-                total_error.classList.remove('display-none');
-            }
-        }
-        if (name === null || name === '') {
-            // show error
-            submitBtn.disabled = true;
-            let name_error = document.getElementById('name_error');
-            name_error.classList.remove('display-none');
-        }
-        else {
-            let name_error = document.getElementById('name_error');
-            name_error.classList.add('display-none');
-            nameValid = true;
-        }
-
-        if (nameValid && amountValid) {
-            submitBtn.disabled = false;
-        }
-    }
-
-    function checkPaycheckPercentage() {
-        console.log('in percentage');
-        let amountValid = false;
-        let nameValid = false;
-        let submitBtn = document.getElementById('paycheckBtn');
-        submitBtn.disabled = true;
-
-        let name = document.getElementById('paycheckName').value;
-        let paycheckAmount = document.getElementById('paycheck_amount').value;
-        let total = 100;
-        // prefillBudgets(total);
-        if (total !== null) {
-            let budgets = document.getElementsByClassName('all-budgets');
-            let b_total = 0;
-            for (let b of budgets) {
-                let temp = Number(b.value);
-                b_total += temp;
-                let p = b.parentElement.parentElement.querySelector("p");
-                p.innerHTML = "$" + Number(paycheckAmount).toFixed(2) * temp / 100;
-            }
-            total = parseFloat(total).toFixed(2);
-            b_total = parseFloat(b_total).toFixed(2);
-
-            if (b_total == total) {
-                submitBtn.disabled = false;
-                let total_error = document.getElementById('amount_error');
-                total_error.classList.add('display-none');
-                amountValid = true;
-            }
-            else {
-                submitBtn.disabled = true;
-                let total_error = document.getElementById('amount_error');
-                total_error.innerHTML = `Budgets breakdown (${b_total}%) does not add up too 100%.`;
-                total_error.classList.remove('display-none');
-            }
-        }
-        if (name === null || name === '') {
-            // show error
-            submitBtn.disabled = true;
-            let name_error = document.getElementById('name_error');
-            name_error.classList.remove('display-none');
-        }
-        else {
-            let name_error = document.getElementById('name_error');
-            name_error.classList.add('display-none');
-            nameValid = true;
-        }
-
-        if (nameValid && amountValid) {
-            submitBtn.disabled = false;
-        }
-    }
-
-    function toggleBudgetBreakdown() {
-        let isPercentage = document.getElementById('isPercentage');
-        let budgets = document.getElementsByClassName('all-budgets');
-        let budgetsLi = document.getElementsByClassName('all-budgets-li');
-
-        let name = document.getElementById("paycheckName");
-        let amount = document.getElementById("paycheck_amount");
-
-        if (isPercentage.value === "True") {
-            isPercentage.value = "";
-            name.addEventListener("input", checkPaycheck);
-            name.removeEventListener("input", checkPaycheckPercentage);
-            amount.addEventListener("input", checkPaycheck);
-            amount.removeEventListener("input", checkPaycheckPercentage);
-            for (let b of budgets) {
-                b.addEventListener("input", checkPaycheck);
-                b.removeEventListener("input", checkPaycheckPercentage);
-                b.placeholder = "$0.00";
-            }
-            for (let b of budgetsLi) {
-                let p = b.querySelector("p");
-                p.classList.add('display-none');
-            }
-            checkPaycheck();
-        }
-        else {
-            isPercentage.value = "True";
-            name.addEventListener("input", checkPaycheckPercentage);
-            name.removeEventListener("input", checkPaycheck);
-            amount.addEventListener("input", checkPaycheckPercentage);
-            amount.removeEventListener("input", checkPaycheck);
-            for (let b of budgets) {
-                b.addEventListener("input", checkPaycheckPercentage);
-                b.removeEventListener("input", checkPaycheck);
-                b.placeholder = "0.00%";
-            }
-            for (let b of budgetsLi) {
-                let p = b.querySelector("p");
-                p.classList.remove('display-none');
-            }
-            checkPaycheckPercentage();
-        }
-
-        let accordionItems = document.getElementsByClassName('accordion-item');
-        for (let item of accordionItems) {
-            if (item.classList.contains('display-none')) {
-                item.classList.remove('display-none');
-            }
-            else {
-                item.classList.add('display-none');
-            }
-        }
-    }
-
 </script>
     <div class="card border-0">
         <div class="row">
             <div class="col-lg-5 hidden-on-smaller-992">
-                <img src="/static/images/money-large.png" class="img-fluid rounded-start img-full" alt="Money image">
+                <img src="/static/images/money-large.png" class="img-fluid rounded-start img-full" alt="Money image" loading="lazy">
             </div>
             <div class="col-lg-7">
                 <div class="card-body p-5">
@@ -252,10 +37,15 @@
                                 <div class="form-outline mb-4">
                                     <label class="form-label" for="name">Paycheck Name</label>
                                     <input class="validatePaycheck form-control" type="text" id="paycheckName" name="name" placeholder="I'm rich!" autocomplete="niklas" required>
+                                    <div id="name_error" class="invalid-feedback">
+                                        Please enter a name for the paycheck.
+                                    </div>
                                 </div>
                                 <div class="form-outline mb-4">
                                     <label class="form-label" for="amount">Paycheck Amount</label>
                                     <input class="validatePaycheck form-control" type="number" step=".01" id="paycheck_amount" name="amount" placeholder="$0.00" autocomplete="niklas" required>
+                                    <div id="amount_error" class="invalid-feedback">
+                                    </div>
                                 </div>
                                 <div class="form-outline mb-4">
                                     <label class="form-label" for="amount">Date</label>
@@ -301,8 +91,6 @@
                         <div class="row">
                             <div class="mt-5">
                                 <button id="paycheckBtn" class="btn btn-primary w-100" type="submit" disabled>Add paycheck</button>
-                                <div id="name_error" class="text-danger display-none invalid-feedback">Paycheck Name is invalid<br></div>
-                                <div id="amount_error" class="text-danger display-none invalid-feedback"><br></div>
                             </div>
                         </div>
                     </form>
@@ -350,10 +138,10 @@
                                         </table>
                                         <div class="row">
                                             <div class="col-5 p-1">
-                                                <button onclick="delete_prefill('delete{{ k }}')" class="btn btn-outline-danger w-100">Delete</button>
+                                                <button onclick="openDeletePrefillModa('delete{{ k }}')" class="btn btn-outline-danger w-100">Delete</button>
                                             </div>
                                             <div class="col-7 p-1">
-                                                <button onclick="fillvalues('table{{ i }}', {{ k }});" class="btn btn-primary w-100">Select this previous amount</button>
+                                                <button onclick="fillBudgetAmountsFromPrefill('table{{ i }}', {{ k }});" class="btn btn-primary w-100">Select this previous amount</button>
                                             </div>
                                         </div>
                                     </div>
@@ -371,7 +159,7 @@
                                             <p>Are you sure you want to delete this prefill?</p>
                                         </div>
                                         <div class="modal-footer">
-                                            <button onclick="deleteRequest(event, 'delete{{ k }}', '{{ k }}', '{{ url_for('home.delete_prefill', amount=k) }}')" type="button" id="delete_button" class="btn btn-danger">
+                                            <button onclick="sendDeletePrefillRequest(event, 'delete{{ k }}', '{{ k }}', '{{ url_for('home.delete_prefill', amount=k) }}')" type="button" id="delete_button" class="btn btn-danger">
                                                 <span class="value">Delete</span>
                                                 <span class="spinner spinner-border spinner-border-sm" role="status" aria-hidden="true" hidden></span>
                                                 <span class="loading" hidden>Loading...</span>
@@ -395,11 +183,11 @@
 
     <script src="/static/js/setdate.js"></script>
     <script>
-        document.getElementById("paycheckName").addEventListener("input", checkPaycheck);
-        document.getElementById("paycheck_amount").addEventListener("input", checkPaycheck);
+        document.getElementById("paycheckName").addEventListener("input", isPaycheckValid);
+        document.getElementById("paycheck_amount").addEventListener("input", isPaycheckValid);
 
         {% for budget in budgets %}
-            document.getElementById("{{ budget.name }}{{ budget.id }}".replace("&#39;", "'")).addEventListener("input", checkPaycheck);
+            document.getElementById("{{ budget.name }}{{ budget.id }}".replace("&#39;", "'")).addEventListener("input", isPaycheckValid);
         {% endfor %}
     </script>
 
