@@ -55,7 +55,7 @@ async function toggleBudgetActive(id, event) {
   let active = event.target.checked;
   const strId = `budget-${id}`;
 
-  sendToggle(id, active);
+  let temp = await sendToggle(id, active);
 
   await new Promise((r) => setTimeout(r, 500));
 

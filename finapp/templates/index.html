@@ -8,16 +8,7 @@
 {% block content %}
 <script>
     function sendToggle(id, active) {
-        return new Promise(function(resolve, reject) {
-            let xmlHttp = new XMLHttpRequest();
-            let url = "{{ url_for('home.toggle_budget') }}" + `?id=${id}&active=${active}`;
-            xmlHttp.open( "GET", url );
-            xmlHttp.onload = () => {
-                resolve(xmlHttp.response);
-            };
-            xmlHttp.send( null );
-
-        })
+        return getRequest("{{ url_for('home.toggle_budget') }}", { id, active });
     }
 
     function checkDuplicateBudget() {

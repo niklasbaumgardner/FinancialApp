@@ -23,7 +23,7 @@ async function sendDeletePrefillRequest(event, id, amount, url) {
   let loading = button.querySelector(".loading");
   loading.hidden = false;
 
-  let response = await sendRequest(url);
+  let response = await getRequest(url);
   console.log(response);
 
   document.getElementById(id).remove();

@@ -203,8 +203,7 @@ class Pagination {
     this.setCurrentPage(this.currentPage + 1);
   }
 
-  getTransactionArray(stringData) {
-    let data = JSON.parse(stringData);
+  getTransactionArray(data) {
     let newTransactionArray = [];
     for (let t of data.transactions) {
       let transaction = new Transaction(...t);

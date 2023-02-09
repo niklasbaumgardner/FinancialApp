@@ -19,44 +19,35 @@
 
     const storage = window["localStorage"];
 
-    async function getData(url) {
-        return new Promise(function (resolve, reject) {
-            var xmlHttp = new XMLHttpRequest();
-            xmlHttp.open("GET", url);
-            xmlHttp.onload = () => {
-                resolve(xmlHttp.response);
-            };
-            xmlHttp.send(null);
-
-        })
-    }
     async function getPieData(date='') {
         let result;
         if (date !== '') {
-            result = await getData("{{ url_for('home.get_pie_data') }}" + "?date=" + date);
+            result = await getRequest("{{ url_for('home.get_pie_data') }}", { date });
         }
         else {
-            result = await getData("{{ url_for('home.get_pie_data') }}");
+            result = await getRequest("{{ url_for('home.get_pie_data') }}");
         }
-        return JSON.parse(result);
+        return result;
     }
     async function getAllBudgetsLineData(startDate='') {
-        let result = await getData("{{ url_for('home.get_all_budgets_line_data') }}" + "?startDate=" + startDate);
-        return JSON.parse(result);
+        let result = await getRequest("{{ url_for('home.get_all_budgets_line_data') }}", { startDate });
+        return result;
     }
     async function getNetSpending(value) {
         let object = JSON.parse(value);
-        let result = await getData(`{{ url_for('home.get_net_spending_for_month') }}?month=${object.month}&year=${object.year}&ytd=${object.ytd}`);
-        return JSON.parse(result);
+        console.log(object);
+        let result = await getRequest("{{ url_for('home.get_net_spending_for_month') }}", object);
+        return result;
     }
     async function getMonthSpending(value) {
         let object = JSON.parse(value);
-        let result = await getData(`{{ url_for('home.get_spending_for_month') }}?month=${object.month}&year=${object.year}&ytd=${object.ytd}`);
-        return JSON.parse(result);
+        console.log(object);
+        let result = await getRequest("{{ url_for('home.get_spending_for_month') }}", object);
+        return result;
     }
     async function getAllBudgetNames() {
-        let result = await getData("{{ url_for('home.get_budget_name') }}");
-        return JSON.parse(result);
+        let result = await getRequest("{{ url_for('home.get_budget_name') }}");
+        return result;
     }
 </script>
 

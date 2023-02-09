@@ -32,9 +32,9 @@ def toggle_budget():
         active = False if active == "false" else True
         queries.update_budget(id_, is_active=active)
 
-        return "succes"
+        return { "success": True }
 
-    return "fail"
+    return { "success": False }
 
 
 @home.route("/add_budget", methods=["POST"])

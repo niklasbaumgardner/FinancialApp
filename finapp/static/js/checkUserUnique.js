@@ -1,27 +1,11 @@
 "use strict";
 
 async function sendUsernameRequest(username) {
-  let response = await fetch(
-    USERNAME_UNIQUE_URL +
-      "?" +
-      new URLSearchParams({
-        username,
-      })
-  );
-  response = await response.json();
-  return response;
+  return getRequest(USERNAME_UNIQUE_URL, { username });
 }
 
 async function sendEmailRequest(email) {
-  let response = await fetch(
-    EMAIL_UNIQUE_URL +
-      "?" +
-      new URLSearchParams({
-        email,
-      })
-  );
-  response = await response.json();
-  return response;
+  return getRequest(EMAIL_UNIQUE_URL, { email });
 }
 
 function enableSubmitButton() {
