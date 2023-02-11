@@ -4,7 +4,7 @@
   "display": "minimal-ui",
   "icons": [
     {
-      "src": "finapp/static/images/pig.png",
+      "src": "images/pig.png",
       "sizes": "427x427",
       "type": "image/png"
     }
