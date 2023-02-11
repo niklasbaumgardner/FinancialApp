@@ -1,0 +1,15 @@
+{
+  "background_color": "black",
+  "description": "Budgeting app by Niklas Baumgardner ",
+  "display": "fullscreen",
+  "icons": [
+    {
+      "src": "finapp/static/images/pig.png",
+      "sizes": "427x427",
+      "type": "image/png"
+    }
+  ],
+  "name": "FinApp",
+  "short_name": "FinApp",
+  "start_url": "/"
+}
