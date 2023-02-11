@@ -1,7 +1,7 @@
 {
   "background_color": "black",
   "description": "Budgeting app by Niklas Baumgardner ",
-  "display": "standalone",
+  "display": "minimal-ui",
   "icons": [
     {
       "src": "finapp/static/images/pig.png",
