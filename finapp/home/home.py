@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request
+from flask import Blueprint, render_template, redirect, url_for, request, send_from_directory
 from flask_login import login_required
 from datetime import datetime, date
 from finapp.home import helpers, queries
@@ -420,3 +420,7 @@ def get_net_spending_for_month():
     data = helpers.net_spending(month, year, ytd)
 
     return data
+
+@home.route("/sw.js")
+def service_worker():
+    return send_from_directory("static", "sw.js")
