@@ -75,3 +75,7 @@
 input {
   color-scheme: dark;
 }
+
+.welcome {
+  margin-top: -1rem;
+}
