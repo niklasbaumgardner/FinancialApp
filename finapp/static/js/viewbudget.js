@@ -266,3 +266,13 @@ function checkInput() {
   let btn = document.getElementById("transSubmit");
   btn.disabled = true;
 }
+
+// Focus the transaction name input on first tab click
+function keydownHandler(event) {
+  event.preventDefault();
+  if (event.key === "Tab") {
+    document.getElementById("name").focus();
+    console.log(document.activeElement);
+  }
+}
+window.addEventListener("keydown", keydownHandler, { once: true });
