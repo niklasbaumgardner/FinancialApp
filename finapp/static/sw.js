@@ -1,6 +1,6 @@
 "use strict";
 
-const FILES_TO_CACHE = ["/", "/static/js/app.js", "/static/images/pig.png"];
+const FILES_TO_CACHE = ["/static/images/pig.png"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(
