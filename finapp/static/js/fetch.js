@@ -10,3 +10,20 @@ async function getRequest(url, params = {}) {
   response = await response.json();
   return response;
 }
+
+async function postRequest(url, formData) {
+  let response = await fetch(url, {
+    method: "POST",
+    body: formData,
+  });
+  response = await response.json();
+  return response;
+}
+
+async function deleteRequest(url) {
+  let response = await fetch(url, {
+    method: "DELETE",
+  });
+  response = await response.json();
+  return response;
+}

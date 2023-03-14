@@ -27,6 +27,54 @@ class Pagination {
     this.setCurrentPage(1 * currentPage);
   }
 
+  async getPageData(page) {
+    let response = await fetch(
+      GET_PAGE_URL + "?" + new URLSearchParams({ page })
+    );
+    response = await response.json();
+    return response;
+  }
+
+  requestPageData(page) {
+    let request = fetch(GET_PAGE_URL + "?" + new URLSearchParams({ page }));
+    return request;
+  }
+
+  async requestNewPages(options) {
+    console.log(options);
+    delete this.pageMap[this.currentPage];
+    if (options.lessThanCurrentPage || options.greaterThanCurrentPage) {
+      for (let key of Object.keys(this.pageMap)) {
+        if (key < this.currentPage && options.lessThanCurrentPage) {
+          delete this.pageMap[key];
+          console.log("deleting pageMap key", key);
+        }
+        else if (key > this.currentPage && options.greaterThanCurrentPage) {
+          delete this.pageMap[key];
+          console.log("deleting pageMap key", key);
+        }
+      }
+      for (let key of Object.keys(this.currentRequests)) {
+        if (key < this.currentPage && options.lessThanCurrentPage) {
+          delete this.currentRequests[key];
+          console.log("deleting currentRequests key", key);
+        }
+        else if (key > this.currentPage && options.greaterThanCurrentPage) {
+          delete this.currentRequests[key];
+          console.log("deleting currentRequests key", key);
+        }
+      }
+    }
+
+    let data = await this.getPageData(this.currentPage);
+    this.numTransactions = data.total;
+    this.numPages = data.num_pages;
+
+    this.pageMap[this.currentPage] = this.getTransactionArray(data);
+
+    this.setCurrentPage(this.currentPage, true);
+  }
+
   createPageButtons() {
     if (this.#BUTTONS_VISIBLE > this.numPages) {
       this.#BUTTONS_VISIBLE = this.numPages;
@@ -64,8 +112,8 @@ class Pagination {
     this.nextButton.firstElementChild.disabled = disable;
   }
 
-  setCurrentPage(newPage) {
-    if (newPage === this.currentPage) {
+  setCurrentPage(newPage, flush=false) {
+    if (!flush && newPage === this.currentPage) {
       return;
     }
 
@@ -155,10 +203,11 @@ class Pagination {
     if (!this.pageMap[this.currentPage]) {
       let data;
       if (this.currentRequests[this.currentPage]) {
-        data = await this.currentRequests[this.currentPage];
+        let request = await this.currentRequests[this.currentPage];
+        data = await request.json();
         this.currentRequests[this.currentPage] = null;
       } else {
-        data = await getPageData(this.currentPage);
+        data = await this.getPageData(this.currentPage);
       }
       this.pageMap[this.currentPage] = this.getTransactionArray(data);
     }
@@ -219,7 +268,7 @@ class Pagination {
         continue;
       }
 
-      let request = getPageData(pageNum);
+      let request = this.requestPageData(pageNum);
 
       this.currentRequests[pageNum] = request;
     }

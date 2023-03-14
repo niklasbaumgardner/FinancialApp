@@ -1,7 +1,16 @@
-from flask import Blueprint, render_template, redirect, url_for, request, send_from_directory
+from flask import (
+    Blueprint,
+    render_template,
+    redirect,
+    url_for,
+    request,
+    send_from_directory,
+)
 from flask_login import login_required
 from datetime import datetime, date
 from finapp.home import helpers, queries
+from jinja2 import Template
+from jinja2.filters import FILTERS, environmentfilter
 
 
 home = Blueprint("home", __name__)
@@ -32,9 +41,9 @@ def toggle_budget():
         active = False if active == "false" else True
         queries.update_budget(id_, is_active=active)
 
-        return { "success": True }
+        return {"success": True}
 
-    return { "success": False }
+    return {"success": False}
 
 
 @home.route("/add_budget", methods=["POST"])
@@ -223,7 +232,7 @@ def get_page(budget_id):
 
     transactions = helpers.jsify_transactions(transactions)
 
-    return {"page": page, "transactions": transactions}
+    return {"page": page, "transactions": transactions, "total": total, "num_pages": num_pages}
 
 
 @home.route("/view_budget/<int:id>")
@@ -282,7 +291,7 @@ def edit_transaction(b_id, t_id):
         b_id=b_id, t_id=t_id, name=new_name, amount=new_amount, new_date=new_date
     )
 
-    return redirect(url_for("home.view_budget", id=b_id, page=page))
+    return {"success": True}
 
 
 @home.route("/move_transaction/<int:sb_id>/<int:t_id>", methods=["POST"])
@@ -292,10 +301,10 @@ def move_transaction(sb_id, t_id):
 
     queries.update_transaction(b_id=sb_id, t_id=t_id, new_b_id=new_budget_id)
 
-    return redirect(url_for("home.view_budget", id=sb_id))
+    return {"success": True}
 
 
-@home.route("/delete_transaction/<int:b_id>/<int:t_id>", methods=["POST"])
+@home.route("/delete_transaction/<int:b_id>/<int:t_id>", methods=["DELETE"])
 @login_required
 def delete_transaction(b_id, t_id):
     page = request.form.get("page")
@@ -303,7 +312,7 @@ def delete_transaction(b_id, t_id):
 
     queries.delete_transaction(b_id, t_id)
 
-    return redirect(url_for("home.view_budget", id=b_id, page=page))
+    return {"success": True}
 
 
 @home.route("/delete_budget/<int:b_id>", methods=["POST"])
@@ -421,6 +430,21 @@ def get_net_spending_for_month():
 
     return data
 
+
 @home.route("/sw.js")
 def service_worker():
     return send_from_directory("static", "sw.js")
+
+
+@environmentfilter
+def budgets_array(environment, value):
+    """
+    custom budgets list to js array filter
+    """
+    lst = []
+    for budget in value:
+        temp = dict(id=budget.id, budgetString=str(budget))
+        lst.append(temp)
+    return lst
+
+FILTERS["budgets_array"] = budgets_array

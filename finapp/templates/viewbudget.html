@@ -11,7 +11,6 @@
     const GET_PAGE_URL = "{{ url_for('home.get_page', budget_id=budget.id) }}";
     const MOVE_TRANSACTION_URL = "{{ url_for('home.move_transaction', sb_id=budget.id, t_id=0) }}".slice(0, -1);
     const DELETE_TRANSACTION_URL = "{{ url_for('home.delete_transaction', b_id=budget.id, t_id=0) }}".slice(0, -1);
-    const budgetsArray = [];
     const params = new URLSearchParams(window.location.search);
     async function getPageData(pageNum) {
         params.set("page", pageNum);
@@ -35,12 +34,7 @@
         transactionArray.push(transaction);
     }
 
-    {% for budg in budgets %}
-        temp = { id: "{{ budg.id }}", budgetString: "{{ str(budg) }}" };
-        budgetsArray.push(temp);
-    {% endfor %}
-
-
+    const budgetsArray = {{ budgets|budgets_array|tojson }};
 </script>
     <div class="container pb-5">
         <div class="row">

@@ -43,8 +43,8 @@ function checkInput() {
 
 // Focus the transaction name input on first tab click
 function keydownHandler(event) {
-  event.preventDefault();
   if (event.key === "Tab") {
+    event.preventDefault();
     document.getElementById("name").focus();
     console.log(document.activeElement);
   }

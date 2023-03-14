@@ -110,17 +110,16 @@ class Transaction {
       })
     );
 
-    div5.appendChild(
-      createElement({
-        type: "input",
-        id: `editDate${this.id}`,
-        name: `editDate${this.id}`,
-        classString: `show-edit-${this.id} form-control w-75`,
-        inputType: "date",
-        value: this.date,
-        hidden: true,
-      })
-    );
+    this.dateElement = createElement({
+      type: "input",
+      id: `editDate${this.id}`,
+      name: `editDate${this.id}`,
+      classString: `show-edit-${this.id} form-control w-75`,
+      inputType: "date",
+      value: this.date,
+      hidden: true,
+    });
+    div5.appendChild(this.dateElement);
 
     if (this.isTransfer) {
       let transferDiv = createElement({
@@ -312,10 +311,22 @@ class Transaction {
     this.deleteModal.show();
   }
 
-  handleUpdateTransaction(event) {
+  async handleUpdateTransaction(event) {
     event.preventDefault();
     this.pageInput.value = pagination.currentPage;
-    this.element.submit();
+
+    let formData = new FormData(this.element);
+    let url = this.element.action;
+
+    let options = {};
+    if (this.date > this.dateElement.value) {
+      options.greaterThanCurrentPage = true;
+    } else {
+      options.lessThanCurrentPage = true;
+    }
+
+    await postRequest(url, formData);
+    pagination.requestNewPages(options);
   }
 
   handleCancelEditTransaction(event) {
@@ -382,7 +393,7 @@ class DeleteModal {
       createElement({
         type: "h5",
         classString: "modal-title",
-        content: `Delete transaction ${this.transaction.name} ?`,
+        content: `Delete transaction "${this.transaction.name}"?`,
       })
     );
 
@@ -402,21 +413,27 @@ class DeleteModal {
     div4.appendChild(
       createElement({
         type: "p",
-        content: "Are you sure you want to delete this transaction?",
+        content: `Are you sure you want to delete transaction "${this.transaction.name}"?`,
+      })
+    );
+    div4.appendChild(
+      createElement({
+        type: "p",
+        content: `Transaction amount: ${this.transaction.amount}`,
       })
     );
 
     let div5 = createElement({ classString: "modal-footer" });
     div2.appendChild(div5);
 
-    let form = createElement({
+    this.form = createElement({
       type: "form",
       method: "POST",
       action: DELETE_TRANSACTION_URL + this.transaction.id,
     });
-    div5.appendChild(form);
+    div5.appendChild(this.form);
 
-    form.appendChild(
+    this.form.appendChild(
       createElement({
         type: "input",
         classString: "page-number",
@@ -427,16 +444,19 @@ class DeleteModal {
       })
     );
 
-    form.appendChild(
+    this.form.appendChild(
       createElement({
         type: "button",
         inputType: "submit",
         classString: "btn btn-danger me-1",
         content: "Delete",
+        onclick: (event) => {
+          this.handelDeleteSubmit(event);
+        },
       })
     );
 
-    form.appendChild(
+    this.form.appendChild(
       createElement({
         type: "button",
         onclick: () => {
@@ -452,6 +472,18 @@ class DeleteModal {
     this.parentElement.appendChild(this.element);
 
     this.created = true;
+  }
+
+  async handelDeleteSubmit(event) {
+    event.preventDefault();
+
+    let url = this.form.action;
+
+    console.log(url);
+    await deleteRequest(url);
+    pagination.requestNewPages({ greaterThanCurrentPage: true });
+
+    this.hide();
   }
 }
 
@@ -485,14 +517,14 @@ class MoveModal {
     let div1 = createElement({ classString: "modal-dialog" });
     this.element.appendChild(div1);
 
-    let form = createElement({
+    this.form = createElement({
       type: "form",
       method: "POST",
       action: MOVE_TRANSACTION_URL + this.transaction.id,
     });
-    div1.appendChild(form);
+    div1.appendChild(this.form);
 
-    form.appendChild(
+    this.form.appendChild(
       createElement({
         type: "input",
         classString: "page-number",
@@ -504,7 +536,7 @@ class MoveModal {
     );
 
     let div2 = createElement({ classString: "modal-content" });
-    form.appendChild(div2);
+    this.form.appendChild(div2);
 
     let div3 = createElement({ classString: "modal-header" });
     div2.appendChild(div3);
@@ -549,22 +581,25 @@ class MoveModal {
       })
     );
 
-    let select = createElement({
+    this.select = createElement({
       type: "select",
       id: "new_budget",
       classString: "form-select form-select-sm w-75",
       name: "new_budget",
     });
-    div5.appendChild(select);
+    div5.appendChild(this.select);
 
     for (let budg of budgetsArray) {
+      if (budg.id == this.transaction.budgetId) {
+        continue;
+      }
       let tempOption = createElement({
         type: "option",
         value: budg.id,
         content: budg.budgetString,
       });
 
-      select.appendChild(tempOption);
+      this.select.appendChild(tempOption);
     }
 
     let div6 = createElement({ classString: "modal-footer" });
@@ -576,6 +611,9 @@ class MoveModal {
         inputType: "submit",
         classString: "btn btn-primary me-1",
         content: "Move",
+        onclick: (event) => {
+          this.handelMoveSubmit(event);
+        },
       })
     );
 
@@ -593,5 +631,17 @@ class MoveModal {
 
     this.parentElement = document.getElementById("moveModals");
     this.parentElement.appendChild(this.element);
+  }
+
+  async handelMoveSubmit(event) {
+    event.preventDefault();
+
+    let url = this.form.action;
+    let formData = new FormData(this.form);
+
+    await postRequest(url, formData);
+    pagination.requestNewPages({ greaterThanCurrentPage: true });
+
+    this.hide();
   }
 }
