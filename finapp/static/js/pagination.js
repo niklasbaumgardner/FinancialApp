@@ -27,16 +27,21 @@ class Pagination {
     this.setCurrentPage(1 * currentPage);
   }
 
+  pageUrlWithParams(page) {
+    params.set("page", page);
+    return GET_PAGE_URL + "?" + params;
+  }
+
   async getPageData(page) {
-    let response = await fetch(
-      GET_PAGE_URL + "?" + new URLSearchParams({ page })
-    );
+    let url = this.pageUrlWithParams(page);
+    let response = await fetch(url);
     response = await response.json();
     return response;
   }
 
   requestPageData(page) {
-    let request = fetch(GET_PAGE_URL + "?" + new URLSearchParams({ page }));
+    let url = this.pageUrlWithParams(page);
+    let request = fetch(url);
     return request;
   }
 

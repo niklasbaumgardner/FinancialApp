@@ -12,10 +12,6 @@
     const MOVE_TRANSACTION_URL = "{{ url_for('home.move_transaction', sb_id=budget.id, t_id=0) }}".slice(0, -1);
     const DELETE_TRANSACTION_URL = "{{ url_for('home.delete_transaction', b_id=budget.id, t_id=0) }}".slice(0, -1);
     const params = new URLSearchParams(window.location.search);
-    async function getPageData(pageNum) {
-        params.set("page", pageNum);
-        return getRequest(GET_PAGE_URL, params);
-    }
 </script>
 <script src="/static/js/createElement.js"></script>
 <script src="/static/js/pagination.js"></script>
