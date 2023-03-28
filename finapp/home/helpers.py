@@ -4,6 +4,7 @@ from flask import url_for
 
 
 def format_to_money_string(number, include_minus=True):
+    number = round(number, 2)
     if include_minus and number < 0:
         return f"-${abs(number):,.2f}"
     return f"${abs(number):,.2f}"

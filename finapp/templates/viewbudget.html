@@ -39,7 +39,7 @@
                     {{ budget.name }}
                 </div>
                 <div class="fs-4 mb-0 subhead">
-                    Total: {{ format_to_money_string(round(budget.total, 2)) }}
+                    Total: <span id="budgetTotal">{{ format_to_money_string(budget.total) }}</span>
                 </div>
             </div>
             <div class="col-auto align-self-end fs-5">

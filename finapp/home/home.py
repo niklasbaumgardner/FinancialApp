@@ -216,6 +216,8 @@ def get_page(budget_id):
     year = request.args.get("year", 0, type=int)
     ytd = request.args.get("ytd") == "true"
 
+    budget = queries.get_budget(budget_id)
+
     if ytd:
         transactions, total, page, num_pages = queries.get_transactions_for_year(
             budget_id=budget_id, year=year, page=page, paginate=True
@@ -231,7 +233,13 @@ def get_page(budget_id):
 
     transactions = helpers.jsify_transactions(transactions)
 
-    return {"page": page, "transactions": transactions, "total": total, "num_pages": num_pages}
+    return {
+        "page": page,
+        "transactions": transactions,
+        "total": total,
+        "num_pages": num_pages,
+        "budget_total": helpers.format_to_money_string(budget.total),
+    }
 
 
 @home.route("/view_budget/<int:id>")
@@ -440,5 +448,6 @@ def budgets_array(environment, value):
         temp = dict(id=budget.id, budgetString=str(budget))
         lst.append(temp)
     return lst
+
 
 FILTERS["budgets_array"] = budgets_array

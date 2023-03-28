@@ -17,6 +17,7 @@ class Pagination {
     this.transactionContainer = document.getElementById("transactionList");
     this.prevButton = document.getElementById("prev");
     this.nextButton = document.getElementById("next");
+    this.budgetTotalElement = document.getElementById("budgetTotal");
     this.init(currentPage);
   }
 
@@ -74,6 +75,8 @@ class Pagination {
     let data = await this.getPageData(this.currentPage);
     this.numTransactions = data.total;
     this.numPages = data.num_pages;
+
+    this.budgetTotalElement.textContent = data.budget_total;
 
     this.pageMap[this.currentPage] = this.getTransactionArray(data);
 
