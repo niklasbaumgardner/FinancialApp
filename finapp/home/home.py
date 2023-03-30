@@ -438,6 +438,32 @@ def get_net_spending_for_month():
     return data
 
 
+@home.route("/search/<int:b_id>", methods=["GET"])
+@login_required
+def search(b_id):
+    date = request.args.get("date")
+    amount = request.args.get("amount")
+    name = request.args.get("name")
+    page = request.args.get("page", -1, type=int)
+
+    month = request.args.get("month", 0, type=int)
+    year = request.args.get("year", 0, type=int)
+    ytd = request.args.get("ytd") == "true"
+
+    transactions, total, page, num_pages = helpers.search_for(
+        b_id, name, date, amount, page, month, year, ytd
+    )
+
+    transactions = helpers.jsify_transactions(transactions)
+
+    return {
+        "page": page,
+        "transactions": transactions,
+        "total": total,
+        "num_pages": num_pages,
+    }
+
+
 @environmentfilter
 def budgets_array(environment, value):
     """

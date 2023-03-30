@@ -3,14 +3,58 @@
 const storage = window["localStorage"];
 const PER_PAGE = 10;
 
-class Pagination {
-  #BUTTONS_VISIBLE = 5;
+class PaginationOwner {
   constructor(transactions, numTransactions, currentPage, numPages) {
+    this.searching = false;
+    this.pagination = new Pagination(
+      transactions,
+      numTransactions,
+      currentPage,
+      numPages,
+      GET_PAGE_URL
+    );
+    this.pagination.init(currentPage);
+
+    this.search = new Search([], 0, 1, 1, SEARCH_PAGE_URL);
+
+    this.searchIcon = document.getElementById("searchIcon");
+    this.searchInputs = document.getElementById("searchInputs");
+
+    for (let searchButton of document.querySelectorAll(".search-toggle")) {
+      searchButton.addEventListener("click", (event) => {
+        this.searchClickFunction(event);
+      });
+    }
+  }
+
+  toggleSearch() {
+    this.searching = !this.searching;
+
+    if (this.searching) {
+      this.search.clearInputs();
+      this.search.init(1);
+    } else {
+      this.pagination.init(1);
+    }
+  }
+
+  searchClickFunction(event) {
+    this.searchIcon.toggleAttribute("hidden");
+    this.searchInputs.toggleAttribute("hidden");
+
+    this.toggleSearch();
+  }
+}
+
+class Pagination {
+  constructor(transactions, numTransactions, currentPage, numPages, url) {
     this.currentRequests = {};
     this.visibleButtons = [];
     this.pageMap = {};
     this.numTransactions = numTransactions;
     this.numPages = numPages;
+    this.URL = url;
+    this.BUTTONS_VISIBLE = 5;
 
     this.pageMap[currentPage] = transactions;
 
@@ -18,19 +62,19 @@ class Pagination {
     this.prevButton = document.getElementById("prev");
     this.nextButton = document.getElementById("next");
     this.budgetTotalElement = document.getElementById("budgetTotal");
-    this.init(currentPage);
+
+    this.prevButton.onclick = () => this.onPrevClick();
+    this.nextButton.onclick = () => this.onNextClick();
   }
 
   init(currentPage) {
-    this.prevButton.onclick = () => this.onPrevClick();
-    this.nextButton.onclick = () => this.onNextClick();
-    this.allPageButtons = this.createPageButtons();
-    this.setCurrentPage(1 * currentPage);
+    this.allPageButtons = this.createAllPageButtons();
+    this.setCurrentPage(1 * currentPage, true);
   }
 
   pageUrlWithParams(page) {
     params.set("page", page);
-    return GET_PAGE_URL + "?" + params;
+    return this.URL + "?" + params;
   }
 
   async getPageData(page) {
@@ -46,16 +90,21 @@ class Pagination {
     return request;
   }
 
+  /**
+   * options object
+   *  {
+   *    lessThanCurrentPage
+   *    greatherThanCurrentPage
+   *  }
+   */
   async requestNewPages(options) {
-    console.log(options);
     delete this.pageMap[this.currentPage];
     if (options.lessThanCurrentPage || options.greaterThanCurrentPage) {
       for (let key of Object.keys(this.pageMap)) {
         if (key < this.currentPage && options.lessThanCurrentPage) {
           delete this.pageMap[key];
           console.log("deleting pageMap key", key);
-        }
-        else if (key > this.currentPage && options.greaterThanCurrentPage) {
+        } else if (key > this.currentPage && options.greaterThanCurrentPage) {
           delete this.pageMap[key];
           console.log("deleting pageMap key", key);
         }
@@ -64,8 +113,7 @@ class Pagination {
         if (key < this.currentPage && options.lessThanCurrentPage) {
           delete this.currentRequests[key];
           console.log("deleting currentRequests key", key);
-        }
-        else if (key > this.currentPage && options.greaterThanCurrentPage) {
+        } else if (key > this.currentPage && options.greaterThanCurrentPage) {
           delete this.currentRequests[key];
           console.log("deleting currentRequests key", key);
         }
@@ -74,18 +122,23 @@ class Pagination {
 
     let data = await this.getPageData(this.currentPage);
     this.numTransactions = data.total;
-    this.numPages = data.num_pages;
 
-    this.budgetTotalElement.textContent = data.budget_total;
+    this.numPages = data.num_pages;
+    this.createNeededPageButtons();
+
+    if (data.budget_total) {
+      this.budget_total = data.budget_total;
+      this.budgetTotalElement.textContent = this.budget_total;
+    }
 
     this.pageMap[this.currentPage] = this.getTransactionArray(data);
 
     this.setCurrentPage(this.currentPage, true);
   }
 
-  createPageButtons() {
-    if (this.#BUTTONS_VISIBLE > this.numPages) {
-      this.#BUTTONS_VISIBLE = this.numPages;
+  createAllPageButtons() {
+    if (this.BUTTONS_VISIBLE > this.numPages) {
+      this.BUTTONS_VISIBLE = this.numPages;
     }
     let buttonArr = [];
     for (let i = 1; i <= this.numPages; i++) {
@@ -94,6 +147,18 @@ class Pagination {
     }
 
     return buttonArr;
+  }
+
+  createNeededPageButtons() {
+    let currentNumberOfPageButtons = this.allPageButtons.length;
+    if (currentNumberOfPageButtons < this.numPages) {
+      for (let i = currentNumberOfPageButtons + 1; i <= this.numPages; i++) {
+        let button = this.createButton(i);
+        this.allPageButtons.push(button);
+      }
+    }
+
+    this.BUTTONS_VISIBLE = Math.min(this.numPages, 5);
   }
 
   createButton(pageNum) {
@@ -120,13 +185,15 @@ class Pagination {
     this.nextButton.firstElementChild.disabled = disable;
   }
 
-  setCurrentPage(newPage, flush=false) {
+  setCurrentPage(newPage, flush = false) {
     if (!flush && newPage === this.currentPage) {
       return;
     }
 
     this.togglePrevButton();
     this.toggleNextButton();
+
+    this.currentPage = newPage;
 
     if (newPage >= this.numPages) {
       this.currentPage = this.numPages;
@@ -136,10 +203,6 @@ class Pagination {
     if (newPage <= 1) {
       this.currentPage = 1;
       this.togglePrevButton(true);
-    }
-
-    if (newPage > 1 && newPage < this.numPages) {
-      this.currentPage = newPage;
     }
 
     this.updatePage();
@@ -157,16 +220,16 @@ class Pagination {
 
   updateVisibleButtons() {
     let arr = [];
-    for (let i = -2; i < this.#BUTTONS_VISIBLE - 2; i++) {
+    for (let i = -2; i < this.BUTTONS_VISIBLE - 2; i++) {
       arr.push(this.currentPage + i);
     }
 
     let leftOOR = arr.filter((ele) => ele < 1).length;
     arr = arr.slice(leftOOR);
 
-    if (arr.length < this.#BUTTONS_VISIBLE) {
+    if (arr.length < this.BUTTONS_VISIBLE) {
     }
-    while (arr.length < this.#BUTTONS_VISIBLE) {
+    while (arr.length < this.BUTTONS_VISIBLE) {
       let num = arr[arr.length - 1];
       if (num) {
         num += 1;
@@ -182,7 +245,7 @@ class Pagination {
     }
 
     if (leftOOR === 0) {
-      while (arr.length < this.#BUTTONS_VISIBLE) {
+      while (arr.length < this.BUTTONS_VISIBLE) {
         arr.unshift(arr[0] - 1);
       }
     }
@@ -219,9 +282,17 @@ class Pagination {
       }
       this.pageMap[this.currentPage] = this.getTransactionArray(data);
     }
-    for (let transaction of this.pageMap[this.currentPage]) {
-      this.transactionContainer.appendChild(transaction.renderElement());
+
+    let noTransactionsFound = document.getElementById("emptyTransaction");
+    if (this.pageMap[this.currentPage].length) {
+      noTransactionsFound.toggleAttribute("hidden", true);
+      for (let transaction of this.pageMap[this.currentPage]) {
+        this.transactionContainer.appendChild(transaction.renderElement());
+      }
+    } else {
+      noTransactionsFound.toggleAttribute("hidden", false);
     }
+
     moveTransactionInputTo(storage.getItem("transactionInputLocation"));
   }
 
@@ -243,20 +314,16 @@ class Pagination {
   }
 
   onPrevClick() {
-    //
     if (this.prevButton.firstElementChild.disabled) {
       return;
     }
-    console.log("clicked prev");
     this.setCurrentPage(this.currentPage - 1);
   }
 
   onNextClick() {
-    //
     if (this.nextButton.firstElementChild.disabled) {
       return;
     }
-    console.log("clicked next");
     this.setCurrentPage(this.currentPage + 1);
   }
 
@@ -280,5 +347,71 @@ class Pagination {
 
       this.currentRequests[pageNum] = request;
     }
+  }
+}
+
+class Search extends Pagination {
+  constructor(transactions, numTransactions, currentPage, numPages, url) {
+    super(transactions, numTransactions, currentPage, numPages, url);
+
+    this.searchName = document.getElementById("searchName");
+    this.searchDate = document.getElementById("searchDate");
+    this.searchAmount = document.getElementById("searchAmount");
+
+    this.searchName.addEventListener("input", this);
+    this.searchDate.addEventListener("input", this);
+    this.searchAmount.addEventListener("input", this);
+  }
+
+  handleEvent(event) {
+    switch (event.type) {
+      case "input": {
+        this.handleInputEvent(event);
+      }
+    }
+  }
+
+  pageUrlWithParams(page) {
+    this.setSearchParams();
+    params.set("page", page);
+    let url = this.URL + "?" + params;
+    this.removeSearchParams();
+
+    return url;
+  }
+
+  async handleInputEvent(event) {
+    await this.requestNewPages({
+      lessThanCurrentPage: true,
+      greaterThanCurrentPage: true,
+    });
+
+    this.createNeededPageButtons();
+    this.updatePageButtons();
+  }
+
+  clearInputs() {
+    this.searchName.value = "";
+    this.searchDate.value = "";
+    this.searchAmount.value = "";
+
+    if (this.currentPage) {
+      this.requestNewPages({
+        lessThanCurrentPage: true,
+        greaterThanCurrentPage: true,
+      });
+    }
+  }
+
+  setSearchParams() {
+    params.set("name", this.searchName.value);
+    params.set("date", this.searchDate.value);
+    params.set("amount", this.searchAmount.value);
+  }
+
+  removeSearchParams() {
+    params.delete("name");
+    params.delete("date");
+    params.delete("amount");
   }
 }

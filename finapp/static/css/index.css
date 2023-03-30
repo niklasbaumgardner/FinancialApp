@@ -79,3 +79,26 @@ input {
 .welcome {
   margin-top: -1rem;
 }
+
+.search-button {
+  background: no-repeat center/80% url("../images/search.svg");
+}
+
+.search-toggle {
+  width: 40px;
+  height: 40px;
+  border: none;
+  padding: 0;
+}
+
+.mw-70 {
+  max-width: 70px;
+}
+
+.mw-160 {
+  max-width: 160px;
+}
+
+.w-160 {
+  width: 160px;
+}

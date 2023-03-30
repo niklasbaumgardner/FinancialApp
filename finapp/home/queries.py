@@ -134,8 +134,13 @@ def get_transactions(
     include_transfers=True,
     page=1,
     paginate=False,
+    query=False,
+    transactions=None,
 ):
-    transactions = Transaction.query.filter(
+    if not transactions:
+        transactions = Transaction.query
+
+    transactions = transactions.filter(
         Transaction.budget_id == budget_id, Transaction.user_id == current_user.get_id()
     ).order_by(Transaction.date.desc(), Transaction.id.desc())
 
@@ -158,19 +163,29 @@ def get_transactions(
             transactions.page,
             transactions.pages,
         )
+    elif query:
+        return transactions
     else:
-        transactions = transactions.all()
-
-    return transactions
+        return transactions.all()
 
 
 def get_transactions_for_month(
-    budget_id, month, year=None, include_transfers=True, page=1, paginate=False
+    budget_id,
+    month,
+    year=None,
+    include_transfers=True,
+    page=1,
+    paginate=False,
+    query=False,
+    transactions=None,
 ):
     if not year:
         year = date.today().year
 
-    transactions = Transaction.query.filter(
+    if not transactions:
+        transactions = Transaction.query
+
+    transactions = transactions.filter(
         Transaction.budget_id == budget_id,
         Transaction.user_id == current_user.get_id(),
         extract("month", Transaction.date) == month,
@@ -190,16 +205,25 @@ def get_transactions_for_month(
             transactions.page,
             transactions.pages,
         )
+    elif query:
+        return transactions
     else:
-        transactions = transactions.all()
-
-    return transactions
+        return transactions.all()
 
 
 def get_transactions_for_year(
-    budget_id, year, include_transfers=True, page=1, paginate=False
+    budget_id,
+    year,
+    include_transfers=True,
+    page=1,
+    paginate=False,
+    query=False,
+    transactions=None,
 ):
-    transactions = Transaction.query.filter(
+    if not transactions:
+        transactions = Transaction.query
+
+    transactions = transactions.filter(
         Transaction.budget_id == budget_id,
         Transaction.user_id == current_user.get_id(),
         extract("year", Transaction.date) == year,
@@ -218,10 +242,10 @@ def get_transactions_for_year(
             transactions.page,
             transactions.pages,
         )
+    elif query:
+        return transactions
     else:
-        transactions = transactions.all()
-
-    return transactions
+        return transactions.all()
 
 
 def update_transaction(
@@ -280,6 +304,71 @@ def _delete_transaction(transaction, b_id):
         db.session.commit()
 
         update_budget_total(b_id)
+
+
+def search(budget_id, name, date, amount, page, month, year, ytd):
+    transactions = None
+
+    if name:
+        transactions = (
+            transactions.filter(Transaction.name.ilike(f"%{name}%"))
+            if transactions
+            else Transaction.query.filter(Transaction.name.ilike(f"%{name}%"))
+        )
+    if date:
+        transactions = (
+            transactions.filter(Transaction.date == date)
+            if transactions
+            else Transaction.query.filter(Transaction.date == date)
+        )
+    if amount:
+        transactions = (
+            transactions.filter(Transaction.amount == amount)
+            if transactions
+            else Transaction.query.filter(Transaction.amount == amount)
+        )
+
+    if transactions:
+        if ytd:
+            transactions = get_transactions_for_year(
+                budget_id=budget_id,
+                year=year,
+                page=page,
+                query=True,
+                transactions=transactions,
+            )
+        elif month:
+            transactions = get_transactions_for_month(
+                budget_id=budget_id,
+                month=month,
+                year=year,
+                page=page,
+                query=True,
+                transactions=transactions,
+            )
+        else:
+            transactions = get_transactions(
+                budget_id=budget_id, page=page, query=True, transactions=transactions
+            )
+
+        transactions = transactions.filter_by(user_id=current_user.get_id()).filter_by(
+            budget_id=budget_id
+        )
+
+        transactions = transactions.paginate(page=page, per_page=10)
+
+        if transactions.total == 0:
+            # I want to return the number of pages as 1
+            return ([], 0, 1, 1)
+
+        return (
+            transactions.items,
+            transactions.total,
+            transactions.page,
+            transactions.pages,
+        )
+    else:
+        return ([], 0, 1, 1)
 
 
 ##

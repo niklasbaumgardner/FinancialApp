@@ -15,6 +15,9 @@ def is_same_day(d1, d2):
 
 
 def get_date_from_string(str_date):
+    if not str_date:
+        return None
+
     year, month, day = str_date.strip().split("-")
 
     return date(int(year), int(month), int(day))
@@ -185,7 +188,10 @@ def spending_for_month(month, year, ytd):
         income = sum([t.amount for t in temp_trans if t.amount > 0])
 
         if expenses != 0 or income != 0:
-            data[budg.name] = { "expenses": round(expenses, 2), "income": round(income, 2) }
+            data[budg.name] = {
+                "expenses": round(expenses, 2),
+                "income": round(income, 2),
+            }
     return data
 
 
@@ -274,3 +280,15 @@ def confirmBudgetsForPercentages(dic, amount):
 
     else:
         return False
+
+
+def search_for(budget_id, name, date, amount, page, month, year, ytd):
+    date = get_date_from_string(date)
+    try:
+        amount = float(amount)
+    except:
+        amount = None
+
+    transactions = queries.search(budget_id, name, date, amount, page, month, year, ytd)
+
+    return transactions
