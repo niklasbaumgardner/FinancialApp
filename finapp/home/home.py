@@ -9,7 +9,7 @@ from flask_login import login_required
 from datetime import datetime, date
 from finapp.home import helpers, queries
 from jinja2 import Template
-from jinja2.filters import FILTERS, environmentfilter
+from jinja2.filters import FILTERS
 
 
 home = Blueprint("home", __name__)
@@ -464,8 +464,7 @@ def search(b_id):
     }
 
 
-@environmentfilter
-def budgets_array(environment, value):
+def budgets_array(value):
     """
     custom budgets list to js array filter
     """

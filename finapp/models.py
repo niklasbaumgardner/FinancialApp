@@ -1,6 +1,6 @@
 from finapp.extensions import db, login_manager
 from flask_login import UserMixin
-from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from itsdangerous import URLSafeTimedSerializer as Serializer
 import os
 
 
