@@ -81,7 +81,12 @@ input {
 }
 
 .search-button {
-  background: no-repeat center/80% url("../images/search.svg");
+  background: no-repeat center/70% url("../images/search.svg");
+  opacity: .5;
+}
+
+.search-button:hover {
+  opacity: 1;
 }
 
 .search-toggle {
@@ -101,4 +106,11 @@ input {
 
 .w-160 {
   width: 160px;
+}
+
+input:focus-visible,
+button:focus-visible {
+  outline: 2px solid #0d6efd;
+  outline-offset: 2px;
+  opacity: 1;
 }
