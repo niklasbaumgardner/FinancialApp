@@ -292,8 +292,6 @@ class Pagination {
     } else {
       noTransactionsFound.toggleAttribute("hidden", false);
     }
-
-    moveTransactionInputTo(storage.getItem("transactionInputLocation"));
   }
 
   clearTransactionContainer() {

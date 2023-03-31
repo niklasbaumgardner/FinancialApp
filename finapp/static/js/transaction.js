@@ -59,7 +59,7 @@ class Transaction {
     let li = createElement({
       type: "li",
       classString:
-        "list-group-item border-start-0 border-top-0 border-end-0 border-transparent",
+        "list-group-item",
     });
     this.element.appendChild(li);
 

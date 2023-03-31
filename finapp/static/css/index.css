@@ -114,3 +114,11 @@ button:focus-visible {
   outline-offset: 2px;
   opacity: 1;
 }
+
+#transactionList > form > li {
+  border: none;
+}
+
+#transactionList > form:not(:last-child) > li {
+  border-bottom: 1px solid rgba(255, 255, 255, .5);
+}
