@@ -128,7 +128,6 @@ def get_transaction(budget_id, trans_id):
 
 
 def sort_transactions(sort_by, transactions):
-    print(sort_by)
     if not sort_by or sort_by.get("date") == "desc":
         transactions = transactions.order_by(
             Transaction.date.desc(), Transaction.id.desc()
