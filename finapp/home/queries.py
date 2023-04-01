@@ -127,12 +127,47 @@ def get_transaction(budget_id, trans_id):
     return transactions
 
 
+def sort_transactions(sort_by, transactions):
+    print(sort_by)
+    if not sort_by or sort_by.get("date") == "desc":
+        transactions = transactions.order_by(
+            Transaction.date.desc(), Transaction.id.desc()
+        )
+    elif sort_by.get("date") == "asc":
+        transactions = transactions.order_by(
+            Transaction.date.asc(), Transaction.id.asc()
+        )
+    elif sort_by.get("name") == "desc":
+        transactions = transactions.order_by(
+            Transaction.name.desc(), Transaction.id.desc()
+        )
+    elif sort_by.get("name") == "asc":
+        transactions = transactions.order_by(
+            Transaction.name.asc(), Transaction.id.asc()
+        )
+    elif sort_by.get("amount") == "desc":
+        transactions = transactions.order_by(
+            Transaction.amount.desc(), Transaction.id.desc()
+        )
+    elif sort_by.get("amount") == "asc":
+        transactions = transactions.order_by(
+            Transaction.amount.asc(), Transaction.id.asc()
+        )
+    else:
+        transactions = transactions.order_by(
+            Transaction.date.desc(), Transaction.id.desc()
+        )
+
+    return transactions
+
+
 def get_transactions(
     budget_id,
     start_date=None,
     end_date=None,
     include_transfers=True,
     page=1,
+    sort_by=None,
     paginate=False,
     query=False,
     transactions=None,
@@ -142,7 +177,9 @@ def get_transactions(
 
     transactions = transactions.filter(
         Transaction.budget_id == budget_id, Transaction.user_id == current_user.get_id()
-    ).order_by(Transaction.date.desc(), Transaction.id.desc())
+    )
+
+    transactions = sort_transactions(sort_by=sort_by, transactions=transactions)
 
     if not include_transfers:
         transactions = transactions.filter(
@@ -175,6 +212,7 @@ def get_transactions_for_month(
     year=None,
     include_transfers=True,
     page=1,
+    sort_by=None,
     paginate=False,
     query=False,
     transactions=None,
@@ -190,7 +228,9 @@ def get_transactions_for_month(
         Transaction.user_id == current_user.get_id(),
         extract("month", Transaction.date) == month,
         extract("year", Transaction.date) == year,
-    ).order_by(Transaction.date.desc(), Transaction.id.desc())
+    )
+
+    transactions = sort_transactions(sort_by=sort_by, transactions=transactions)
 
     if not include_transfers:
         transactions = transactions.filter(
@@ -216,6 +256,7 @@ def get_transactions_for_year(
     year,
     include_transfers=True,
     page=1,
+    sort_by=None,
     paginate=False,
     query=False,
     transactions=None,
@@ -227,7 +268,9 @@ def get_transactions_for_year(
         Transaction.budget_id == budget_id,
         Transaction.user_id == current_user.get_id(),
         extract("year", Transaction.date) == year,
-    ).order_by(Transaction.date.desc(), Transaction.id.desc())
+    )
+
+    transactions = sort_transactions(sort_by=sort_by, transactions=transactions)
 
     if not include_transfers:
         transactions = transactions.filter(

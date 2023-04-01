@@ -25,6 +25,15 @@ class PaginationOwner {
         this.searchClickFunction(event);
       });
     }
+
+    this.sortOptions = document.querySelectorAll(
+      "#sort-options .dropdown-item"
+    );
+    for (let sortButton of this.sortOptions) {
+      sortButton.addEventListener("click", (event) => {
+        this.sortTransactions(event);
+      });
+    }
   }
 
   toggleSearch() {
@@ -44,6 +53,24 @@ class PaginationOwner {
 
     this.toggleSearch();
   }
+
+  async sortTransactions(event) {
+    let button = event.target;
+    for (let sortButton of this.sortOptions) {
+      sortButton.classList.remove("active");
+    }
+
+    button.classList.add("active");
+
+    console.log(event);
+
+    this.pagination.sort = button.value;
+
+    await this.pagination.requestNewPages({
+      lessThanCurrentPage: true,
+      greaterThanCurrentPage: true,
+    });
+  }
 }
 
 class Pagination {
@@ -55,6 +82,7 @@ class Pagination {
     this.numPages = numPages;
     this.URL = url;
     this.BUTTONS_VISIBLE = 5;
+    this.sort = '{"date":"desc"}';
 
     this.pageMap[currentPage] = transactions;
 
@@ -74,6 +102,7 @@ class Pagination {
 
   pageUrlWithParams(page) {
     params.set("page", page);
+    params.set("sort", this.sort);
     return this.URL + "?" + params;
   }
 
@@ -99,6 +128,7 @@ class Pagination {
    */
   async requestNewPages(options) {
     delete this.pageMap[this.currentPage];
+    console.log("deleting pageMap key", this.currentPage);
     if (options.lessThanCurrentPage || options.greaterThanCurrentPage) {
       for (let key of Object.keys(this.pageMap)) {
         if (key < this.currentPage && options.lessThanCurrentPage) {
@@ -371,8 +401,7 @@ class Search extends Pagination {
 
   pageUrlWithParams(page) {
     this.setSearchParams();
-    params.set("page", page);
-    let url = this.URL + "?" + params;
+    let url = super.pageUrlWithParams(page);
     this.removeSearchParams();
 
     return url;

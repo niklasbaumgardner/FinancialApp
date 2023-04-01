@@ -10,6 +10,7 @@ from datetime import datetime, date
 from finapp.home import helpers, queries
 from jinja2 import Template
 from jinja2.filters import FILTERS
+import json
 
 
 home = Blueprint("home", __name__)
@@ -138,7 +139,6 @@ def paycheck():
 @home.route("/budget_transaction", methods=["POST"])
 @login_required
 def budget_transaction():
-
     name = request.form.get("name")
     try:
         amount = float(request.form.get("amount"))
@@ -215,20 +215,30 @@ def get_page(budget_id):
     month = request.args.get("month", 0, type=int)
     year = request.args.get("year", 0, type=int)
     ytd = request.args.get("ytd") == "true"
+    sort_by = request.args.get("sort")
+    try:
+        sort_by = json.loads(sort_by)
+    except:
+        sort_by = None
 
     budget = queries.get_budget(budget_id)
 
     if ytd:
         transactions, total, page, num_pages = queries.get_transactions_for_year(
-            budget_id=budget_id, year=year, page=page, paginate=True
+            budget_id=budget_id, year=year, page=page, sort_by=sort_by, paginate=True
         )
     elif month:
         transactions, total, page, num_pages = queries.get_transactions_for_month(
-            budget_id=budget_id, month=month, year=year, page=page, paginate=True
+            budget_id=budget_id,
+            month=month,
+            year=year,
+            page=page,
+            sort_by=sort_by,
+            paginate=True,
         )
     else:
         transactions, total, page, num_pages = queries.get_transactions(
-            budget_id=budget_id, page=page, paginate=True
+            budget_id=budget_id, page=page, sort_by=sort_by, paginate=True
         )
 
     transactions = helpers.jsify_transactions(transactions)
