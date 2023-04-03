@@ -50,8 +50,7 @@
             </div>
             <div class="card-body">
                 <div id="transactionInput" class="list-group-item pb-2 border-0">
-                    <form id="addTransaction" method="POST" action="{{ url_for('home.budget_transaction') }}">
-                        <input name="budget" value="{{ budget.id }}" hidden>
+                    <form id="addTransaction" method="POST" action="{{ url_for('home.add_transaction', budget_id=budget.id) }}">
                         <div class="row">
                             <div class="col-12 col-md-8 col-xl-6 mb-2">
                                 <input class="form-control" type="text" form="addTransaction" id="name" name="name" placeholder="Spent too much?" autocomplete="niklas" required>

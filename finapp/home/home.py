@@ -136,9 +136,9 @@ def paycheck():
     return redirect(url_for("home.index"))
 
 
-@home.route("/budget_transaction", methods=["POST"])
+@home.route("/add_transaction/<int:budget_id>", methods=["POST"])
 @login_required
-def budget_transaction():
+def add_transaction(budget_id):
     name = request.form.get("name")
     try:
         amount = float(request.form.get("amount"))
@@ -147,8 +147,6 @@ def budget_transaction():
 
     str_date = request.form.get("date")
     date = helpers.get_date_from_string(str_date)
-
-    budget_id = request.form.get("budget")
 
     if name and amount and budget_id:
         queries.create_transaction(
