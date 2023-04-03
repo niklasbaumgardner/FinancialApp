@@ -142,7 +142,7 @@ def sort_transactions(sort_by, transactions):
         )
     elif sort_by.get("name") == "asc":
         transactions = transactions.order_by(
-            Transaction.name.asc(), Transaction.id.asc()
+            Transaction.name.asc(), Transaction.id.desc()
         )
     elif sort_by.get("amount") == "desc":
         transactions = transactions.order_by(
@@ -150,7 +150,7 @@ def sort_transactions(sort_by, transactions):
         )
     elif sort_by.get("amount") == "asc":
         transactions = transactions.order_by(
-            Transaction.amount.asc(), Transaction.id.asc()
+            Transaction.amount.asc(), Transaction.id.desc()
         )
     else:
         transactions = transactions.order_by(
@@ -348,7 +348,7 @@ def _delete_transaction(transaction, b_id):
         update_budget_total(b_id)
 
 
-def search(budget_id, name, date, amount, page, month, year, ytd):
+def search(budget_id, name, date, amount, page, month, year, ytd, sort_by):
     transactions = None
 
     if name:
@@ -378,6 +378,7 @@ def search(budget_id, name, date, amount, page, month, year, ytd):
                 page=page,
                 query=True,
                 transactions=transactions,
+                sort_by=sort_by,
             )
         elif month:
             transactions = get_transactions_for_month(
@@ -387,15 +388,15 @@ def search(budget_id, name, date, amount, page, month, year, ytd):
                 page=page,
                 query=True,
                 transactions=transactions,
-            )
-        else:
-            transactions = get_transactions(
-                budget_id=budget_id, page=page, query=True, transactions=transactions
+                sort_by=sort_by,
             )
 
         transactions = transactions.filter_by(user_id=current_user.get_id()).filter_by(
             budget_id=budget_id
         )
+
+        print(sort_by)
+        transactions = sort_transactions(sort_by=sort_by, transactions=transactions)
 
         transactions = transactions.paginate(page=page, per_page=10)
 

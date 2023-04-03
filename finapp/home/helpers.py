@@ -1,6 +1,7 @@
 from datetime import date
 from finapp.home import queries
 from flask import url_for
+import json
 
 
 def format_to_money_string(number, include_minus=True):
@@ -282,13 +283,28 @@ def confirmBudgetsForPercentages(dic, amount):
         return False
 
 
-def search_for(budget_id, name, date, amount, page, month, year, ytd):
+def search_for(budget_id, name, date, amount, page, month, year, ytd, sort_by):
     date = get_date_from_string(date)
     try:
         amount = float(amount)
     except:
         amount = None
 
-    transactions = queries.search(budget_id, name, date, amount, page, month, year, ytd)
+    try:
+        sort_by = json.loads(sort_by)
+    except:
+        sort_by = None
+
+    transactions = queries.search(
+        budget_id=budget_id,
+        name=name,
+        date=date,
+        amount=amount,
+        page=page,
+        month=month,
+        year=year,
+        ytd=ytd,
+        sort_by=sort_by,
+    )
 
     return transactions

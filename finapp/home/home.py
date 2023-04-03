@@ -460,8 +460,18 @@ def search(b_id):
     year = request.args.get("year", 0, type=int)
     ytd = request.args.get("ytd") == "true"
 
+    sort_by = request.args.get("sort")
+
     transactions, total, page, num_pages = helpers.search_for(
-        b_id, name, date, amount, page, month, year, ytd
+        budget_id=b_id,
+        name=name,
+        date=date,
+        amount=amount,
+        page=page,
+        month=month,
+        year=year,
+        ytd=ytd,
+        sort_by=sort_by,
     )
 
     transactions = helpers.jsify_transactions(transactions)

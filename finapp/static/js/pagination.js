@@ -34,6 +34,15 @@ class PaginationOwner {
         this.sortTransactions(event);
       });
     }
+
+    this.sortOptionsSearch = document.querySelectorAll(
+      "#sort-options-search .dropdown-item"
+    );
+    for (let sortButton of this.sortOptionsSearch) {
+      sortButton.addEventListener("click", (event) => {
+        this.sortTransactions(event);
+      });
+    }
   }
 
   toggleSearch() {
@@ -56,20 +65,46 @@ class PaginationOwner {
 
   async sortTransactions(event) {
     let button = event.target;
-    for (let sortButton of this.sortOptions) {
-      sortButton.classList.remove("active");
+
+    if (this.searching) {
+      if (this.search.sort === button.value) {
+        return;
+      }
+
+      for (let sortButton of this.sortOptionsSearch) {
+        sortButton.classList.remove("active");
+      }
+
+      button.classList.add("active");
+  
+      console.log(event);
+
+      this.search.sort = button.value;
+
+      await this.search.requestNewPages({
+        lessThanCurrentPage: true,
+        greaterThanCurrentPage: true,
+      });
+    } else {
+      if (this.pagination.sort === button.value) {
+        return;
+      }
+
+      for (let sortButton of this.sortOptions) {
+        sortButton.classList.remove("active");
+      }
+
+      button.classList.add("active");
+  
+      console.log(event);
+
+      this.pagination.sort = button.value;
+
+      await this.pagination.requestNewPages({
+        lessThanCurrentPage: true,
+        greaterThanCurrentPage: true,
+      });
     }
-
-    button.classList.add("active");
-
-    console.log(event);
-
-    this.pagination.sort = button.value;
-
-    await this.pagination.requestNewPages({
-      lessThanCurrentPage: true,
-      greaterThanCurrentPage: true,
-    });
   }
 }
 
