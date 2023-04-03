@@ -96,7 +96,7 @@ class Pagination {
   }
 
   init(currentPage) {
-    this.allPageButtons = this.createAllPageButtons();
+    this.createAllPageButtons();
     this.setCurrentPage(1 * currentPage, true);
   }
 
@@ -154,7 +154,7 @@ class Pagination {
     this.numTransactions = data.total;
 
     this.numPages = data.num_pages;
-    this.createNeededPageButtons();
+    this.createAllPageButtons();
 
     if (data.budget_total) {
       this.budget_total = data.budget_total;
@@ -167,25 +167,15 @@ class Pagination {
   }
 
   createAllPageButtons() {
-    if (this.BUTTONS_VISIBLE > this.numPages) {
-      this.BUTTONS_VISIBLE = this.numPages;
+    if (this.allPageButtons) {
+      for (let button of this.allPageButtons) {
+        button.remove();
+      }
     }
-    let buttonArr = [];
+    this.allPageButtons = [];
     for (let i = 1; i <= this.numPages; i++) {
       let button = this.createButton(i);
-      buttonArr.push(button);
-    }
-
-    return buttonArr;
-  }
-
-  createNeededPageButtons() {
-    let currentNumberOfPageButtons = this.allPageButtons.length;
-    if (currentNumberOfPageButtons < this.numPages) {
-      for (let i = currentNumberOfPageButtons + 1; i <= this.numPages; i++) {
-        let button = this.createButton(i);
-        this.allPageButtons.push(button);
-      }
+      this.allPageButtons.push(button);
     }
 
     this.BUTTONS_VISIBLE = Math.min(this.numPages, 5);
@@ -413,7 +403,7 @@ class Search extends Pagination {
       greaterThanCurrentPage: true,
     });
 
-    this.createNeededPageButtons();
+    this.createAllPageButtons();
     this.updatePageButtons();
   }
 
