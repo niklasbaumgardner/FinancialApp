@@ -161,6 +161,9 @@
     <script>
         const paginationOwner = new PaginationOwner(transactionArray, TOTAL_TRANSACTIONS, CURRENT_PAGE, NUM_PAGES);
 
+        document.getElementById("name").addEventListener("input", checkInput);
+        document.getElementById("amount").addEventListener("input", checkInput);
+
     </script>
 
 {% endblock content %}
