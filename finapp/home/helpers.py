@@ -283,8 +283,11 @@ def confirmBudgetsForPercentages(dic, amount):
         return False
 
 
-def search_for(budget_id, name, date, amount, page, month, year, ytd, sort_by):
-    date = get_date_from_string(date)
+def search_for(
+    budget_id, name, start_date, end_date, amount, page, month, year, ytd, sort_by
+):
+    start_date = get_date_from_string(start_date)
+    end_date = get_date_from_string(end_date)
     try:
         amount = float(amount)
     except:
@@ -298,7 +301,8 @@ def search_for(budget_id, name, date, amount, page, month, year, ytd, sort_by):
     transactions = queries.search(
         budget_id=budget_id,
         name=name,
-        date=date,
+        start_date=start_date,
+        end_date=end_date,
         amount=amount,
         page=page,
         month=month,

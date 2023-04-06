@@ -408,11 +408,13 @@ class Search extends Pagination {
     super(transactions, numTransactions, currentPage, numPages, url);
 
     this.searchName = document.getElementById("searchName");
-    this.searchDate = document.getElementById("searchDate");
+    this.startDate = document.getElementById("startDate");
+    this.endDate = document.getElementById("endDate");
     this.searchAmount = document.getElementById("searchAmount");
 
     this.searchName.addEventListener("input", this);
-    this.searchDate.addEventListener("input", this);
+    this.startDate.addEventListener("input", this);
+    this.endDate.addEventListener("input", this);
     this.searchAmount.addEventListener("input", this);
   }
 
@@ -444,7 +446,8 @@ class Search extends Pagination {
 
   clearInputs() {
     this.searchName.value = "";
-    this.searchDate.value = "";
+    this.startDate.value = "";
+    this.endDate.value = "";
     this.searchAmount.value = "";
 
     if (this.currentPage) {
@@ -457,7 +460,8 @@ class Search extends Pagination {
 
   setSearchParams() {
     params.set("name", this.searchName.value);
-    params.set("date", this.searchDate.value);
+    params.set("startDate", this.startDate.value);
+    params.set("endDate", this.endDate.value);
     params.set("amount", this.searchAmount.value);
   }
 

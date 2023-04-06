@@ -93,20 +93,37 @@
                     </div>
                 </div>
                 <div id="searchInputs" hidden="true">
-                    <div class="row my-1">
-                        <div class="col-10">
-                            <input class="form-control" type="text" id="searchName" placeholder="Search">
+                    <div class="row gy-2">
+                        <div class="col">
+                            <div class="row gy-2">
+                                <div class="col-12 col-md-8">
+                                    <input class="form-control" type="text" id="searchName" placeholder="Search">
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <input class="form-control _w-160 amount-input-86" type="number" step=".01" id="searchAmount" name="amount" placeholder="0.00">
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-2 text-end">
+                        <div class="col-2 col-md-1 text-end">
                             <button class="btn-close search-toggle"></button>
                         </div>
-                    </div>
-                    <div class="row my-1">
-                        <div class="col-6 col-sm-5">
-                            <input class="form-control _w-160" type="date" id="searchDate">
-                        </div>
-                        <div class="col-6 col-sm-5">
-                            <input class="form-control _w-160 amount-input-86" type="number" step=".01" id="searchAmount" name="amount" placeholder="0.00">
+                    <!-- </div>
+                    <div class="row my-1"> -->
+                        <div class="col-12">
+                            <div class="row gy-2">
+                                <div class="col-12 col-sm-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text">Start date:</span>
+                                        <input class="form-control _w-160" type="date" id="startDate">
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text">End date:</span>
+                                        <input class="form-control _w-160" type="date" id="endDate">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="row mt-3">

@@ -449,7 +449,8 @@ def get_net_spending_for_month():
 @home.route("/search/<int:b_id>", methods=["GET"])
 @login_required
 def search(b_id):
-    date = request.args.get("date")
+    start_date = request.args.get("startDate")
+    end_date = request.args.get("endDate")
     amount = request.args.get("amount")
     name = request.args.get("name")
     page = request.args.get("page", -1, type=int)
@@ -463,7 +464,8 @@ def search(b_id):
     transactions, total, page, num_pages = helpers.search_for(
         budget_id=b_id,
         name=name,
-        date=date,
+        start_date=start_date,
+        end_date=end_date,
         amount=amount,
         page=page,
         month=month,

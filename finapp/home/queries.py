@@ -348,7 +348,9 @@ def _delete_transaction(transaction, b_id):
         update_budget_total(b_id)
 
 
-def search(budget_id, name, date, amount, page, month, year, ytd, sort_by):
+def search(
+    budget_id, name, start_date, end_date, amount, page, month, year, ytd, sort_by
+):
     transactions = None
 
     if name:
@@ -357,17 +359,23 @@ def search(budget_id, name, date, amount, page, month, year, ytd, sort_by):
             if transactions
             else Transaction.query.filter(Transaction.name.ilike(f"%{name}%"))
         )
-    if date:
-        transactions = (
-            transactions.filter(Transaction.date == date)
-            if transactions
-            else Transaction.query.filter(Transaction.date == date)
-        )
     if amount:
         transactions = (
             transactions.filter(Transaction.amount == amount)
             if transactions
             else Transaction.query.filter(Transaction.amount == amount)
+        )
+    if start_date:
+        transactions = (
+            transactions.filter(Transaction.date >= start_date)
+            if transactions
+            else Transaction.query.filter(Transaction.date >= start_date)
+        )
+    if end_date:
+        transactions = (
+            transactions.filter(Transaction.date <= end_date)
+            if transactions
+            else Transaction.query.filter(Transaction.date <= end_date)
         )
 
     if transactions:
