@@ -349,7 +349,17 @@ def _delete_transaction(transaction, b_id):
 
 
 def search(
-    budget_id, name, start_date, end_date, amount, page, month, year, ytd, sort_by
+    budget_id,
+    name,
+    start_date,
+    end_date,
+    min_amount,
+    max_amount,
+    page,
+    month,
+    year,
+    ytd,
+    sort_by,
 ):
     transactions = None
 
@@ -359,11 +369,17 @@ def search(
             if transactions
             else Transaction.query.filter(Transaction.name.ilike(f"%{name}%"))
         )
-    if amount:
+    if min_amount:
         transactions = (
-            transactions.filter(Transaction.amount == amount)
+            transactions.filter(Transaction.amount >= min_amount)
             if transactions
-            else Transaction.query.filter(Transaction.amount == amount)
+            else Transaction.query.filter(Transaction.amount >= min_amount)
+        )
+    if max_amount:
+        transactions = (
+            transactions.filter(Transaction.amount <= max_amount)
+            if transactions
+            else Transaction.query.filter(Transaction.amount <= max_amount)
         )
     if start_date:
         transactions = (
@@ -403,7 +419,6 @@ def search(
             budget_id=budget_id
         )
 
-        print(sort_by)
         transactions = sort_transactions(sort_by=sort_by, transactions=transactions)
 
         transactions = transactions.paginate(page=page, per_page=10)

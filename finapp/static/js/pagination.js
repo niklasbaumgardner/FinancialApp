@@ -410,12 +410,14 @@ class Search extends Pagination {
     this.searchName = document.getElementById("searchName");
     this.startDate = document.getElementById("startDate");
     this.endDate = document.getElementById("endDate");
-    this.searchAmount = document.getElementById("searchAmount");
+    this.minAmount = document.getElementById("minAmount");
+    this.maxAmount = document.getElementById("maxAmount");
 
     this.searchName.addEventListener("input", this);
     this.startDate.addEventListener("input", this);
     this.endDate.addEventListener("input", this);
-    this.searchAmount.addEventListener("input", this);
+    this.minAmount.addEventListener("input", this);
+    this.maxAmount.addEventListener("input", this);
   }
 
   handleEvent(event) {
@@ -448,7 +450,8 @@ class Search extends Pagination {
     this.searchName.value = "";
     this.startDate.value = "";
     this.endDate.value = "";
-    this.searchAmount.value = "";
+    this.minAmount.value = "";
+    this.maxAmount.value = "";
 
     if (this.currentPage) {
       this.requestNewPages({
@@ -462,12 +465,15 @@ class Search extends Pagination {
     params.set("name", this.searchName.value);
     params.set("startDate", this.startDate.value);
     params.set("endDate", this.endDate.value);
-    params.set("amount", this.searchAmount.value);
+    params.set("minAmount", this.minAmount.value);
+    params.set("maxAmount", this.maxAmount.value);
   }
 
   removeSearchParams() {
     params.delete("name");
-    params.delete("date");
-    params.delete("amount");
+    params.delete("startDate");
+    params.delete("endDate");
+    params.delete("minAmount");
+    params.delete("maxAmount");
   }
 }

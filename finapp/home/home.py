@@ -451,7 +451,8 @@ def get_net_spending_for_month():
 def search(b_id):
     start_date = request.args.get("startDate")
     end_date = request.args.get("endDate")
-    amount = request.args.get("amount")
+    min_amount = request.args.get("minAmount")
+    max_amount = request.args.get("maxAmount")
     name = request.args.get("name")
     page = request.args.get("page", -1, type=int)
 
@@ -466,7 +467,8 @@ def search(b_id):
         name=name,
         start_date=start_date,
         end_date=end_date,
-        amount=amount,
+        min_amount=min_amount,
+        max_amount=max_amount,
         page=page,
         month=month,
         year=year,

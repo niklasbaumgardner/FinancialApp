@@ -284,7 +284,17 @@ def confirmBudgetsForPercentages(dic, amount):
 
 
 def search_for(
-    budget_id, name, start_date, end_date, amount, page, month, year, ytd, sort_by
+    budget_id,
+    name,
+    start_date,
+    end_date,
+    min_amount,
+    max_amount,
+    page,
+    month,
+    year,
+    ytd,
+    sort_by,
 ):
     start_date = get_date_from_string(start_date)
     end_date = get_date_from_string(end_date)
@@ -303,7 +313,8 @@ def search_for(
         name=name,
         start_date=start_date,
         end_date=end_date,
-        amount=amount,
+        min_amount=min_amount,
+        max_amount=max_amount,
         page=page,
         month=month,
         year=year,

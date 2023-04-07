@@ -93,40 +93,7 @@
                     </div>
                 </div>
                 <div id="searchInputs" hidden="true">
-                    <div class="row gy-2">
-                        <div class="col">
-                            <div class="row gy-2">
-                                <div class="col-12 col-md-8">
-                                    <input class="form-control" type="text" id="searchName" placeholder="Search">
-                                </div>
-                                <div class="col-12 col-md-4">
-                                    <input class="form-control _w-160 amount-input-86" type="number" step=".01" id="searchAmount" name="amount" placeholder="0.00">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-2 col-md-1 text-end">
-                            <button class="btn-close search-toggle"></button>
-                        </div>
-                    <!-- </div>
-                    <div class="row my-1"> -->
-                        <div class="col-12">
-                            <div class="row gy-2">
-                                <div class="col-12 col-sm-6">
-                                    <div class="input-group">
-                                        <span class="input-group-text">Start date:</span>
-                                        <input class="form-control _w-160" type="date" id="startDate">
-                                    </div>
-                                </div>
-                                <div class="col-12 col-sm-6">
-                                    <div class="input-group">
-                                        <span class="input-group-text">End date:</span>
-                                        <input class="form-control _w-160" type="date" id="endDate">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row mt-3">
+                    <div class="row mb-3">
                         <div class="col">
                             <div class="dropdown">
                                 <button class="btn btn-outline-grey dropdown-toggle sort-button" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -142,19 +109,73 @@
                                 </ul>
                             </div>
                         </div>
-                        <!-- <div class="col">
+                        <div class="col-2 col-md-1 text-end">
+                            <button class="btn-close search-toggle"></button>
+                        </div>
+                    </div>
+                    <div class="row my-2">
+                        <div class="col">
+                            <div class="row gy-2">
+                                <div class="col-12 col-xl-6">
+                                    <div class="input-group">
+                                        <input class="form-control" type="text" id="searchName" placeholder="Search">
+                                        <!-- <div class="input-group-text">
+                                            <input class="form-check-input mt-0" type="checkbox" value="">
+                                        </div> -->
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6 col-xl-3">
+                                    <div class="input-group">
+                                        <span class="input-group-text">Min. amount:</span>
+                                        <input class="form-control amount-input-86" type="number" step=".01" id="minAmount" placeholder="0.00">
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6 col-xl-3">
+                                    <div class="input-group">
+                                        <span class="input-group-text">Max. amount:</span>
+                                        <input class="form-control amount-input-86" type="number" step=".01" id="maxAmount" placeholder="0.00">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row gy-2">
+                        <div class="col-12 col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text">Start date:</span>
+                                <input class="form-control _w-160" type="date" id="startDate">
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text">End date:</span>
+                                <input class="form-control _w-160" type="date" id="endDate">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <div class="row mt-3">
+                        <div class="col text-end">
                             <div class="dropdown">
-                                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <button class="btn btn-outline-grey dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     Filter
                                 </button>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#">Action</a></li>
-                                    <li><a class="dropdown-item" href="#">Another action</a></li>
-                                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><input type="checkbox" class="dropdown-item" value='{"name":"asc"}'>Name: Case sensitive</input></li>
+                                    <li><button class="dropdown-item" value='{"name":"desc"}'>Name: Reverse alphabetical</button></li>
+                                    <li><button class="dropdown-item" value='{"amount":"desc"}'>Greater than amount</button></li>
+                                    <li><button class="dropdown-item" value='{"amount":"asc"}'>Less than amount</button></li>
+                                    <li>
+                                        <div class="form-check dropdown-item">
+                                            <input class="form-check-input" type="checkbox" value='{"name": "case-sensitive"}'>
+                                            <label class="form-check-label" for="flexCheckDefault">
+                                                Name: Case-sensitive
+                                            </label>
+                                        </div>
+                                    </li>
                                 </ul>
                             </div>
-                        </div> -->
-                    </div>
+                        </div>
+                    </div> -->
                 </div>
             </div>
         </div>
