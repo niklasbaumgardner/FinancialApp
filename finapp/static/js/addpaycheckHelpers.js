@@ -109,7 +109,8 @@ function isDollarAmountsValid() {
       amountValid = true;
     } else {
       let total_error = document.getElementById("amount_error");
-      total_error.innerText = `Paycheck Amount ($${total}) does not equal combined Budgets amount ($${b_total}).`;
+      total_error.innerText = `$${total} is not equal to Budgets amount of $${b_total}.
+      Difference of $${Math.abs((total - b_total).toFixed(2))}`;
       total_error.classList.add("display-block");
     }
   }
