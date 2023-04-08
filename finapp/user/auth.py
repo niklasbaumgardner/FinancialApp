@@ -102,17 +102,20 @@ def password_request():
 @auth.route("/password_reset", methods=["GET", "POST"])
 def password_reset():
     token = request.args.get("token")
-    print(token)
     if request.method == "POST":
         user = User.verify_reset_token(token)
         if not user:
             flash("That is an invalid or expired token", "alert-primary")
+            if current_user.is_authenticated:
+                return redirect(url_for("auth.profile"))
+            else:
+                return redirect(url_for("auth.password_request"))
 
         password1 = request.form.get("password1")
         password2 = request.form.get("password2")
 
         if password1 != password2:
-            flash("Passwords are not equal. Please try again")
+            flash("Passwords are not equal. Please try again", "alert-primary")
             return render_template("password_reset.html")
 
         queries.updateUserPasswod(user.id, password=password1)
