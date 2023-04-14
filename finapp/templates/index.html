@@ -104,7 +104,7 @@
                                                 <span id="name_error_editName{{ budget.id }}" class="text-danger fs-6" hidden>Budget name already exist. Choose another name.</span>
                                             </div>
                                         </div>
-                                        <div class="col text-end mw-70">
+                                        <div class="col text-end mw-80">
                                             <p class="mb-1">Active</p>
                                             <label class="switch">
                                                 <input class="activeState" type="checkbox" {% if budget.is_active %}checked{% endif %} onclick="toggleBudgetActive('{{ budget.id }}', event); event.stopPropagation();">
