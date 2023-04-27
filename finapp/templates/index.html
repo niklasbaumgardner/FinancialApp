@@ -115,7 +115,7 @@
                                     <!-- <form method="POST" id="budgetForm{{ budget.id }}" action="{{ url_for('home.edit_budget', id=budget.id) }}">
                                         <input onclick="event.stopPropagation();"class="show-edit-{{ budget.id }} form-control w-75 edit-name" name="editName{{ budget.id }}" type="text" value="{{ budget.name }}" hidden required>
                                     </form> -->
-                                    <p class="mt-3">{{ format_to_money_string(budget.total) }}</p>
+                                    <p class="mt-3">{{ budget.total|prettify_money }}</p>
                                     <div class="d-flex justify-content-end">
                                         <div class="">
                                             <a class="show-not-edit-{{ budget.id }} btn btn-sm btn-outline-danger mx-3" href="javascript:void(0);" onclick="delete_budget('{{ budget.id }}'); event.stopPropagation();">Delete</a>
@@ -230,7 +230,7 @@
                                                                 {{ budget.name }}
                                                             </div>
                                                             <div>
-                                                                {{ round(budget.total, 2) }}
+                                                                {{ budget.total|prettify_money }}
                                                             </div>
                                                         </div>
                                                     </li>

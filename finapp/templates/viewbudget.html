@@ -43,7 +43,7 @@
                             {{ budget.name }}
                         </div>
                         <div class="fs-4 mb-0 subhead">
-                            Total: <span id="budgetTotal">{{ format_to_money_string(budget.total) }}</span>
+                            Total: <span id="budgetTotal">{{ budget.total|prettify_money }}</span>
                         </div>
                     </div>
                 </div>
@@ -109,6 +109,33 @@
                                 </ul>
                             </div>
                         </div>
+                        <!-- <div class="col">
+                            <div class="dropdown">
+                                <button class="btn btn-outline-grey dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Filter
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end_">
+                                    <li><label><input type="checkbox" class="dropdown-item" value='{"name":"asc"}'/>Name: Case sensitive</label></li>
+                                    <li>
+                                        <input class="form-check-input" type="checkbox" value="" id="case-sensitive">
+                                        <label class="form-check-label" for="case-sensitive">
+                                            Name: case sensitive
+                                        </label>
+                                    </li>
+                                    <li><button class="dropdown-item" value='{"name":"desc"}'>Name: Reverse alphabetical</button></li>
+                                    <li><button class="dropdown-item" value='{"amount":"desc"}'>Greater than amount</button></li>
+                                    <li><button class="dropdown-item" value='{"amount":"asc"}'>Less than amount</button></li>
+                                    <li>
+                                        <div class="form-check dropdown-item">
+                                            <input class="form-check-input" type="checkbox" value='{"name": "case-sensitive"}'>
+                                            <label class="form-check-label" for="flexCheckDefault">
+                                                Name: Case-sensitive
+                                            </label>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div> -->
                         <div class="col-2 col-md-1 text-end">
                             <button class="btn-close search-toggle"></button>
                         </div>
@@ -153,29 +180,6 @@
                             </div>
                         </div>
                     </div>
-                    <!-- <div class="row mt-3">
-                        <div class="col text-end">
-                            <div class="dropdown">
-                                <button class="btn btn-outline-grey dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Filter
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><input type="checkbox" class="dropdown-item" value='{"name":"asc"}'>Name: Case sensitive</input></li>
-                                    <li><button class="dropdown-item" value='{"name":"desc"}'>Name: Reverse alphabetical</button></li>
-                                    <li><button class="dropdown-item" value='{"amount":"desc"}'>Greater than amount</button></li>
-                                    <li><button class="dropdown-item" value='{"amount":"asc"}'>Less than amount</button></li>
-                                    <li>
-                                        <div class="form-check dropdown-item">
-                                            <input class="form-check-input" type="checkbox" value='{"name": "case-sensitive"}'>
-                                            <label class="form-check-label" for="flexCheckDefault">
-                                                Name: Case-sensitive
-                                            </label>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div> -->
                 </div>
             </div>
         </div>

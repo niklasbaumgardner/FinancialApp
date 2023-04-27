@@ -27,7 +27,6 @@ def index():
         budgets=[active, inactive],
         round=round,
         total=helpers.format_to_money_string(total),
-        format_to_money_string=helpers.format_to_money_string,
     )
 
 
@@ -84,6 +83,9 @@ def add_paycheck():
                 if budget.id == item[0]:
                     item.insert(1, budget.name)
                     break
+
+    prefills = [ [k, v] for k, v in prefills.items() ]
+    prefills.sort(key=lambda x: x[0])
 
     return render_template(
         "addpaycheck.html",
@@ -285,7 +287,6 @@ def view_budget(id):
         strftime=datetime.strftime,
         budgets=budgets,
         str=str,
-        format_to_money_string=helpers.format_to_money_string,
         total=total,
         page=page,
         num_pages=num_pages,
@@ -497,4 +498,13 @@ def budgets_array(value):
     return lst
 
 
+def prettify_money(value):
+    """
+    Formats a number into a dollar amount string
+    """
+
+    return helpers.format_to_money_string(value)
+
+
 FILTERS["budgets_array"] = budgets_array
+FILTERS["prettify_money"] = prettify_money
