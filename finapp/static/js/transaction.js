@@ -380,6 +380,13 @@ class DeleteModal {
       style: "display:none;",
     });
 
+    this.form = createElement({
+      type: "form",
+      method: "POST",
+      action: DELETE_TRANSACTION_URL + this.transaction.id,
+    });
+    this.element.appendChild(this.form);
+
     let div1 = createElement({ classString: "modal-dialog" });
     this.element.appendChild(div1);
 
@@ -426,14 +433,7 @@ class DeleteModal {
     let div5 = createElement({ classString: "modal-footer" });
     div2.appendChild(div5);
 
-    this.form = createElement({
-      type: "form",
-      method: "POST",
-      action: DELETE_TRANSACTION_URL + this.transaction.id,
-    });
-    div5.appendChild(this.form);
-
-    this.form.appendChild(
+    div5.appendChild(
       createElement({
         type: "input",
         classString: "page-number",
@@ -444,27 +444,27 @@ class DeleteModal {
       })
     );
 
-    this.form.appendChild(
-      createElement({
-        type: "button",
-        inputType: "submit",
-        classString: "btn btn-danger me-1",
-        content: "Delete",
-        onclick: (event) => {
-          this.handelDeleteSubmit(event);
-        },
-      })
-    );
-
-    this.form.appendChild(
+    div5.appendChild(
       createElement({
         type: "button",
         onclick: () => {
           this.hide();
         },
         inputType: "button",
-        classString: "btn btn-outline-secondary",
+        classString: "btn btn-outline-secondary col w-50",
         content: "Cancel",
+      })
+    );
+
+    div5.appendChild(
+      createElement({
+        type: "button",
+        inputType: "submit",
+        classString: "btn btn-danger col w-50",
+        content: "Delete",
+        onclick: (event) => {
+          this.handelDeleteSubmit(event);
+        },
       })
     );
 
@@ -608,24 +608,24 @@ class MoveModal {
     div6.appendChild(
       createElement({
         type: "button",
-        inputType: "submit",
-        classString: "btn btn-primary me-1",
-        content: "Move",
-        onclick: (event) => {
-          this.handelMoveSubmit(event);
+        onclick: () => {
+          this.hide();
         },
+        inputType: "button",
+        classString: "btn btn-outline-secondary col w-50",
+        content: "Cancel",
       })
     );
 
     div6.appendChild(
       createElement({
         type: "button",
-        onclick: () => {
-          this.hide();
+        inputType: "submit",
+        classString: "btn btn-primary col w-50",
+        content: "Move",
+        onclick: (event) => {
+          this.handelMoveSubmit(event);
         },
-        inputType: "button",
-        classString: "btn btn-outline-secondary",
-        content: "Cancel",
       })
     );
 
