@@ -15,6 +15,8 @@ class PaginationOwner {
     );
     this.pagination.init(currentPage);
 
+    this.currentPagination = this.pagination;
+
     this.search = new Search([], 0, 1, 1, SEARCH_PAGE_URL);
 
     this.searchIcon = document.getElementById("searchIcon");
@@ -51,8 +53,10 @@ class PaginationOwner {
     if (this.searching) {
       this.search.clearInputs();
       this.search.init(1);
+      this.currentPagination = this.search;
     } else {
       this.pagination.init(1);
+      this.currentPagination = this.pagination;
     }
   }
 
@@ -105,6 +109,10 @@ class PaginationOwner {
         greaterThanCurrentPage: true,
       });
     }
+  }
+
+  requestNewPages(options) {
+    this.currentPagination.requestNewPages(options);
   }
 }
 

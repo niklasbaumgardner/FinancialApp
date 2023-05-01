@@ -313,7 +313,7 @@ class Transaction {
 
   async handleUpdateTransaction(event) {
     event.preventDefault();
-    this.pageInput.value = paginationOwner.pagination.currentPage;
+    this.pageInput.value = paginationOwner.currentPagination.currentPage;
 
     let formData = new FormData(this.element);
     let url = this.element.action;
@@ -326,7 +326,7 @@ class Transaction {
     }
 
     await postRequest(url, formData);
-    paginationOwner.pagination.requestNewPages(options);
+    paginationOwner.requestNewPages(options);
   }
 
   handleCancelEditTransaction(event) {
@@ -481,7 +481,7 @@ class DeleteModal {
 
     console.log(url);
     await deleteRequest(url);
-    paginationOwner.pagination.requestNewPages({ greaterThanCurrentPage: true });
+    paginationOwner.requestNewPages({ greaterThanCurrentPage: true });
 
     this.hide();
   }
@@ -640,7 +640,7 @@ class MoveModal {
     let formData = new FormData(this.form);
 
     await postRequest(url, formData);
-    paginationOwner.pagination.requestNewPages({ greaterThanCurrentPage: true });
+    paginationOwner.requestNewPages({ greaterThanCurrentPage: true });
 
     this.hide();
   }
