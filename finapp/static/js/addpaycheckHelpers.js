@@ -37,16 +37,15 @@ function fillBudgetAmountsFromPrefill(id, totalAmount) {
   let table = document.getElementById(id);
   let list = [];
   for (let r = 1; r < table.rows.length - 1; r++) {
-    let name = table.rows[r].cells[0].innerHTML;
+    let name = table.rows[r].cells[0].innerText;
     let id = table.rows[r].cells[1].id;
-    let amount = table.rows[r].cells[1].innerHTML;
-    let temp = [name + id, amount];
-    list[list.length] = temp;
+    let amount = table.rows[r].cells[1].innerText;
+    list.push({ id: name + id, amount: amount.replace("$", "").replace(",", "") });
   }
 
-  for (let i = 0; i < list.length; i++) {
-    let input = document.getElementById(list[i][0]);
-    input.value = list[i][1];
+  for (let prefill of list) {
+    let input = document.getElementById(prefill.id);
+    input.value = prefill.amount;
   }
 
   if (!isPercentage()) {
