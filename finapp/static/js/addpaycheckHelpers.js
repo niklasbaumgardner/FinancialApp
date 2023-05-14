@@ -40,7 +40,10 @@ function fillBudgetAmountsFromPrefill(id, totalAmount) {
     let name = table.rows[r].cells[0].innerText;
     let id = table.rows[r].cells[1].id;
     let amount = table.rows[r].cells[1].innerText;
-    list.push({ id: name + id, amount: amount.replace("$", "").replace(",", "") });
+    list.push({
+      id: name + id,
+      amount: amount.replace("$", "").replace(",", ""),
+    });
   }
 
   for (let prefill of list) {
