@@ -132,7 +132,8 @@ class Pagination {
     this.transactionContainer = document.getElementById("transactionList");
     this.prevButton = document.getElementById("prev");
     this.nextButton = document.getElementById("next");
-    this.budgetTotalElement = document.getElementById("budgetTotal");
+    this.searchTotalElement = document.getElementById("searchResultsTotal");
+    this.searchSumElement = document.getElementById("searchResultsSum");
 
     this.prevButton.onclick = () => this.onPrevClick();
     this.nextButton.onclick = () => this.onNextClick();
@@ -199,9 +200,11 @@ class Pagination {
     this.numPages = data.num_pages;
     this.createAllPageButtons();
 
-    if (data.budget_total) {
-      this.budget_total = data.budget_total;
-      this.budgetTotalElement.textContent = this.budget_total;
+    console.log(data);
+    if (data.search_sum) {
+      this.search_sum = data.search_sum;
+      this.searchTotalElement.textContent = data.total === 1 ? "1 transaction" : `${data.total} transactions`
+      this.searchSumElement.textContent = this.search_sum;
     }
 
     this.pageMap[this.currentPage] = this.getTransactionArray(data);

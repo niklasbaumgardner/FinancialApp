@@ -95,18 +95,25 @@
                 <div id="searchInputs" hidden="true">
                     <div class="row mb-3">
                         <div class="col">
-                            <div class="dropdown">
-                                <button class="btn btn-outline-grey dropdown-toggle sort-button" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Sort by
-                                </button>
-                                <ul id="sort-options-search" class="dropdown-menu">
-                                    <li><button class="dropdown-item active" value='{"date":"desc"}'>Date: Newest to oldest</button></li>
-                                    <li><button class="dropdown-item" value='{"date":"asc"}'>Date: Oldest to newest</button></li>
-                                    <li><button class="dropdown-item" value='{"name":"asc"}'>Name: Alphabetical</button></li>
-                                    <li><button class="dropdown-item" value='{"name":"desc"}'>Name: Reverse alphabetical</button></li>
-                                    <li><button class="dropdown-item" value='{"amount":"desc"}'>Amount: Most income</button></li>
-                                    <li><button class="dropdown-item" value='{"amount":"asc"}'>Amount: Most expensive</button></li>
-                                </ul>
+                            <div class="row gy-2">
+                                <div class="col-12 col-md-3">
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-grey dropdown-toggle sort-button" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Sort by
+                                        </button>
+                                        <ul id="sort-options-search" class="dropdown-menu">
+                                            <li><button class="dropdown-item active" value='{"date":"desc"}'>Date: Newest to oldest</button></li>
+                                            <li><button class="dropdown-item" value='{"date":"asc"}'>Date: Oldest to newest</button></li>
+                                            <li><button class="dropdown-item" value='{"name":"asc"}'>Name: Alphabetical</button></li>
+                                            <li><button class="dropdown-item" value='{"name":"desc"}'>Name: Reverse alphabetical</button></li>
+                                            <li><button class="dropdown-item" value='{"amount":"desc"}'>Amount: Most income</button></li>
+                                            <li><button class="dropdown-item" value='{"amount":"asc"}'>Amount: Most expensive</button></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <p class="fs-4"><span id="searchResultsTotal">0 transactions</span> totalling <span class="fw-bold" id="searchResultsSum">$0</span></p>
+                                </div>
                             </div>
                         </div>
                         <!-- <div class="col">
@@ -166,7 +173,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row gy-2">
+                    <div class="row my-2">
                         <div class="col-12 col-md-6">
                             <div class="input-group">
                                 <span class="input-group-text">Start date:</span>
@@ -180,6 +187,11 @@
                             </div>
                         </div>
                     </div>
+                    <!-- <div class="row my-2">
+                        <div class="col">
+                            <p>Search totoal: <span id="searchTotal">$0</span></p>
+                        </div>
+                    </div> -->
                 </div>
             </div>
         </div>

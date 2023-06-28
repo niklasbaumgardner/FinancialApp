@@ -463,7 +463,7 @@ def search(b_id):
 
     sort_by = request.args.get("sort")
 
-    transactions, total, page, num_pages = helpers.search_for(
+    transactions, total, page, num_pages, search_sum = helpers.search_for(
         budget_id=b_id,
         name=name,
         start_date=start_date,
@@ -484,6 +484,7 @@ def search(b_id):
         "transactions": transactions,
         "total": total,
         "num_pages": num_pages,
+        "search_sum": helpers.format_to_money_string(search_sum)
     }
 
 

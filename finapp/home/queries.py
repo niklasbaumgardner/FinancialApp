@@ -1,6 +1,7 @@
 from finapp.models import Budget, Transaction, PaycheckPrefill
 from finapp.extensions import db
 from sqlalchemy import extract
+from sqlalchemy.sql import func
 from flask_login import current_user
 from datetime import date
 
@@ -419,22 +420,25 @@ def search(
             budget_id=budget_id
         )
 
+        search_sum = transactions.with_entities(func.sum(Transaction.amount)).first()[0]
+
         transactions = sort_transactions(sort_by=sort_by, transactions=transactions)
 
         transactions = transactions.paginate(page=page, per_page=10)
 
         if transactions.total == 0:
             # I want to return the number of pages as 1
-            return ([], 0, 1, 1)
+            return ([], 0, 1, 1, 0)
 
         return (
             transactions.items,
             transactions.total,
             transactions.page,
             transactions.pages,
+            search_sum
         )
     else:
-        return ([], 0, 1, 1)
+        return ([], 0, 1, 1, 0)
 
 
 ##

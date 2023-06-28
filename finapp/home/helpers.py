@@ -308,7 +308,7 @@ def search_for(
     except:
         sort_by = None
 
-    transactions = queries.search(
+    return queries.search(
         budget_id=budget_id,
         name=name,
         start_date=start_date,
@@ -321,5 +321,3 @@ def search_for(
         ytd=ytd,
         sort_by=sort_by,
     )
-
-    return transactions
