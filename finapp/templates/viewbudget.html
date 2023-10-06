@@ -13,29 +13,15 @@
     const MOVE_TRANSACTION_URL = "{{ url_for('home.move_transaction', sb_id=budget.id, t_id=0) }}".slice(0, -1);
     const DELETE_TRANSACTION_URL = "{{ url_for('home.delete_transaction', b_id=budget.id, t_id=0) }}".slice(0, -1);
     const params = new URLSearchParams(window.location.search);
-</script>
-<script src="/static/js/createElement.js"></script>
-<script src="/static/js/pagination.js"></script>
-<script src="/static/js/viewbudget.js"></script>
-<script src="/static/js/transaction.js"></script>
-<script>
     const TOTAL_TRANSACTIONS = {{ total }};
     const CURRENT_PAGE = {{ page }};
     const NUM_PAGES = {{ num_pages }};
-
-    const parser = new DOMParser();
-    const transactionArray = [];
-    const transactionsPy = {{ transactions|tojson }};
-    for (let t of transactionsPy) {
-        let transaction = new Transaction(...t);
-        transactionArray.push(transaction);
-    }
-
     const budgetsArray = {{ budgets|budgets_array|tojson }};
+    const transactionsPy = {{ transactions|tojson }};
 </script>
 
     <div class="container">
-        <div class="card mb-4">
+        <article class="card mb-4">
             <div class="card-header">
                 <div class="row">
                     <div class="col">
@@ -68,9 +54,9 @@
                     </form>
                 </div>
             </div>
-        </div>
+        </article>
 
-        <div class="card mb-4">
+        <article class="card mb-4">
             <div class="card-body">
                 <div id="searchIcon" class="row">
                     <div class="col">
@@ -194,9 +180,9 @@
                     </div> -->
                 </div>
             </div>
-        </div>
+        </article>
 
-        <div class="card mb-4">
+        <article class="card mb-4">
             <div class="card-body">
                 <ul id="transactionList" class="list-group">
                     <li id="emptyTransaction" class="list-group-item border-0" hidden="true">
@@ -206,7 +192,7 @@
                     </li>
                 </ul>
             </div>
-        </div>
+        </article>
         <nav aria-label="...">
             <ul class="pagination">
                 <li id="prev" class="page-item">
@@ -228,12 +214,6 @@
 
 
     <script src="/static/js/setdate.js"></script>
-    <script>
-        const paginationOwner = new PaginationOwner(transactionArray, TOTAL_TRANSACTIONS, CURRENT_PAGE, NUM_PAGES);
-
-        document.getElementById("name").addEventListener("input", checkInput);
-        document.getElementById("amount").addEventListener("input", checkInput);
-
-    </script>
+    <script src="/static/js/viewbudget.mjs" type="module"></script>
 
 {% endblock content %}

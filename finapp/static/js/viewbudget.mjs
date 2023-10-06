@@ -1,4 +1,5 @@
-"use strict";
+import { Transaction } from "/static/js/transaction.mjs";
+import { PaginationOwner } from "./pagination.mjs";
 
 function checkInput() {
   let name = document.getElementById("name").value;
@@ -50,3 +51,19 @@ function keydownHandler(event) {
   }
 }
 window.addEventListener("keydown", keydownHandler, { once: true });
+
+const transactionArray = [];
+for (let t of transactionsPy) {
+  let transaction = new Transaction(...t);
+  transactionArray.push(transaction);
+}
+
+const paginationOwner = new PaginationOwner(
+  transactionArray,
+  TOTAL_TRANSACTIONS,
+  CURRENT_PAGE,
+  NUM_PAGES
+);
+
+document.getElementById("name").addEventListener("input", checkInput);
+document.getElementById("amount").addEventListener("input", checkInput);

@@ -1,9 +1,9 @@
-"use strict";
+import { Transaction } from "./transaction.mjs";
 
 const storage = window["localStorage"];
 const PER_PAGE = 10;
 
-class PaginationOwner {
+export class PaginationOwner {
   constructor(transactions, numTransactions, currentPage, numPages) {
     this.searching = false;
     this.pagination = new Pagination(
@@ -45,6 +45,23 @@ class PaginationOwner {
         this.sortTransactions(event);
       });
     }
+
+    document.addEventListener("RequestNewPages", this);
+  }
+
+  handleEvent(event) {
+    switch (event.type) {
+      case "click":
+        this.handleClick(event);
+        break;
+      case "RequestNewPages":
+        this.requestNewPages(event.detail);
+        break;
+    }
+  }
+
+  handleClick(event) {
+    // pass
   }
 
   toggleSearch() {
@@ -80,7 +97,7 @@ class PaginationOwner {
       }
 
       button.classList.add("active");
-  
+
       console.log(event);
 
       this.search.sort = button.value;
@@ -99,7 +116,7 @@ class PaginationOwner {
       }
 
       button.classList.add("active");
-  
+
       console.log(event);
 
       this.pagination.sort = button.value;
@@ -116,7 +133,7 @@ class PaginationOwner {
   }
 }
 
-class Pagination {
+export class Pagination {
   constructor(transactions, numTransactions, currentPage, numPages, url) {
     this.currentRequests = {};
     this.visibleButtons = [];
@@ -203,7 +220,8 @@ class Pagination {
     console.log(data);
     if (data.search_sum) {
       this.search_sum = data.search_sum;
-      this.searchTotalElement.textContent = data.total === 1 ? "1 transaction" : `${data.total} transactions`
+      this.searchTotalElement.textContent =
+        data.total === 1 ? "1 transaction" : `${data.total} transactions`;
       this.searchSumElement.textContent = this.search_sum;
     }
 
@@ -353,7 +371,7 @@ class Pagination {
     if (this.pageMap[this.currentPage].length) {
       noTransactionsFound.toggleAttribute("hidden", true);
       for (let transaction of this.pageMap[this.currentPage]) {
-        this.transactionContainer.appendChild(transaction.renderElement());
+        this.transactionContainer.appendChild(transaction.fragment);
       }
     } else {
       noTransactionsFound.toggleAttribute("hidden", false);
@@ -414,7 +432,7 @@ class Pagination {
   }
 }
 
-class Search extends Pagination {
+export class Search extends Pagination {
   constructor(transactions, numTransactions, currentPage, numPages, url) {
     super(transactions, numTransactions, currentPage, numPages, url);
 
