@@ -4,6 +4,18 @@
   font-family: "Inter", sans-serif !important;
 }
 
+.d-flex[hidden] {
+  display: none !important;
+}
+
+.modal {
+  display: none;
+}
+
+.modal[show] {
+  display: block;
+}
+
 .alert-absolute {
   position: absolute;
   z-index: 1;
@@ -142,4 +154,35 @@ button:focus-visible {
   color: #000;
   background-color: #adb5bd;
   border-color: #adb5bd;
+}
+
+.icon-button {
+  filter: invert(57%) sepia(91%) saturate(1140%) hue-rotate(190deg) brightness(101%) contrast(99%);
+  box-sizing: content-box;
+  width: 1em;
+  height: 1em;
+  padding: .25em;
+  border: 0;
+  opacity: 80%;
+}
+
+.icon-button:hover {
+  opacity: 100%;
+}
+
+#edit-btn {
+  background: url("../images/edit.svg") no-repeat center/100%;
+}
+
+#move-btn {
+  background: url("../images/transfer.svg") no-repeat center/100%;
+}
+
+#update-btn {
+  background: url("../images/save.svg") no-repeat center/100%;
+}
+
+#delete-btn {
+  background: url("../images/delete.svg") no-repeat center/100%;
+  filter: invert(22%) sepia(94%) saturate(2471%) hue-rotate(340deg) brightness(95%) contrast(81%);
 }
