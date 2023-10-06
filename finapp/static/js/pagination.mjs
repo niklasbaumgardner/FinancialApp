@@ -466,6 +466,15 @@ export class Search extends Pagination {
   }
 
   async handleInputEvent(event) {
+    if (
+      !this.searchName.value &&
+      !this.startDate.value &&
+      !this.endDate.value &&
+      !this.minAmount.value &&
+      !this.maxAmount.value
+    ) {
+      return;
+    }
     await this.requestNewPages({
       lessThanCurrentPage: true,
       greaterThanCurrentPage: true,
