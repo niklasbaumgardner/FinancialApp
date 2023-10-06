@@ -288,6 +288,7 @@ def search_for(
     name,
     start_date,
     end_date,
+    amount,
     min_amount,
     max_amount,
     page,
@@ -298,10 +299,30 @@ def search_for(
 ):
     start_date = get_date_from_string(start_date)
     end_date = get_date_from_string(end_date)
+
     try:
-        amount = float(amount)
+        multiplier = -1
+        if amount[0] == "+" or amount[0] == "-":
+            multiplier = 1
+        amount = float(amount) * multiplier
     except:
         amount = None
+
+    try:
+        multiplier = -1
+        if min_amount[0] == "+" or min_amount[0] == "-":
+            multiplier = 1
+        min_amount = float(min_amount) * multiplier
+    except:
+        min_amount = None
+
+    try:
+        multiplier = -1
+        if max_amount[0] == "+" or max_amount[0] == "-":
+            multiplier = 1
+        max_amount = float(max_amount) * multiplier
+    except:
+        max_amount = None
 
     try:
         sort_by = json.loads(sort_by)
@@ -313,6 +334,7 @@ def search_for(
         name=name,
         start_date=start_date,
         end_date=end_date,
+        amount=amount,
         min_amount=min_amount,
         max_amount=max_amount,
         page=page,

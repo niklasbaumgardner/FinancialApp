@@ -133,41 +133,56 @@
                             <button class="btn-close search-toggle"></button>
                         </div>
                     </div>
-                    <div class="row my-2">
+
+                    <div class="row mb-2">
                         <div class="col">
-                            <div class="row gy-2">
-                                <div class="col-12 col-xl-6">
-                                    <div class="input-group">
-                                        <input class="form-control" type="text" id="searchName" placeholder="Search">
-                                        <!-- <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">filters</button>
-                                        <ul class="dropdown-menu">
-                                            <li>
-                                                <div class="form-check dropdown-item d-flex">
-                                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                                    <label class="form-check-label" for="flexCheckDefault">
-                                                        Case sensitive
-                                                    </label>
-                                                </div>
-                                            </li>
-                                        </ul> -->
-                                    </div>
+                            <div class="input-group">
+                                <input class="form-control" type="text" id="searchName" placeholder="Search">
+                                <!-- <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">filters</button>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <div class="form-check dropdown-item d-flex">
+                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                            <label class="form-check-label" for="flexCheckDefault">
+                                                Case sensitive
+                                            </label>
+                                        </div>
+                                    </li>
+                                </ul> -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row gy-2 mb-2">
+                        <div class="col-12 form-text mt-2">Use + for positive numbers (income) and no symbol for negative (spent).</div>
+                        <div class="col-12 col-lg-7">
+                            <div class="input-group">
+                                <span class="input-group-text">Amount:</span>
+                                <input class="form-control amount-input-86" type="number" step=".01" id="searchAmount" placeholder="0.00" title="Use + for positive numbers">
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-5">
+                            <button class="btn btn-outline-primary w-100" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                                Search by min and max amounts
+                            </button>
+                        </div>
+                    </div>
+                    <div class="collapse" id="collapseExample">
+                        <div class="row gy-2 mb-2">
+                            <div class="col-12 col-md-6">
+                                <div class="input-group">
+                                    <span class="input-group-text">Min. amount:</span>
+                                    <input class="form-control amount-input-86" type="number" step=".01" id="minAmount" placeholder="0.00">
                                 </div>
-                                <div class="col-12 col-md-6 col-xl-3">
-                                    <div class="input-group">
-                                        <span class="input-group-text">Min. amount:</span>
-                                        <input class="form-control amount-input-86" type="number" step=".01" id="minAmount" placeholder="0.00">
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md-6 col-xl-3">
-                                    <div class="input-group">
-                                        <span class="input-group-text">Max. amount:</span>
-                                        <input class="form-control amount-input-86" type="number" step=".01" id="maxAmount" placeholder="0.00">
-                                    </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <div class="input-group">
+                                    <span class="input-group-text">Max. amount:</span>
+                                    <input class="form-control amount-input-86" type="number" step=".01" id="maxAmount" placeholder="0.00">
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="row my-2">
+                    <div class="row gy-2">
                         <div class="col-12 col-md-6">
                             <div class="input-group">
                                 <span class="input-group-text">Start date:</span>

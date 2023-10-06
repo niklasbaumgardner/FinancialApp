@@ -354,6 +354,7 @@ def search(
     name,
     start_date,
     end_date,
+    amount,
     min_amount,
     max_amount,
     page,
@@ -370,18 +371,25 @@ def search(
             if transactions
             else Transaction.query.filter(Transaction.name.ilike(f"%{name}%"))
         )
-    if min_amount:
+    if amount:
         transactions = (
-            transactions.filter(Transaction.amount >= min_amount)
+            transactions.filter(Transaction.amount == amount)
             if transactions
-            else Transaction.query.filter(Transaction.amount >= min_amount)
+            else Transaction.query.filter(Transaction.amount == amount)
         )
-    if max_amount:
-        transactions = (
-            transactions.filter(Transaction.amount <= max_amount)
-            if transactions
-            else Transaction.query.filter(Transaction.amount <= max_amount)
-        )
+    else:
+        if min_amount:
+            transactions = (
+                transactions.filter(Transaction.amount >= min_amount)
+                if transactions
+                else Transaction.query.filter(Transaction.amount >= min_amount)
+            )
+        if max_amount:
+            transactions = (
+                transactions.filter(Transaction.amount <= max_amount)
+                if transactions
+                else Transaction.query.filter(Transaction.amount <= max_amount)
+            )
     if start_date:
         transactions = (
             transactions.filter(Transaction.date >= start_date)
@@ -435,7 +443,7 @@ def search(
             transactions.total,
             transactions.page,
             transactions.pages,
-            search_sum
+            search_sum,
         )
     else:
         return ([], 0, 1, 1, 0)
