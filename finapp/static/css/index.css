@@ -137,11 +137,11 @@ button:focus-visible {
   opacity: 1;
 }
 
-#transactionList > form > li {
+#transactionList > transaction > li {
   border: none;
 }
 
-#transactionList > form:not(:last-child) > li {
+#transactionList > transaction:not(:last-child) > li {
   border-bottom: 1px solid rgba(255, 255, 255, .5);
 }
 
@@ -163,6 +163,7 @@ button:focus-visible {
   height: 1em;
   padding: .25em;
   border: 0;
+  border-radius: 0;
   opacity: 80%;
 }
 
@@ -185,4 +186,52 @@ button:focus-visible {
 #delete-btn {
   background: url("../images/delete.svg") no-repeat center/100%;
   filter: invert(22%) sepia(94%) saturate(2471%) hue-rotate(340deg) brightness(95%) contrast(81%);
+}
+
+.transaction-grid {
+  display: grid;
+  grid-template: "name amount buttons";
+}
+
+.name {
+  grid-area: name;
+}
+
+.amount {
+  grid-area: amount;
+}
+
+.buttons {
+  grid-area: buttons;
+  height: 100%;
+}
+
+.edit-amount {
+  width: 25%;
+  min-width: 100px;
+}
+
+.column-flex {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+@media (max-width: 575px) {
+  transaction[editing] .transaction-grid {
+    grid-template:
+      "name amount" 1fr
+      "name buttons" 1fr;
+    gap: .5rem;
+
+  }
+
+  .buttons > .show-edit {
+    align-items: center;
+    height: 100%;
+  }
+
+  .edit-amount {
+    width: 100%;
+  }
 }

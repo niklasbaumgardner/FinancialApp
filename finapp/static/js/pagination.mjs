@@ -379,7 +379,7 @@ export class Pagination {
   }
 
   clearTransactionContainer() {
-    let transactions = document.querySelectorAll("#transactionList > form");
+    let transactions = document.querySelectorAll("#transactionList > transaction");
     for (let t of transactions) {
       t.remove();
     }

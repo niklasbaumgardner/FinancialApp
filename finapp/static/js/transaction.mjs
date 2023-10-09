@@ -3,11 +3,7 @@ import { CustomElement } from "./customElement.mjs";
 export class Transaction extends CustomElement {
   get markup() {
     return `<template>
-      <form
-        id="transaction-${this.id}"
-        action="${this.editURL}"
-        method="POST"
-      >
+      <transaction>
         <input
           class="page-number"
           name="page"
@@ -16,26 +12,30 @@ export class Transaction extends CustomElement {
           value="1"
         />
         <li class="list-group-item">
-          <div class="row">
-            <div class="col">
-              <div class="d-flex flex-column">
-                <p class="${this.showNotEditClass} fs-5 my-0">${this.name}</p>
-                <input
-                  id="editName${this.id}"
-                  class="${this.showEditClass} form-control mb-2"
-                  name="editName${this.id}"
-                  hidden=""
-                  autocomplete="niklas"
-                  type="text"
-                  value="${this.name}"
-                />
-                <div class="row">
-                  <div class="col-12">
+        <form
+          id="transaction-${this.id}"
+          action="${this.editURL}"
+          method="POST"
+        >
+            <div class="transaction-grid">
+              <div class="name">
+                <div class="column-flex">
+                  <p class="${this.showNotEditClass} fs-5 my-0">${this.name}</p>
+                  <input
+                    id="editName${this.id}"
+                    class="${this.showEditClass} form-control"
+                    name="editName${this.id}"
+                    hidden=""
+                    autocomplete="niklas"
+                    type="text"
+                    value="${this.name}"
+                  />
+                  <div class="column-flex">
                     <span class="${this.showNotEditClass} fs-75"
                       >${this.dateAsString}</span
                     ><input
                       id="editDate${this.id}"
-                      class="${this.showEditClass} form-control w-75"
+                      class="${this.showEditClass} form-control form-control-sm w-75"
                       name="editDate${this.id}"
                       hidden=""
                       type="date"
@@ -44,60 +44,60 @@ export class Transaction extends CustomElement {
                   </div>
                 </div>
               </div>
-            </div>
-            <div class="col">
-              <div class="d-flex justify-content-center">
-                <p class="${this.showNotEditClass} fs-6">${this.stringAmount}</p>
-                <input
-                  id="editAmount${this.id}"
-                  class="${this.showEditClass} form-control w-25 amount-input-71"
-                  name="editAmount${this.id}"
-                  hidden=""
-                  autocomplete="niklas"
-                  step=".01"
-                  type="number"
-                  value="${this.amount}"
-                />
+              <div class="amount">
+                <div class="d-flex justify-content-center">
+                  <p class="${this.showNotEditClass} fs-6 my-0">${this.stringAmount}</p>
+                  <input
+                    id="editAmount${this.id}"
+                    class="${this.showEditClass} form-control edit-amount"
+                    name="editAmount${this.id}"
+                    hidden=""
+                    autocomplete="niklas"
+                    step=".01"
+                    type="number"
+                    value="${this.amount}"
+                  />
+                </div>
+              </div>
+              <div class="buttons">
+                <div class="show-not-edit d-flex justify-content-end gap-3">
+                  <button
+                    class="btn btn-link icon-button"
+                    id="edit-btn"
+                    type="button" title="Edit this transaction"
+                  ></button>
+                  <button
+                    class="btn btn-link icon-button"
+                    id="delete-btn"
+                    type="button"
+                    title="Delete this transaction"
+                  ></button>
+                </div>
+                <div class="show-edit d-flex justify-content-end gap-3" hidden="">
+                  <button
+                    class="btn btn-link icon-button"
+                    id="update-btn"
+                    type="button"
+                    title="Save this transaction"
+                  ></button>
+                  <button
+                    class="btn btn-link icon-button"
+                    id="move-btn"
+                    type="button"
+                    title="Transfer transaction to another budget"
+                  ></button>
+                  <button
+                    class="btn-close"
+                    id="cancel-btn"
+                    type="button"
+                    title="Cancel"
+                  ></button>
+                </div>
               </div>
             </div>
-            <div class="col">
-              <div class="show-not-edit d-flex justify-content-end gap-3">
-                <button
-                  class="btn btn-link icon-button"
-                  id="edit-btn"
-                  type="button" title="Edit this transaction"
-                ></button>
-                <button
-                  class="btn btn-link icon-button"
-                  id="delete-btn"
-                  type="button"
-                  title="Delete this transaction"
-                ></button>
-              </div>
-              <div class="show-edit d-flex justify-content-end gap-3" hidden="">
-                <button
-                  class="btn btn-link icon-button"
-                  id="update-btn"
-                  type="button"
-                  title="Save this transaction"
-                ></button>
-                <button
-                  class="btn btn-link icon-button"
-                  id="move-btn"
-                  type="button"
-                  title="Transfer transaction to another budget"
-                ></button>
-                <button
-                  class="btn-close"
-                  id="cancel-btn"
-                  type="button"
-                  title="Cancel"
-                ></button>
-              </div>
-            </div>
-          </div>
+          </form>
         </li>
-      </form>
+      </transaction>
     </template>`;
   }
 
@@ -167,7 +167,8 @@ export class Transaction extends CustomElement {
 
     this.editDateElement = fragment.getElementById(`editDate${this.id}`);
 
-    this.element = fragment.querySelector("form");
+    this.form = fragment.querySelector("form");
+    this.element = fragment.querySelector("transaction");
   }
 
   addEventListeners() {
@@ -199,6 +200,7 @@ export class Transaction extends CustomElement {
   }
 
   handleEditTransaction(event) {
+    this.element.toggleAttribute("editing", true);
     this.showNotEdit.hidden = true;
     for (let ele of this.showNotEditElements) {
       ele.hidden = true;
@@ -220,9 +222,10 @@ export class Transaction extends CustomElement {
 
   async handleUpdateTransaction(event) {
     // this.pageInput.value = paginationOwner.currentPagination.currentPage;
+    this.element.toggleAttribute("editing", false);
 
-    let formData = new FormData(this.element);
-    let url = this.element.action;
+    let formData = new FormData(this.form);
+    let url = this.form.action;
 
     let options = {};
     if (this.date > this.editDateElement.value) {
@@ -242,6 +245,7 @@ export class Transaction extends CustomElement {
   }
 
   handleCancelEditTransaction(event) {
+    this.element.toggleAttribute("editing", false);
     this.showNotEdit.hidden = false;
     for (let ele of this.showNotEditElements) {
       ele.hidden = false;
