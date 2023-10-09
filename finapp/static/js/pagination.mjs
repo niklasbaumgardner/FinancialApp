@@ -213,6 +213,9 @@ export class Pagination {
 
     let data = await this.getPageData(this.currentPage);
     this.numTransactions = data.total;
+    if (data.budget_total) {
+      document.getElementById("budgetTotal").textContent = data.budget_total;
+    }
 
     this.numPages = data.num_pages;
     this.createAllPageButtons();
