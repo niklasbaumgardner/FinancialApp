@@ -165,6 +165,8 @@ export class Transaction extends CustomElement {
     );
     this.showEditElements = fragment.querySelectorAll(`.${this.showEditClass}`);
 
+    this.editDateElement = fragment.getElementById(`editDate${this.id}`);
+
     this.element = fragment.querySelector("form");
   }
 
@@ -217,20 +219,26 @@ export class Transaction extends CustomElement {
   }
 
   async handleUpdateTransaction(event) {
-    this.pageInput.value = paginationOwner.currentPagination.currentPage;
+    // this.pageInput.value = paginationOwner.currentPagination.currentPage;
 
     let formData = new FormData(this.element);
     let url = this.element.action;
 
     let options = {};
-    if (this.date > this.dateElement.value) {
+    if (this.date > this.editDateElement.value) {
       options.greaterThanCurrentPage = true;
     } else {
       options.lessThanCurrentPage = true;
     }
 
     await postRequest(url, formData);
-    paginationOwner.requestNewPages(options);
+    this.element.dispatchEvent(
+      new CustomEvent("RequestNewPages", {
+        bubbles: true,
+        composed: true,
+        detail: options,
+      })
+    );
   }
 
   handleCancelEditTransaction(event) {
