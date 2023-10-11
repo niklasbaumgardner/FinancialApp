@@ -191,6 +191,7 @@ button:focus-visible {
 .transaction-grid {
   display: grid;
   grid-template: "name amount buttons";
+  grid-template-columns: repeat(3, 1fr);
 }
 
 .name {
