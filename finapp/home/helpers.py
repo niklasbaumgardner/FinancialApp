@@ -302,7 +302,7 @@ def search_for(
 
     try:
         multiplier = -1
-        if amount[0] == "+" or amount[0] == "-":
+        if amount[0] == "+" or amount[0] == "-" or amount == "0":
             multiplier = 1
         amount = float(amount) * multiplier
     except:
@@ -310,7 +310,7 @@ def search_for(
 
     try:
         multiplier = -1
-        if min_amount[0] == "+" or min_amount[0] == "-":
+        if min_amount[0] == "+" or min_amount[0] == "-" or min_amount == "0":
             multiplier = 1
         min_amount = float(min_amount) * multiplier
     except:
@@ -318,7 +318,7 @@ def search_for(
 
     try:
         multiplier = -1
-        if max_amount[0] == "+" or max_amount[0] == "-":
+        if max_amount[0] == "+" or max_amount[0] == "-" or max_amount == "0":
             multiplier = 1
         max_amount = float(max_amount) * multiplier
     except:

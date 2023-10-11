@@ -371,20 +371,20 @@ def search(
             if transactions
             else Transaction.query.filter(Transaction.name.ilike(f"%{name}%"))
         )
-    if amount:
+    if amount is not None:
         transactions = (
             transactions.filter(Transaction.amount == amount)
             if transactions
             else Transaction.query.filter(Transaction.amount == amount)
         )
     else:
-        if min_amount:
+        if min_amount is not None:
             transactions = (
                 transactions.filter(Transaction.amount >= min_amount)
                 if transactions
                 else Transaction.query.filter(Transaction.amount >= min_amount)
             )
-        if max_amount:
+        if max_amount is not None:
             transactions = (
                 transactions.filter(Transaction.amount <= max_amount)
                 if transactions
