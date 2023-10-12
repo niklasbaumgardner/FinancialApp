@@ -308,21 +308,29 @@ def search_for(
     except:
         amount = None
 
+    switch_min_max = False
     try:
         multiplier = -1
-        if min_amount[0] == "+" or min_amount[0] == "-" or min_amount == "0":
+        if min_amount[0] == "+" or min_amount[0] == "-":
             multiplier = 1
+        else:
+            switch_min_max = True
         min_amount = float(min_amount) * multiplier
     except:
         min_amount = None
 
     try:
         multiplier = -1
-        if max_amount[0] == "+" or max_amount[0] == "-" or max_amount == "0":
+        if max_amount[0] == "+" or max_amount[0] == "-":
             multiplier = 1
+        else:
+            switch_min_max = True
         max_amount = float(max_amount) * multiplier
     except:
         max_amount = None
+
+    if switch_min_max:
+        min_amount, max_amount = max_amount, min_amount
 
     try:
         sort_by = json.loads(sort_by)
