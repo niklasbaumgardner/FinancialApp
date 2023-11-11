@@ -456,6 +456,7 @@ def search(b_id):
     min_amount = request.args.get("minAmount")
     max_amount = request.args.get("maxAmount")
     name = request.args.get("name")
+    name = json.loads(name)
     page = request.args.get("page", -1, type=int)
 
     month = request.args.get("month", 0, type=int)

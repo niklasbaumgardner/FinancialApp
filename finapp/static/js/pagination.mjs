@@ -382,7 +382,9 @@ export class Pagination {
   }
 
   clearTransactionContainer() {
-    let transactions = document.querySelectorAll("#transactionList > transaction");
+    let transactions = document.querySelectorAll(
+      "#transactionList > transaction"
+    );
     for (let t of transactions) {
       t.remove();
     }
@@ -439,26 +441,53 @@ export class Search extends Pagination {
   constructor(transactions, numTransactions, currentPage, numPages, url) {
     super(transactions, numTransactions, currentPage, numPages, url);
 
-    this.searchName = document.getElementById("searchName");
+    this.searchItems = [...document.querySelectorAll("search-item")];
     this.startDate = document.getElementById("startDate");
     this.endDate = document.getElementById("endDate");
     this.amount = document.getElementById("searchAmount");
     this.minAmount = document.getElementById("minAmount");
     this.maxAmount = document.getElementById("maxAmount");
 
-    this.searchName.addEventListener("input", this);
+    for (let searchItem of this.searchItems) {
+      searchItem.addEventListener("input", this);
+    }
     this.startDate.addEventListener("input", this);
     this.endDate.addEventListener("input", this);
     this.amount.addEventListener("input", this);
     this.minAmount.addEventListener("input", this);
     this.maxAmount.addEventListener("input", this);
+
+    document.addEventListener("SearchItemAdded", this);
+    document.addEventListener("SearchItemRemoved", this);
   }
 
   handleEvent(event) {
     switch (event.type) {
-      case "input": {
+      case "input":
         this.handleInputEvent(event);
-      }
+        break;
+      case "SearchItemAdded":
+        this.searchItemAdded(event);
+        break;
+      case "SearchItemRemoved":
+        this.searchItemRemoved(event);
+        break;
+    }
+  }
+
+  searchItemAdded(event) {
+    let searchItem = event.target;
+    searchItem.addEventListener("input", this);
+    this.searchItems.push(searchItem);
+  }
+
+  searchItemRemoved(event) {
+    let searchItem = event.target;
+    searchItem.removeEventListener("input", this);
+
+    let index = this.searchItems.indexOf(searchItem);
+    if (index > -1) {
+      this.searchItems.splice(index, 1);
     }
   }
 
@@ -472,7 +501,7 @@ export class Search extends Pagination {
 
   async handleInputEvent(event) {
     if (
-      !this.searchName.value &&
+      !this.getSearchItemsAsString() &&
       !this.startDate.value &&
       !this.endDate.value &&
       !this.amount.value &&
@@ -491,7 +520,7 @@ export class Search extends Pagination {
   }
 
   clearInputs() {
-    this.searchName.value = "";
+    this.clearSearchItems();
     this.startDate.value = "";
     this.endDate.value = "";
     this.amount.value = "";
@@ -506,8 +535,28 @@ export class Search extends Pagination {
     }
   }
 
+  clearSearchItems() {
+    for (let searchItem of this.searchItems) {
+      searchItem.inputEl.value = "";
+    }
+  }
+
+  getSearchItemsAsString() {
+    return this.searchItems.reduce(
+      (string, item) => string + item.inputEl.value,
+      ""
+    );
+  }
+
+  getSearchItemsAsJson() {
+    let array = this.searchItems
+      .filter((item) => item.inputEl.value.length > 0)
+      .map((item) => item.inputEl.value);
+    return JSON.stringify(array);
+  }
+
   setSearchParams() {
-    params.set("name", this.searchName.value);
+    params.set("name", this.getSearchItemsAsJson());
     params.set("startDate", this.startDate.value);
     params.set("endDate", this.endDate.value);
     params.set("amount", this.amount.value);

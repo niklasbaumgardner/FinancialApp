@@ -67,3 +67,20 @@ const paginationOwner = new PaginationOwner(
 
 document.getElementById("name").addEventListener("input", checkInput);
 document.getElementById("amount").addEventListener("input", checkInput);
+
+let addNewSearchItemButton = document.getElementById("add-search-terms-button");
+
+function onAddSearchItem() {
+  let searchItem = document.createElement("search-item");
+
+  addNewSearchItemButton.parentNode.insertBefore(
+    searchItem,
+    addNewSearchItemButton
+  );
+
+  searchItem.dispatchEvent(
+    new CustomEvent("SearchItemAdded", { bubbles: true, composed: true })
+  );
+}
+
+addNewSearchItemButton.addEventListener("click", onAddSearchItem);

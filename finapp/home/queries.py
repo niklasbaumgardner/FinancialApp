@@ -1,7 +1,7 @@
 from finapp.models import Budget, Transaction, PaycheckPrefill
 from finapp.extensions import db
 from sqlalchemy import extract
-from sqlalchemy.sql import func
+from sqlalchemy.sql import func, or_
 from flask_login import current_user
 from datetime import date
 
@@ -367,9 +367,13 @@ def search(
 
     if name:
         transactions = (
-            transactions.filter(Transaction.name.ilike(f"%{name}%"))
+            transactions.filter(
+                or_(Transaction.name.ilike(f"%{search_name}%") for search_name in name)
+            )
             if transactions
-            else Transaction.query.filter(Transaction.name.ilike(f"%{name}%"))
+            else Transaction.query.filter(
+                or_(Transaction.name.ilike(f"%{search_name}%") for search_name in name)
+            )
         )
     if amount is not None:
         transactions = (
