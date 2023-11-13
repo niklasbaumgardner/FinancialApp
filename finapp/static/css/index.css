@@ -240,6 +240,8 @@ button:focus-visible {
 search-item {
   display: inline-flex;
   align-items: center;
+  flex-grow: 1;
+  min-width: 33%;
 }
 
 search-item > .btn-close {
@@ -247,7 +249,7 @@ search-item > .btn-close {
 }
 
 .search-items-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
   gap: 8px;
+  flex-wrap: wrap;
 }
