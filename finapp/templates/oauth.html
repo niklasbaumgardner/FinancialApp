@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+<!-- <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+<script>
+  (function () {
+    let linkToken = localStorage.getItem("link_token");
+    console.log(linkToken);
+    let handler = Plaid.create({
+      token: linkToken,
+      receivedRedirectUri: window.location.href,
+      onSuccess: function (public_token) {
+        postRequest(
+          "/api/set_access_token",
+          { public_token: public_token },
+          function (data) {
+            location.href = "https://example.com";
+          }
+        );
+      },
+    });
+
+    handler.open();
+  })();
+</script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
+<script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+<script>
+  (function ($) {
+    var linkToken = localStorage.getItem("link_token");
+    var handler = Plaid.create({
+      token: linkToken,
+      receivedRedirectUri: window.location.href,
+      onSuccess: function (public_token) {
+        $.post(
+          "/api/set_access_token",
+          { public_token: public_token },
+          function (data) {
+            location.href = "https://example.com";
+          }
+        );
+      },
+    });
+    handler.open();
+  })(jQuery);
+</script>

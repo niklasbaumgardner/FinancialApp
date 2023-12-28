@@ -1,4 +1,5 @@
-from finapp.models import Budget, Transaction, PaycheckPrefill
+from curses import curs_set
+from finapp.models import Budget, Transaction, PaycheckPrefill, PlaidAccessToken
 from finapp.extensions import db
 from sqlalchemy import extract
 from sqlalchemy.sql import func, or_
@@ -533,6 +534,41 @@ def _delete_prefill(prefill):
     if prefill:
         db.session.delete(prefill)
         db.session.commit()
+
+
+##
+## Plaid queirs
+##
+
+
+def create_plaid_access_token(access_token, item_id):
+    plaid_access_token = PlaidAccessToken(
+        user_id=current_user.id, access_token=access_token, item_id=item_id, cursor="now"
+    )
+
+    db.session.add(plaid_access_token)
+    db.session.commit()
+
+
+def get_plaid_access_token_by_item_id(item_id):
+    plaid_access_token = PlaidAccessToken.query.filter_by(
+        user_id=current_user.id, item_id=item_id
+    ).first()
+
+    return plaid_access_token
+
+
+def get_all_access_tokens():
+    return PlaidAccessToken.query.filter_by(
+        user_id=current_user.id,
+    ).all()
+
+
+def update_plaid_cursor(item_id, new_cursor):
+    plaid_access_token = get_plaid_access_token_by_item_id(item_id=item_id)
+    plaid_access_token.cursor = new_cursor
+
+    db.session.commit()
 
 
 ##

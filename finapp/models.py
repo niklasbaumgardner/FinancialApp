@@ -56,3 +56,11 @@ class PaycheckPrefill(db.Model):
     total_amount = db.Column(db.Float, nullable=False)
     budget_id = db.Column(db.Integer, db.ForeignKey("budget.id"), nullable=False)
     amount = db.Column(db.Float, nullable=False)
+
+
+class PlaidAccessToken(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    access_token = db.Column(db.String(90), nullable=False)
+    item_id = db.Column(db.String(90), nullable=False)
+    cursor = db.Column(db.String(120), nullable=True)

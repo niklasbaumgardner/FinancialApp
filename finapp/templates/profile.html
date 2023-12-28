@@ -8,6 +8,8 @@
     <script>
         const USERNAME_UNIQUE_URL = "{{ url_for('auth.username_unique') }}";
         const EMAIL_UNIQUE_URL = "{{ url_for('auth.email_unique') }}";
+        const PLAID_CLIENT_LINK_TOKEN_URL = "{{ url_for('plaid.create_link_token') }}";
+        const PLAID_ACOUNTS_URL = "{{ url_for('plaid.get_plaid_accounts') }}";
     </script>
 
     <div class="row justify-content-center align-items-center">
@@ -43,10 +45,18 @@
                             <p class="small"><a href="{{ url_for('auth.password_request') }}">Reset password</a></p>
                         </div>
                     </form>
+
+                    <ul id="accounts-list" class="list-group mb-4">
+                    </ul>
+                    <button class="btn btn-primary w-100" id="link-button">Link bank account</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script src="/static/js/checkUserUnique.js"></script>
+    <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+    <script src="/static/js/createLinkTokenPlaid.js"></script>
+    <script src="/static/js/plaidAccounts.js"></script>
 {% endblock content %}
+
