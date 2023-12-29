@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, request, abort
-from flask_login import login_required
+from flask_login import login_required, current_user
 from datetime import datetime, date
 from finapp.home import helpers, queries
 from jinja2 import Template
@@ -492,6 +492,15 @@ def search(b_id):
     }
 
 
+@home.route("/set_theme", methods=["GET"])
+@login_required
+def set_theme():
+    color = request.args.get("theme")
+    color = "dark" if color == "dark" else "light"
+    queries.set_theme(color=color)
+    return {"success": True}
+
+
 def budgets_array(value):
     """
     custom budgets list to js array filter
@@ -526,3 +535,15 @@ FILTERS["budgets_array"] = budgets_array
 FILTERS["json_array"] = json_array
 FILTERS["to_json"] = to_json
 FILTERS["prettify_money"] = prettify_money
+
+
+@home.context_processor
+def utility_processor():
+    def get_theme():
+        if current_user.is_authenticated:
+            theme = queries.get_theme()
+            if theme:
+                return theme.color
+        return ""
+
+    return dict(theme=get_theme())

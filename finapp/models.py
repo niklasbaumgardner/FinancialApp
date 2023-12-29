@@ -31,6 +31,12 @@ class User(db.Model, UserMixin):
         return User.query.get(user_id)
 
 
+class Theme(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    color = db.Column(db.String, nullable=False)
+
+
 class Budget(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)

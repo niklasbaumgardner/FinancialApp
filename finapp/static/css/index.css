@@ -1,5 +1,4 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter");
-@import url("dark.css");
 
 * {
   font-family: "Inter", sans-serif !important;
@@ -28,6 +27,10 @@ body {
 
 .fixed-top {
   z-index: 799;
+}
+
+.nb-nav-bg {
+  background-color: var(--sl-color-neutral-200);
 }
 
 .alert-absolute {
@@ -287,10 +290,19 @@ sl-dialog[open] {
   position: fixed;
   z-index: 9999;
 }
+
 sl-dialog:not([open]) {
   display: none;
 }
 
 .button-div:not([editing], [type="new"]) {
   cursor: pointer;
+}
+
+input::placeholder {
+  color: white;
+}
+
+:not(:defined) {
+  visibility: hidden;
 }

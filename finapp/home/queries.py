@@ -1,4 +1,4 @@
-from finapp.models import Budget, Transaction, PaycheckPrefill
+from finapp.models import Budget, Transaction, PaycheckPrefill, Theme
 from finapp.extensions import db
 from sqlalchemy import extract
 from sqlalchemy.sql import func, or_
@@ -536,3 +536,22 @@ def _delete_prefill(prefill):
 
 
 ##
+## Theme queries
+##
+
+
+def get_theme():
+    return Theme.query.filter_by(user_id=current_user.id).first()
+
+
+def set_theme(color):
+    theme = get_theme()
+    if theme:
+        theme.color = color
+        db.session.commit()
+    else:
+        theme = Theme(user_id=current_user.id, color=color)
+        db.session.add(theme)
+        db.session.commit()
+
+    return theme
