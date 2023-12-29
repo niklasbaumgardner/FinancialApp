@@ -1,4 +1,4 @@
-import { Transaction } from "/static/js/transaction.mjs";
+import { Transaction } from "./transaction.mjs";
 import { PaginationOwner } from "./pagination.mjs";
 
 function checkInput() {

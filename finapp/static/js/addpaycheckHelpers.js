@@ -1,11 +1,23 @@
 "use strict";
 
-function openDeletePrefillModa(id) {
-  document.getElementById(id).style.display = "block";
+function openPreviousPaycheckDialog() {
+  const dialog = document.querySelector("sl-dialog");
+  dialog.show();
 }
 
-function openPreviousPaycheckModal() {
-  document.getElementById("previousPaycheckModal").style.display = "block";
+function closePreviousPaycheckDialog() {
+  const dialog = document.querySelector("sl-dialog");
+  dialog.hide();
+}
+
+function openDeletePrefillDialog(id) {
+  const dialog = document.getElementById(id);
+  dialog.show();
+}
+
+function closeDeletePrefillDialog(id) {
+  const dialog = document.getElementById(id);
+  dialog.hide();
 }
 
 async function sendDeletePrefillRequest(event, id, amount, url) {
@@ -32,7 +44,7 @@ async function sendDeletePrefillRequest(event, id, amount, url) {
 }
 
 function fillBudgetAmountsFromPrefill(id, totalAmount) {
-  document.getElementById("previousPaycheckModal").style.display = "none";
+  closePreviousPaycheckDialog();
 
   let table = document.getElementById(id);
   let list = [];
@@ -57,19 +69,6 @@ function fillBudgetAmountsFromPrefill(id, totalAmount) {
   isPaycheckValid();
 }
 
-function isPaycheckNameValid() {
-  let name = document.getElementById("paycheckName").value;
-  let name_error = document.getElementById("name_error");
-
-  if (!name) {
-    name_error.classList.add("display-block");
-    return false;
-  } else {
-    name_error.classList.remove("display-block");
-    return true;
-  }
-}
-
 const isPercentage = () => document.getElementById("isPercentage").checked;
 
 function isPaycheckValid() {
@@ -91,11 +90,24 @@ function isPaycheckValid() {
   console.log(!(nameValid && amountValid));
 }
 
+function isPaycheckNameValid() {
+  let nameEl = document.getElementById("paycheckName");
+  let name = nameEl.value;
+
+  if (!name) {
+    nameEl.setAttribute("help-text", "Please enter a name for the paycheck.");
+    return false;
+  } else {
+    nameEl.setAttribute("help-text", "");
+    return true;
+  }
+}
+
 function isDollarAmountsValid() {
   let amountValid = false;
+  let amountEl = document.getElementById("paycheck_amount");
+  let total = amountEl.value;
 
-  let total = document.getElementById("paycheck_amount").value;
-  // prefillBudgets(total);
   if (total !== null) {
     let budgets = document.getElementsByClassName("all-budgets");
     let b_total = 0;
@@ -106,14 +118,14 @@ function isDollarAmountsValid() {
     b_total = parseFloat(b_total).toFixed(2);
 
     if (b_total == total) {
-      let total_error = document.getElementById("amount_error");
-      total_error.classList.remove("display-block");
+      amountEl.setAttribute("help-text", "");
       amountValid = true;
     } else {
-      let total_error = document.getElementById("amount_error");
-      total_error.innerText = `$${total} is not equal to Budgets amount of $${b_total}.
-      Difference of $${Math.abs((total - b_total).toFixed(2))}`;
-      total_error.classList.add("display-block");
+      amountEl.setAttribute(
+        "help-text",
+        `$${total} is not equal to Budgets amount of $${b_total}.
+        Difference of $${Math.abs((total - b_total).toFixed(2))}`
+      );
     }
   }
 
@@ -122,10 +134,10 @@ function isDollarAmountsValid() {
 
 function isPercentagesValid() {
   let amountValid = false;
-
-  let paycheckAmount = document.getElementById("paycheck_amount").value;
+  let amountEl = document.getElementById("paycheck_amount");
+  let paycheckAmount = amountEl.value;
   let total = 100;
-  // prefillBudgets(total);
+
   if (total !== null) {
     let budgets = document.getElementsByClassName("all-budgets");
     let b_total = 0;
@@ -139,13 +151,13 @@ function isPercentagesValid() {
     b_total = parseFloat(b_total).toFixed(2);
 
     if (b_total == total) {
-      let total_error = document.getElementById("amount_error");
-      total_error.classList.add("display-none");
+      amountEl.setAttribute("help-text", "");
       amountValid = true;
     } else {
-      let total_error = document.getElementById("amount_error");
-      total_error.innerText = `Budgets breakdown (${b_total}%) does not add up too 100%.`;
-      total_error.classList.remove("display-none");
+      amountEl.setAttribute(
+        "help-text",
+        `Budgets breakdown (${b_total}%) does not add up too 100%.`
+      );
     }
   }
 
@@ -185,3 +197,20 @@ function toggleBudgetBreakdown() {
     }
   }
 }
+
+function addEventListeners() {
+  document
+    .getElementById("paycheckName")
+    .addEventListener("input", isPaycheckValid);
+  document
+    .getElementById("paycheck_amount")
+    .addEventListener("input", isPaycheckValid);
+
+  let budgets = document.getElementsByClassName("all-budgets");
+
+  for (let budget of budgets) {
+    budget.addEventListener("input", isPaycheckValid);
+  }
+}
+
+addEventListeners();

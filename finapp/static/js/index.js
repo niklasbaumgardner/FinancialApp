@@ -3,31 +3,56 @@
 const ACTIVE = [];
 const INACTIVE = [];
 
-function categorizeBudgets() {
-  let allBudgets = document.querySelectorAll(".budgets");
+function addNewBudget() {
+  let budgetCard = document.createElement("budget-card");
+  budgetCard.type = "new";
+  budgetCard.budget = { addNewBudgetUrl: ADD_NEW_BUDGET_URL };
 
-  for (let b of allBudgets) {
-    let active = b.querySelector(".activeState").checked;
-    if (active) {
-      ACTIVE[ACTIVE.length] = [b.id, b.querySelector(".fs-4").innerHTML];
-    } else {
-      INACTIVE[INACTIVE.length] = [b.id, b.querySelector(".fs-4").innerHTML];
-    }
-  }
-
-  // console.log(ACTIVE);
-  // console.log(INACTIVE);
+  addToActive(0, budgetCard);
 }
 
-function findNewIndex(id, name, active) {
+function closeDeleteBudgetDialog(id) {
+  const dialog = document.getElementById(id);
+  dialog.hide();
+}
+
+async function deleteBudgetRequest(event, id) {
+  const dialog = document.getElementById(id);
+  let form = dialog.querySelector("form");
+  let formData = new FormData(form);
+  await deleteRequest(form.action, formData);
+  dialog.remove();
+  let budgetCard = document.getElementById(`budget${id.replace("delete", "")}`);
+  budgetCard.remove();
+}
+
+async function categorizeBudgets() {
+  let activeRow = document
+    .querySelector(".budget-row")
+    .querySelectorAll("budget-card");
+  for (let b of activeRow) {
+    ACTIVE[ACTIVE.length] = b;
+  }
+
+  let inactiveRow = document
+    .querySelectorAll(".budget-row")[1]
+    .querySelectorAll("budget-card");
+  for (let b of inactiveRow) {
+    INACTIVE[INACTIVE.length] = b;
+  }
+}
+
+function findNewIndex(name, active) {
   let arr = active ? ACTIVE : INACTIVE;
 
-  if (arr.length == 0) {
+  if (arr.length === 0) {
     return 0;
   }
-  for (let [index, ele] of arr.entries()) {
-    let test = name.localeCompare(ele[1], "en", { sensitivity: "accent" });
-    // console.log(name, ele[1], test);
+  for (let [index, budgetCard] of arr.entries()) {
+    let test = name.localeCompare(budgetCard.budget.name, "en", {
+      sensitivity: "accent",
+    });
+
     if (test < 1) {
       return index;
     }
@@ -51,43 +76,63 @@ function removeElement(id) {
   return ele;
 }
 
-async function toggleBudgetActive(id, event) {
-  let active = event.target.checked;
-  const strId = `budget-${id}`;
+class BudgetManager {
+  constructor() {
+    window.addEventListener("Budget:ToggleActive", this);
+    window.addEventListener("Budget:AddBudget", this);
+  }
 
-  let temp = await sendToggle(id, active);
+  handleEvent(event) {
+    event.stopPropagation();
+    event.preventDefault();
 
-  await new Promise((r) => setTimeout(r, 500));
+    switch (event.type) {
+      case "Budget:ToggleActive":
+        this.handleToggleActive(event);
+        break;
+      case "Budget:AddBudget":
+        this.handleAddBudget(event);
+        break;
+    }
+  }
 
-  if (active) {
-    let index = INACTIVE.findIndex((element) => element[0] == strId);
-    let name = INACTIVE[index][1];
-    // console.log(index);
-    INACTIVE.splice(index, 1);
-    // console.log(INACTIVE);
+  handleToggleActive(event) {
+    const budget = event.target;
+    budget.remove();
+    const active = budget.budget.isActive;
 
-    let ele = removeElement(strId);
+    if (active) {
+      let index = INACTIVE.findIndex((element) => element === budget);
+      INACTIVE.splice(index, 1);
 
-    let newIndex = findNewIndex(strId, name, active);
-    ACTIVE.splice(newIndex, 0, [strId, name]);
-    // console.log(ACTIVE);
+      let newIndex = findNewIndex(budget.budget.name, active);
+      ACTIVE.splice(newIndex, 0, budget);
 
-    addToActive(newIndex, ele);
-  } else {
-    let index = ACTIVE.findIndex((element) => element[0] == strId);
-    let name = ACTIVE[index][1];
-    // console.log(index);
-    ACTIVE.splice(index, 1);
-    // console.log(ACTIVE);
+      addToActive(newIndex, budget);
+    } else {
+      let index = ACTIVE.findIndex((element) => element === budget);
+      ACTIVE.splice(index, 1);
 
-    let ele = removeElement(strId);
+      let newIndex = findNewIndex(budget.budget.name, active);
+      INACTIVE.splice(newIndex, 0, budget);
 
-    let newIndex = findNewIndex(strId, name, active);
-    INACTIVE.splice(newIndex, 0, [strId, name]);
+      addToInactive(newIndex, budget);
+    }
+  }
 
-    addToInactive(newIndex, ele);
+  handleAddBudget(event) {
+    const budgetData = event.detail.budget;
+    const budget = document.createElement("budget-card");
+    budget.classList.add("button-div");
+    budget.budget = JSON.parse(budgetData);
+
+    let newIndex = findNewIndex(budget.budget.name, true);
+    ACTIVE.splice(newIndex, 0, budget);
+
+    addToActive(newIndex, budget);
   }
 }
 
 // function calls
 categorizeBudgets();
+const budgetManager = new BudgetManager();

@@ -20,9 +20,10 @@ async function postRequest(url, formData) {
   return response;
 }
 
-async function deleteRequest(url) {
+async function deleteRequest(url, formData) {
   let response = await fetch(url, {
     method: "DELETE",
+    body: formData,
   });
   response = await response.json();
   return response;

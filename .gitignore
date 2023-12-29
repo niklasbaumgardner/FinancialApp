@@ -138,3 +138,5 @@ db_backup/
 
 # vs code
 .vscode
+
+node_modules/

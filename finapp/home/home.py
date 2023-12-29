@@ -1,10 +1,4 @@
-from flask import (
-    Blueprint,
-    render_template,
-    redirect,
-    url_for,
-    request,
-)
+from flask import Blueprint, render_template, redirect, url_for, request, abort
 from flask_login import login_required
 from datetime import datetime, date
 from finapp.home import helpers, queries
@@ -54,12 +48,12 @@ def add_budget():
     except:
         amount = 0
 
-    if name and amount is not None:
+    if name:
         duplicate = queries.get_duplicate_budget_by_name(name)
         if not duplicate:
             budg = queries.create_budget(name)
 
-            if amount != 0:
+            if amount is not None and amount != 0:
                 str_date = request.form.get("date")
                 date = helpers.get_date_from_string(str_date)
                 queries.create_transaction(
@@ -69,7 +63,10 @@ def add_budget():
                     budget_id=budg.id,
                 )
 
-    return redirect(url_for("home.index"))
+            return {"budget": budg.to_json()}
+
+        abort(409)
+    abort(400)
 
 
 @home.route("/add_paycheck", methods=["GET"])
@@ -84,7 +81,7 @@ def add_paycheck():
                     item.insert(1, budget.name)
                     break
 
-    prefills = [ [k, v] for k, v in prefills.items() ]
+    prefills = [[k, v] for k, v in prefills.items()]
     prefills.sort(key=lambda x: x[0])
 
     return render_template(
@@ -199,9 +196,13 @@ def transfer():
 @home.route("/edit_budget/<int:id>", methods=["POST"])
 @login_required
 def edit_budget(id):
-    new_name = request.form.get(f"editName{id}")
-    queries.update_budget(id, name=new_name)
-    return redirect(url_for("home.index"))
+    new_name = request.form.get("name")
+    duplicate = queries.get_duplicate_budget_by_name(new_name)
+    if not duplicate:
+        queries.update_budget(id, name=new_name)
+        return {"sucess": True}
+
+    abort(409)
 
 
 @home.route("/get_page/<int:budget_id>")
@@ -331,7 +332,7 @@ def delete_transaction(b_id, t_id):
     return {"success": True}
 
 
-@home.route("/delete_budget/<int:b_id>", methods=["POST"])
+@home.route("/delete_budget/<int:b_id>", methods=["DELETE"])
 @login_required
 def delete_budget(b_id):
     new_budget_id = request.form.get("new_budget")
@@ -354,10 +355,10 @@ def delete_budget(b_id):
     for prefill in prefills:
         queries._delete_prefill(prefill)
 
-    # finall delete the budget
+    # finally delete the budget
     queries.delete_budget(b_id)
 
-    return redirect(url_for("home.index"))
+    return {"success": True}
 
 
 @home.route("/delete_prefill/<float:amount>", methods=["GET"])
@@ -487,7 +488,7 @@ def search(b_id):
         "transactions": transactions,
         "total": total,
         "num_pages": num_pages,
-        "search_sum": helpers.format_to_money_string(search_sum)
+        "search_sum": helpers.format_to_money_string(search_sum),
     }
 
 
@@ -502,6 +503,10 @@ def budgets_array(value):
     return lst
 
 
+def to_json(object):
+    return object.to_json()
+
+
 def prettify_money(value):
     """
     Formats a number into a dollar amount string
@@ -511,4 +516,5 @@ def prettify_money(value):
 
 
 FILTERS["budgets_array"] = budgets_array
+FILTERS["to_json"] = to_json
 FILTERS["prettify_money"] = prettify_money

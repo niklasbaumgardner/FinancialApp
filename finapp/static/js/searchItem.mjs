@@ -1,4 +1,5 @@
-import { NikElement, html } from "./customElement.mjs";
+import { NikElement } from "./customElement.mjs";
+import { html } from "./imports.mjs";
 
 export class SearchItem extends NikElement {
   static get queries() {

@@ -1,19 +1,33 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter');
+@import url("https://fonts.googleapis.com/css2?family=Inter");
+@import url("dark.css");
 
 * {
   font-family: "Inter", sans-serif !important;
+}
+
+body {
+  background-color: var(--sl-color-neutral-0);
 }
 
 .d-flex[hidden] {
   display: none !important;
 }
 
+.d-flex.gx-2 {
+  column-gap: .5rem;
+}
+
 .modal {
   display: none;
+  background-color: rgb(0, 0, 0, 0.8);
 }
 
 .modal[show] {
   display: block;
+}
+
+.fixed-top {
+  z-index: 799;
 }
 
 .alert-absolute {
@@ -29,15 +43,15 @@
 
 .gradient-custom {
   /* fallback for old browsers */
-  background: #6a11cb;
+  /* background: #6a11cb; */
 
   /* Chrome 10-25, Safari 5.1-6 */
-  background: -webkit-linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1));
+  /* background: -webkit-linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1)); */
 
   /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-  background: linear-gradient(to right, rgba(170, 17, 222, 1), rgba(37, 117, 252, 1));
+  /* background: linear-gradient(to right, rgba(170, 17, 222, 1), rgba(37, 117, 252, 1)); */
 
-  background-size: cover;
+  /* background-size: cover; */
 }
 
 .index-grid {
@@ -75,11 +89,6 @@
   .index-grid {
     grid-template-columns: 400px 400px 400px;
   }
-}
-
-.modal {
-  display: none;
-  background-color: rgb(0, 0, 0, 0.8);
 }
 
 .bg-light-dark {
@@ -122,12 +131,16 @@ input {
   max-width: 80px;
 }
 
-.mw-160 {
+.w-160 {
+  width: 160px;
+}
+
+.mxw-160 {
   max-width: 160px;
 }
 
-.w-160 {
-  width: 160px;
+.mw-160 {
+  min-width: 160px;
 }
 
 input:focus-visible,
@@ -252,4 +265,29 @@ search-item > .btn-close {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+}
+
+.nb-row {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.nb-row-sm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+sl-card {
+  width: 100%;
+}
+
+sl-dialog {
+  position: fixed;
+  z-index: 9999;
+}
+
+.button-div:not([editing], [type="new"]) {
+  cursor: pointer;
 }

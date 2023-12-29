@@ -1,3 +1,5 @@
+from flask import url_for
+import json
 from finapp.extensions import db, login_manager
 from flask_login import UserMixin
 from itsdangerous import URLSafeTimedSerializer
@@ -35,6 +37,20 @@ class Budget(db.Model):
     total = db.Column(db.Float, nullable=False)
     name = db.Column(db.String(60), nullable=False)
     is_active = db.Column(db.Boolean, nullable=False)
+
+    def to_json(self):
+        return json.dumps(
+            dict(
+                id=self.id,
+                user_id=self.user_id,
+                total=self.total,
+                name=self.name,
+                isActive=self.is_active,
+                url=url_for("home.view_budget", id=self.id),
+                editUrl=url_for("home.edit_budget", id=self.id),
+                toggleActiveUrl=url_for("home.toggle_budget"),
+            )
+        )
 
     def __str__(self):
         return f"{self.name : <30s}|{self.total : >10.2f}"
