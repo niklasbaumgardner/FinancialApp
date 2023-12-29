@@ -503,6 +503,13 @@ def budgets_array(value):
     return lst
 
 
+def json_array(lst):
+    newLst = []
+    for ele in lst:
+        newLst.append(ele.to_json())
+    return newLst
+
+
 def to_json(object):
     return object.to_json()
 
@@ -516,5 +523,6 @@ def prettify_money(value):
 
 
 FILTERS["budgets_array"] = budgets_array
+FILTERS["json_array"] = json_array
 FILTERS["to_json"] = to_json
 FILTERS["prettify_money"] = prettify_money

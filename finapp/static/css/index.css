@@ -283,9 +283,12 @@ sl-card {
   width: 100%;
 }
 
-sl-dialog {
+sl-dialog[open] {
   position: fixed;
   z-index: 9999;
+}
+sl-dialog:not([open]) {
+  display: none;
 }
 
 .button-div:not([editing], [type="new"]) {
