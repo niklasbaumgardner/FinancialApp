@@ -131,7 +131,7 @@ def password_reset():
 @auth.route("/profile", methods=["GET", "POST"])
 @login_required
 def profile():
-    user = User.query.filter_by(id=current_user.get_id()).first()
+    user = queries.getUserById(id=current_user.id)
     if request.method == "POST":
         username = request.form.get("username")
         email = request.form.get("email")

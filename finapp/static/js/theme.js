@@ -31,7 +31,7 @@ function setTheme(theme, options) {
 
   // Set html element theme
   document.documentElement.setAttribute("data-bs-theme", theme);
-  document.documentElement.setAttribute("class", `sl-theme-${theme}`);
+  document.documentElement.classList.toggle("sl-theme-dark", theme === "dark");
 
   // Set all buttons to inactive
   for (let button of getThemeButtons()) {
@@ -55,7 +55,7 @@ function setTheme(theme, options) {
   }
 }
 
-window.addEventListener("DOMContentLoaded", () => {
+(() => {
   if (THEME === "") {
     let storedTheme = getTheme();
     setTheme(storedTheme);
@@ -68,4 +68,4 @@ window.addEventListener("DOMContentLoaded", () => {
     let theme = event.detail.item.id;
     setTheme(theme);
   });
-});
+})();
