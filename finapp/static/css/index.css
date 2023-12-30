@@ -8,6 +8,10 @@ body {
   background-color: var(--sl-color-neutral-0);
 }
 
+a {
+  color: var(--sl-color-primary-700);
+}
+
 .d-flex[hidden] {
   display: none !important;
 }
@@ -305,4 +309,11 @@ input::placeholder {
 
 :not(:defined) {
   visibility: hidden;
+}
+
+:host,
+:root {
+  .button--medium {
+    --sl-button-font-size-medium: var(--sl-font-size-medium);
+  }
 }

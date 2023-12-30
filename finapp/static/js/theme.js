@@ -38,10 +38,6 @@ function setTheme(theme, options) {
     button.checked = button.id === theme;
   }
 
-  // Set theme button to active
-  // let currentThemeButton = getThemeButton(theme);
-  // currentThemeButton.checked = true;
-
   for (let icon of getThemeIcons()) {
     icon.hidden = true;
   }
