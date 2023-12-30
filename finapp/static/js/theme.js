@@ -1,9 +1,9 @@
 "use strict";
 
-const storage = window["localStorage"];
+const themeStorage = window["localStorage"];
 
 function getTheme() {
-  return storage.getItem("theme");
+  return themeStorage.getItem("theme");
 }
 
 function getThemeButton(theme) {
@@ -53,7 +53,7 @@ function setTheme(theme, options) {
     return;
   }
 
-  storage.setItem("theme", theme);
+  themeStorage.setItem("theme", theme);
   if (!(options?.dontSend === true)) {
     fetch(THEME_URL + "?" + new URLSearchParams({ theme }));
   }
