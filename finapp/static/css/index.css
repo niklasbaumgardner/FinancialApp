@@ -37,11 +37,9 @@ a {
   background-color: var(--sl-color-neutral-200);
 }
 
-.alert-absolute {
+.alerts {
   position: absolute;
-  z-index: 1;
-  max-width: 500px;
-  margin: -50px -0.25rem 0 -0.25rem;
+  top: 60px;
 }
 
 .display-block {
@@ -56,9 +54,10 @@ a {
   /* background: -webkit-linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1)); */
 
   /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-  /* background: linear-gradient(to right, rgba(170, 17, 222, 1), rgba(37, 117, 252, 1)); */
+  background: linear-gradient(to right, rgba(170, 17, 222, 1), #27bafd);
+  /* background-color: hsl(213.3 100% 65%); */
 
-  /* background-size: cover; */
+  background-size: cover;
 }
 
 .index-grid {

@@ -8,47 +8,47 @@
 
 {% block content %}
 
-<input type="date" id="date" name="date" hidden>
-
 <div class="row justify-content-center align-items-center">
     <div class="col-12 col-lg-8">
         <sl-card>
             <p class="card-title fs-2 mb-3">Transfer money</p>
             <sl-divider></sl-divider>
-            <form action="{{ url_for('home.transfer') }}" method="POST"></form>
-            <div class="row g-4 mb-4">
-                <div class="col-sm-6 col-lg-12">
-                    <div class="row">
-                        <div class="col-12 col-lg-6 mb-3">
-                            <sl-input label="Transaction name" id="paycheckName" name="name" placeholder="Transfer Me" autocomplete="niklas" required></sl-input>
+            <form action="{{ url_for('home.transfer') }}" method="POST">
+                <input type="date" id="date" name="date" hidden>
+                <div class="row g-4 mb-4">
+                    <div class="col-sm-6 col-lg-12">
+                        <div class="row">
+                            <div class="col-12 col-lg-6 mb-3">
+                                <sl-input label="Transaction name" id="paycheckName" name="name" placeholder="Transfer Me" autocomplete="niklas" required></sl-input>
+                            </div>
+                            <div class="col-12 col-lg-6 mb-3">
+                                <sl-input label="Transfer amount" type="number" step=".01" id="paycheck_amount" name="amount" placeholder="0.00" autocomplete="niklas" required></sl-input>
+                            </div>
                         </div>
-                        <div class="col-12 col-lg-6 mb-3">
-                            <sl-input label="Transfer amount" type="number" step=".01" id="paycheck_amount" name="amount" placeholder="0.00" autocomplete="niklas" required></sl-input>
+                    </div>
+                    <div class="col-sm-6 col-lg-12">
+                        <div class="row">
+                            <div class="col-12 col-lg-6 mb-3">
+                                <sl-select label="Source budget" placeholder="Please select" name="source_budget" id="source_budget" onchange="remove_from_dest()" required>
+                                    {% for budget in budgets %}
+                                        <sl-option class="source" id="source{{ budget.id }}" value="{{ budget.id }}">{{ str(budget) }}</sl-option>
+                                    {% endfor %}
+                                </sl-select>
+                            </div>
+                            <div class="col-12 col-lg-6 mb-3">
+                                <sl-select label="Destination budget" placeholder="Please select" name="dest_budget" id="dest_budget" onchange="remove_from_source()" required>
+                                    {% for budget in budgets %}
+                                        <sl-option class="dest" id="dest{{ budget.id }}" value="{{ budget.id }}">{{ str(budget) }}</sl-option>
+                                    {% endfor %}
+                                </sl-select>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-6 col-lg-12">
-                    <div class="row">
-                        <div class="col-12 col-lg-6 mb-3">
-                            <sl-select label="Source budget" placeholder="Please select" name="source_budget" id="source_budget" onchange="remove_from_dest()" required>
-                                {% for budget in budgets %}
-                                    <sl-option class="source" id="source{{ budget.id }}" value="{{ budget.id }}">{{ str(budget) }}</sl-option>
-                                {% endfor %}
-                            </sl-select>
-                        </div>
-                        <div class="col-12 col-lg-6 mb-3">
-                            <sl-select label="Destination budget" placeholder="Please select" name="dest_budget" id="dest_budget" onchange="remove_from_source()" required>
-                                {% for budget in budgets %}
-                                    <sl-option class="dest" id="dest{{ budget.id }}" value="{{ budget.id }}">{{ str(budget) }}</sl-option>
-                                {% endfor %}
-                            </sl-select>
-                        </div>
-                    </div>
+                <div class="row mb-2">
+                    <sl-button class="w-100" variant="primary" type="submit">Transfer</sl-button>
                 </div>
-            </div>
-            <div class="row mb-2">
-                <sl-button class="w-100" variant="primary" type="submit">Transfer</sl-button>
-            </div>
+            </form>
         </sl-card>
     </div>
 </div>

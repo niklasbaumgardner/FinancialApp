@@ -9,6 +9,11 @@ export class SearchItem extends NikElement {
     };
   }
 
+  connectedCallback() {
+    super.connectedCallback();
+    this.dispatchEvent(new CustomEvent("SearchItemAdded", { bubbles: true }));
+  }
+
   handleClick(event) {
     if (event.target.id === "search-remove") {
       this.dispatchEvent(
@@ -19,16 +24,19 @@ export class SearchItem extends NikElement {
   }
 
   render() {
-    return html`<input
+    return html`<sl-input
         id="search-name"
-        class="searchName form-control"
+        class="searchName w-100"
         type="text"
         placeholder="Search"
-      /><button
+      ></sl-input
+      ><sl-icon-button
         id="search-remove"
-        class="btn-close"
+        name="x-lg"
+        label="Remove"
+        style="font-size: 22px;"
         @click=${this.handleClick}
-      ></button>`;
+      ></sl-icon-button>`;
   }
 }
 customElements.define("search-item", SearchItem);

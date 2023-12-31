@@ -41,10 +41,10 @@ def login():
             return redirect(url_for("home.index"))
 
         elif user:
-            flash("Password was incorrect. Try again", "alert-primary")
+            flash("Password was incorrect. Try again", "danger")
             return render_template("login.html", email=email)
 
-        flash("User not found. Please create an acount", "alert-primary")
+        flash("User not found. Please create an acount", "neutral")
 
     return render_template("login.html", email=email)
 
@@ -58,22 +58,22 @@ def signup():
         password2 = request.form.get("password2")
 
         if not queries.is_email_unique(email):
-            flash("Email already exists. Please log in", "alert-primary")
+            flash("Email already exists. Please log in", "primary")
             return redirect(url_for("auth.login", email=email))
 
         if not queries.is_username_unique(username):
             flash(
                 "Username already exists. Please choose a different username",
-                "alert-primary",
+                "danger",
             )
             return render_template("signup.html")
 
         if password1 != password2:
-            flash("Passwords don't match. Try again", "alert-primary")
+            flash("Passwords don't match. Try again", "warning")
             return render_template("signup.html", email=email)
 
         queries.createUser(email=email, username=username, password=password1)
-        flash("Sign up succesful", "alert-primary")
+        flash("Sign up succesful", "success")
         return redirect(url_for("auth.login"))
 
     return render_template("signup.html")
@@ -92,7 +92,7 @@ def password_request():
         send_reset_email(user)
         flash(
             "An email has been sent with instructions to reset your password. (Check spam folder)",
-            "alert-primary",
+            "primary",
         )
         return redirect(url_for("auth.login"))
 
@@ -105,7 +105,7 @@ def password_reset():
     if request.method == "POST":
         user = User.verify_reset_token(token)
         if not user:
-            flash("That is an invalid or expired token", "alert-primary")
+            flash("That is an invalid or expired token", "danger")
             if current_user.is_authenticated:
                 return redirect(url_for("auth.profile"))
             else:
@@ -115,13 +115,13 @@ def password_reset():
         password2 = request.form.get("password2")
 
         if password1 != password2:
-            flash("Passwords are not equal. Please try again", "alert-primary")
+            flash("Passwords are not equal. Please try again", "warning")
             return render_template("password_reset.html")
 
         queries.updateUserPasswod(user.id, password=password1)
         flash(
             "Your password has been updated! You are now able to log in",
-            "alert-primary",
+            "success",
         )
         return redirect(url_for("auth.login"))
 

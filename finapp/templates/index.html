@@ -22,8 +22,6 @@
     </div>
 </div>
 
-<input type="date" id="date" hidden>
-
 {% for group in budgets %}
     <div class="index-grid mb-5 pb-5 budget-row">
         {% for budget in group %}
@@ -54,6 +52,8 @@
         </sl-dialog>
     {% endfor %}
 {% endfor %}
+
+<input type="date" id="date" name="date" hidden>
 
 <script src="/static/js/index.js"></script>
 <script src="/static/js/setdate.js"></script>

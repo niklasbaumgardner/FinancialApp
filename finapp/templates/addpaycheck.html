@@ -2,16 +2,13 @@
 
 {% block title %}Add Paycheck{% endblock title %}
 {% block addtransaction %}active{% endblock addtransaction %}
-{% block backButton %}<sl-button href="/" class="me-5" variant="primary" outline><sl-icon slot="prefix" name="caret-left"></sl-icon>Back</sl-button>{% endblock backButton %}
+{% block backButton %}<sl-button href="/" class="me-4" variant="primary" outline><sl-icon slot="prefix" name="caret-left"></sl-icon>Back</sl-button>{% endblock backButton %}
 
 
 {% block content %}
-<sl-card>
-    <div class="row">
-        <div class="col-lg-5 hidden-on-smaller-992">
-            <img src="/static/images/money-large.png" class="img-fluid rounded-start img-full" alt="Money image" loading="lazy">
-        </div>
-        <div class="col-lg-7">
+<div class="row justify-content-center align-items-center">
+    <div class="col-12 col-lg-8">
+        <sl-card>
             <p class="card-title fs-2 mb-3">Add paycheck</p>
             <sl-divider></sl-divider>
             <form action="{{ url_for('home.paycheck') }}" method="POST">
@@ -48,15 +45,13 @@
                         </ul>
                     </div>
                 </div>
-                <div class="row">
-                    <div>
-                        <sl-button id="paycheckBtn" class="w-100" type="submit" variant="primary" disabled>Add paycheck</sl-button>
-                    </div>
+                <div class="row mb-2">
+                    <sl-button id="paycheckBtn" class="w-100" type="submit" variant="primary" disabled>Add paycheck</sl-button>
                 </div>
             </form>
-        </div>
+        </sl-card>
     </div>
-</sl-card>
+</div>
 
 
 {% if showPrefills %}

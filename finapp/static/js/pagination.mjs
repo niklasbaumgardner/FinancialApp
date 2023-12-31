@@ -22,54 +22,31 @@ export class PaginationOwner {
     this.searchIcon = document.getElementById("searchIcon");
     this.searchInputs = document.getElementById("searchInputs");
 
-    for (let searchButton of document.querySelectorAll(".search-toggle")) {
-      searchButton.addEventListener("click", (event) => {
-        this.searchClickFunction(event);
-      });
-    }
-
-    this.sortOptions = document.querySelectorAll(
-      "#sort-options .dropdown-item"
-    );
-    for (let sortButton of this.sortOptions) {
-      sortButton.addEventListener("click", (event) => {
-        this.sortTransactions(event);
-      });
-    }
-
-    this.sortOptionsSearch = document.querySelectorAll(
-      "#sort-options-search .dropdown-item"
-    );
-    for (let sortButton of this.sortOptionsSearch) {
-      sortButton.addEventListener("click", (event) => {
-        this.sortTransactions(event);
-      });
-    }
-
     document.addEventListener("RequestNewPages", this);
+    document.addEventListener("SortingChanged", this);
+    document.addEventListener("ToggleSearching", this);
   }
 
   handleEvent(event) {
     switch (event.type) {
-      case "click":
-        this.handleClick(event);
-        break;
       case "RequestNewPages":
         this.requestNewPages(event.detail);
+        break;
+      case "SortingChanged":
+        this.handleSortingChanged(event);
+        break;
+      case "ToggleSearching":
+        this.toggleSearch(event.detail.searching);
         break;
     }
   }
 
-  handleClick(event) {
-    // pass
-  }
-
-  toggleSearch() {
-    this.searching = !this.searching;
+  toggleSearch(searching) {
+    this.searching = searching;
 
     if (this.searching) {
-      this.search.clearInputs();
       this.search.init(1);
+      this.search.clearInputs();
       this.currentPagination = this.search;
     } else {
       this.pagination.init(1);
@@ -77,11 +54,16 @@ export class PaginationOwner {
     }
   }
 
-  searchClickFunction(event) {
-    this.searchIcon.toggleAttribute("hidden");
-    this.searchInputs.toggleAttribute("hidden");
+  handleSortingChanged(event) {
+    let sort = event.detail.sort;
+    this.currentPagination.sort = sort;
 
-    this.toggleSearch();
+    console.log(sort, this.currentPagination.sort);
+
+    this.requestNewPages({
+      lessThanCurrentPage: true,
+      greaterThanCurrentPage: true,
+    });
   }
 
   async sortTransactions(event) {
@@ -438,10 +420,10 @@ export class Pagination {
 }
 
 export class Search extends Pagination {
-  constructor(transactions, numTransactions, currentPage, numPages, url) {
-    super(transactions, numTransactions, currentPage, numPages, url);
+  init(currentPage) {
+    super.init(currentPage);
 
-    this.searchItems = [...document.querySelectorAll("search-item")];
+    this.searchItems = [];
     this.startDate = document.getElementById("startDate");
     this.endDate = document.getElementById("endDate");
     this.amount = document.getElementById("searchAmount");
@@ -459,6 +441,8 @@ export class Search extends Pagination {
 
     document.addEventListener("SearchItemAdded", this);
     document.addEventListener("SearchItemRemoved", this);
+
+    // this.initialized = true;
   }
 
   handleEvent(event) {
@@ -489,6 +473,8 @@ export class Search extends Pagination {
     if (index > -1) {
       this.searchItems.splice(index, 1);
     }
+
+    this.handleInputEvent();
   }
 
   pageUrlWithParams(page) {
