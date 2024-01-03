@@ -71,6 +71,22 @@ class Transaction(db.Model):
     date = db.Column(db.Date, nullable=False)
     is_transfer = db.Column(db.Boolean, nullable=True)
 
+    def to_json(self):
+        return json.dumps(
+            dict(
+                id=self.id,
+                userId=self.user_id,
+                name=self.name,
+                budgetId=self.budget_id,
+                amount=self.amount,
+                date=self.date.strftime("%Y-%m-%d"),
+                isTransfer=self.is_transfer,
+                editUrl=url_for(
+                    "home.edit_transaction", b_id=self.budget_id, t_id=self.id
+                ),
+            )
+        )
+
 
 class PaycheckPrefill(db.Model):
     id = db.Column(db.Integer, primary_key=True)

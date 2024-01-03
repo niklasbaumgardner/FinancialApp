@@ -67,17 +67,7 @@ def jsify_transactions(transactions):
     t_list = []
 
     for t in transactions:
-        temp = [
-            t.id,
-            t.name,
-            t.amount,
-            format_to_money_string(t.amount),
-            t.date.strftime("%Y-%m-%d"),
-            t.is_transfer,
-            t.budget_id,
-            url_for("home.edit_transaction", b_id=t.budget_id, t_id=t.id),
-        ]
-        t_list.append(temp)
+        t_list.append(t.to_json())
 
     return t_list
 

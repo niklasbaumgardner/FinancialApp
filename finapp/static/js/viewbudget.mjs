@@ -1,4 +1,3 @@
-import { Transaction } from "./transaction.mjs";
 import { PaginationOwner } from "./pagination.mjs";
 
 function checkInput() {
@@ -54,7 +53,8 @@ window.addEventListener("keydown", keydownHandler, { once: true });
 
 const transactionArray = [];
 for (let t of transactionsPy) {
-  let transaction = new Transaction(...t);
+  let transaction = document.createElement("nb-transaction");
+  transaction.transaction = JSON.parse(t);
   transactionArray.push(transaction);
 }
 
@@ -67,20 +67,3 @@ const paginationOwner = new PaginationOwner(
 
 document.getElementById("name").addEventListener("input", checkInput);
 document.getElementById("amount").addEventListener("input", checkInput);
-
-let addNewSearchItemButton = document.getElementById("add-search-terms-button");
-
-function onAddSearchItem() {
-  let searchItem = document.createElement("search-item");
-
-  addNewSearchItemButton.parentNode.insertBefore(
-    searchItem,
-    addNewSearchItemButton
-  );
-
-  searchItem.dispatchEvent(
-    new CustomEvent("SearchItemAdded", { bubbles: true, composed: true })
-  );
-}
-
-addNewSearchItemButton.addEventListener("click", onAddSearchItem);

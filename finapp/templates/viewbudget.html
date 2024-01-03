@@ -51,30 +51,21 @@
 
 <search-budget-card></search-budget-card>
 
-<article class="card mb-4">
-    <div class="card-body">
-        <ul id="transactionList" class="list-group">
-            <li id="emptyTransaction" class="list-group-item border-0" hidden="true">
-                <div class="d-flex justify-content-center">
-                    <p class="fs-5">No transactions found</p>
-                </div>
-            </li>
-        </ul>
+<sl-card class="mb-4">
+    <div id="transactionList" class="">
+        <div id="emptyTransaction" class="" hidden="true">
+            <div class="d-flex justify-content-center">
+                <p class="fs-5">No transactions found</p>
+            </div>
+        </div>
     </div>
-</article>
+</sl-card>
+
 <nav aria-label="...">
-    <ul class="pagination">
-        <li id="prev" class="page-item">
-            <button class="page-link">
-                <span aria-hidden="true">&laquo;</span>
-            </button>
-        </li>
-        <li id="next" class="page-item">
-            <button class="page-link">
-                <span aria-hidden="true">&raquo;</span>
-            </button>
-        </li>
-    </ul>
+    <sl-button-group label="Pagination" class="pagination">
+        <sl-button id="prev" variant="primary" outline label="Previous page"><sl-icon name="chevron-left"></sl-icon></sl-button>
+        <sl-button id="next" variant="primary" outline label="Next page"><sl-icon name="chevron-right"></sl-icon></sl-button>
+    </sl-button-group>
 </nav>
 
 <div id="moveModals"></div>
@@ -82,6 +73,7 @@
 
 
     <script src="/static/js/setdate.js"></script>
+    <script src="/static/js/transaction.mjs" type="module"></script>
     <script src="/static/js/viewbudget.mjs" type="module"></script>
     <script src="/static/js/viewBudgetSearchCard.mjs" type="module"></script>
 

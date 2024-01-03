@@ -297,9 +297,9 @@ def view_budget(id):
 @home.route("/edit_transaction/<int:b_id>/<int:t_id>", methods=["POST"])
 @login_required
 def edit_transaction(b_id, t_id):
-    new_name = request.form.get(f"editName{t_id}")
-    new_amount = request.form.get(f"editAmount{t_id}")
-    new_date = request.form.get(f"editDate{t_id}")
+    new_name = request.form.get(f"name")
+    new_amount = request.form.get(f"amount")
+    new_date = request.form.get(f"date")
     page = request.form.get("page")
     page = page if page else 1
 
@@ -308,7 +308,10 @@ def edit_transaction(b_id, t_id):
         b_id=b_id, t_id=t_id, name=new_name, amount=new_amount, new_date=new_date
     )
 
-    return {"success": True}
+    return {
+        "success": True,
+        "transaction": queries.get_transaction(budget_id=b_id, trans_id=t_id).to_json(),
+    }
 
 
 @home.route("/move_transaction/<int:sb_id>/<int:t_id>", methods=["POST"])
@@ -457,7 +460,10 @@ def search(b_id):
     min_amount = request.args.get("minAmount")
     max_amount = request.args.get("maxAmount")
     name = request.args.get("name")
-    name = json.loads(name)
+    if name:
+        name = json.loads(name)
+    else:
+        name = []
     page = request.args.get("page", -1, type=int)
 
     month = request.args.get("month", 0, type=int)

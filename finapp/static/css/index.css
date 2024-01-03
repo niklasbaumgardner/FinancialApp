@@ -54,10 +54,10 @@ a {
   /* background: -webkit-linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1)); */
 
   /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-  background: linear-gradient(to right, rgba(170, 17, 222, 1), #27bafd);
+  /* background: linear-gradient(to right, rgba(170, 17, 222, 1), #27bafd); */
   /* background-color: hsl(213.3 100% 65%); */
 
-  background-size: cover;
+  /* background-size: cover; */
 }
 
 .index-grid {
@@ -149,19 +149,15 @@ input {
   min-width: 160px;
 }
 
+.width-fit-content {
+  width: fit-content;
+}
+
 input:focus-visible,
 button:focus-visible {
   outline: 2px solid #0d6efd;
   outline-offset: 2px;
   opacity: 1;
-}
-
-#transactionList > transaction > li {
-  border: none;
-}
-
-#transactionList > transaction:not(:last-child) > li {
-  border-bottom: 1px solid rgba(255, 255, 255, .5);
 }
 
 .btn-outline-grey {
@@ -211,6 +207,7 @@ button:focus-visible {
   display: grid;
   grid-template: "name amount buttons";
   grid-template-columns: repeat(3, 1fr);
+  gap: .5rem;
 }
 
 .name {
@@ -219,6 +216,8 @@ button:focus-visible {
 
 .amount {
   grid-area: amount;
+  display: flex;
+  justify-content: center;
 }
 
 .buttons {
@@ -227,8 +226,7 @@ button:focus-visible {
 }
 
 .edit-amount {
-  width: 25%;
-  min-width: 100px;
+  width: fit-content;
 }
 
 .column-flex {
@@ -237,23 +235,31 @@ button:focus-visible {
   gap: .5rem;
 }
 
-@media (max-width: 575px) {
-  transaction[editing] .transaction-grid {
-    grid-template:
-      "name amount" 1fr
-      "name buttons" 1fr;
+@media (max-width: 768px) {
+  transaction[editing] .transaction-grid,
+  nb-transaction[editing] .transaction-grid {
+    grid-template-areas:
+      "name amount"
+      "name buttons";
     gap: .5rem;
-
-  }
-
-  .buttons > .show-edit {
-    align-items: center;
-    height: 100%;
+    grid-template-columns: repeat(2, minmax(min(20px, 100%), 1fr));
   }
 
   .edit-amount {
     width: 100%;
   }
+}
+
+.transaction-buttons {
+  display: flex;
+  justify-content: end;
+  align-items: start;
+  gap: .5rem;
+}
+
+.transaction-buttons > * {
+  width: fit-content;
+  flex-shrink: 0;
 }
 
 search-item {

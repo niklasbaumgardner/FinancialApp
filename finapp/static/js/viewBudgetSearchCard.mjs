@@ -21,20 +21,32 @@ class BudgetSearchCard extends NikElement {
     this.numSearchItems = 1;
     this.searchItems = [document.createElement("search-item")];
     this.exactAmount = true;
+    this.exactDate = true;
+
+    document.addEventListener("SearchTotalChanged", (event) =>
+      this.handleSearchTotalChanged(event)
+    );
   }
 
   static properties = {
     searching: { type: Boolean, reflect: true },
     numSearchItems: { type: Number, reflect: true },
     exactAmount: { type: Boolean, reflect: true },
+    exactDate: { type: Boolean, reflect: true },
   };
 
   static get queries() {
     return {
       dropdownItems: { all: "sl-menu-item" },
-      nameInputEl: "#budgetName",
-      amountInputEl: "#budgetAmount",
-      submitButtonEl: "#saveButton",
+      inputEls: { all: "sl-input" },
+      amountInputEl: "#searchAmount",
+      maxAmountInputEl: "#maxAmount",
+      minAmountInputEl: "#minAmount",
+      dateInputEl: "#exactDate",
+      startDateInputEl: "#startDate",
+      endDateInputEl: "#endDate",
+      searchCountEl: "#searchResultsCount",
+      searchSumEl: "#searchResultsSum",
     };
   }
 
@@ -50,8 +62,47 @@ class BudgetSearchCard extends NikElement {
     }
   }
 
+  get searchItemValuesAsString() {
+    return this.searchItems.reduce(
+      (string, item) => string + item.inputEl.value,
+      ""
+    );
+  }
+
+  get searchItemValuesAsJsonString() {
+    let array = this.searchItems
+      .filter((item) => item.inputEl.value.length > 0)
+      .map((item) => item.inputEl.value);
+    return JSON.stringify(array);
+  }
+
+  get searchValuesObject() {
+    if (!this.searching) {
+      return null;
+    }
+
+    let searchValues = {};
+    searchValues.name = this.searchItemValuesAsJsonString;
+
+    if (this.exactAmount) {
+      searchValues.amount = this.amountInputEl.value;
+    } else {
+      searchValues.minAmount = this.minAmountInputEl.value;
+      searchValues.maxAmount = this.maxAmountInputEl.value;
+    }
+
+    if (this.exactDate) {
+      searchValues.startDate = this.dateInputEl.value;
+      searchValues.endDate = this.dateInputEl.value;
+    } else {
+      searchValues.startDate = this.startDateInputEl.value;
+      searchValues.endDate = this.endDateInputEl.value;
+    }
+
+    return searchValues;
+  }
+
   toggleSearch(event) {
-    console.log(event);
     this.searching = !this.searching;
 
     this.dispatchEvent(
@@ -96,6 +147,10 @@ class BudgetSearchCard extends NikElement {
     this.exactAmount = !this.exactAmount;
   }
 
+  toggleDateSearch() {
+    this.exactDate = !this.exactDate;
+  }
+
   addNewSearchItem() {
     this.searchItems.push(document.createElement("search-item"));
     this.numSearchItems += 1;
@@ -109,6 +164,36 @@ class BudgetSearchCard extends NikElement {
     }
 
     this.numSearchItems -= 1;
+  }
+
+  handleInputEvent(event) {
+    console.log(this);
+
+    if (this.lastSearchValues === JSON.stringify(this.searchValuesObject)) {
+      return;
+    }
+
+    console.log(this.searchValuesObject);
+
+    this.dispatchEvent(
+      new CustomEvent("SearchInputChanged", {
+        bubbles: true,
+        detail: this.searchValuesObject,
+      })
+    );
+
+    this.lastSearchValues = JSON.stringify(this.searchValuesObject);
+  }
+
+  handleSearchTotalChanged(event) {
+    if (!this.searching) {
+      return;
+    }
+
+    let { searchCount, searchSum } = event.detail;
+    this.searchCountEl.textContent =
+      searchCount === 1 ? "1 transaction" : `${searchCount} transactions`;
+    this.searchSumEl.textContent = searchSum;
   }
 
   sortTemplate() {
@@ -161,7 +246,7 @@ class BudgetSearchCard extends NikElement {
     if (this.exactAmount) {
       return html`<div class="col-12 col-lg-7">
           <sl-input
-            label="Amount:"
+            label="Amount"
             type="number"
             step=".01"
             id="searchAmount"
@@ -176,14 +261,14 @@ class BudgetSearchCard extends NikElement {
             class="w-100"
             @click=${this.toggleAmountSearch}
           >
-            Search by min and max amounts
+            Search by amount range
           </sl-button>
         </div>`;
     }
 
     return html`<div class="col-12 col-md-6 col-xl-4">
         <sl-input
-          label="Min amount:"
+          label="Min amount"
           type="number"
           step=".01"
           id="minAmount"
@@ -193,7 +278,7 @@ class BudgetSearchCard extends NikElement {
       </div>
       <div class="col-12 col-md-6 col-xl-4">
         <sl-input
-          label="Max amount:"
+          label="Max amount"
           type="number"
           step=".01"
           id="maxAmount"
@@ -214,11 +299,37 @@ class BudgetSearchCard extends NikElement {
   }
 
   dateTemplate() {
-    return html`<div class="col-12 col-md-6">
+    if (this.exactDate) {
+      return html`<div class="col-12 col-md-6">
+          <sl-input label="Date" type="date" id="exactDate"></sl-input>
+        </div>
+        <div class="col-12 col-md-6 d-flex align-items-end">
+          <sl-button
+            variant="primary"
+            outline
+            class="w-100"
+            @click=${this.toggleDateSearch}
+          >
+            Search by start and end date
+          </sl-button>
+        </div>`;
+    }
+
+    return html`<div class="col-12 col-xl-5">
         <sl-input label="Start date" type="date" id="startDate"></sl-input>
       </div>
-      <div class="col-12 col-md-6">
+      <div class="col-12 col-xl-5">
         <sl-input label="End date" type="date" id="endDate"></sl-input>
+      </div>
+      <div class="col-12 col-xl-2 d-flex align-items-end">
+        <sl-button
+          variant="primary"
+          outline
+          class="w-100"
+          @click=${this.toggleDateSearch}
+        >
+          Search by exact date
+        </sl-button>
       </div>`;
   }
 
@@ -230,7 +341,7 @@ class BudgetSearchCard extends NikElement {
               <div class="col-12 col-md-3">${this.sortTemplate()}</div>
               <div class="col">
                 <p class="fs-4">
-                  <span id="searchResultsTotal">0 transactions</span> totalling
+                  <span id="searchResultsCount">0 transactions</span> totalling
                   <span class="fw-bold" id="searchResultsSum">$0</span>
                 </p>
               </div>
@@ -279,7 +390,9 @@ class BudgetSearchCard extends NikElement {
   }
 
   render() {
-    return html`<sl-card class="mb-4">${this.template()}</sl-card>`;
+    return html`<sl-card @input=${this.handleInputEvent} class="mb-4"
+      >${this.template()}</sl-card
+    >`;
   }
 }
 
