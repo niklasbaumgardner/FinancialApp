@@ -27,7 +27,7 @@
             {{ budget.name }}
         </div>
         <div class="fs-4 mb-0 subhead">
-            Total: <span id="budgetTotal">{{ budget.total|prettify_money }}</span>
+            Total: <sl-format-number id="budgetTotal" type="currency" currency="USD" value="{{ budget.total }}" lang="en-US"></sl-format-number>
         </div>
     </div>
 

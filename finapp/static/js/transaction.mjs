@@ -57,7 +57,7 @@ class NBTransaction extends NikElement {
     formData.set("date", newDate);
     let response = await postRequest(this.transaction.editUrl, formData);
 
-    if (newDate !== date) {
+    if (newDate !== date || newAmount !== amount) {
       this.dispatchEvent(
         new CustomEvent("RequestNewPages", {
           bubbles: true,

@@ -249,7 +249,7 @@ def get_page(budget_id):
         "transactions": transactions,
         "total": total,
         "num_pages": num_pages,
-        "budget_total": helpers.format_to_money_string(budget.total),
+        "budget_total": budget.total,
     }
 
 
