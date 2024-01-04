@@ -322,3 +322,19 @@ input::placeholder {
     --sl-button-font-size-medium: var(--sl-font-size-medium);
   }
 }
+
+.theme-button {
+  appearance: none;
+  width: 120px;
+  height: 120px;
+}
+
+.theme-button.light {
+  background-color: hsl(0, 0%, 100%);
+  color: black;
+}
+
+.theme-button.dark {
+  background-color: hsl(240, 5.9%, 11%);
+  color: white;
+}
