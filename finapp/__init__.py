@@ -32,6 +32,9 @@ def create_app():
     from finapp.routes.theme import theme_bp as theme_blueprint
     from finapp.routes.transfer import transfer_bp as transfer_blueprint
     from finapp.routes.viewbudget import viewbudget_bp as viewbudget_blueprint
+    from finapp.utils.context_processor import (
+        context_processor_bp as context_processor_blueprint,
+    )
 
     app.register_blueprint(auth_blueprint)
     app.register_blueprint(dashboard_blueprint)
@@ -41,6 +44,7 @@ def create_app():
     app.register_blueprint(theme_blueprint)
     app.register_blueprint(transfer_blueprint)
     app.register_blueprint(viewbudget_blueprint)
+    app.register_blueprint(context_processor_blueprint)
 
     with app.app_context():
         db.create_all()
