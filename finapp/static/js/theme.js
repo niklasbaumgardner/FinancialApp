@@ -49,10 +49,6 @@ function setTheme(theme, options) {
   let currentThemeIcon = getThemeIcon(theme);
   currentThemeIcon.hidden = false;
 
-  if (theme === getTheme()) {
-    return;
-  }
-
   themeStorage.setItem("theme", theme);
   if (!(options?.dontSend === true)) {
     fetch(THEME_URL + "?" + new URLSearchParams({ theme }));
