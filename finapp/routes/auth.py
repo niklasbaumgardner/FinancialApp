@@ -1,15 +1,15 @@
 from flask import Blueprint, render_template, flash, request, redirect, url_for
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
-from finapp.home import queries
+from finapp.utils import queries
 from finapp.models import User
 from finapp import mail
 from finapp import bcrypt
 
-auth = Blueprint("auth", __name__)
+auth_bp = Blueprint("auth_bp", __name__)
 
 
-@auth.route("/login", methods=["GET", "POST"])
+@auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
         return redirect(url_for("home.index"))
@@ -49,7 +49,7 @@ def login():
     return render_template("login.html", email=email)
 
 
-@auth.route("/signup", methods=["GET", "POST"])
+@auth_bp.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
         email = request.form.get("email")
@@ -79,7 +79,7 @@ def signup():
     return render_template("signup.html")
 
 
-@auth.route("/password_request", methods=["GET", "POST"])
+@auth_bp.route("/password_request", methods=["GET", "POST"])
 def password_request():
     if current_user.is_authenticated:
         user = queries.getUserById(id=current_user.get_id())
@@ -99,7 +99,7 @@ def password_request():
     return render_template("password_request.html")
 
 
-@auth.route("/password_reset", methods=["GET", "POST"])
+@auth_bp.route("/password_reset", methods=["GET", "POST"])
 def password_reset():
     token = request.args.get("token")
     if request.method == "POST":
@@ -128,35 +128,21 @@ def password_reset():
     return render_template("password_reset.html")
 
 
-@auth.route("/profile", methods=["GET", "POST"])
-@login_required
-def profile():
-    user = queries.getUserById(id=current_user.id)
-    if request.method == "POST":
-        username = request.form.get("username")
-        email = request.form.get("email")
-
-        queries.updateUser(id=user.id, email=email, username=username)
-
-        return redirect(url_for("auth.profile"))
-    return render_template("profile.html", username=user.username, email=user.email)
-
-
-@auth.route("/logout")
+@auth_bp.route("/logout")
 @login_required
 def logout():
     logout_user()
     return redirect(url_for("auth.login"))
 
 
-@auth.route("/username_unique", methods=["GET"])
+@auth_bp.route("/username_unique", methods=["GET"])
 def username_unique():
     username = request.args.get("username")
 
     return {"isUnique": queries.is_username_unique(username)}
 
 
-@auth.route("/email_unique", methods=["GET"])
+@auth_bp.route("/email_unique", methods=["GET"])
 def email_unique():
     email = request.args.get("email")
 

@@ -1,6 +1,5 @@
 from datetime import date
-from finapp.home import queries
-from flask import url_for
+from finapp.utils import queries
 import json
 
 

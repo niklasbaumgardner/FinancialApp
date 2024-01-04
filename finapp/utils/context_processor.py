@@ -1,5 +1,5 @@
 from flask_login import current_user
-from finapp.home import queries
+from finapp.utils import queries
 import app
 
 

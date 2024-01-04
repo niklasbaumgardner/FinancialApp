@@ -27,7 +27,7 @@
     </head>
 
     <script>
-        const THEME_URL = "{{ url_for('theme.set_theme') }}";
+        const THEME_URL = "{{ url_for('theme_bp.set_theme') }}";
         const THEME = "{{ theme }}";
     </script>
 
@@ -44,13 +44,13 @@
             <div class="collapse navbar-collapse" id="navbarsExample07">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link {% block addtransaction %}{% endblock addtransaction %}" href="{{ url_for('home.add_paycheck') }}">Add Paycheck</a>
+                        <a class="nav-link {% block addtransaction %}{% endblock addtransaction %}" href="{{ url_for('paycheck_bp.add_paycheck') }}">Add Paycheck</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% block transfer %}{% endblock transfer %}" href="{{ url_for('home.transfer') }}">Transfer</a>
+                        <a class="nav-link {% block transfer %}{% endblock transfer %}" href="{{ url_for('transfer_bp.transfer') }}">Transfer</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% block dashboard %}{% endblock dashboard %}" href="{{ url_for('home.dashboard') }}">Dashboard</a>
+                        <a class="nav-link {% block dashboard %}{% endblock dashboard %}" href="{{ url_for('dashboard_bp.dashboard') }}">Dashboard</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
@@ -70,13 +70,13 @@
                                 {{ current_user.username }}
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{{ url_for('auth.profile') }}">Profile</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">Logout</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('profile_bp.profile') }}">Profile</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('auth_bp.logout') }}">Logout</a></li>
                             </ul>
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link {% block login %}{% endblock login %}" href="{{ url_for('auth.login') }}">Login</a>
+                            <a class="nav-link {% block login %}{% endblock login %}" href="{{ url_for('auth_bp.login') }}">Login</a>
                         </li>
                     {% endif %}
                 </ul>

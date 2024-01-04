@@ -5,8 +5,8 @@
 
 {% block content %}
     <script>
-        const USERNAME_UNIQUE_URL = "{{ url_for('auth.username_unique') }}";
-        const EMAIL_UNIQUE_URL = "{{ url_for('auth.email_unique') }}";
+        const USERNAME_UNIQUE_URL = "{{ url_for('auth_bp.username_unique') }}";
+        const EMAIL_UNIQUE_URL = "{{ url_for('auth_bp.email_unique') }}";
     </script>
 
     <div class="row justify-content-center align-items-center">
@@ -21,7 +21,7 @@
                     </div>
                 </div>
                 <div class="mb-2">
-                    <form action="{{ url_for('auth.signup') }}" method="POST">
+                    <form action="{{ url_for('auth_bp.signup') }}" method="POST">
                         <div class="nb-row">
                             <sl-input {% if email %}value="{{ email }}"{% endif %} placeholder="Your email" type="email" label="Email" id="email" name="email" required></sl-input>
                             <sl-input placeholder="Your username" label="Username" id="username" name="username" required></sl-input>

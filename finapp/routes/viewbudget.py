@@ -1,15 +1,14 @@
-from flask import Blueprint, render_template, redirect, url_for, request, abort
-from flask_login import login_required, current_user
-from datetime import datetime, date
-from finapp.home import helpers, queries
-from jinja2 import Template
-from jinja2.filters import FILTERS
+from finapp.utils import queries
+from flask import Blueprint, render_template, redirect, url_for, request
+from flask_login import login_required
+from datetime import datetime
+from finapp.utils import helpers
 import json
 
-viewbudget = Blueprint("viewbudget", __name__)
+viewbudget_bp = Blueprint("viewbudget_bp", __name__)
 
 
-@viewbudget.route("/view_budget/<int:id>")
+@viewbudget_bp.route("/view_budget/<int:id>")
 @login_required
 def view_budget(id):
     page = request.args.get("page", 1, type=int)
@@ -50,7 +49,7 @@ def view_budget(id):
     )
 
 
-@viewbudget.route("/get_page/<int:budget_id>")
+@viewbudget_bp.route("/get_page/<int:budget_id>")
 @login_required
 def get_page(budget_id):
     page = request.args.get("page", -1, type=int)
@@ -98,7 +97,7 @@ def get_page(budget_id):
     }
 
 
-@viewbudget.route("/search/<int:b_id>", methods=["GET"])
+@viewbudget_bp.route("/search/<int:b_id>", methods=["GET"])
 @login_required
 def search(b_id):
     start_date = request.args.get("startDate")
@@ -145,7 +144,7 @@ def search(b_id):
     }
 
 
-@viewbudget.route("/add_transaction/<int:budget_id>", methods=["POST"])
+@viewbudget_bp.route("/add_transaction/<int:budget_id>", methods=["POST"])
 @login_required
 def add_transaction(budget_id):
     name = request.form.get("name")
@@ -165,7 +164,7 @@ def add_transaction(budget_id):
     return redirect(url_for("viewbudget.view_budget", id=budget_id))
 
 
-@viewbudget.route("/edit_transaction/<int:b_id>/<int:t_id>", methods=["POST"])
+@viewbudget_bp.route("/edit_transaction/<int:b_id>/<int:t_id>", methods=["POST"])
 @login_required
 def edit_transaction(b_id, t_id):
     new_name = request.form.get(f"name")
@@ -185,7 +184,7 @@ def edit_transaction(b_id, t_id):
     }
 
 
-@viewbudget.route("/move_transaction/<int:sb_id>/<int:t_id>", methods=["POST"])
+@viewbudget_bp.route("/move_transaction/<int:sb_id>/<int:t_id>", methods=["POST"])
 @login_required
 def move_transaction(sb_id, t_id):
     new_budget_id = request.form.get("new_budget")
@@ -195,7 +194,7 @@ def move_transaction(sb_id, t_id):
     return {"success": True}
 
 
-@viewbudget.route("/delete_transaction/<int:b_id>/<int:t_id>", methods=["DELETE"])
+@viewbudget_bp.route("/delete_transaction/<int:b_id>/<int:t_id>", methods=["DELETE"])
 @login_required
 def delete_transaction(b_id, t_id):
     page = request.form.get("page")

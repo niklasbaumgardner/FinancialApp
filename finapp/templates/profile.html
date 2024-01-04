@@ -6,8 +6,8 @@
 
 {% block content %}
     <script>
-        const USERNAME_UNIQUE_URL = "{{ url_for('auth.username_unique') }}";
-        const EMAIL_UNIQUE_URL = "{{ url_for('auth.email_unique') }}";
+        const USERNAME_UNIQUE_URL = "{{ url_for('auth_bp.username_unique') }}";
+        const EMAIL_UNIQUE_URL = "{{ url_for('auth_bp.email_unique') }}";
     </script>
 
     <div class="row justify-content-center align-items-center">
@@ -17,12 +17,12 @@
                     Account Details
                 </div>
                 <div class="mb-2">
-                    <form action="{{ url_for('auth.profile') }}" method="POST" autocomplete="off">
+                    <form action="{{ url_for('profile_bp.profile') }}" method="POST" autocomplete="off">
                         <div class="nb-row">
                             <sl-input value="{{ username }}" original-value="{{ username }}" label="Username" id="username" name="username" required></sl-input>
                             <sl-input value="{{ email }}" original-value="{{ email }}" type="email" label="Email" id="email" name="email" required></sl-input>
                             <sl-button id="submitButton" class="w-100" variant="primary" type="submit" disabled>Update</sl-button>
-                            <p class="small"><a href="{{ url_for('auth.password_request') }}">Reset password</a></p>
+                            <p class="small"><a href="{{ url_for('auth_bp.password_request') }}">Reset password</a></p>
                         </div>
                     </form>
                 </div>

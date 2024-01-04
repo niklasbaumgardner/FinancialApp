@@ -52,9 +52,9 @@ class Budget(db.Model):
                 total=self.total,
                 name=self.name,
                 isActive=self.is_active,
-                url=url_for("viewbudget.view_budget", id=self.id),
-                editUrl=url_for("home.edit_budget", id=self.id),
-                toggleActiveUrl=url_for("home.toggle_budget"),
+                url=url_for("viewbudget_bp.view_budget", id=self.id),
+                editUrl=url_for("index_bp.edit_budget", id=self.id),
+                toggleActiveUrl=url_for("index_bp.toggle_budget"),
             )
         )
 
@@ -82,7 +82,7 @@ class Transaction(db.Model):
                 date=self.date.strftime("%Y-%m-%d"),
                 isTransfer=self.is_transfer,
                 editUrl=url_for(
-                    "viewbudget.edit_transaction", b_id=self.budget_id, t_id=self.id
+                    "viewbudget_bp.edit_transaction", b_id=self.budget_id, t_id=self.id
                 ),
             )
         )

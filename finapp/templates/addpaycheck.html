@@ -11,7 +11,7 @@
         <sl-card>
             <p class="card-title fs-2 mb-3">Add paycheck</p>
             <sl-divider></sl-divider>
-            <form action="{{ url_for('home.paycheck') }}" method="POST">
+            <form action="{{ url_for('paycheck_bp.paycheck') }}" method="POST">
                 <div class="row mb-5">
                     <div class="col-sm nb-row mb-4">
                         <sl-input id="paycheckName" label="Paycheck Name" name="name" placeholder="I'm rich!" autocomplete="niklas" required></sl-input>
@@ -92,7 +92,7 @@
                     Deleting this prefill with amount {{ lst[0] }} is irreverible.
                     <div class="row" slot="footer">
                         <sl-button class="w-50" variant="neutral" outline onclick="closeDeletePrefillDialog('delete{{ lst[0] }}')">Cancel</sl-button>
-                        <sl-button class="w-50" variant="danger" onclick="sendDeletePrefillRequest(event, 'delete{{ lst[0] }}', '{{ lst[0] }}', '{{ url_for('home.delete_prefill', amount=lst[0]) }}')">Delete anyway</sl-button>
+                        <sl-button class="w-50" variant="danger" onclick="sendDeletePrefillRequest(event, 'delete{{ lst[0] }}', '{{ lst[0] }}', '{{ url_for('paycheck_bp.delete_prefill', amount=lst[0]) }}')">Delete anyway</sl-button>
                     </div>
                 </sl-dialog>
             {% endfor %}

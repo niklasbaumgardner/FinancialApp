@@ -14,7 +14,7 @@
 <script>
     const BUDGET_URLS = {};
     {% for budget in budgets %}
-        BUDGET_URLS["{{ budget.name }}".replace("&#39;", "'")] = "{{ url_for('home.view_budget', id=budget.id) }}";
+        BUDGET_URLS["{{ budget.name }}".replace("&#39;", "'")] = "{{ url_for('viewbudget_bp.view_budget', id=budget.id) }}";
     {% endfor %}
 
     const storage = window["localStorage"];
@@ -22,31 +22,31 @@
     async function getPieData(date='') {
         let result;
         if (date !== '') {
-            result = await getRequest("{{ url_for('home.get_pie_data') }}", { date });
+            result = await getRequest("{{ url_for('dashboard_bp.get_pie_data') }}", { date });
         }
         else {
-            result = await getRequest("{{ url_for('home.get_pie_data') }}");
+            result = await getRequest("{{ url_for('dashboard_bp.get_pie_data') }}");
         }
         return result;
     }
     async function getAllBudgetsLineData(startDate='') {
-        let result = await getRequest("{{ url_for('home.get_all_budgets_line_data') }}", { startDate });
+        let result = await getRequest("{{ url_for('dashboard_bp.get_all_budgets_line_data') }}", { startDate });
         return result;
     }
     async function getNetSpending(value) {
         let object = JSON.parse(value);
         console.log(object);
-        let result = await getRequest("{{ url_for('home.get_net_spending_for_month') }}", object);
+        let result = await getRequest("{{ url_for('dashboard_bp.get_net_spending_for_month') }}", object);
         return result;
     }
     async function getMonthSpending(value) {
         let object = JSON.parse(value);
         console.log(object);
-        let result = await getRequest("{{ url_for('home.get_spending_for_month') }}", object);
+        let result = await getRequest("{{ url_for('dashboard_bp.get_spending_for_month') }}", object);
         return result;
     }
     async function getAllBudgetNames() {
-        let result = await getRequest("{{ url_for('home.get_budget_name') }}");
+        let result = await getRequest("{{ url_for('dashboard_bp.get_budget_name') }}");
         return result;
     }
 </script>

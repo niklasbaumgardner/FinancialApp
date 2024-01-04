@@ -5,7 +5,7 @@
 
 {% block content %}
 <script>
-    const ADD_NEW_BUDGET_URL = "{{ url_for('home.add_budget') }}";
+    const ADD_NEW_BUDGET_URL = "{{ url_for('index_bp.add_budget') }}";
 </script>
 
 <div class="row justify-content-between mx-0 welcome mb-5">
@@ -33,7 +33,7 @@
 {% for group in budgets %}
     {% for budget in group %}
         <sl-dialog id="delete{{ budget['id'] }}" label='Are you sure you want to delete this budget named "{{ budget["name"] }}" ?'>
-            <form method="DELETE" action="{{ url_for('home.delete_budget', b_id=budget['id']) }}">
+            <form method="DELETE" action="{{ url_for('index_bp.delete_budget', b_id=budget['id']) }}">
                 <sl-radio-group label="Select a budget to transfer the transactions to" name="new_budget" required>
                     <sl-radio name="new_budget" value="None">Delete transactions along with this budget</sl-radio>
                     {% for group in budgets %}
