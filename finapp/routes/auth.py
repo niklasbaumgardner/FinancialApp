@@ -12,7 +12,7 @@ auth_bp = Blueprint("auth_bp", __name__)
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for("home.index"))
+        return redirect(url_for("index_bp.index"))
 
     email = request.args.get("email")
     if email:
@@ -32,13 +32,10 @@ def login():
             next = request.args.get("next").replace("/", "", 1)
             if next:
                 try:
-                    return redirect(url_for(f"home.{next}"))
+                    return redirect(url_for(f"{next}"))
                 except:
-                    try:
-                        return redirect(url_for(f"auth.{next}"))
-                    except:
-                        pass
-            return redirect(url_for("home.index"))
+                    pass
+            return redirect(url_for("index_bp.index"))
 
         elif user:
             flash("Password was incorrect. Try again", "danger")
@@ -59,7 +56,7 @@ def signup():
 
         if not queries.is_email_unique(email):
             flash("Email already exists. Please log in", "primary")
-            return redirect(url_for("auth.login", email=email))
+            return redirect(url_for("auth_bp.login", email=email))
 
         if not queries.is_username_unique(username):
             flash(
@@ -74,7 +71,7 @@ def signup():
 
         queries.createUser(email=email, username=username, password=password1)
         flash("Sign up succesful", "success")
-        return redirect(url_for("auth.login"))
+        return redirect(url_for("auth_bp.login"))
 
     return render_template("signup.html")
 
@@ -84,7 +81,7 @@ def password_request():
     if current_user.is_authenticated:
         user = queries.getUserById(id=current_user.get_id())
         token = user.get_reset_token()
-        return redirect(url_for("auth.password_reset", token=token))
+        return redirect(url_for("auth_bp.password_reset", token=token))
 
     if request.method == "POST":
         email = request.form.get("email")
@@ -94,7 +91,7 @@ def password_request():
             "An email has been sent with instructions to reset your password. (Check spam folder)",
             "primary",
         )
-        return redirect(url_for("auth.login"))
+        return redirect(url_for("auth_bp.login"))
 
     return render_template("password_request.html")
 
@@ -107,9 +104,9 @@ def password_reset():
         if not user:
             flash("That is an invalid or expired token", "danger")
             if current_user.is_authenticated:
-                return redirect(url_for("auth.profile"))
+                return redirect(url_for("profile_bp.profile"))
             else:
-                return redirect(url_for("auth.password_request"))
+                return redirect(url_for("auth_bp.password_request"))
 
         password1 = request.form.get("password1")
         password2 = request.form.get("password2")
@@ -123,7 +120,7 @@ def password_reset():
             "Your password has been updated! You are now able to log in",
             "success",
         )
-        return redirect(url_for("auth.login"))
+        return redirect(url_for("auth_bp.login"))
 
     return render_template("password_reset.html")
 
@@ -132,7 +129,7 @@ def password_reset():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for("auth.login"))
+    return redirect(url_for("auth_bp.login"))
 
 
 @auth_bp.route("/username_unique", methods=["GET"])
@@ -156,7 +153,7 @@ def send_reset_email(user):
     token = user.get_reset_token()
     msg = Message("Password Reset Request", recipients=[user.email])
     msg.body = f"""To reset your password, visit the following link:
-{url_for('auth.password_reset', token=token, _external=True)}
+{url_for('auth_bp.password_reset', token=token, _external=True)}
 If you did not make this request then please ignore this email and no changes will be made.
 """
     mail.send(msg)
