@@ -31,6 +31,14 @@ def create_app():
 
     app.register_blueprint(home_blueprint)
 
+    from finapp.home.viewbudget import viewbudget as viewbudget_blueprint
+
+    app.register_blueprint(viewbudget_blueprint)
+
+    from finapp.home.theme import theme as theme_blueprint
+
+    app.register_blueprint(theme_blueprint)
+
     with app.app_context():
         db.create_all()
 

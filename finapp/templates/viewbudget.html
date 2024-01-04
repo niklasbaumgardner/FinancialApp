@@ -8,10 +8,10 @@
 
 {% block content %}
 <script>
-    const GET_PAGE_URL = "{{ url_for('home.get_page', budget_id=budget.id) }}";
-    const SEARCH_PAGE_URL = "{{ url_for('home.search', b_id=budget.id) }}";
-    const MOVE_TRANSACTION_URL = "{{ url_for('home.move_transaction', sb_id=budget.id, t_id=0) }}".slice(0, -1);
-    const DELETE_TRANSACTION_URL = "{{ url_for('home.delete_transaction', b_id=budget.id, t_id=0) }}".slice(0, -1);
+    const GET_PAGE_URL = "{{ url_for('viewbudget.get_page', budget_id=budget.id) }}";
+    const SEARCH_PAGE_URL = "{{ url_for('viewbudget.search', b_id=budget.id) }}";
+    const MOVE_TRANSACTION_URL = "{{ url_for('viewbudget.move_transaction', sb_id=budget.id, t_id=0) }}".slice(0, -1);
+    const DELETE_TRANSACTION_URL = "{{ url_for('viewbudget.delete_transaction', b_id=budget.id, t_id=0) }}".slice(0, -1);
     const params = new URLSearchParams(window.location.search);
     const TOTAL_TRANSACTIONS = {{ total }};
     const CURRENT_PAGE = {{ page }};
@@ -31,7 +31,7 @@
         </div>
     </div>
 
-    <form id="addTransaction" method="POST" action="{{ url_for('home.add_transaction', budget_id=budget.id) }}">
+    <form id="addTransaction" method="POST" action="{{ url_for('viewbudget.add_transaction', budget_id=budget.id) }}">
         <div class="row">
             <div class="col-12 col-md-8 col-xl-6 mb-2">
                 <sl-input type="text" id="name" name="name" placeholder="Spent too much?" autocomplete="niklas" required></sl-input>

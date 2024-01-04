@@ -174,15 +174,3 @@ def send_reset_email(user):
 If you did not make this request then please ignore this email and no changes will be made.
 """
     mail.send(msg)
-
-
-@auth.context_processor
-def utility_processor():
-    def get_theme():
-        if current_user.is_authenticated:
-            theme = queries.get_theme()
-            if theme:
-                return theme.color
-        return ""
-
-    return dict(theme=get_theme())
