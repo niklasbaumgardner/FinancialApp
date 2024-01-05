@@ -30,6 +30,7 @@ primaryColorSelector.addEventListener("sl-input", () => {
 let backgroundColorSelector = document.getElementById(
   "preferences-background-color-selector"
 );
+let backgroundPreview = document.querySelector(".background-preview");
 backgroundColorSelector.addEventListener("sl-input", () => {
   let newBackgroundColor = backgroundColorSelector.value;
   for (let classString of document.body.classList) {
@@ -39,6 +40,14 @@ backgroundColorSelector.addEventListener("sl-input", () => {
   }
 
   document.body.classList.add(`${newBackgroundColor}-background`);
+
+  for (let classString of backgroundPreview.classList) {
+    if (classString.includes("-background")) {
+      backgroundPreview.classList.remove(classString);
+    }
+  }
+
+  backgroundPreview.classList.add(`${newBackgroundColor}-background`);
 
   setBackgroundColor(newBackgroundColor);
 });

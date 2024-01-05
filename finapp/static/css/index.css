@@ -17,7 +17,7 @@ a {
 }
 
 .d-flex.gx-2 {
-  column-gap: .5rem;
+  column-gap: 0.5rem;
 }
 
 .modal {
@@ -97,7 +97,7 @@ input {
 
 .search-button {
   background: no-repeat center/70% url("../images/search.svg");
-  opacity: .5;
+  opacity: 0.5;
 }
 
 .search-button:hover {
@@ -154,11 +154,12 @@ button:focus-visible {
 }
 
 .icon-button {
-  filter: invert(57%) sepia(91%) saturate(1140%) hue-rotate(190deg) brightness(101%) contrast(99%);
+  filter: invert(57%) sepia(91%) saturate(1140%) hue-rotate(190deg)
+    brightness(101%) contrast(99%);
   box-sizing: content-box;
   width: 1em;
   height: 1em;
-  padding: .25em;
+  padding: 0.25em;
   border: 0;
   border-radius: 0;
   opacity: 80%;
@@ -182,14 +183,15 @@ button:focus-visible {
 
 #delete-btn {
   background: url("../images/delete.svg") no-repeat center/100%;
-  filter: invert(22%) sepia(94%) saturate(2471%) hue-rotate(340deg) brightness(95%) contrast(81%);
+  filter: invert(22%) sepia(94%) saturate(2471%) hue-rotate(340deg)
+    brightness(95%) contrast(81%);
 }
 
 .transaction-grid {
   display: grid;
   grid-template: "name amount buttons";
   grid-template-columns: repeat(3, 1fr);
-  gap: .5rem;
+  gap: 0.5rem;
 }
 
 .name {
@@ -214,7 +216,7 @@ button:focus-visible {
 .column-flex {
   display: flex;
   flex-direction: column;
-  gap: .5rem;
+  gap: 0.5rem;
 }
 
 @media (max-width: 768px) {
@@ -223,7 +225,7 @@ button:focus-visible {
     grid-template-areas:
       "name amount"
       "name buttons";
-    gap: .5rem;
+    gap: 0.5rem;
     grid-template-columns: repeat(2, minmax(min(20px, 100%), 1fr));
   }
 
@@ -331,12 +333,10 @@ input::placeholder {
 sl-icon-button.icon-primary::part(base) {
   color: var(--sl-color-primary-600);
 }
-
 sl-icon-button.icon-primary::part(base):hover,
 sl-icon-button.icon-primary::part(base):focus {
   color: var(--sl-color-primary-500);
 }
-
 sl-icon-button.icon-primary::part(base):active {
   color: var(--sl-color-primary-600);
 }
@@ -344,12 +344,23 @@ sl-icon-button.icon-primary::part(base):active {
 sl-icon-button.icon-danger::part(base) {
   color: var(--sl-color-danger-600);
 }
-
 sl-icon-button.icon-danger::part(base):hover,
 sl-icon-button.icon-danger::part(base):focus {
   color: var(--sl-color-danger-500);
 }
-
 sl-icon-button.icon-danger::part(base):active {
   color: var(--sl-color-danger-600);
+}
+
+sl-button[variant="nik"]::part(base):hover {
+  background-color: var(--sl-color-primary-600);
+}
+sl-button[variant="nik"]::part(base):active {
+  color: var(--sl-color-primary-600);
+}
+
+.background-preview {
+  border: 2px solid var(--sl-color-neutral-1000);
+  width: 100px;
+  height: 100px;
 }

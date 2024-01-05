@@ -27,11 +27,18 @@
                     <sl-divider></sl-divider>
                     <div class="w-100 pb-3">
                         <p class="fs-4">Background color</p>
-                        <sl-radio-group id="preferences-background-color-selector" label="Select a background" value="{{ backgroundColor }}">
-                            <sl-radio value="">Default</sl-radio>
-                            <sl-radio value="niks-favorite">Niklas' favorite</sl-radio>
-                            <!-- <sl-radio value="custom">Custon <sl-color-picker value="#f5a623ff" opacity label="Select a color"></sl-color-picker></sl-radio> -->
-                        </sl-radio-group>
+                        <div class="row">
+                            <div class="col-6">
+                                <sl-radio-group id="preferences-background-color-selector" label="Select a background" value="{{ backgroundColor }}">
+                                    <sl-radio value="">Default</sl-radio>
+                                    <sl-radio value="niks-favorite">Niklas' favorite</sl-radio>
+                                </sl-radio-group>
+                            </div>
+                            <div class="col-6">
+                                <label>Preview</label>
+                                <div class="background-preview {{ backgroundColor }}-background"></div>
+                            </div>
+                        </div>
                     </div>
                     <sl-divider></sl-divider>
                     <div class="w-100 pb-3">
