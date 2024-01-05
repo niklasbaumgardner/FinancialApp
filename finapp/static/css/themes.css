@@ -1,10 +1,18 @@
 .sl-theme-light {
+  .nb-nav-bg {
+    background-color: var(--sl-color-neutral-100);
+  }
+
   .niks-favorite-background {
     background: linear-gradient(to right, rgba(170, 17, 222, .5), hsl(198.7 97.9% 57.2% / 50%));
   }
 }
 
 .sl-theme-dark {
+  .nb-nav-bg {
+    background-color: var(--sl-color-neutral-50);
+  }
+
   .niks-favorite-background {
     background: linear-gradient(to right, rgba(170, 17, 222, 1), hsl(198.7 97.9% 57.2%));
   }

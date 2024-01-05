@@ -33,10 +33,6 @@ a {
   z-index: 799;
 }
 
-.nb-nav-bg {
-  background-color: var(--sl-color-neutral-200);
-}
-
 .alerts {
   position: absolute;
   top: 60px;
