@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="{{ theme }}" class="sl-theme-{{ theme }}">
+<html lang="en" data-bs-theme="{{ theme }}" class="sl-theme-{{ theme }} {{ color }}-primary">
     <head>
         <!-- Required meta tags -->
         <meta charset="utf-8">
@@ -12,6 +12,7 @@
         <link href="/static/css/index.css" rel="stylesheet">
         <link href="/static/css/light.css" rel="stylesheet">
         <link href="/static/css/dark.css" rel="stylesheet">
+        <link href="/static/css/themes.css" rel="stylesheet">
         <link href="/static/css/dashboard.css" rel="stylesheet">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
@@ -28,6 +29,7 @@
 
     <script>
         const THEME_URL = "{{ url_for('theme_bp.set_theme') }}";
+        const COLOR_URL = "{{ url_for('preferences_bp.set_primary_color') }}";
         const THEME = "{{ theme }}";
     </script>
 
@@ -65,11 +67,23 @@
                         </sl-menu>
                     </sl-dropdown>
                     {% if current_user.is_authenticated %}
+                        <!-- <sl-dropdown>
+                            <sl-button slot="trigger" variant="text" caret>
+                                <sl-icon slot="prefix" name="person-circle"></sl-icon>
+                                {{ current_user.username }}
+                            </sl-button>
+                            <sl-menu>
+                                <sl-menu-item><a href="{{ url_for('preferences_bp.preferences') }}">Preferences</a></sl-menu-item>
+                                <sl-menu-item href="{{ url_for('profile_bp.profile') }}">Profile</sl-menu-item>
+                                <sl-menu-item href="{{ url_for('auth_bp.logout') }}">Logout</sl-menu-item>
+                            </sl-menu>
+                        </sl-dropdown> -->
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 {{ current_user.username }}
                             </a>
                             <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{{ url_for('preferences_bp.preferences') }}">Preferences</a></li>
                                 <li><a class="dropdown-item" href="{{ url_for('profile_bp.profile') }}">Profile</a></li>
                                 <li><a class="dropdown-item" href="{{ url_for('auth_bp.logout') }}">Logout</a></li>
                             </ul>

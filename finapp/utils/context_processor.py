@@ -1,5 +1,4 @@
 from flask_login import current_user
-from finapp.models import Theme
 from finapp.utils import queries
 from flask import Blueprint
 
@@ -22,4 +21,4 @@ def utility_processor():
             theme=theme.theme, backgroundColor=theme.backgroundColor, color=theme.color
         )
 
-    return dict(theme="")
+    return dict(theme="", backgroundColor="", color="")

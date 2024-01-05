@@ -550,6 +550,7 @@ def set_theme(theme_color=None, background_color=None, color=None):
         return
 
     theme = get_theme()
+
     if theme:
         if theme_color:
             theme.theme = theme_color
@@ -561,7 +562,7 @@ def set_theme(theme_color=None, background_color=None, color=None):
     else:
         theme = Theme(
             user_id=current_user.id,
-            theme=theme,
+            theme=theme_color,
             backgroundColor=background_color,
             color=color,
         )
