@@ -545,7 +545,10 @@ def get_theme():
     return Theme.query.filter_by(user_id=current_user.id).first()
 
 
-def set_theme(theme_color, background_color, color):
+def set_theme(theme_color=None, background_color=None, color=None):
+    if not current_user.is_authenticated:
+        return
+
     theme = get_theme()
     if theme:
         if theme_color:
