@@ -34,7 +34,9 @@ class User(db.Model, UserMixin):
 class Theme(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    color = db.Column(db.String, nullable=False)
+    theme = db.Column(db.String, nullable=True)
+    backgroundColor = db.Column(db.String, nullable=True)
+    color = db.Column(db.String, nullable=True)
 
 
 class Budget(db.Model):

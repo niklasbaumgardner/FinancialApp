@@ -11,7 +11,7 @@ def utility_processor():
         if current_user.is_authenticated:
             theme = queries.get_theme()
             if theme:
-                return theme.color
+                return theme.theme
         return ""
 
     return dict(theme=get_theme())

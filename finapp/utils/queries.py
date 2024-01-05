@@ -545,13 +545,23 @@ def get_theme():
     return Theme.query.filter_by(user_id=current_user.id).first()
 
 
-def set_theme(color):
+def set_theme(theme_color, background_color, color):
     theme = get_theme()
     if theme:
-        theme.color = color
+        if theme_color:
+            theme.theme = theme_color
+        if background_color:
+            theme.backgroundColor = background_color
+        if color:
+            theme.color = color
         db.session.commit()
     else:
-        theme = Theme(user_id=current_user.id, color=color)
+        theme = Theme(
+            user_id=current_user.id,
+            theme=theme,
+            backgroundColor=background_color,
+            color=color,
+        )
         db.session.add(theme)
         db.session.commit()
 
