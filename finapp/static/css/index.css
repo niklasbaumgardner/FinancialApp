@@ -240,7 +240,6 @@ button:focus-visible {
   display: flex;
   justify-content: end;
   align-items: start;
-  gap: .5rem;
 }
 
 .transaction-buttons > * {
@@ -323,4 +322,38 @@ input::placeholder {
 .theme-button.dark {
   background-color: hsl(240, 5.9%, 11%);
   color: white;
+}
+
+.icon-fs-20 {
+  font-size: 20px;
+}
+
+.icon-fs-18 {
+  font-size: 18px;
+}
+
+sl-icon-button.icon-primary::part(base) {
+  color: var(--sl-color-primary-600);
+}
+
+sl-icon-button.icon-primary::part(base):hover,
+sl-icon-button.icon-primary::part(base):focus {
+  color: var(--sl-color-primary-500);
+}
+
+sl-icon-button.icon-primary::part(base):active {
+  color: var(--sl-color-primary-600);
+}
+
+sl-icon-button.icon-danger::part(base) {
+  color: var(--sl-color-danger-600);
+}
+
+sl-icon-button.icon-danger::part(base):hover,
+sl-icon-button.icon-danger::part(base):focus {
+  color: var(--sl-color-danger-500);
+}
+
+sl-icon-button.icon-danger::part(base):active {
+  color: var(--sl-color-danger-600);
 }

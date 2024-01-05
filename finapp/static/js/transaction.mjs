@@ -136,38 +136,48 @@ class NBTransaction extends NikElement {
 
   buttonsTempate() {
     if (this.editing) {
-      return html`<sl-button
-          variant="danger"
-          outline
-          size="small"
-          @click=${this.handleDeleteClick}
-          ><sl-icon name="trash"></sl-icon></sl-button
-        ><sl-button
-          id="moveButton"
-          variant="primary"
-          size="small"
-          @click=${this.handleMoveTransactionClick}
-          outline
-          >Move</sl-button
-        ><sl-button
-          id="saveButton"
-          variant="primary"
-          size="small"
-          @click=${this.handleSaveClick}
-          >Save</sl-button
-        ><sl-icon-button
-          name="x-lg"
-          library="system"
-          label="Cancel"
-          @click=${this.handleEditClick}
-        ></sl-icon-button>`;
+      return html`<sl-tooltip content="Delete"
+          ><sl-icon-button
+            class="icon-danger icon-fs-20"
+            name="trash"
+            @click=${this.handleDeleteClick}
+          ></sl-icon-button></sl-tooltip
+        ><sl-tooltip content="Move"
+          ><sl-icon-button
+            class="icon-fs-20"
+            name="arrows-move"
+            id="moveButton"
+            variant="primary"
+            @click=${this.handleMoveTransactionClick}
+            outline
+          ></sl-icon-button></sl-tooltip
+        ><sl-tooltip content="Save"
+          ><sl-icon-button
+            class="icon-primary icon-fs-20"
+            name="floppy-fill"
+            id="saveButton"
+            variant="primary"
+            @click=${this.handleSaveClick}
+          ></sl-icon-button></sl-tooltip
+        ><sl-tooltip content="Cancel"
+          ><sl-icon-button
+            class="icon-fs-20"
+            name="x-lg"
+            library="system"
+            label="Cancel"
+            @click=${this.handleEditClick}
+          ></sl-icon-button
+        ></sl-tooltip>`;
     }
 
-    return html`<sl-icon-button
-      name="pencil-square"
-      label="Settings"
-      @click=${this.handleEditClick}
-    ></sl-icon-button>`;
+    return html`<sl-tooltip content="Edit"
+      ><sl-icon-button
+        class="icon-primary icon-fs-18"
+        name="pencil-square"
+        label="Settings"
+        @click=${this.handleEditClick}
+      ></sl-icon-button
+    ></sl-tooltip>`;
   }
 
   template() {

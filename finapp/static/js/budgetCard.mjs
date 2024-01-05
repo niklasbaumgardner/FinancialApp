@@ -63,18 +63,24 @@ class BudgetCard extends NikElement {
           size="small"
           @click=${this.handleSaveClick}
           >Save</sl-button
-        ><sl-icon-button
-          name="x-lg"
-          library="system"
-          label="Cancel"
-          @click=${this.handleCancelClick}
-        ></sl-icon-button>`;
+        ><sl-tooltip content="Cancel"
+          ><sl-icon-button
+            name="x-lg"
+            library="system"
+            label="Cancel"
+            @click=${this.handleCancelClick}
+          ></sl-icon-button
+        ></sl-tooltip>`;
     }
-    return html`<sl-icon-button
-      name="pencil-square"
-      label="Settings"
-      @click=${this.handleEditClick}
-    ></sl-icon-button>`;
+
+    return html`<sl-tooltip content="Edit"
+      ><sl-icon-button
+        class="icon-primary"
+        name="pencil-square"
+        label="Settings"
+        @click=${this.handleEditClick}
+      ></sl-icon-button
+    ></sl-tooltip>`;
   }
 
   template() {
