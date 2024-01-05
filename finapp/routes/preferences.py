@@ -17,3 +17,11 @@ def set_primary_color():
     color = request.args.get("color")
     queries.set_theme(color=color)
     return {"success": True}
+
+
+@preferences_bp.route("/set_background_color", methods=["GET"])
+@login_required
+def set_background_color():
+    background_color = request.args.get("backgroundColor")
+    queries.set_theme(background_color=background_color)
+    return {"success": True}

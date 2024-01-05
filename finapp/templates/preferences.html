@@ -6,8 +6,8 @@
 
 {% block content %}
     <script>
-        const USERNAME_UNIQUE_URL = "{{ url_for('auth_bp.username_unique') }}";
-        const EMAIL_UNIQUE_URL = "{{ url_for('auth_bp.email_unique') }}";
+        const COLOR_URL = "{{ url_for('preferences_bp.set_primary_color') }}";
+        const BACKGROUND_COLOR_URL = "{{ url_for('preferences_bp.set_background_color') }}";
     </script>
 
     <div class="row justify-content-center">
@@ -27,10 +27,10 @@
                     <sl-divider></sl-divider>
                     <div class="w-100 pb-3">
                         <p class="fs-4">Background color</p>
-                        <sl-radio-group label="Select a background">
+                        <sl-radio-group id="preferences-background-color-selector" label="Select a background" value="{{ backgroundColor }}">
                             <sl-radio value="">Default</sl-radio>
-                            <sl-radio value="favorite">Niklas' favorite</sl-radio>
-                            <sl-radio value="custom">Custon <sl-color-picker value="#f5a623ff" opacity label="Select a color"></sl-color-picker></sl-radio>
+                            <sl-radio value="niks-favorite">Niklas' favorite</sl-radio>
+                            <!-- <sl-radio value="custom">Custon <sl-color-picker value="#f5a623ff" opacity label="Select a color"></sl-color-picker></sl-radio> -->
                         </sl-radio-group>
                     </div>
                     <sl-divider></sl-divider>
@@ -38,8 +38,8 @@
                         <p class="fs-4">Color</p>
                         <div class="row">
                             <div class="col-6">
-                                <sl-radio-group label="Select a primary color" id="preferences-primary-color-selector" value="{{ color }}">
-                                    <sl-radio value="default">Default</sl-radio>
+                                <sl-radio-group id="preferences-primary-color-selector" label="Select a primary color" value="{{ color }}">
+                                    <sl-radio value="">Default</sl-radio>
                                     <sl-radio value="red">Red</sl-radio>
                                     <sl-radio value="gray">Gray</sl-radio>
                                     <sl-radio value="orange">Orange</sl-radio>

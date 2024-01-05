@@ -552,19 +552,19 @@ def set_theme(theme_color=None, background_color=None, color=None):
     theme = get_theme()
 
     if theme:
-        if theme_color:
+        if theme_color is not None:
             theme.theme = theme_color
-        if background_color:
+        if background_color is not None:
             theme.backgroundColor = background_color
-        if color:
+        if color is not None:
             theme.color = color
         db.session.commit()
     else:
         theme = Theme(
             user_id=current_user.id,
-            theme=theme_color,
-            backgroundColor=background_color,
-            color=color,
+            theme=theme_color or "",
+            backgroundColor=background_color or "",
+            color=color or "",
         )
         db.session.add(theme)
         db.session.commit()

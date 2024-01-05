@@ -4,6 +4,10 @@ function setColor(color) {
   fetch(COLOR_URL + "?" + new URLSearchParams({ color }));
 }
 
+function setBackgroundColor(backgroundColor) {
+  fetch(BACKGROUND_COLOR_URL + "?" + new URLSearchParams({ backgroundColor }));
+}
+
 let themeSelector = document.getElementById("preferences-theme-selector");
 themeSelector.addEventListener("sl-input", () => setTheme(themeSelector.value));
 
@@ -21,4 +25,20 @@ primaryColorSelector.addEventListener("sl-input", () => {
   document.documentElement.classList.add(`${newColor}-primary`);
 
   setColor(newColor);
+});
+
+let backgroundColorSelector = document.getElementById(
+  "preferences-background-color-selector"
+);
+backgroundColorSelector.addEventListener("sl-input", () => {
+  let newBackgroundColor = backgroundColorSelector.value;
+  for (let classString of document.body.classList) {
+    if (classString.includes("-background")) {
+      document.body.classList.remove(classString);
+    }
+  }
+
+  document.body.classList.add(`${newBackgroundColor}-background`);
+
+  setBackgroundColor(newBackgroundColor);
 });
