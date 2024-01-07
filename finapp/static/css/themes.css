@@ -10,6 +10,78 @@
       hsl(198.7 97.9% 57.2% / 50%)
     );
   }
+
+  .red-background {
+    background: hsl(0, 80%, 75%);
+  }
+
+  .gray-background {
+    background: hsl(0, 0%, 75%);
+  }
+
+  .orange-background {
+    background: hsl(20, 80%, 75%);
+  }
+
+  .amber-background {
+    background: hsl(40 100% 75%);
+  }
+
+  .yellow-background {
+    background: hsl(50 100% 75%);
+  }
+
+  .lime-background {
+    background: hsl(75, 80%, 75%);
+  }
+
+  .green-background {
+    background: hsl(175, 80%, 75%);
+  }
+
+  .emerald-background {
+    background: hsl(155 100% 75%);
+  }
+
+  .teal-background {
+    background: hsl(170 100% 75%);
+  }
+
+  .cyan-background {
+    background: hsl(185 100% 75%);
+  }
+
+  .sky-background {
+    background: hsl(200 100% 75%);
+  }
+
+  .blue-background {
+    background: hsl(240 100% 75%);
+  }
+
+  .indigo-background {
+    background: hsl(255 100% 75%);
+  }
+
+  .violet-background {
+    background: hsl(270 100% 75%);
+  }
+
+  .purple-background {
+    background: hsl(280 100% 75%);
+  }
+
+  .fuchsia-background {
+    background: hsl(290 100% 75%);
+  }
+
+  .pink-background {
+    background: hsl(300 100% 75%);
+  }
+
+  .rose-background {
+    background: hsl(333 100% 75%);
+  }
 }
 
 .sl-theme-dark {
@@ -23,6 +95,78 @@
       rgba(170, 17, 222, 1),
       hsl(198.7 97.9% 57.2%)
     );
+  }
+
+  .red-background {
+    background: hsl(0, 80%, 25%);
+  }
+
+  .gray-background {
+    background: hsl(0, 0%, 25%);
+  }
+
+  .orange-background {
+    background: hsl(20, 80%, 25%);
+  }
+
+  .amber-background {
+    background: hsl(40 100% 25%);
+  }
+
+  .yellow-background {
+    background: hsl(50 100% 25%);
+  }
+
+  .lime-background {
+    background: hsl(75, 80%, 25%);
+  }
+
+  .green-background {
+    background: hsl(125, 80%, 25%);
+  }
+
+  .emerald-background {
+    background: hsl(155 100% 15%);
+  }
+
+  .teal-background {
+    background: hsl(170 100% 25%);
+  }
+
+  .cyan-background {
+    background: hsl(185 100% 25%);
+  }
+
+  .sky-background {
+    background: hsl(200 100% 25%);
+  }
+
+  .blue-background {
+    background: hsl(240 100% 25%);
+  }
+
+  .indigo-background {
+    background: hsl(255 100% 25%);
+  }
+
+  .violet-background {
+    background: hsl(270 100% 25%);
+  }
+
+  .purple-background {
+    background: hsl(280 100% 25%);
+  }
+
+  .fuchsia-background {
+    background: hsl(290 100% 25%);
+  }
+
+  .pink-background {
+    background: hsl(300 100% 25%);
+  }
+
+  .rose-background {
+    background: hsl(333 100% 25%);
   }
 }
 

@@ -353,10 +353,14 @@ sl-icon-button.icon-danger::part(base):active {
 }
 
 sl-button[variant="nik"]::part(base):hover {
-  background-color: var(--sl-color-primary-600);
+  background-color: var(--sl-color-neutral-1000);
+  color: var(--sl-color-neutral-0);
+  border-color: var(--sl-color-neutral-1000);
 }
 sl-button[variant="nik"]::part(base):active {
-  color: var(--sl-color-primary-600);
+  background-color: var(--sl-color-neutral-900);
+  color: var(--sl-color-neutral-0);
+  border-color: var(--sl-color-neutral-900);
 }
 
 .background-preview {
