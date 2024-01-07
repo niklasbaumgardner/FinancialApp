@@ -53,18 +53,18 @@ const CHART_COLORS_ARRAY = [
 // ];
 
 const COLORS = [
-  "rgb(201, 203, 207)", // light grey
+  "hsl(240 5.3% 58%)", // "rgb(201, 203, 207)", // light grey
   "rgb(255, 234, 167)", // light pale yellow
   "rgb(250, 177, 160)", // light pale orange
   "rgb(116, 185, 255)", // light baby blue
   "rgb(129, 236, 236)", // light teal
   "rgb(162, 155, 254)", // light pale purple
-  "rgb(214, 48, 49)", // red
+  "hsl(0 98.6% 67.9%)", // "rgb(214, 48, 49)", // red
   "rgb(0, 184, 148)", // green
   "rgb(95, 39, 205)", // purple
   "rgb(6, 82, 221)", // blue
   "rgb(255, 250, 101)", // yellow
-  "rgb(255, 99, 72)", // orange
+  "hsl(27.2 100% 57.7%)", //"rgb(255, 99, 72)", // orange
   "rgb(248, 165, 194)", // light pale pink
 ];
 
@@ -427,8 +427,8 @@ class ChartHandler {
             ticks: {
               color: "white",
             },
-          }
-        }
+          },
+        },
       },
     });
   }

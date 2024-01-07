@@ -124,7 +124,7 @@ def all_budgets_net_worth(start_date=None):
     # { budget name: { date: net worth } }
     all_budgets = queries.get_budgets(active_only=True)
     temp = {}
-    first = None
+    first = start_date
     last = None
     for budget in all_budgets:
         b_trans = queries.get_transactions(budget.id, start_date)

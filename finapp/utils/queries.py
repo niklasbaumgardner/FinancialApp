@@ -123,10 +123,20 @@ def create_transaction(name, amount, date, budget_id, is_transfer=False):
 
 
 def get_transaction(budget_id, trans_id):
-    transactions = Transaction.query.filter_by(
+    transaction = Transaction.query.filter_by(
         id=trans_id, budget_id=budget_id, user_id=current_user.get_id()
     ).first()
-    return transactions
+    return transaction
+
+
+def get_first_transaction_date():
+    transaction = (
+        Transaction.query.filter_by(user_id=current_user.get_id())
+        .order_by(Transaction.date.asc())
+        .limit(1)
+        .first()
+    )
+    return transaction.date
 
 
 def sort_transactions(sort_by, transactions):

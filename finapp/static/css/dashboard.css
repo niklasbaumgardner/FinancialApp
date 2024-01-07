@@ -10,6 +10,7 @@
 #lineChart {
   width: 100%;
   min-height: 400px;
+  max-height: 800px;
 }
 
 .py-12 {
@@ -34,7 +35,7 @@
 }
 
 .fs-75 {
-  font-size: .75rem !important;
+  font-size: 0.75rem !important;
 }
 
 .no-underline {
@@ -42,7 +43,7 @@
 }
 
 .border-transparent {
-  border-bottom: 1px solid rgba(255, 255, 255, .5);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 .w-40 {
@@ -131,8 +132,8 @@ button {
   right: 0;
   bottom: 0;
   background-color: transparent;
-  -webkit-transition: .3s;
-  transition: .3s;
+  -webkit-transition: 0.3s;
+  transition: 0.3s;
   outline: 1px solid #595c5f;
 }
 
@@ -144,8 +145,8 @@ button {
   left: 2px;
   bottom: 2px;
   background-color: #595c5f;
-  -webkit-transition: .3s;
-  transition: .3s;
+  -webkit-transition: 0.3s;
+  transition: 0.3s;
 }
 
 input:checked + .slider:before {
@@ -201,7 +202,7 @@ a.disabled {
 }
 
 .text-info-50 {
-  color: rgba(13, 203, 240, .5);
+  color: rgba(13, 203, 240, 0.5);
 }
 
 .pie-grid {
@@ -221,14 +222,14 @@ a.disabled {
   display: grid;
   grid-template-columns: 1fr;
   grid-template:
-    'pie'
-    'donut';
+    "pie"
+    "donut";
   gap: 48px;
 }
 
 @media (min-width: 1200px) {
   .pie-donut-grid {
     grid-template-columns: 1fr 1fr !important;
-    grid-template: 'pie donut';
+    grid-template: "pie donut";
   }
 }

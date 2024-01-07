@@ -29,6 +29,7 @@ function setTheme(theme, options) {
 
   console.log("setting theme", theme);
 
+  themeStorage.setItem("theme", theme);
   // Set html element theme
   document.documentElement.setAttribute("data-bs-theme", theme);
   document.documentElement.classList.toggle("sl-theme-dark", theme === "dark");
@@ -49,7 +50,6 @@ function setTheme(theme, options) {
   let currentThemeIcon = getThemeIcon(theme);
   currentThemeIcon.hidden = false;
 
-  themeStorage.setItem("theme", theme);
   if (!(options?.dontSend === true)) {
     fetch(THEME_URL + "?" + new URLSearchParams({ theme }));
   }

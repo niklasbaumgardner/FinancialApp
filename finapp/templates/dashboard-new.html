@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock title %}
+{% block dashboard %}active{% endblock dashboard %}
+
+{% block backButton %}<sl-button href="/" class="me-4" variant="primary" outline><sl-icon slot="prefix" name="caret-left"></sl-icon>Back</sl-button>{% endblock backButton %}
+
+
+
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+
+<script>
+    const BUDGET_URLS = {};
+    {% for budget in budgets %}
+        BUDGET_URLS["{{ budget.name }}".replace("&#39;", "'")] = "{{ url_for('viewbudget_bp.view_budget', id=budget.id) }}";
+    {% endfor %}
+
+    const GET_PIE_DATA_URL = "{{ url_for('dashboard_bp.get_pie_data') }}";
+    const GET_ALL_BUDGETS_LINE_DATA_URL = "{{ url_for('dashboard_bp.get_all_budgets_line_data') }}";
+    const GET_NET_SPENDING_URL = "{{ url_for('dashboard_bp.get_net_spending') }}";
+    const GET_SPENDING_FOR_MONTH_URL = "{{ url_for('dashboard_bp.get_spending_for_month') }}";
+    const GET_BUDGET_NAME_URL = "{{ url_for('dashboard_bp.get_budget_name') }}";
+
+    const START_DATE = "{{ startDate }}";
+</script>
+
+<sl-details class="mb-5" summary="Budgets line chart" open>
+    <sl-select id="budgets" value="allBudgets" label="Select the budgets to show" multiple hoist disabled>
+        <sl-option value="allBudgets">All budgets</sl-option>
+    </sl-select>
+    <sl-input class="width-fit-content" id="startDate" type="date" label="Start date"></sl-input>
+    <div class="row">
+        <canvas id="lineChart"></canvas>
+    </div>
+</sl-details>
+
+<!-- <sl-details summary="Spending breakdown" open>
+    <sl-select id="netSpendingSelect" label="Spending in" hoist>
+    </sl-select>
+</sl-details> -->
+
+<script src="/static/js/dashboard-new.js"></script>
+
+{% endblock content %}
