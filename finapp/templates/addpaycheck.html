@@ -15,7 +15,7 @@
                 <div class="row mb-5">
                     <div class="col-sm nb-row mb-4">
                         <sl-input id="paycheckName" label="Paycheck Name" name="name" placeholder="I'm rich!" autocomplete="niklas" required></sl-input>
-                        <sl-input id="paycheck_amount" label="Paycheck Amount" type="number" name="amount" placeholder="$0.00" autocomplete="niklas" required></sl-input>
+                        <sl-input id="paycheck_amount" label="Paycheck Amount" type="number" step=".01" name="amount" placeholder="$0.00" autocomplete="niklas" required></sl-input>
                         <sl-input class="mw-160 w-50" label="Date" type="date" id="date" name="date" required></sl-input>
                         <sl-checkbox id="isPercentage" name="isPercentage" onclick="toggleBudgetBreakdown()">Use percentages for breakdown</sl-checkbox>
                         {% if showPrefills %}
