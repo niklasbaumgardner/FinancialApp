@@ -68,7 +68,7 @@ def paycheck():
         if is_percentage:
             helpers.confirmBudgetsForPercentages(temp, float(amount))
 
-    return redirect(url_for("home.index"))
+    return redirect(url_for("index_bp.index"))
 
 
 @paycheck_bp.route("/delete_prefill/<float:amount>", methods=["GET"])

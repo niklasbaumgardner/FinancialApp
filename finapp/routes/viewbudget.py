@@ -161,7 +161,7 @@ def add_transaction(budget_id):
             name=name, amount=amount, date=date, budget_id=budget_id
         )
 
-    return redirect(url_for("viewbudget.view_budget", id=budget_id))
+    return redirect(url_for("viewbudget_bp.view_budget", id=budget_id))
 
 
 @viewbudget_bp.route("/edit_transaction/<int:b_id>/<int:t_id>", methods=["POST"])

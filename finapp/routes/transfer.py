@@ -38,7 +38,7 @@ def transfer():
                 is_transfer=True,
             )
 
-        return redirect(url_for("home.index"))
+        return redirect(url_for("index_bp.index"))
 
     budgets = queries.get_budgets(active_only=True)
     return render_template("transfer.html", budgets=budgets, str=str)
