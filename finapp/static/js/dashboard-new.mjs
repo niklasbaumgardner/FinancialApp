@@ -1,4 +1,4 @@
-"use strict";
+import "./dashboardBudgetCard.mjs";
 
 const dashboardStorage = window["localStorage"];
 
@@ -102,8 +102,7 @@ async function getAllBudgetsLineData(startDate = "") {
   return result;
 }
 
-async function getNetSpending(value) {
-  let object = JSON.parse(value);
+async function getNetSpending(object) {
   let result = await getRequest(GET_NET_SPENDING_URL, object);
   return result;
 }
@@ -352,15 +351,22 @@ class ChartManager {
 
 class NetSpendingManager {
   constructor() {
-    this.netSpendingSelect = document.getElementById("netSpendingSelect");
-    this.netSpendingSelect.addEventListener("input", this);
-
     this.init();
   }
 
-  init() {
-    // this.data = getNetSpending();
+  get currentSelection() {
+    return JSON.parse(this.netSpendingSelect.value);
+  }
+
+  async init() {
+    this.netSpendingSelect = document.getElementById("netSpendingSelect");
+    this.netSpendingSelect.addEventListener("input", this);
+
+    this.cardsEl = document.getElementById("cards");
+
     this.addOptions();
+    this.data = await getNetSpending(this.currentSelection);
+    this.createCards();
   }
 
   handleEvent(event) {
@@ -370,6 +376,24 @@ class NetSpendingManager {
   }
 
   handleInputEvent(event) {}
+
+  createCards() {
+    console.log(this.data);
+    let { month, year, ytd } = this.currentSelection;
+    for (let [name, budget] of Object.entries(this.data)) {
+      let card = document.createElement("dashboard-budget-card");
+      budget.url = `${BUDGET_URLS[name]}?month=${month}&year=${year}&ytd=${ytd}`;
+      if (name !== "allBudgets") {
+        card.classList.add("button-div");
+      } else {
+        name = "All budgets combined";
+      }
+      budget.name = name;
+      card.budget = budget;
+
+      this.cardsEl.appendChild(card);
+    }
+  }
 
   createOptionElement(string, month, year, ytd) {
     let option = document.createElement("sl-option");
@@ -418,9 +442,9 @@ class NetSpendingManager {
       this.netSpendingSelect.appendChild(option);
     }
 
-    this.netSpendingSelect.value = options[0].value;
+    this.netSpendingSelect.value = options[1].value;
   }
 }
 
 new ChartManager();
-// new NetSpendingManager();
+new NetSpendingManager();

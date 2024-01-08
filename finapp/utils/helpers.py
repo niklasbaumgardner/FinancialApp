@@ -107,15 +107,15 @@ def net_spending(month, year, ytd):
         total_in += in_
         total_out += out
         data[budget.name] = {
-            "in": format_to_money_string(in_),
-            "out": format_to_money_string(out, False),
-            "net": format_to_money_string(net),
+            "in": in_,
+            "out": out,
+            "net": net,
         }
     total_net = total_in + total_out
     data["allBudgets"] = {
-        "in": format_to_money_string(total_in),
-        "out": format_to_money_string(total_out, False),
-        "net": format_to_money_string(total_net),
+        "in": total_in,
+        "out": total_out,
+        "net": total_net,
     }
     return data
 
