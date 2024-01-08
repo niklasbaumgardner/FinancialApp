@@ -176,7 +176,8 @@ def get_transactions(
     budget_id,
     start_date=None,
     end_date=None,
-    include_transfers=True,
+    include_all_transfers=True,
+    include_only_positive_transfers=False,
     page=1,
     sort_by=None,
     paginate=False,
@@ -192,9 +193,16 @@ def get_transactions(
 
     transactions = sort_transactions(sort_by=sort_by, transactions=transactions)
 
-    if not include_transfers:
+    if not include_all_transfers:
         transactions = transactions.filter(
             (Transaction.is_transfer == False) | (Transaction.is_transfer == None)
+        )
+
+    if include_only_positive_transfers:
+        transactions = transactions.filter(
+            (Transaction.is_transfer == False)
+            | (Transaction.is_transfer == None)
+            | (Transaction.is_transfer == True) & (Transaction.amount > 0)
         )
 
     if start_date:
@@ -221,7 +229,8 @@ def get_transactions_for_month(
     budget_id,
     month,
     year=None,
-    include_transfers=True,
+    include_all_transfers=True,
+    include_only_positive_transfers=False,
     page=1,
     sort_by=None,
     paginate=False,
@@ -243,9 +252,16 @@ def get_transactions_for_month(
 
     transactions = sort_transactions(sort_by=sort_by, transactions=transactions)
 
-    if not include_transfers:
+    if not include_all_transfers:
         transactions = transactions.filter(
             (Transaction.is_transfer == False) | (Transaction.is_transfer == None)
+        )
+
+    if include_only_positive_transfers:
+        transactions = transactions.filter(
+            (Transaction.is_transfer == False)
+            | (Transaction.is_transfer == None)
+            | (Transaction.is_transfer == True) & (Transaction.amount > 0)
         )
 
     if paginate:
@@ -265,7 +281,8 @@ def get_transactions_for_month(
 def get_transactions_for_year(
     budget_id,
     year,
-    include_transfers=True,
+    include_all_transfers=True,
+    include_only_positive_transfers=False,
     page=1,
     sort_by=None,
     paginate=False,
@@ -283,9 +300,16 @@ def get_transactions_for_year(
 
     transactions = sort_transactions(sort_by=sort_by, transactions=transactions)
 
-    if not include_transfers:
+    if not include_all_transfers:
         transactions = transactions.filter(
             (Transaction.is_transfer == False) | (Transaction.is_transfer == None)
+        )
+
+    if include_only_positive_transfers:
+        transactions = transactions.filter(
+            (Transaction.is_transfer == False)
+            | (Transaction.is_transfer == None)
+            | (Transaction.is_transfer == True) & (Transaction.amount > 0)
         )
 
     if paginate:

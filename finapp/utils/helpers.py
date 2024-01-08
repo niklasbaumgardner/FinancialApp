@@ -85,38 +85,52 @@ def in_out_net(trans):
 
 
 def net_spending(month, year, ytd):
-    data = {}
+    data = []
     total_in = 0
     total_out = 0
     total_net = 0
+    total_sum = 0
     all_budgets = queries.get_budgets()
 
     for budget in all_budgets:
+        total_sum += budget.total
+
         if ytd:
             b_trans = queries.get_transactions_for_year(
-                budget_id=budget.id, year=year, include_transfers=False
+                budget_id=budget.id, year=year, include_only_positive_transfers=True
             )
         else:
             b_trans = queries.get_transactions_for_month(
-                budget.id, month=month, year=year, include_transfers=False
+                budget.id, month=month, year=year, include_only_positive_transfers=True
             )
 
         if not b_trans:
             continue
+
         in_, out, net = in_out_net(b_trans)
         total_in += in_
         total_out += out
-        data[budget.name] = {
-            "in": in_,
-            "out": out,
-            "net": net,
-        }
+
+        data.append(
+            {
+                "name": budget.name,
+                "in": in_,
+                "out": out,
+                "net": net,
+                "total": round(budget.total, 2),
+            }
+        )
+
     total_net = total_in + total_out
-    data["allBudgets"] = {
-        "in": total_in,
-        "out": total_out,
-        "net": total_net,
-    }
+    data = [
+        {
+            "name": "allBudgets",
+            "in": total_in,
+            "out": total_out,
+            "net": total_net,
+            "total": total_sum,
+        }
+    ] + data
     return data
 
 

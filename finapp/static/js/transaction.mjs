@@ -81,6 +81,18 @@ class NBTransaction extends NikElement {
     this.deleteModal.show();
   }
 
+  transferTemplate() {
+    if (this.transaction.isTransfer) {
+      return html`<sl-tag
+        class="width-fit-content fs-75"
+        variant="primary"
+        size="small"
+        pill
+        >Transfer</sl-tag
+      >`;
+    }
+  }
+
   nameTemplate() {
     if (this.editing) {
       return html`<sl-input
@@ -100,15 +112,15 @@ class NBTransaction extends NikElement {
     }
 
     return html`<p class="fs-5 my-0">${this.transaction.name}</p>
-      <div class="column-flex">
-        <span class="fs-75"
+      <div class="d-flex align-items-center">
+        <span class="fs-75 me-2"
           ><sl-format-date
             date=${this.transaction.date + "T00:00:00"}
             month="long"
             day="numeric"
             year="numeric"
-          ></sl-format-date
-        ></span>
+          ></sl-format-date></span
+        >${this.transferTemplate()}
       </div>`;
   }
 

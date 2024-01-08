@@ -36,7 +36,7 @@
     async function getNetSpending(value) {
         let object = JSON.parse(value);
         console.log(object);
-        let result = await getRequest("{{ url_for('dashboard_bp.get_net_spending_for_month') }}", object);
+        let result = await getRequest("{{ url_for('dashboard_bp.get_net_spending') }}", object);
         return result;
     }
     async function getMonthSpending(value) {

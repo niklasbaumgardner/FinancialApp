@@ -27,7 +27,7 @@
 </script>
 
 <sl-details class="mb-5" summary="Budgets line chart" open>
-    <sl-select id="budgets" value="allBudgets" label="Select the budgets to show" multiple hoist disabled>
+    <sl-select id="budgets" value="allBudgets" label="Select the budgets to show" class="width-fit-content" multiple hoist disabled>
         <sl-option value="allBudgets">All budgets</sl-option>
     </sl-select>
     <sl-input class="width-fit-content" id="startDate" type="date" label="Start date"></sl-input>
@@ -37,9 +37,9 @@
 </sl-details>
 
 <sl-details summary="Spending breakdown" open>
-    <sl-select id="netSpendingSelect" label="Spending in" hoist>
+    <sl-select id="netSpendingSelect" label="Spending in" class="width-fit-content mb-3" hoist>
     </sl-select>
-    <div id="cards" class="row justify-content-center justify-content-lg-start"></div>
+    <div id="cards" class="row gy-4 justify-content-center justify-content-lg-start"></div>
 </sl-details>
 
 <script src="/static/js/dashboard-new.mjs" type="module"></script>

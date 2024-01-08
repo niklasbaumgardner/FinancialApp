@@ -135,6 +135,10 @@ input {
   width: fit-content;
 }
 
+.white-space-nowrap {
+  white-space: nowrap;
+}
+
 input:focus-visible,
 button:focus-visible {
   outline: 2px solid #0d6efd;
@@ -367,4 +371,12 @@ sl-button[variant="nik"]::part(base):active {
   border: 2px solid var(--sl-color-neutral-1000);
   width: 100px;
   height: 100px;
+}
+
+.nb-text-success {
+  color: var(--sl-color-success-600);
+}
+
+.nb-text-danger {
+  color: var(--sl-color-danger-600);
 }

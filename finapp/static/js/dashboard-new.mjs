@@ -7,28 +7,6 @@ const COLORS_OBJECT = {
     neutral0: "rgb(0, 0, 0)",
     ticks: "rgba(0, 0, 0, .79)",
     grid: "rgba(0, 0, 0, .11)",
-    0: "hsl(0, 80%, 75%)",
-    1: "hsl(20, 80%, 75%)",
-    2: "hsl(40 100% 75%)",
-    3: "hsl(50 100% 75%)",
-    4: "hsl(75, 80%, 75%)",
-    5: "hsl(175, 80%, 75%)",
-    6: "hsl(155 100% 75%)",
-    7: "hsl(170 100% 75%)",
-    8: "hsl(185 100% 75%)",
-    9: "hsl(200 100% 75%)",
-    10: "hsl(240 100% 75%)",
-    11: "hsl(255 100% 75%)",
-    12: "hsl(270 100% 75%)",
-    13: "hsl(280 100% 75%)",
-    14: "hsl(290 100% 75%)",
-    15: "hsl(300 100% 75%)",
-    16: "hsl(333 100% 75%)",
-  },
-  dark: {
-    neutral0: "rgb(255, 255, 255)",
-    ticks: "rgba(255, 255, 255, .79)",
-    grid: "rgba(255, 255, 255, .11)",
     0: "hsl(0, 80%, 25%)",
     1: "hsl(20, 80%, 25%)",
     2: "hsl(40 100% 25%)",
@@ -46,6 +24,28 @@ const COLORS_OBJECT = {
     14: "hsl(290 100% 25%)",
     15: "hsl(300 100% 25%)",
     16: "hsl(333 100% 25%)",
+  },
+  dark: {
+    neutral0: "rgb(255, 255, 255)",
+    ticks: "rgba(255, 255, 255, .79)",
+    grid: "rgba(255, 255, 255, .11)",
+    0: "hsl(0, 80%, 75%)",
+    1: "hsl(20, 80%, 75%)",
+    2: "hsl(40 100% 75%)",
+    3: "hsl(50 100% 75%)",
+    4: "hsl(75, 80%, 75%)",
+    5: "hsl(175, 80%, 75%)",
+    6: "hsl(155 100% 75%)",
+    7: "hsl(170 100% 75%)",
+    8: "hsl(185 100% 75%)",
+    9: "hsl(200 100% 75%)",
+    10: "hsl(240 100% 75%)",
+    11: "hsl(255 100% 75%)",
+    12: "hsl(270 100% 75%)",
+    13: "hsl(280 100% 75%)",
+    14: "hsl(290 100% 75%)",
+    15: "hsl(300 100% 75%)",
+    16: "hsl(333 100% 75%)",
   },
 };
 
@@ -146,14 +146,11 @@ class ChartManager {
     let date = event.target.value;
     let currentDate = this.lastDate;
 
-    console.log(date, currentDate);
-
     if (date === currentDate) {
       return;
     }
 
     let response = await getAllBudgetsLineData(date);
-    console.log(response);
     this.lineChartData = response.data;
     this.lineChartKeys = response.keys;
 
@@ -351,6 +348,8 @@ class ChartManager {
 
 class NetSpendingManager {
   constructor() {
+    this.cardsCache = {};
+    this.dataCache = {};
     this.init();
   }
 
@@ -358,40 +357,72 @@ class NetSpendingManager {
     return JSON.parse(this.netSpendingSelect.value);
   }
 
+  get key() {
+    return this.netSpendingSelect.value;
+  }
+
   async init() {
     this.netSpendingSelect = document.getElementById("netSpendingSelect");
-    this.netSpendingSelect.addEventListener("input", this);
+    this.netSpendingSelect.addEventListener("sl-change", this);
 
     this.cardsEl = document.getElementById("cards");
 
     this.addOptions();
-    this.data = await getNetSpending(this.currentSelection);
+    await this.getData();
     this.createCards();
+    this.addCardsToDocument();
   }
 
-  handleEvent(event) {
-    if (event.type === "input") {
-      this.handleInputEvent(event);
+  async getData() {
+    let data = await getNetSpending(this.currentSelection);
+    this.dataCache[this.key] = data;
+  }
+
+  async handleEvent(event) {
+    if (!this.cardsCache[this.key]) {
+      await this.getData();
+      this.createCards();
+    }
+
+    this.removeCards();
+    this.addCardsToDocument();
+  }
+
+  removeCards() {
+    for (let card of this.cardsEl.querySelectorAll("dashboard-budget-card")) {
+      card.remove();
     }
   }
 
-  handleInputEvent(event) {}
+  addCardsToDocument() {
+    this.cardsEl.append(...this.cardsCache[this.key]);
+  }
 
   createCards() {
-    console.log(this.data);
+    this.cardsCache[this.key] = [];
+
     let { month, year, ytd } = this.currentSelection;
-    for (let [name, budget] of Object.entries(this.data)) {
+    for (let budget of this.dataCache[this.key]) {
       let card = document.createElement("dashboard-budget-card");
-      budget.url = `${BUDGET_URLS[name]}?month=${month}&year=${year}&ytd=${ytd}`;
-      if (name !== "allBudgets") {
+      if (budget.name !== "allBudgets") {
+        budget.url = `${
+          BUDGET_URLS[budget.name]
+        }?month=${month}&year=${year}&ytd=${ytd}`;
         card.classList.add("button-div");
       } else {
-        name = "All budgets combined";
+        budget.name = "All budgets combined";
       }
-      budget.name = name;
+      card.classList.add(
+        "col-10",
+        "col-sm-8",
+        "col-md-5",
+        "col-lg-4",
+        "col-xl-3"
+      );
+
       card.budget = budget;
 
-      this.cardsEl.appendChild(card);
+      this.cardsCache[this.key].push(card);
     }
   }
 
