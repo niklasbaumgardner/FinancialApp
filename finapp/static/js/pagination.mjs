@@ -20,6 +20,12 @@ export class PaginationOwner {
     document.addEventListener("RequestNewPages", this);
     document.addEventListener("SortingChanged", this);
     document.addEventListener("ToggleSearching", this);
+
+    this.prevButton = document.getElementById("prev");
+    this.nextButton = document.getElementById("next");
+
+    this.prevButton.onclick = () => this.onPrevClick();
+    this.nextButton.onclick = () => this.onNextClick();
   }
 
   handleEvent(event) {
@@ -34,6 +40,24 @@ export class PaginationOwner {
         this.toggleSearch(event.detail.searching);
         break;
     }
+  }
+
+  onPrevClick() {
+    if (this.prevButton.disabled) {
+      return;
+    }
+    this.currentPagination.setCurrentPage(
+      this.currentPagination.currentPage - 1
+    );
+  }
+
+  onNextClick() {
+    if (this.nextButton.disabled) {
+      return;
+    }
+    this.currentPagination.setCurrentPage(
+      this.currentPagination.currentPage + 1
+    );
   }
 
   toggleSearch(searching) {
@@ -125,9 +149,6 @@ export class Pagination {
     this.transactionContainer = document.getElementById("transactionList");
     this.prevButton = document.getElementById("prev");
     this.nextButton = document.getElementById("next");
-
-    this.prevButton.onclick = () => this.onPrevClick();
-    this.nextButton.onclick = () => this.onNextClick();
   }
 
   init(currentPage) {
@@ -226,7 +247,7 @@ export class Pagination {
   createButton(pageNum) {
     let button = document.createElement("sl-button");
     button.textContent = pageNum;
-    button.outline = true;
+    button.variant = "default";
     button.onclick = () => this.setCurrentPage(pageNum);
 
     return button;
@@ -313,7 +334,6 @@ export class Pagination {
 
     for (let i = start; i < end; i++) {
       let button = this.allPageButtons[i];
-      button.outline = !(i + 1 === this.currentPage);
       button.variant = i + 1 === this.currentPage ? "primary" : "default";
       buttonsListEle.insertBefore(button, this.nextButton);
     }
@@ -374,20 +394,6 @@ export class Pagination {
     for (let input of allPageNumberInputs) {
       input.setAttribute("value", this.currentPage);
     }
-  }
-
-  onPrevClick() {
-    if (this.prevButton.firstElementChild.disabled) {
-      return;
-    }
-    this.setCurrentPage(this.currentPage - 1);
-  }
-
-  onNextClick() {
-    if (this.nextButton.firstElementChild.disabled) {
-      return;
-    }
-    this.setCurrentPage(this.currentPage + 1);
   }
 
   getTransactionArray(data) {
