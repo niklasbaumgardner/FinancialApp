@@ -97,11 +97,11 @@ def net_spending(month, year, ytd):
 
         if ytd:
             b_trans = queries.get_transactions_for_year(
-                budget_id=budget.id, year=year, include_only_positive_transfers=True
+                budget_id=budget.id, year=year, include_all_transfers=False
             )
         else:
             b_trans = queries.get_transactions_for_month(
-                budget.id, month=month, year=year, include_only_positive_transfers=True
+                budget.id, month=month, year=year, include_all_transfers=False
             )
 
         if not b_trans:
@@ -182,11 +182,11 @@ def spending_for_month(month, year, ytd):
     for budg in all_budgets:
         if ytd:
             temp_trans = queries.get_transactions_for_year(
-                budget_id=budg.id, year=year, include_transfers=False
+                budget_id=budg.id, year=year, include_all_transfers=False
             )
         else:
             temp_trans = queries.get_transactions_for_month(
-                budget_id=budg.id, month=month, year=year, include_transfers=False
+                budget_id=budg.id, month=month, year=year, include_all_transfers=False
             )
         expenses = sum([t.amount for t in temp_trans if t.amount < 0]) * -1
         income = sum([t.amount for t in temp_trans if t.amount > 0])
