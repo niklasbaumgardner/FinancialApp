@@ -51,20 +51,6 @@ class DashboardBudgetCard extends NikElement {
       <sl-divider></sl-divider>
       <div class="d-flex justify-content-between">
         <span
-          >Income:
-          <sl-format-number
-            class="white-space-nowrap ${this.budget.in > 0
-              ? "nb-text-success"
-              : this.budget.in < 0
-              ? "nb-text-danger"
-              : ""}"
-            type="currency"
-            currency="USD"
-            value="${this.budget.in}"
-            lang="en-US"
-          ></sl-format-number
-        ></span>
-        <span class="text-end"
           >Spent:
           <sl-format-number
             class="white-space-nowrap ${this.budget.out > 0
@@ -75,6 +61,20 @@ class DashboardBudgetCard extends NikElement {
             type="currency"
             currency="USD"
             value="${this.budget.out}"
+            lang="en-US"
+          ></sl-format-number
+        ></span>
+        <span class="text-end"
+          >Income:
+          <sl-format-number
+            class="white-space-nowrap ${this.budget.in > 0
+              ? "nb-text-success"
+              : this.budget.in < 0
+              ? "nb-text-danger"
+              : ""}"
+            type="currency"
+            currency="USD"
+            value="${this.budget.in}"
             lang="en-US"
           ></sl-format-number
         ></span>
