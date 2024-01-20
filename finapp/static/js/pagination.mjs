@@ -76,8 +76,6 @@ export class PaginationOwner {
     let sort = event.detail.sort;
     this.currentPagination.sort = sort;
 
-    console.log(sort, this.currentPagination.sort);
-
     this.requestNewPages({
       lessThanCurrentPage: true,
       greaterThanCurrentPage: true,
@@ -98,8 +96,6 @@ export class PaginationOwner {
 
       button.classList.add("active");
 
-      console.log(event);
-
       this.search.sort = button.value;
 
       await this.search.requestNewPages({
@@ -116,8 +112,6 @@ export class PaginationOwner {
       }
 
       button.classList.add("active");
-
-      console.log(event);
 
       this.pagination.sort = button.value;
 
@@ -215,7 +209,6 @@ export class Pagination {
     this.numPages = data.num_pages;
     this.createAllPageButtons();
 
-    console.log(data);
     if (data.search_sum) {
       document.dispatchEvent(
         new CustomEvent("SearchTotalChanged", {
@@ -443,15 +436,33 @@ export class Search extends Pagination {
     return url;
   }
 
+  debounce(callback, wait) {
+    return (...args) => {
+      window.clearTimeout(this.timeoutId);
+      this.timeoutId = window.setTimeout(() => {
+        callback(...args);
+      }, wait);
+    };
+  }
+
   async handleInputEvent(event) {
     this.searchValues = event.detail;
-    await this.requestNewPages({
-      lessThanCurrentPage: true,
-      greaterThanCurrentPage: true,
-    });
 
-    this.createAllPageButtons();
-    this.updatePageButtons();
+    if (this.lastSearchValues === this.searchValues) {
+      return;
+    }
+
+    this.debounce(async () => {
+      await this.requestNewPages({
+        lessThanCurrentPage: true,
+        greaterThanCurrentPage: true,
+      });
+
+      this.createAllPageButtons();
+      this.updatePageButtons();
+    }, 300)();
+
+    this.lastSearchValues = this.searchValues;
   }
 
   setSearchParams() {

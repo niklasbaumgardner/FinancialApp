@@ -1,6 +1,5 @@
 import { html } from "./imports.mjs";
 import { NikElement } from "./customElement.mjs";
-import { getRequest, postRequest, deleteRequest } from "./fetch.mjs";
 import "./searchItem.mjs";
 
 class BudgetSearchCard extends NikElement {
@@ -167,8 +166,6 @@ class BudgetSearchCard extends NikElement {
   }
 
   handleInputEvent(event) {
-    console.log(this);
-
     if (this.lastSearchValues === JSON.stringify(this.searchValuesObject)) {
       return;
     }
