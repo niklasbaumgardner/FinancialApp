@@ -22,21 +22,41 @@ class DashboardBudgetCard extends NikElement {
   }
 
   template() {
-    return html`<span class="fs-4">${this.budget.name}</span>
-      <sl-divider></sl-divider>
-      <div class="mb-3 d-flex justify-content-between">
-        Current total:
-        <sl-format-number
+    return html`<span class="col-4">${this.budget.name}</span
+      ><span class="col-2 text-end"
+        ><sl-format-number
           class="white-space-nowrap"
           type="currency"
           currency="USD"
           value="${this.budget.total}"
           lang="en-US"
-        ></sl-format-number>
-      </div>
-      <div class="d-flex justify-content-between">
-        Net income:
-        <sl-format-number
+        ></sl-format-number></span
+      ><span class="col-2 text-end"
+        ><sl-format-number
+          class="white-space-nowrap ${this.budget.in > 0
+            ? "nb-text-success"
+            : this.budget.in < 0
+            ? "nb-text-danger"
+            : ""}"
+          type="currency"
+          currency="USD"
+          value="${this.budget.in}"
+          lang="en-US"
+        ></sl-format-number></span
+      ><span class="col-2 text-end"
+        ><sl-format-number
+          class="white-space-nowrap ${this.budget.out > 0
+            ? "nb-text-success"
+            : this.budget.out < 0
+            ? "nb-text-danger"
+            : ""}"
+          type="currency"
+          currency="USD"
+          value="${this.budget.out}"
+          lang="en-US"
+        ></sl-format-number></span
+      ><span class="col-2 text-end"
+        ><sl-format-number
           class="white-space-nowrap ${this.budget.net > 0
             ? "nb-text-success"
             : this.budget.net < 0
@@ -46,47 +66,25 @@ class DashboardBudgetCard extends NikElement {
           currency="USD"
           value="${this.budget.net}"
           lang="en-US"
-        ></sl-format-number>
-      </div>
-      <sl-divider></sl-divider>
-      <div class="d-flex justify-content-between">
-        <span
-          >Spent:
-          <sl-format-number
-            class="white-space-nowrap ${this.budget.out > 0
-              ? "nb-text-success"
-              : this.budget.out < 0
-              ? "nb-text-danger"
-              : ""}"
-            type="currency"
-            currency="USD"
-            value="${this.budget.out}"
-            lang="en-US"
-          ></sl-format-number
-        ></span>
-        <span class="text-end"
-          >Income:
-          <sl-format-number
-            class="white-space-nowrap ${this.budget.in > 0
-              ? "nb-text-success"
-              : this.budget.in < 0
-              ? "nb-text-danger"
-              : ""}"
-            type="currency"
-            currency="USD"
-            value="${this.budget.in}"
-            lang="en-US"
-          ></sl-format-number
-        ></span>
-      </div>`;
+        ></sl-format-number
+      ></span>`;
   }
 
   render() {
     if (this.budget.url) {
-      return html`<sl-card @click=${this.onClick}>${this.template()}</sl-card>`;
+      return html`<div
+        style="display:flex;justify-content:space-between;min-width:550px;"
+        @click=${this.onClick}
+      >
+        ${this.template()}
+      </div>`;
     }
 
-    return html`<sl-card>${this.template()}</sl-card>`;
+    return html`<div
+      style="display:flex;justify-content:space-between;min-width:550px;"
+    >
+      ${this.template()}
+    </div>`;
   }
 }
 

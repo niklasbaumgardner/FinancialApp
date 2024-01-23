@@ -233,3 +233,17 @@ a.disabled {
     grid-template: "pie donut";
   }
 }
+
+#cards {
+  overflow-x: scroll;
+}
+
+#cards-header {
+  display: flex;
+  justify-content: space-between;
+  min-width: 550px;
+}
+
+#cards > sl-divider {
+  min-width: 550px;
+}

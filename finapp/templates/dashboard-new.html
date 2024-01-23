@@ -39,7 +39,19 @@
 <sl-details summary="Spending breakdown" open>
     <sl-select id="netSpendingSelect" label="Spending in" class="width-fit-content mb-3" hoist>
     </sl-select>
+    <sl-card id="" class="mb-4">
+        <div id="cards" class="pb-3">
+            <div id="cards-header" class="d-flex">
+                <span class="col-4">Name</span>
+                <span class="col-2 text-end">Current total</span>
+                <span class="col-2 text-end">Income</span>
+                <span class="col-2 text-end">Spent</span>
+                <span class="col-2 text-end">Net</span>
+            </div>
+        </div>
+    </sl-card>
     <div id="cards" class="row gy-4 justify-content-center justify-content-lg-start"></div>
+
 </sl-details>
 
 <script src="/static/js/dashboard-new.mjs" type="module"></script>

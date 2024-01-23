@@ -389,6 +389,9 @@ class NetSpendingManager {
   }
 
   removeCards() {
+    for (let divider of this.cardsEl.querySelectorAll("sl-divider")) {
+      divider.remove();
+    }
     for (let card of this.cardsEl.querySelectorAll("dashboard-budget-card")) {
       card.remove();
     }
@@ -412,18 +415,24 @@ class NetSpendingManager {
       } else {
         budget.name = "All budgets combined";
       }
-      card.classList.add(
-        "col-10",
-        "col-sm-8",
-        "col-md-5",
-        "col-lg-4",
-        "col-xl-3"
-      );
 
       card.budget = budget;
 
       this.cardsCache[this.key].push(card);
     }
+
+    this.cardsCache[this.key] = this.cardsCache[this.key].reduce(
+      (result, element, index, array) => {
+        result.push(element);
+
+        if (index < array.length - 1) {
+          result.push(document.createElement("sl-divider"));
+        }
+
+        return result;
+      },
+      [document.createElement("sl-divider")]
+    );
   }
 
   createOptionElement(string, month, year, ytd) {
