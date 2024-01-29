@@ -4,19 +4,21 @@ from finapp.config import Config
 from flask_migrate import Migrate
 from flask_mail import Mail
 from flask_login import LoginManager
+from flask_sqlalchemy import SQLAlchemy
 
 
 bcrypt = Bcrypt()
 migrate = Migrate()
 mail = Mail()
 login_manager = LoginManager()
+db = SQLAlchemy()
 
 
 app = Flask(__name__)
 
 app.config.from_object(Config)
 
-# db.init_app(app)
+db.init_app(app)
 bcrypt.init_app(app)
 login_manager.init_app(app)
 login_manager.login_view = "auth_bp.login"
@@ -48,10 +50,10 @@ app.register_blueprint(transfer_blueprint)
 app.register_blueprint(viewbudget_blueprint)
 app.register_blueprint(context_processor_blueprint)
 
-# with app.app_context():
-#     db.create_all()
+with app.app_context():
+    db.create_all()
 
-# migrate.init_app(app, db)
+migrate.init_app(app, db)
 
 from finapp.utils.jinja_filters import add_filters
 

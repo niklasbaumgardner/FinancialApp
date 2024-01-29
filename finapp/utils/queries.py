@@ -1,10 +1,9 @@
 from finapp.models import Budget, Transaction, PaycheckPrefill, Theme, User
-from finapp.models import db_session
 from sqlalchemy import extract
 from sqlalchemy.sql import func, or_
 from flask_login import current_user
 from datetime import date
-from finapp import bcrypt
+from finapp import bcrypt, db
 
 ## Helper functions
 ##
@@ -29,8 +28,8 @@ def paginate_query(query, page):
 
 def create_budget(name):
     budg = Budget(name=name, total=0, user_id=current_user.get_id(), is_active=True)
-    db_session.add(budg)
-    db_session.commit()
+    db.session.add(budg)
+    db.session.commit()
     return budg
 
 
@@ -85,7 +84,7 @@ def update_budget(id, name=None, is_active=None):
             budget.name = name
         if is_active is not None:
             budget.is_active = is_active
-        db_session.commit()
+        db.session.commit()
 
 
 def update_budget_total(b_id):
@@ -98,13 +97,13 @@ def update_budget_total(b_id):
             total += trans.amount
         budget.total = total
 
-        db_session.commit()
+        db.session.commit()
 
 
 def add_transaction_to_total(budget, transaction):
     if budget:
         budget.total += transaction.amount
-        db_session.commit()
+        db.session.commit()
 
 
 def delete_budget(id):
@@ -114,8 +113,8 @@ def delete_budget(id):
 
 def _delete_budget(budget):
     if budget:
-        db_session.delete(budget)
-        db_session.commit()
+        db.session.delete(budget)
+        db.session.commit()
 
 
 ##
@@ -134,8 +133,8 @@ def create_transaction(name, amount, date, budget_id, is_transfer=False):
             date=date,
             is_transfer=is_transfer,
         )
-        db_session.add(trans)
-        db_session.commit()
+        db.session.add(trans)
+        db.session.commit()
         add_transaction_to_total(budget, trans)
 
 
@@ -364,7 +363,7 @@ def _update_transaction(
         if is_transfer is not None:
             transaction.is_transfer = is_transfer
 
-        db_session.commit()
+        db.session.commit()
 
         for id in should_update_budget_total:
             update_budget_total(id)
@@ -377,8 +376,8 @@ def delete_transaction(b_id, t_id):
 
 def _delete_transaction(transaction, b_id):
     if transaction:
-        db_session.delete(transaction)
-        db_session.commit()
+        db.session.delete(transaction)
+        db.session.commit()
 
         update_budget_total(b_id)
 
@@ -507,8 +506,8 @@ def create_or_update_prefill(b_id, total_amount, amount):
     if db_prefill:
         db_prefill.amount = prefill.amount
     else:
-        db_session.add(prefill)
-    db_session.commit()
+        db.session.add(prefill)
+    db.session.commit()
 
 
 def get_prefill(prefill_id):
@@ -565,8 +564,8 @@ def delete_prefill(p_id):
 
 def _delete_prefill(prefill):
     if prefill:
-        db_session.delete(prefill)
-        db_session.commit()
+        db.session.delete(prefill)
+        db.session.commit()
 
 
 ##
@@ -591,7 +590,7 @@ def set_theme(theme_color=None, background_color=None, color=None):
             theme.backgroundColor = background_color
         if color is not None:
             theme.color = color
-        db_session.commit()
+        db.session.commit()
     else:
         theme = Theme(
             user_id=current_user.id,
@@ -599,8 +598,8 @@ def set_theme(theme_color=None, background_color=None, color=None):
             backgroundColor=background_color or "",
             color=color or "",
         )
-        db_session.add(theme)
-        db_session.commit()
+        db.session.add(theme)
+        db.session.commit()
 
     return theme
 
@@ -613,8 +612,8 @@ def set_theme(theme_color=None, background_color=None, color=None):
 def createUser(email, username, password):
     hash_ = hashPassword(password=password)
     new_user = User(email=email, username=username, password=hash_)
-    db_session.add(new_user)
-    db_session.commit()
+    db.session.add(new_user)
+    db.session.commit()
 
 
 def getUserById(id):
@@ -637,7 +636,7 @@ def updateUser(id, username, email):
     if email:
         user.email = email
 
-    db_session.commit()
+    db.session.commit()
 
 
 def updateUserPasswod(id, password):
@@ -648,7 +647,7 @@ def updateUserPasswod(id, password):
     hash_ = hashPassword(password=password)
     user.password = hash_
 
-    db_session.commit()
+    db.session.commit()
 
 
 def hashPassword(password):
