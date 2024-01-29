@@ -27,7 +27,13 @@ def paginate_query(query, page):
 
 
 def create_budget(name):
-    budg = Budget(name=name, total=0, user_id=current_user.get_id(), is_active=True)
+    budg = Budget(
+        name=name,
+        total=0,
+        user_id=current_user.get_id(),
+        is_active=True,
+        is_shared=False,
+    )
     db.session.add(budg)
     db.session.commit()
     return budg

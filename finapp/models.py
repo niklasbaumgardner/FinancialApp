@@ -45,6 +45,7 @@ class Budget(db.Model):
     total = db.Column(db.Float, nullable=False)
     name = db.Column(db.String(60), nullable=False)
     is_active = db.Column(db.Boolean, nullable=False)
+    is_shared = db.Column(db.Boolean, nullable=False)
 
     def to_json(self):
         return json.dumps(
@@ -62,6 +63,12 @@ class Budget(db.Model):
 
     def __str__(self):
         return f"{self.name : <30s}|{self.total : >10.2f}"
+
+
+class SharedBudget(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    budget_id = db.Column(db.Integer, db.ForeignKey("budget.id"), nullable=False)
 
 
 class Transaction(db.Model):
