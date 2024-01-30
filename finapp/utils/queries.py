@@ -1,6 +1,13 @@
-from finapp.models import Budget, Transaction, PaycheckPrefill, Theme, User
+from finapp.models import (
+    Budget,
+    SharedBudget,
+    Transaction,
+    PaycheckPrefill,
+    Theme,
+    User,
+)
 from sqlalchemy import extract
-from sqlalchemy.sql import func, or_
+from sqlalchemy.sql import func, or_, and_
 from flask_login import current_user
 from datetime import date
 from finapp import bcrypt, db
@@ -39,42 +46,50 @@ def create_budget(name):
     return budg
 
 
+def get_budget_for_id(id):
+    # do not call this method unless absolutely needed
+    return Budget.query.filter_by(id=id).first()
+
+
 def get_budget(id):
     try:
         id = int(id)
-        return Budget.query.filter_by(id=id, user_id=current_user.get_id()).first()
+        return Budget.query.filter(
+            or_(
+                and_(Budget.id == id, Budget.user_id == current_user.get_id()),
+                get_shared_budgets_query().exists(),
+            )
+        ).first()
+
     except:
         return None
 
 
 def get_budgets(separate=False, active_only=False, inactive_only=False):
+    shared_budget_query = get_shared_budgets_query()
+    budgets = Budget.query.where(
+        or_(Budget.user_id == current_user.id, shared_budget_query.exists())
+    )
+
     if active_only:
-        active = Budget.query.filter_by(
-            user_id=current_user.get_id(), is_active=True
-        ).all()
+        active = budgets.filter_by(is_active=True).all()
         active.sort(key=lambda x: x.name.lower())
         return active
 
     elif inactive_only:
-        inactive = Budget.query.filter_by(
-            user_id=current_user.get_id(), is_active=False
-        ).all()
+        inactive = budgets.filter_by(is_active=False).all()
         inactive.sort(key=lambda x: x.name.lower())
         return inactive
 
     elif separate:
-        active = Budget.query.filter_by(
-            user_id=current_user.get_id(), is_active=True
-        ).all()
-        inactive = Budget.query.filter_by(
-            user_id=current_user.get_id(), is_active=False
-        ).all()
+        active = budgets.filter_by(is_active=True).all()
+        inactive = budgets.filter_by(is_active=False).all()
         active.sort(key=lambda x: x.name.lower())
         inactive.sort(key=lambda x: x.name.lower())
         return active, inactive
 
     else:
-        budgets = Budget.query.filter_by(user_id=current_user.get_id()).all()
+        budgets = budgets.all()
         budgets.sort(key=lambda x: x.name.lower())
         return budgets
 
@@ -121,6 +136,33 @@ def _delete_budget(budget):
     if budget:
         db.session.delete(budget)
         db.session.commit()
+
+
+##
+## SharedBudget queries
+##
+
+
+def create_shared_budget(budget):
+    maybe = get_shared_budget(budget_id=budget.id)
+    if maybe:
+        return maybe
+
+    shared_budget = SharedBudget(user_id=current_user.id, budget_id=budget.id)
+    db.session.add(shared_budget)
+    budget.is_shared = True
+    db.session.commit()
+    return shared_budget
+
+
+def get_shared_budget(budget_id):
+    return SharedBudget.query.filter_by(
+        user_id=current_user.id, budget_id=budget_id
+    ).first()
+
+
+def get_shared_budgets_query():
+    return SharedBudget.query.filter_by(user_id=current_user.id, budget_id=Budget.id)
 
 
 ##
@@ -666,3 +708,31 @@ def is_email_unique(email):
 
 def is_username_unique(username):
     return not User.query.filter_by(username=username).first()
+
+
+def get_shared_users_for_budget_id(budget_id):
+    shared_budget_query = SharedBudget.query.filter_by(
+        budget_id=budget_id, user_id=User.id
+    )
+    budget_owner_query = Budget.query.filter_by(id=budget_id, user_id=User.id)
+
+    return User.query.where(
+        and_(
+            current_user.id != User.id,
+            or_(shared_budget_query.exists(), budget_owner_query.exists()),
+        )
+    ).all()
+
+
+def get_shared_users_for_all_budgets():
+    shared_budget_query = SharedBudget.query.filter_by(
+        budget_id=Budget.id, user_id=User.id
+    )
+    budget_shared_query = Budget.query.where(
+        and_(Budget.is_shared == True, Budget.user_id == User.id),
+        or_(shared_budget_query.exists()),
+    )
+
+    return User.query.where(
+        and_(current_user.id != User.id, budget_shared_query.exists())
+    ).all()

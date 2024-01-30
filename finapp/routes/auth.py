@@ -1,10 +1,9 @@
 from flask import Blueprint, render_template, flash, request, redirect, url_for
 from flask_login import login_user, current_user, logout_user, login_required
-from flask_mail import Message
 from finapp.utils import queries
 from finapp.models import User
-from finapp import mail
 from finapp import bcrypt
+from finapp.utils.send_email import send_reset_email
 
 auth_bp = Blueprint("auth_bp", __name__)
 
@@ -144,16 +143,3 @@ def email_unique():
     email = request.args.get("email")
 
     return {"isUnique": queries.is_email_unique(email)}
-
-
-def send_reset_email(user):
-    if not user:
-        return
-
-    token = user.get_reset_token()
-    msg = Message("Password Reset Request", recipients=[user.email])
-    msg.body = f"""To reset your password, visit the following link:
-{url_for('auth_bp.password_reset', token=token, _external=True)}
-If you did not make this request then please ignore this email and no changes will be made.
-"""
-    mail.send(msg)

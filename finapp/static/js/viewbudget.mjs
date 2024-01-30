@@ -41,6 +41,11 @@ function checkInput() {
   btn.disabled = true;
 }
 
+let shareBudgetDialog = document.getElementById("share-budget-dialog");
+function handleShareButtonClick() {
+  shareBudgetDialog.show();
+}
+
 // Focus the transaction name input on first tab click
 function keydownHandler(event) {
   if (event.key === "Tab") {
@@ -67,3 +72,6 @@ const paginationOwner = new PaginationOwner(
 
 document.getElementById("name").addEventListener("input", checkInput);
 document.getElementById("amount").addEventListener("input", checkInput);
+document
+  .getElementById("share-budget-button")
+  .addEventListener("click", handleShareButtonClick);

@@ -31,9 +31,10 @@ a {
   z-index: 799;
 }
 
-.alerts {
+#alerts {
   position: absolute;
   top: 60px;
+  z-index: 99999;
 }
 
 .display-block {

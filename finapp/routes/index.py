@@ -2,7 +2,7 @@ from finapp.utils import queries
 from flask import Blueprint, render_template, request, abort
 from flask_login import login_required
 from finapp.utils import helpers
-from jinja2 import Template
+import json
 
 
 index_bp = Blueprint("index_bp", __name__)
@@ -13,12 +13,17 @@ index_bp = Blueprint("index_bp", __name__)
 def index():
     active, inactive = queries.get_budgets(separate=True)
 
+    shared_users = {
+        u.id: u.to_dict() for u in queries.get_shared_users_for_all_budgets()
+    }
+
     total = round(sum([x.total for x in active + inactive]), 2)
     return render_template(
         "index.html",
         budgets=[active, inactive],
         round=round,
         total=helpers.format_to_money_string(total),
+        shared_users=json.dumps(shared_users),
     )
 
 
@@ -82,6 +87,10 @@ def edit_budget(id):
 @index_bp.route("/delete_budget/<int:b_id>", methods=["DELETE"])
 @login_required
 def delete_budget(b_id):
+    budget = queries.get_budget(b_id)
+    if budget.is_shared:
+        abort(400)
+
     new_budget_id = request.form.get("new_budget")
 
     # move or delete the transactions

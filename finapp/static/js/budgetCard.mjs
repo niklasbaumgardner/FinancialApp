@@ -1,6 +1,6 @@
 import { html } from "./imports.mjs";
 import { NikElement } from "./customElement.mjs";
-import { getRequest, postRequest, deleteRequest } from "./fetch.mjs";
+import { getRequest, postRequest } from "./fetch.mjs";
 
 class BudgetCard extends NikElement {
   static properties = {
@@ -18,6 +18,28 @@ class BudgetCard extends NikElement {
       amountInputEl: "#budgetAmount",
       submitButtonEl: "#saveButton",
     };
+  }
+
+  getSharedUsers() {
+    return this.budget.sharedUserIds?.reduce(
+      (acc, curr) => acc + SHARED_USERS[curr].username,
+      ""
+    );
+  }
+
+  sharedUserTemplate() {
+    if (this.budget.isShared) {
+      return html`<div class="col text-end">
+        <sl-tooltip
+          content="This budget is shared with ${this.getSharedUsers()}"
+        >
+          <sl-icon
+            name="person-circle"
+            style="padding: var(--sl-spacing-x-small);"
+          ></sl-icon
+        ></sl-tooltip>
+      </div>`;
+    }
   }
 
   nameTemplate() {
@@ -43,21 +65,28 @@ class BudgetCard extends NikElement {
         </div>`;
     }
     return html`<div class="col text-start">
-      <div class="d-flex flex-column">
-        <p class="fs-4 mb-0">${this.budget.name}</p>
+        <div class="d-flex flex-column">
+          <p class="fs-4 mb-0">${this.budget.name}</p>
+        </div>
       </div>
-    </div>`;
+      ${this.sharedUserTemplate()}`;
+  }
+
+  deleteButtonTemplate() {
+    if (!this.budget.isShared) {
+      return html`<sl-button
+        variant="danger"
+        outline
+        size="small"
+        @click=${this.handleDeleteClick}
+        >Delete</sl-button
+      >`;
+    }
   }
 
   buttonsTemplate() {
     if (this.editing) {
-      return html`<sl-button
-          variant="danger"
-          outline
-          size="small"
-          @click=${this.handleDeleteClick}
-          >Delete</sl-button
-        ><sl-button
+      return html`${this.deleteButtonTemplate()}<sl-button
           id="saveButton"
           variant="primary"
           size="small"
@@ -150,6 +179,8 @@ class BudgetCard extends NikElement {
       return;
     }
 
+    this.nameInputEl.setAttribute("help-text", "");
+    this.submitButtonEl.disabled = false;
     for (let card of document.querySelectorAll("budget-card")) {
       if (this === card) {
         continue;
@@ -161,9 +192,6 @@ class BudgetCard extends NikElement {
         );
         this.submitButtonEl.disabled = true;
         break;
-      } else {
-        this.nameInputEl.setAttribute("help-text", "");
-        this.submitButtonEl.disabled = false;
       }
     }
   }

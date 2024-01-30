@@ -1,7 +1,6 @@
 from finapp.utils import queries
 from flask import Blueprint, render_template, redirect, url_for, request
 from flask_login import login_required
-from datetime import datetime
 from finapp.utils import helpers
 import json
 
@@ -35,17 +34,22 @@ def view_budget(id):
 
     transactions = helpers.jsify_transactions(transactions)
 
+    shared_users = {}
+    if budget.is_shared:
+        shared_users = {
+            u.id: u.to_dict()
+            for u in queries.get_shared_users_for_budget_id(budget_id=budget.id)
+        }
+
     return render_template(
         "viewbudget.html",
         budget=budget,
         transactions=transactions,
-        round=round,
-        strftime=datetime.strftime,
         budgets=budgets,
-        str=str,
         total=total,
         page=page,
         num_pages=num_pages,
+        shared_users=shared_users,
     )
 
 

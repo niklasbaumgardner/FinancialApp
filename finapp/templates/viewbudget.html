@@ -12,6 +12,8 @@
     const SEARCH_PAGE_URL = "{{ url_for('viewbudget_bp.search', b_id=budget.id) }}";
     const MOVE_TRANSACTION_URL = "{{ url_for('viewbudget_bp.move_transaction', sb_id=budget.id, t_id=0) }}".slice(0, -1);
     const DELETE_TRANSACTION_URL = "{{ url_for('viewbudget_bp.delete_transaction', b_id=budget.id, t_id=0) }}".slice(0, -1);
+    const SHARE_BUDGET_URL = "{{ url_for('sharebudget_bp.share_budget', budget_id=budget.id) }}"
+
     const params = new URLSearchParams(window.location.search);
     const TOTAL_TRANSACTIONS = {{ total }};
     const CURRENT_PAGE = {{ page }};
@@ -23,8 +25,22 @@
 
 <sl-card class="mb-4">
     <div class="row" slot="header">
-        <div class="fs-1">
-            {{ budget.name }}
+        <div class="d-flex justify-content-between">
+            <div class="fs-1">
+                {{ budget.name }}
+            </div>
+            <div>
+                {% if budget.is_shared %}
+                    {% for _, u in shared_users.items() %}
+                        <sl-tooltip content="This budget is shared with {{ u['username'] }}">
+                            <sl-icon name="person-circle"></sl-icon>
+                        </sl-tooltip>
+                    {% endfor %}
+                {% endif %}
+                <sl-tooltip content="Share this budget">
+                    <sl-icon-button id="share-budget-button" name="share-fill" label="Share this budget"></sl-icon-button>
+                </sl-tooltip>
+            </div>
         </div>
         <div class="fs-5 mb-0 subhead">
             Total: <sl-format-number id="budgetTotal" type="currency" currency="USD" value="{{ budget.total }}" lang="en-US"></sl-format-number>
@@ -70,11 +86,13 @@
 
 <div id="moveModals"></div>
 <div id="deleteModals"></div>
+<share-budget-dialog id="share-budget-dialog"></share-budget-dialog>
 
 
     <script src="/static/js/setdate.js"></script>
     <script src="/static/js/transaction.mjs" type="module"></script>
     <script src="/static/js/viewbudget.mjs" type="module"></script>
     <script src="/static/js/viewBudgetSearchCard.mjs" type="module"></script>
+    <script src="/static/js/shareBudgetElement.mjs" type="module"></script>
 
 {% endblock content %}

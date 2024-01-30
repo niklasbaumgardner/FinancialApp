@@ -38,6 +38,7 @@ from finapp.routes.index import index_bp as index_blueprint
 from finapp.routes.paycheck import paycheck_bp as paycheck_blueprint
 from finapp.routes.preferences import preferences_bp as preferences_blueprint
 from finapp.routes.profile import profile_bp as profile_blueprint
+from finapp.routes.sharebudget import sharebudget_bp as sharebudget_blueprint
 from finapp.routes.theme import theme_bp as theme_blueprint
 from finapp.routes.transfer import transfer_bp as transfer_blueprint
 from finapp.routes.viewbudget import viewbudget_bp as viewbudget_blueprint
@@ -51,6 +52,7 @@ app.register_blueprint(index_blueprint)
 app.register_blueprint(paycheck_blueprint)
 app.register_blueprint(preferences_blueprint)
 app.register_blueprint(profile_blueprint)
+app.register_blueprint(sharebudget_blueprint)
 app.register_blueprint(theme_blueprint)
 app.register_blueprint(transfer_blueprint)
 app.register_blueprint(viewbudget_blueprint)

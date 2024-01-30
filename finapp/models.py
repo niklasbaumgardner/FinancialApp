@@ -4,6 +4,7 @@ from flask_login import UserMixin
 from itsdangerous import URLSafeTimedSerializer
 import os
 from finapp import db, login_manager
+from finapp.utils import queries
 
 
 @login_manager.user_loader
@@ -16,6 +17,15 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(60), unique=True, nullable=False)
     email = db.Column(db.String(60), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
+
+    def to_dict(self):
+        return dict(
+            id=self.id,
+            username=self.username,
+        )
+
+    def to_json(self):
+        return json.dumps(self.to_dict())
 
     def get_reset_token(self):
         s = URLSafeTimedSerializer(os.environ.get("SECRET_KEY"))
@@ -48,21 +58,38 @@ class Budget(db.Model):
     is_shared = db.Column(db.Boolean, nullable=False)
 
     def to_json(self):
-        return json.dumps(
-            dict(
-                id=self.id,
-                user_id=self.user_id,
-                total=self.total,
-                name=self.name,
-                isActive=self.is_active,
-                url=url_for("viewbudget_bp.view_budget", id=self.id),
-                editUrl=url_for("index_bp.edit_budget", id=self.id),
-                toggleActiveUrl=url_for("index_bp.toggle_budget"),
-            )
+        obj = dict(
+            id=self.id,
+            user_id=self.user_id,
+            total=self.total,
+            name=self.name,
+            isActive=self.is_active,
+            isShared=self.is_shared,
+            url=url_for("viewbudget_bp.view_budget", id=self.id),
+            editUrl=url_for("index_bp.edit_budget", id=self.id),
+            toggleActiveUrl=url_for("index_bp.toggle_budget"),
         )
+
+        if self.is_shared:
+            obj["sharedUserIds"] = [
+                u.id for u in queries.get_shared_users_for_budget_id(budget_id=self.id)
+            ]
+        return json.dumps(obj)
 
     def __str__(self):
         return f"{self.name : <30s}|{self.total : >10.2f}"
+
+    def get_share_token(self, recipient_id):
+        s = URLSafeTimedSerializer(os.environ.get("SECRET_KEY"))
+        return s.dumps({"budget_id": self.id, "recipient_id": recipient_id})
+
+    @staticmethod
+    def verify_share_token(token, expire_sec=3600 * 24):
+        s = URLSafeTimedSerializer(os.environ.get("SECRET_KEY"))
+
+        obj = s.loads(token, max_age=expire_sec)
+
+        return obj
 
 
 class SharedBudget(db.Model):
