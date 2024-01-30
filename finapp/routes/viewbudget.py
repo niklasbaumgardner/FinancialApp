@@ -50,6 +50,7 @@ def view_budget(id):
         page=page,
         num_pages=num_pages,
         shared_users=shared_users,
+        shared_users_json=json.dumps(shared_users),
     )
 
 

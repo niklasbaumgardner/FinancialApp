@@ -251,9 +251,7 @@ def get_transactions(
     if not transactions:
         transactions = Transaction.query
 
-    transactions = transactions.filter(
-        Transaction.budget_id == budget_id, Transaction.user_id == current_user.get_id()
-    )
+    transactions = transactions.filter(Transaction.budget_id == budget_id)
 
     transactions = sort_transactions(sort_by=sort_by, transactions=transactions)
 
@@ -303,7 +301,6 @@ def get_transactions_for_month(
 
     transactions = transactions.filter(
         Transaction.budget_id == budget_id,
-        Transaction.user_id == current_user.get_id(),
         extract("month", Transaction.date) == month,
         extract("year", Transaction.date) == year,
     )
@@ -346,7 +343,6 @@ def get_transactions_for_year(
 
     transactions = transactions.filter(
         Transaction.budget_id == budget_id,
-        Transaction.user_id == current_user.get_id(),
         extract("year", Transaction.date) == year,
     )
 

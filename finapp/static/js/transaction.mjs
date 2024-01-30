@@ -5,12 +5,21 @@ import { MoveTransactionModal } from "./moveTransactionElement.mjs";
 import { DeleteTransactionModal } from "./deleteTransactionElement.mjs";
 
 class NBTransaction extends NikElement {
-  constructor() {
-    super();
+  connectedCallback() {
+    super.connectedCallback();
 
-    this.deleteModal = new DeleteTransactionModal(this);
-    this.moveModal = new MoveTransactionModal(this);
+    if (CURRENT_USER_ID !== this.transaction.userId) {
+      return;
+    }
+
+    if (!this.deleteModal) {
+      this.deleteModal = new DeleteTransactionModal(this);
+    }
+    if (!this.moveModal) {
+      this.moveModal = new MoveTransactionModal(this);
+    }
   }
+
   static properties = {
     editing: { type: Boolean, reflect: true },
     transaction: { type: Object },
@@ -147,6 +156,12 @@ class NBTransaction extends NikElement {
   }
 
   buttonsTempate() {
+    if (CURRENT_USER_ID !== this.transaction.userId) {
+      return html`<sl-tag variant="primary" size="small"
+        >${SHARED_USERS[this.transaction.userId].username}</sl-tag
+      >`;
+    }
+
     if (this.editing) {
       return html`<sl-tooltip content="Delete"
           ><sl-icon-button

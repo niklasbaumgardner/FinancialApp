@@ -20,6 +20,9 @@
     const NUM_PAGES = {{ num_pages }};
     const budgetsArray = {{ budgets|budgets_array|tojson }};
     const transactionsPy = {{ transactions|tojson }};
+    const SHARED_USERS = JSON.parse({{ shared_users_json|tojson }});
+    const IS_BUDGET_SHARED = "{{ budget.is_shared }}" === "True";
+    const CURRENT_USER_ID = {{ current_user.id }};
 </script>
 <script src="/static/js/searchItem.mjs" type="module"></script>
 
