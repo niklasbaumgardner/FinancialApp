@@ -18,6 +18,13 @@ def share_budget(budget_id):
     if not user:
         return abort(400)
 
+    shared_budget = queries.get_shared_budget_for_user_id(
+        budget_id=budget_id, user_id=user.id
+    )
+    if shared_budget:
+        # just return if the budget is already shared with this user
+        return {"success": True}
+
     budget = queries.get_budget(id=budget_id)
     token = budget.get_share_token(recipient_id=user.id)
 

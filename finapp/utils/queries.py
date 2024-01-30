@@ -161,6 +161,10 @@ def get_shared_budget(budget_id):
     ).first()
 
 
+def get_shared_budget_for_user_id(budget_id, user_id):
+    return SharedBudget.query.filter_by(user_id=user_id, budget_id=budget_id).first()
+
+
 def get_shared_budgets_query():
     return SharedBudget.query.filter_by(user_id=current_user.id, budget_id=Budget.id)
 
