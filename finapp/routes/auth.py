@@ -17,6 +17,11 @@ def login():
     if email:
         return render_template("login.html", email=email)
 
+    def get_url_for_route(route, args):
+        if route == "accept_budget":
+            token = args.replace("?token=", "")
+            return url_for("sharebudget_bp.accept_budget", token=token)
+
     email = request.form.get("email")
     password = request.form.get("password")
     remember = request.form.get("remember")
@@ -28,10 +33,11 @@ def login():
             remember = True if remember == "True" else False
             login_user(user, remember=remember)
             print(email, "next", request.args.get("next"))
-            next = request.args.get("next").replace("/", "", 1)
+            next_list = request.args.get("next").strip("/").split("/")
+            next, args = next_list[0], next_list[1]
             if next:
                 try:
-                    return redirect(url_for(f"{next}"))
+                    return redirect(get_url_for_route(next, args))
                 except:
                     pass
             return redirect(url_for("index_bp.index"))
