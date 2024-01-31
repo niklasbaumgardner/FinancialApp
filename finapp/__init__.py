@@ -4,21 +4,20 @@ from finapp.config import Config
 from flask_migrate import Migrate
 from flask_mail import Mail
 from flask_login import LoginManager
-from flask_sqlalchemy import SQLAlchemy as _BaseSQLAlchemy
-
-
-class SQLAlchemy(_BaseSQLAlchemy):
-    def apply_pool_defaults(self, app, options):
-        options = super().apply_pool_defaults(app, options)
-        options["pool_pre_ping"] = True
-        return options
+from flask_sqlalchemy import SQLAlchemy
 
 
 bcrypt = Bcrypt()
 migrate = Migrate()
 mail = Mail()
 login_manager = LoginManager()
-db = SQLAlchemy()
+db = SQLAlchemy(
+    engine_options=dict(
+        pool_pre_ping=True,
+        pool_size=10,
+        max_overflow=20,
+    )
+)
 
 
 app = Flask(__name__)
