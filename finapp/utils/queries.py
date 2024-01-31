@@ -729,8 +729,10 @@ def get_shared_users_for_all_budgets():
         budget_id=Budget.id, user_id=User.id
     )
     budget_shared_query = Budget.query.where(
-        and_(Budget.is_shared == True, Budget.user_id == User.id),
-        or_(shared_budget_query.exists()),
+        or_(
+            and_(Budget.is_shared == True, Budget.user_id == User.id),
+            shared_budget_query.exists(),
+        )
     )
 
     return User.query.where(
