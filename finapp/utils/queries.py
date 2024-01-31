@@ -54,10 +54,13 @@ def get_budget_for_id(id):
 def get_budget(id):
     try:
         id = int(id)
-        return Budget.query.filter(
-            or_(
-                and_(Budget.id == id, Budget.user_id == current_user.get_id()),
-                get_shared_budgets_query().exists(),
+        return Budget.query.where(
+            and_(
+                Budget.id == id,
+                or_(
+                    Budget.user_id == current_user.get_id(),
+                    get_shared_budgets_query().exists(),
+                ),
             )
         ).first()
 
