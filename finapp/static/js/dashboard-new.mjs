@@ -64,6 +64,9 @@ const MONTHS = {
   12: "December",
 };
 
+const options = { style: "currency", currency: "USD" };
+const USDFormatter = new Intl.NumberFormat("en-US", options);
+
 class Colors {
   constructor(chartManager) {
     this.chartManager = chartManager;
@@ -120,11 +123,7 @@ async function getAllBudgetNames() {
 
 function currencyFormatter(params) {
   let rounded = Math.round(params.value * 100) / 100;
-  if (rounded < 0) {
-    return `-$${-rounded}`;
-  }
-
-  return `$${rounded}`;
+  return USDFormatter.format(rounded);
 }
 
 class ChartManager {
