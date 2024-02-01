@@ -84,7 +84,7 @@ def signup():
 @auth_bp.route("/password_request", methods=["GET", "POST"])
 def password_request():
     if current_user.is_authenticated:
-        user = queries.getUserById(id=current_user.get_id())
+        user = queries.getUserById(id=current_user.id)
         token = user.get_reset_token()
         return redirect(url_for("auth_bp.password_reset", token=token))
 

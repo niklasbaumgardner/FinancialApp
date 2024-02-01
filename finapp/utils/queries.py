@@ -37,7 +37,7 @@ def create_budget(name):
     budg = Budget(
         name=name,
         total=0,
-        user_id=current_user.get_id(),
+        user_id=current_user.id,
         is_active=True,
         is_shared=False,
     )
@@ -51,27 +51,27 @@ def get_budget_for_id(id):
     return Budget.query.filter_by(id=id).first()
 
 
-def get_budget(id):
-    try:
-        id = int(id)
-        return Budget.query.where(
-            and_(
-                Budget.id == id,
-                or_(
-                    Budget.user_id == current_user.get_id(),
-                    get_shared_budgets_query().exists(),
-                ),
-            )
-        ).first()
+def get_budget(id, shared=True, query=False):
+    budget_query = Budget.query.where(
+        Budget.id == id,
+        or_(
+            Budget.user_id == current_user.id,
+            get_shared_budgets_query_by_budget().exists() if shared else False,
+        ),
+    )
 
-    except:
-        return None
+    if query:
+        return budget_query
+
+    return budget_query.first()
 
 
 def get_budgets(separate=False, active_only=False, inactive_only=False):
-    shared_budget_query = get_shared_budgets_query()
     budgets = Budget.query.where(
-        or_(Budget.user_id == current_user.id, shared_budget_query.exists())
+        or_(
+            Budget.user_id == current_user.id,
+            get_shared_budgets_query_by_budget().exists(),
+        )
     )
 
     if active_only:
@@ -98,7 +98,7 @@ def get_budgets(separate=False, active_only=False, inactive_only=False):
 
 
 def get_duplicate_budget_by_name(name):
-    return Budget.query.filter_by(name=name, user_id=current_user.get_id()).first()
+    return Budget.query.filter_by(name=name, user_id=current_user.id).first()
 
 
 def update_budget(id, name=None, is_active=None):
@@ -131,7 +131,7 @@ def add_transaction_to_total(budget, transaction):
 
 
 def delete_budget(id):
-    budget = get_budget(id)
+    budget = get_budget(id, shared=False)
     _delete_budget(budget)
 
 
@@ -168,8 +168,14 @@ def get_shared_budget_for_user_id(budget_id, user_id):
     return SharedBudget.query.filter_by(user_id=user_id, budget_id=budget_id).first()
 
 
-def get_shared_budgets_query():
+def get_shared_budgets_query_by_budget():
     return SharedBudget.query.filter_by(user_id=current_user.id, budget_id=Budget.id)
+
+
+def get_shared_budgets_query_by_transaction():
+    return SharedBudget.query.filter_by(
+        user_id=current_user.id, budget_id=Transaction.budget_id
+    )
 
 
 ##
@@ -183,7 +189,7 @@ def create_transaction(name, amount, date, budget_id, is_transfer=False):
         trans = Transaction(
             name=name,
             budget_id=budget.id,
-            user_id=current_user.get_id(),
+            user_id=current_user.id,
             amount=amount,
             date=date,
             is_transfer=is_transfer,
@@ -195,14 +201,14 @@ def create_transaction(name, amount, date, budget_id, is_transfer=False):
 
 def get_transaction(budget_id, trans_id):
     transaction = Transaction.query.filter_by(
-        id=trans_id, budget_id=budget_id, user_id=current_user.get_id()
+        id=trans_id, budget_id=budget_id, user_id=current_user.id
     ).first()
     return transaction
 
 
 def get_first_transaction_date():
     transaction = (
-        Transaction.query.filter_by(user_id=current_user.get_id())
+        Transaction.query.filter_by(user_id=current_user.id)
         .order_by(Transaction.date.asc())
         .limit(1)
         .first()
@@ -258,27 +264,30 @@ def get_transactions(
     if not transactions:
         transactions = Transaction.query
 
-    transactions = transactions.filter(Transaction.budget_id == budget_id)
+    transactions = transactions.where(
+        Transaction.budget_id == budget_id,
+        get_shared_budgets_query_by_transaction().exists(),
+    )
 
     transactions = sort_transactions(sort_by=sort_by, transactions=transactions)
 
     if not include_all_transfers:
-        transactions = transactions.filter(
+        transactions = transactions.where(
             (Transaction.is_transfer == False) | (Transaction.is_transfer == None)
         )
 
     if include_only_positive_transfers:
-        transactions = transactions.filter(
+        transactions = transactions.where(
             (Transaction.is_transfer == False)
             | (Transaction.is_transfer == None)
             | (Transaction.is_transfer == True) & (Transaction.amount > 0)
         )
 
     if start_date:
-        transactions = transactions.filter(Transaction.date >= start_date)
+        transactions = transactions.where(Transaction.date >= start_date)
 
     if end_date:
-        transactions = transactions.filter(Transaction.date <= end_date)
+        transactions = transactions.where(Transaction.date <= end_date)
 
     if paginate:
         return paginate_query(query=transactions, page=page)
@@ -306,8 +315,9 @@ def get_transactions_for_month(
     if not transactions:
         transactions = Transaction.query
 
-    transactions = transactions.filter(
+    transactions = transactions.where(
         Transaction.budget_id == budget_id,
+        get_shared_budgets_query_by_transaction().exists(),
         extract("month", Transaction.date) == month,
         extract("year", Transaction.date) == year,
     )
@@ -315,12 +325,12 @@ def get_transactions_for_month(
     transactions = sort_transactions(sort_by=sort_by, transactions=transactions)
 
     if not include_all_transfers:
-        transactions = transactions.filter(
+        transactions = transactions.where(
             (Transaction.is_transfer == False) | (Transaction.is_transfer == None)
         )
 
     if include_only_positive_transfers:
-        transactions = transactions.filter(
+        transactions = transactions.where(
             (Transaction.is_transfer == False)
             | (Transaction.is_transfer == None)
             | (Transaction.is_transfer == True) & (Transaction.amount > 0)
@@ -348,20 +358,21 @@ def get_transactions_for_year(
     if not transactions:
         transactions = Transaction.query
 
-    transactions = transactions.filter(
+    transactions = transactions.where(
         Transaction.budget_id == budget_id,
+        get_shared_budgets_query_by_transaction().exists(),
         extract("year", Transaction.date) == year,
     )
 
     transactions = sort_transactions(sort_by=sort_by, transactions=transactions)
 
     if not include_all_transfers:
-        transactions = transactions.filter(
+        transactions = transactions.where(
             (Transaction.is_transfer == False) | (Transaction.is_transfer == None)
         )
 
     if include_only_positive_transfers:
-        transactions = transactions.filter(
+        transactions = transactions.where(
             (Transaction.is_transfer == False)
             | (Transaction.is_transfer == None)
             | (Transaction.is_transfer == True) & (Transaction.amount > 0)
@@ -451,44 +462,44 @@ def search(
 
     if name:
         transactions = (
-            transactions.filter(
+            transactions.where(
                 or_(Transaction.name.ilike(f"%{search_name}%") for search_name in name)
             )
             if transactions
-            else Transaction.query.filter(
+            else Transaction.query.where(
                 or_(Transaction.name.ilike(f"%{search_name}%") for search_name in name)
             )
         )
     if amount is not None:
         transactions = (
-            transactions.filter(Transaction.amount == amount)
+            transactions.where(Transaction.amount == amount)
             if transactions
-            else Transaction.query.filter(Transaction.amount == amount)
+            else Transaction.query.where(Transaction.amount == amount)
         )
     else:
         if min_amount is not None:
             transactions = (
-                transactions.filter(Transaction.amount >= min_amount)
+                transactions.where(Transaction.amount >= min_amount)
                 if transactions
-                else Transaction.query.filter(Transaction.amount >= min_amount)
+                else Transaction.query.where(Transaction.amount >= min_amount)
             )
         if max_amount is not None:
             transactions = (
-                transactions.filter(Transaction.amount <= max_amount)
+                transactions.where(Transaction.amount <= max_amount)
                 if transactions
-                else Transaction.query.filter(Transaction.amount <= max_amount)
+                else Transaction.query.where(Transaction.amount <= max_amount)
             )
     if start_date:
         transactions = (
-            transactions.filter(Transaction.date >= start_date)
+            transactions.where(Transaction.date >= start_date)
             if transactions
-            else Transaction.query.filter(Transaction.date >= start_date)
+            else Transaction.query.where(Transaction.date >= start_date)
         )
     if end_date:
         transactions = (
-            transactions.filter(Transaction.date <= end_date)
+            transactions.where(Transaction.date <= end_date)
             if transactions
-            else Transaction.query.filter(Transaction.date <= end_date)
+            else Transaction.query.where(Transaction.date <= end_date)
         )
 
     if transactions:
@@ -512,8 +523,9 @@ def search(
                 sort_by=sort_by,
             )
 
-        transactions = transactions.filter_by(user_id=current_user.get_id()).filter_by(
-            budget_id=budget_id
+        transactions = transactions.where(
+            Transaction.budget_id == budget_id,
+            get_shared_budgets_query_by_transaction().exists(),
         )
 
         search_sum = transactions.with_entities(func.sum(Transaction.amount)).first()[0]
@@ -522,19 +534,17 @@ def search(
 
         items, total, page, num_pages = paginate_query(query=transactions, page=page)
 
-        if total == 0:
-            # I want to return the number of pages as 1
-            return ([], 0, 1, 1, 0)
+        if total > 0:
+            return (
+                items,
+                total,
+                page,
+                num_pages,
+                search_sum,
+            )
 
-        return (
-            items,
-            total,
-            page,
-            num_pages,
-            search_sum,
-        )
-    else:
-        return ([], 0, 1, 1, 0)
+    # I want to return the number of pages as 1
+    return ([], 0, 1, 1, 0)
 
 
 ##
@@ -545,7 +555,7 @@ def search(
 def create_or_update_prefill(b_id, total_amount, amount):
     prefill = PaycheckPrefill(
         budget_id=b_id,
-        user_id=current_user.get_id(),
+        user_id=current_user.id,
         total_amount=total_amount,
         amount=amount,
     )
@@ -563,33 +573,33 @@ def create_or_update_prefill(b_id, total_amount, amount):
 
 def get_prefill(prefill_id):
     prefill = PaycheckPrefill.query.filter_by(
-        id=prefill_id, user_id=current_user.get_id()
+        id=prefill_id, user_id=current_user.id
     ).first()
     return prefill
 
 
 def get_prefills():
-    prefills = PaycheckPrefill.query.filter_by(user_id=current_user.get_id()).all()
+    prefills = PaycheckPrefill.query.filter_by(user_id=current_user.id).all()
     return prefills
 
 
 def get_prefills_by_budget(budget_id):
     prefills = PaycheckPrefill.query.filter_by(
-        budget_id=budget_id, user_id=current_user.get_id()
+        budget_id=budget_id, user_id=current_user.id
     ).all()
     return prefills
 
 
 def get_prefills_by_total_amount(total_amount):
     prefill = PaycheckPrefill.query.filter_by(
-        user_id=current_user.get_id(), total_amount=total_amount
+        user_id=current_user.id, total_amount=total_amount
     ).all()
     return prefill
 
 
 def get_prefill_by_total_amount_and_budget(total_amount, budget_id):
     prefill = PaycheckPrefill.query.filter_by(
-        user_id=current_user.get_id(), total_amount=total_amount, budget_id=budget_id
+        user_id=current_user.id, total_amount=total_amount, budget_id=budget_id
     ).first()
     return prefill
 

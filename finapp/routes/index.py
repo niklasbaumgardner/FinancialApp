@@ -87,8 +87,8 @@ def edit_budget(id):
 @index_bp.route("/delete_budget/<int:b_id>", methods=["DELETE"])
 @login_required
 def delete_budget(b_id):
-    budget = queries.get_budget(b_id)
-    if budget.is_shared:
+    budget = queries.get_budget(b_id, shared=False)
+    if not budget or budget.is_shared:
         abort(400)
 
     new_budget_id = request.form.get("new_budget")
