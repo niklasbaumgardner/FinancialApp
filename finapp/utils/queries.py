@@ -178,7 +178,16 @@ def get_shared_budgets_query_by_transaction():
     )
 
 
-def get_shared_transactions_query(budegt_id):
+def get_shared_transactions_query(budegt_id, transactionsQuery=None):
+    if transactionsQuery:
+        return transactionsQuery.where(
+            Transaction.budget_id == budegt_id,
+            or_(
+                current_user.id == Transaction.user_id,
+                get_shared_budgets_query_by_transaction().exists(),
+            ),
+        )
+
     return Transaction.query.where(
         Transaction.budget_id == budegt_id,
         or_(
@@ -226,37 +235,37 @@ def get_first_transaction_date():
     return transaction.date
 
 
-def sort_transactions(sort_by, transactions):
+def sort_transactions(sort_by, transactionsQuery):
     if not sort_by or sort_by.get("date") == "desc":
-        transactions = transactions.order_by(
+        transactionsQuery = transactionsQuery.order_by(
             Transaction.date.desc(), Transaction.id.desc()
         )
     elif sort_by.get("date") == "asc":
-        transactions = transactions.order_by(
+        transactionsQuery = transactionsQuery.order_by(
             Transaction.date.asc(), Transaction.id.asc()
         )
     elif sort_by.get("name") == "desc":
-        transactions = transactions.order_by(
+        transactionsQuery = transactionsQuery.order_by(
             Transaction.name.desc(), Transaction.id.desc()
         )
     elif sort_by.get("name") == "asc":
-        transactions = transactions.order_by(
+        transactionsQuery = transactionsQuery.order_by(
             Transaction.name.asc(), Transaction.id.desc()
         )
     elif sort_by.get("amount") == "desc":
-        transactions = transactions.order_by(
+        transactionsQuery = transactionsQuery.order_by(
             Transaction.amount.desc(), Transaction.id.desc()
         )
     elif sort_by.get("amount") == "asc":
-        transactions = transactions.order_by(
+        transactionsQuery = transactionsQuery.order_by(
             Transaction.amount.asc(), Transaction.id.desc()
         )
     else:
-        transactions = transactions.order_by(
+        transactionsQuery = transactionsQuery.order_by(
             Transaction.date.desc(), Transaction.id.desc()
         )
 
-    return transactions
+    return transactionsQuery
 
 
 def get_transactions(
@@ -276,7 +285,7 @@ def get_transactions(
 
     transactions = get_shared_transactions_query(budegt_id=budget_id)
 
-    transactions = sort_transactions(sort_by=sort_by, transactions=transactions)
+    transactions = sort_transactions(sort_by=sort_by, transactionsQuery=transactions)
 
     if not include_all_transfers:
         transactions = transactions.where(
@@ -327,7 +336,7 @@ def get_transactions_for_month(
         extract("year", Transaction.date) == year,
     )
 
-    transactions = sort_transactions(sort_by=sort_by, transactions=transactions)
+    transactions = sort_transactions(sort_by=sort_by, transactionsQuery=transactions)
 
     if not include_all_transfers:
         transactions = transactions.where(
@@ -367,7 +376,7 @@ def get_transactions_for_year(
         extract("year", Transaction.date) == year,
     )
 
-    transactions = sort_transactions(sort_by=sort_by, transactions=transactions)
+    transactions = sort_transactions(sort_by=sort_by, transactionsQuery=transactions)
 
     if not include_all_transfers:
         transactions = transactions.where(
@@ -526,11 +535,15 @@ def search(
                 sort_by=sort_by,
             )
 
-        transactions = get_shared_transactions_query(budegt_id=budget_id)
+        transactions = get_shared_transactions_query(
+            budegt_id=budget_id, transactionsQuery=transactions
+        )
 
         search_sum = transactions.with_entities(func.sum(Transaction.amount)).first()[0]
 
-        transactions = sort_transactions(sort_by=sort_by, transactions=transactions)
+        transactions = sort_transactions(
+            sort_by=sort_by, transactionsQuery=transactions
+        )
 
         items, total, page, num_pages = paginate_query(query=transactions, page=page)
 
