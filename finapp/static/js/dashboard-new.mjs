@@ -118,6 +118,15 @@ async function getAllBudgetNames() {
   return result;
 }
 
+function currencyFormatter(params) {
+  let rounded = Math.round(params.value * 100) / 100;
+  if (rounded < 0) {
+    return `-$${-rounded}`;
+  }
+
+  return `$${rounded}`;
+}
+
 class ChartManager {
   constructor() {
     this.colors = new Colors(this);
@@ -365,74 +374,63 @@ class NetSpendingManager {
     this.netSpendingSelect = document.getElementById("netSpendingSelect");
     this.netSpendingSelect.addEventListener("sl-change", this);
 
-    this.cardsEl = document.getElementById("cards");
+    this.spendingGridEl = document.getElementById("spending-grid");
+    this.createDataGrid();
 
     this.addOptions();
     await this.getData();
-    this.createCards();
-    this.addCardsToDocument();
+    this.updateSpendingGrid();
+
+    this.setupThemeWatcher();
+  }
+
+  createDataGrid() {
+    const columnDefs = [
+      { field: "name" },
+      {
+        field: "total",
+        headerName: "Current total",
+        valueFormatter: currencyFormatter,
+      },
+      {
+        field: "in",
+        headerName: "Income",
+        valueFormatter: currencyFormatter,
+      },
+      {
+        field: "out",
+        headerName: "Spent",
+        valueFormatter: currencyFormatter,
+      },
+      { field: "net", valueFormatter: currencyFormatter },
+    ];
+    const gridOptions = {
+      columnDefs,
+      rowData: [],
+      autoSizeStrategy: {
+        type: "fitGridWidth",
+        defaultMinWidth: 200,
+      },
+    };
+    this.dataGrid = agGrid.createGrid(this.spendingGridEl, gridOptions);
   }
 
   async getData() {
     let data = await getNetSpending(this.currentSelection);
     this.dataCache[this.key] = data;
+    console.log(this.dataCache);
   }
 
   async handleEvent(event) {
     if (!this.cardsCache[this.key]) {
       await this.getData();
-      this.createCards();
     }
 
-    this.removeCards();
-    this.addCardsToDocument();
+    this.updateSpendingGrid();
   }
 
-  removeCards() {
-    for (let divider of this.cardsEl.querySelectorAll("sl-divider")) {
-      divider.remove();
-    }
-    for (let card of this.cardsEl.querySelectorAll("dashboard-budget-card")) {
-      card.remove();
-    }
-  }
-
-  addCardsToDocument() {
-    this.cardsEl.append(...this.cardsCache[this.key]);
-  }
-
-  createCards() {
-    this.cardsCache[this.key] = [];
-
-    let { month, year, ytd } = this.currentSelection;
-    for (let budget of this.dataCache[this.key]) {
-      let card = document.createElement("dashboard-budget-card");
-      if (budget.name !== "allBudgets") {
-        budget.url = `${
-          BUDGET_URLS[budget.name]
-        }?month=${month}&year=${year}&ytd=${ytd}`;
-        card.classList.add("button-div");
-      } else {
-        budget.name = "All budgets combined";
-      }
-
-      card.budget = budget;
-
-      this.cardsCache[this.key].push(card);
-    }
-
-    this.cardsCache[this.key] = this.cardsCache[this.key].reduce(
-      (result, element, index, array) => {
-        result.push(element);
-
-        if (index < array.length - 1) {
-          result.push(document.createElement("sl-divider"));
-        }
-
-        return result;
-      },
-      [document.createElement("sl-divider")]
-    );
+  updateSpendingGrid() {
+    this.dataGrid.setGridOption("rowData", this.dataCache[this.key]);
   }
 
   createOptionElement(string, month, year, ytd) {
@@ -483,6 +481,27 @@ class NetSpendingManager {
     }
 
     this.netSpendingSelect.value = options[1].value;
+  }
+
+  setupThemeWatcher() {
+    this.mutationObserver = new MutationObserver((params) =>
+      this.handleThemeChange(params)
+    );
+
+    this.mutationObserver.observe(document.documentElement, {
+      attributes: true,
+    });
+  }
+
+  handleThemeChange(params) {
+    console.log(params);
+
+    let theme = document.documentElement.getAttribute("data-bs-theme");
+    this.spendingGridEl.classList.toggle(
+      "ag-theme-quartz-dark",
+      theme === "dark"
+    );
+    this.spendingGridEl.classList.toggle("ag-theme-quartz", theme === "light");
   }
 }
 

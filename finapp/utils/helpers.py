@@ -124,7 +124,7 @@ def net_spending(month, year, ytd):
     total_net = total_in + total_out
     data = [
         {
-            "name": "allBudgets",
+            "name": "All budgets",
             "in": total_in,
             "out": total_out,
             "net": total_net,

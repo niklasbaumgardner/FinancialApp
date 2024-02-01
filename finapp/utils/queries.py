@@ -178,6 +178,16 @@ def get_shared_budgets_query_by_transaction():
     )
 
 
+def get_shared_transactions_query(budegt_id):
+    return Transaction.query.where(
+        Transaction.budget_id == budegt_id,
+        or_(
+            current_user.id == Transaction.user_id,
+            get_shared_budgets_query_by_transaction().exists(),
+        ),
+    )
+
+
 ##
 ## Transaction queries
 ##
@@ -264,10 +274,7 @@ def get_transactions(
     if not transactions:
         transactions = Transaction.query
 
-    transactions = transactions.where(
-        Transaction.budget_id == budget_id,
-        get_shared_budgets_query_by_transaction().exists(),
-    )
+    transactions = get_shared_transactions_query(budegt_id=budget_id)
 
     transactions = sort_transactions(sort_by=sort_by, transactions=transactions)
 
@@ -315,9 +322,7 @@ def get_transactions_for_month(
     if not transactions:
         transactions = Transaction.query
 
-    transactions = transactions.where(
-        Transaction.budget_id == budget_id,
-        get_shared_budgets_query_by_transaction().exists(),
+    transactions = get_shared_transactions_query(budegt_id=budget_id).where(
         extract("month", Transaction.date) == month,
         extract("year", Transaction.date) == year,
     )
@@ -358,9 +363,7 @@ def get_transactions_for_year(
     if not transactions:
         transactions = Transaction.query
 
-    transactions = transactions.where(
-        Transaction.budget_id == budget_id,
-        get_shared_budgets_query_by_transaction().exists(),
+    transactions = get_shared_transactions_query(budegt_id=budget_id).where(
         extract("year", Transaction.date) == year,
     )
 
@@ -523,10 +526,7 @@ def search(
                 sort_by=sort_by,
             )
 
-        transactions = transactions.where(
-            Transaction.budget_id == budget_id,
-            get_shared_budgets_query_by_transaction().exists(),
-        )
+        transactions = get_shared_transactions_query(budegt_id=budget_id)
 
         search_sum = transactions.with_entities(func.sum(Transaction.amount)).first()[0]
 
