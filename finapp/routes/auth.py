@@ -34,9 +34,11 @@ def login():
             login_user(user, remember=remember)
             print(email, "next", request.args.get("next"))
             next_list = request.args.get("next").strip("/").split("/")
-            next, args = next_list[0], next_list[1]
+            next = next_list[0]
             if next:
                 try:
+                    if len(next_list) > 1:
+                        args = next_list[1]
                     return redirect(get_url_for_route(next, args))
                 except:
                     pass
