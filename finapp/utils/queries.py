@@ -683,23 +683,23 @@ def set_theme(theme_color=None, background_color=None, color=None):
 ##
 
 
-def createUser(email, username, password):
-    hash_ = hashPassword(password=password)
+def create_user(email, username, password):
+    hash_ = hash_password(password=password)
     new_user = User(email=email, username=username, password=hash_)
     db.session.add(new_user)
     db.session.commit()
 
 
-def getUserById(id):
+def get_user_by_id(id):
     return User.query.filter_by(id=id).first()
 
 
-def getUserByEmail(email):
+def get_user_by_email(email):
     return User.query.filter_by(email=email).first()
 
 
-def updateUser(id, username, email):
-    user = getUserById(id=id)
+def update_user(id, username, email):
+    user = get_user_by_id(id=id)
 
     username = username if is_username_unique(username=username) else None
     email = email if is_email_unique(email=email) else None
@@ -713,18 +713,18 @@ def updateUser(id, username, email):
     db.session.commit()
 
 
-def updateUserPasswod(id, password):
+def update_user_password(id, password):
     if not password or not id:
         return
 
-    user = getUserById(id=id)
-    hash_ = hashPassword(password=password)
+    user = get_user_by_id(id=id)
+    hash_ = hash_password(password=password)
     user.password = hash_
 
     db.session.commit()
 
 
-def hashPassword(password):
+def hash_password(password):
     return bcrypt.generate_password_hash(password=password).decode("utf-8")
 
 

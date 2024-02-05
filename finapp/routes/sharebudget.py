@@ -14,7 +14,7 @@ def share_budget(budget_id):
     if email == current_user.email:
         abort(400)
 
-    user = queries.getUserByEmail(email=email)
+    user = queries.get_user_by_email(email=email)
     if not user:
         return abort(400)
 

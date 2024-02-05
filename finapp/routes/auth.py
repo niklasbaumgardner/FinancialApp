@@ -27,7 +27,7 @@ def login():
     remember = request.form.get("remember")
 
     if email and password:
-        user = queries.getUserByEmail(email=email)
+        user = queries.get_user_by_email(email=email)
 
         if user and bcrypt.check_password_hash(user.password, password):
             remember = True if remember == "True" else False
@@ -76,7 +76,7 @@ def signup():
             flash("Passwords don't match. Try again", "warning")
             return render_template("signup.html", email=email)
 
-        queries.createUser(email=email, username=username, password=password1)
+        queries.create_user(email=email, username=username, password=password1)
         flash("Sign up succesful", "success")
         return redirect(url_for("auth_bp.login"))
 
@@ -86,13 +86,13 @@ def signup():
 @auth_bp.route("/password_request", methods=["GET", "POST"])
 def password_request():
     if current_user.is_authenticated:
-        user = queries.getUserById(id=current_user.id)
+        user = queries.get_user_by_id(id=current_user.id)
         token = user.get_reset_token()
         return redirect(url_for("auth_bp.password_reset", token=token))
 
     if request.method == "POST":
         email = request.form.get("email")
-        user = queries.getUserByEmail(email=email)
+        user = queries.get_user_by_email(email=email)
         send_reset_email(user)
         flash(
             "An email has been sent with instructions to reset your password. (Check spam folder)",
@@ -122,7 +122,7 @@ def password_reset():
             flash("Passwords are not equal. Please try again", "warning")
             return render_template("password_reset.html")
 
-        queries.updateUserPasswod(user.id, password=password1)
+        queries.update_user_password(user.id, password=password1)
         flash(
             "Your password has been updated! You are now able to log in",
             "success",
