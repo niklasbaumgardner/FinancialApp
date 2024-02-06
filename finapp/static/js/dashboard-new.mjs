@@ -369,6 +369,13 @@ class NetSpendingManager {
     return this.netSpendingSelect.value;
   }
 
+  get cellColorRules() {
+    return {
+      "text-greater-than-zero": "x > 0",
+      "text-less-than-zero": "x < 0",
+    };
+  }
+
   async init() {
     this.netSpendingSelect = document.getElementById("netSpendingSelect");
     this.netSpendingSelect.addEventListener("sl-change", this);
@@ -383,25 +390,46 @@ class NetSpendingManager {
     this.setupThemeWatcher();
   }
 
+  getURLForBudgetId(id) {
+    return `${DEFAULT_BUDGET_URL}/${id}?month=${this.currentSelection.month}&year=${this.currentSelection.year}&ytd=${this.currentSelection.ytd}`;
+  }
+
   createDataGrid() {
     const columnDefs = [
-      { field: "name" },
+      {
+        field: "name",
+        cellRenderer: (param) => {
+          if (param.data.id) {
+            return `<a href="${this.getURLForBudgetId(param.data.id)}">${
+              param.value
+            }</a>`;
+          }
+          return param.value;
+        },
+      },
       {
         field: "total",
         headerName: "Current total",
         valueFormatter: currencyFormatter,
+        cellClassRules: this.cellColorRules,
       },
       {
         field: "in",
         headerName: "Income",
         valueFormatter: currencyFormatter,
+        cellClassRules: this.cellColorRules,
       },
       {
         field: "out",
         headerName: "Spent",
         valueFormatter: currencyFormatter,
+        cellClassRules: this.cellColorRules,
       },
-      { field: "net", valueFormatter: currencyFormatter },
+      {
+        field: "net",
+        valueFormatter: currencyFormatter,
+        cellClassRules: this.cellColorRules,
+      },
     ];
     const gridOptions = {
       columnDefs,

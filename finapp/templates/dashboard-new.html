@@ -13,11 +13,7 @@
 <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@31.0.3/dist/ag-grid-community.min.js"></script>
 
 <script>
-    const BUDGET_URLS = {};
-    {% for budget in budgets %}
-        BUDGET_URLS["{{ budget.name }}".replace("&#39;", "'")] = "{{ url_for('viewbudget_bp.view_budget', id=budget.id) }}";
-    {% endfor %}
-
+    const DEFAULT_BUDGET_URL = "{{ url_for('viewbudget_bp.view_budget', id=0) }}".replace("0", "");
     const GET_PIE_DATA_URL = "{{ url_for('dashboard_bp.get_pie_data') }}";
     const GET_ALL_BUDGETS_LINE_DATA_URL = "{{ url_for('dashboard_bp.get_all_budgets_line_data') }}";
     const GET_NET_SPENDING_URL = "{{ url_for('dashboard_bp.get_net_spending') }}";

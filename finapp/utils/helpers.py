@@ -113,6 +113,7 @@ def net_spending(month, year, ytd):
 
         data.append(
             {
+                "id": budget.id,
                 "name": budget.name,
                 "in": in_,
                 "out": out,
