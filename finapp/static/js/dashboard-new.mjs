@@ -525,10 +525,10 @@ class NetSpendingManager {
 
     let theme = document.documentElement.getAttribute("data-bs-theme");
     this.spendingGridEl.classList.toggle(
-      "ag-theme-quartz-dark",
+      "ag-theme-alpine-dark",
       theme === "dark"
     );
-    this.spendingGridEl.classList.toggle("ag-theme-quartz", theme === "light");
+    this.spendingGridEl.classList.toggle("ag-theme-alpine", theme === "light");
   }
 }
 
