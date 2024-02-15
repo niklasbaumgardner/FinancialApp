@@ -655,6 +655,56 @@ def set_theme(theme_color=None, background_color=None, color=None):
     if not current_user.is_authenticated:
         return
 
+    if theme_color not in ("", "dark", "light"):
+        return
+
+    if background_color not in (
+        "",
+        "niks-favorite",
+        "red",
+        "gray",
+        "orange",
+        "amber",
+        "yellow",
+        "lime",
+        "green",
+        "emerald",
+        "teal",
+        "cyan",
+        "sky",
+        "blue",
+        "indigo",
+        "violet",
+        "purple",
+        "fuchsia",
+        "pink",
+        "rose",
+    ):
+        return
+
+    if color not in (
+        "",
+        "red",
+        "gray",
+        "orange",
+        "amber",
+        "yellow",
+        "lime",
+        "green",
+        "emerald",
+        "teal",
+        "cyan",
+        "sky",
+        "blue",
+        "indigo",
+        "violet",
+        "purple",
+        "fuchsia",
+        "pink",
+        "rose",
+    ):
+        return
+
     theme = get_theme()
 
     if theme:
