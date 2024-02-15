@@ -655,10 +655,10 @@ def set_theme(theme_color=None, background_color=None, color=None):
     if not current_user.is_authenticated:
         return
 
-    if theme_color not in ("", "dark", "light"):
+    if theme_color is not None and theme_color not in ("", "dark", "light"):
         return
 
-    if background_color not in (
+    if background_color is not None and background_color not in (
         "",
         "niks-favorite",
         "red",
@@ -682,7 +682,7 @@ def set_theme(theme_color=None, background_color=None, color=None):
     ):
         return
 
-    if color not in (
+    if color is not None and color not in (
         "",
         "red",
         "gray",

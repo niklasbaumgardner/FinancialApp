@@ -1,5 +1,5 @@
-from flask import Blueprint, render_template, request, redirect, url_for
-from flask_login import current_user, login_required
+from flask import Blueprint, render_template, request
+from flask_login import login_required
 from finapp.utils import queries
 
 preferences_bp = Blueprint("preferences_bp", __name__)
