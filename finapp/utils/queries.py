@@ -174,7 +174,7 @@ def get_shared_budgets_query_by_budget():
 
 def get_shared_budgets_query_by_transaction():
     return SharedBudget.query.filter_by(
-        user_id=Transaction.user_id, budget_id=Transaction.budget_id
+        user_id=current_user.id, budget_id=Transaction.budget_id
     )
 
 
