@@ -169,23 +169,16 @@ class NBTransaction extends NikElement {
             name="trash"
             @click=${this.handleDeleteClick}
           ></sl-icon-button></sl-tooltip
-        ><sl-tooltip content="Move"
-          ><sl-icon-button
-            class="icon-fs-20"
-            name="arrows-move"
-            id="moveButton"
-            variant="primary"
-            @click=${this.handleMoveTransactionClick}
-            outline
-          ></sl-icon-button></sl-tooltip
-        ><sl-tooltip content="Save"
-          ><sl-icon-button
-            class="icon-primary icon-fs-20"
-            name="floppy-fill"
-            id="saveButton"
-            variant="primary"
-            @click=${this.handleSaveClick}
-          ></sl-icon-button></sl-tooltip
+        ><sl-button
+          variant="default"
+          size="small"
+          @click=${this.handleMoveTransactionClick}
+          >Move</sl-button
+        ><sl-button
+          variant="primary"
+          size="small"
+          @click=${this.handleSaveClick}
+          >Save</sl-button
         ><sl-tooltip content="Cancel"
           ><sl-icon-button
             class="icon-fs-20"

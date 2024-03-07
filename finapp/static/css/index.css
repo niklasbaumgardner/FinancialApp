@@ -224,7 +224,7 @@ button:focus-visible {
   gap: 0.5rem;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 992px) {
   transaction[editing] .transaction-grid,
   nb-transaction[editing] .transaction-grid {
     grid-template-areas:
@@ -243,6 +243,11 @@ button:focus-visible {
   display: flex;
   justify-content: end;
   align-items: start;
+  gap: var(--sl-spacing-x-small);
+}
+
+nb-transaction[editing] .transaction-buttons {
+  align-items: center;
 }
 
 .transaction-buttons > * {
