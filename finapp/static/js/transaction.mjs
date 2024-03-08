@@ -170,11 +170,13 @@ class NBTransaction extends NikElement {
             @click=${this.handleDeleteClick}
           ></sl-icon-button></sl-tooltip
         ><sl-button
+          id="moveButton"
           variant="default"
           size="small"
           @click=${this.handleMoveTransactionClick}
           >Move</sl-button
         ><sl-button
+          id="saveButton"
           variant="primary"
           size="small"
           @click=${this.handleSaveClick}
