@@ -1,4 +1,4 @@
-from finapp.utils import queries
+from finapp.queries import budget_queries, transaction_queries
 from flask import Blueprint, render_template, request
 from flask_login import login_required
 from datetime import date
@@ -11,15 +11,15 @@ dashboard_bp = Blueprint("dashboard_bp", __name__)
 @dashboard_bp.route("/dashboard", methods=["GET"])
 @login_required
 def dashboard():
-    budgets = queries.get_budgets()
-    start_date = queries.get_first_transaction_date()
+    budgets = budget_queries.get_budgets()
+    start_date = transaction_queries.get_first_transaction_date()
     return render_template("dashboard-new.html", budgets=budgets, startDate=start_date)
 
 
 @dashboard_bp.route("/get_budget_name", methods={"GET"})
 @login_required
 def get_budget_name():
-    names = ["allBudgets"] + [b.name for b in queries.get_budgets()]
+    names = ["allBudgets"] + [b.name for b in budget_queries.get_budgets()]
 
     return {"names": names}
 

@@ -1,5 +1,5 @@
 from datetime import date
-from finapp.utils import queries
+from finapp.queries import budget_queries, transaction_queries
 import json
 
 
@@ -90,17 +90,17 @@ def net_spending(month, year, ytd):
     total_out = 0
     total_net = 0
     total_sum = 0
-    all_budgets = queries.get_budgets()
+    all_budgets = budget_queries.get_budgets()
 
     for budget in all_budgets:
         total_sum += budget.total
 
         if ytd:
-            b_trans = queries.get_transactions_for_year(
+            b_trans = transaction_queries.get_transactions_for_year(
                 budget_id=budget.id, year=year, include_all_transfers=False
             )
         else:
-            b_trans = queries.get_transactions_for_month(
+            b_trans = transaction_queries.get_transactions_for_month(
                 budget.id, month=month, year=year, include_all_transfers=False
             )
 
@@ -137,12 +137,12 @@ def net_spending(month, year, ytd):
 
 def all_budgets_net_worth(start_date=None):
     # { budget name: { date: net worth } }
-    all_budgets = queries.get_budgets(active_only=True)
+    all_budgets = budget_queries.get_budgets(active_only=True)
     temp = {}
     first = start_date
     last = None
     for budget in all_budgets:
-        b_trans = queries.get_transactions(budget.id, start_date)
+        b_trans = transaction_queries.get_transactions(budget.id, start_date)
         if b_trans:
             b_trans.sort(key=lambda x: x.date)
 
@@ -177,16 +177,16 @@ def all_budgets_net_worth(start_date=None):
 
 
 def spending_for_month(month, year, ytd):
-    all_budgets = queries.get_budgets()
+    all_budgets = budget_queries.get_budgets()
     data = {}
 
     for budg in all_budgets:
         if ytd:
-            temp_trans = queries.get_transactions_for_year(
+            temp_trans = transaction_queries.get_transactions_for_year(
                 budget_id=budg.id, year=year, include_all_transfers=False
             )
         else:
-            temp_trans = queries.get_transactions_for_month(
+            temp_trans = transaction_queries.get_transactions_for_month(
                 budget_id=budg.id, month=month, year=year, include_all_transfers=False
             )
         expenses = sum([t.amount for t in temp_trans if t.amount < 0]) * -1
@@ -203,14 +203,14 @@ def spending_for_month(month, year, ytd):
 def pie_data(date):
     data = {}
     active_only = True if date else False
-    all_budgets = queries.get_budgets(active_only=active_only)
+    all_budgets = budget_queries.get_budgets(active_only=active_only)
 
     if date:
         for budget in all_budgets:
             total = sum(
                 map(
                     lambda x: x.amount,
-                    queries.get_transactions(budget.id, end_date=date),
+                    transaction_queries.get_transactions(budget.id, end_date=date),
                 )
             )
             if total > 0:
@@ -225,10 +225,10 @@ def pie_data(date):
 
 
 def net_worth(start_date=None):
-    all_budgets = queries.get_budgets()
+    all_budgets = budget_queries.get_budgets()
     all_trans = []
     for budget in all_budgets:
-        all_trans += queries.get_transactions(budget.id)
+        all_trans += transaction_queries.get_transactions(budget.id)
     all_trans.sort(key=lambda x: x.date)
 
     data = get_data_dict(all_trans)
@@ -280,7 +280,9 @@ def confirmBudgetsForPercentages(dic, amount):
             elif rmdr < 0:
                 rmdr += 0.01
                 v[-1] -= 0.01
-            queries.create_transaction(name=v[1], amount=v[-1], date=v[2], budget_id=k)
+            transaction_queries.create_transaction(
+                name=v[1], amount=v[-1], date=v[2], budget_id=k
+            )
             return True
 
     else:
@@ -341,7 +343,7 @@ def search_for(
     except:
         sort_by = None
 
-    return queries.search(
+    return transaction_queries.search(
         budget_id=budget_id,
         name=name,
         start_date=start_date,

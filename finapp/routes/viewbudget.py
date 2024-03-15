@@ -1,4 +1,4 @@
-from finapp.utils import queries
+from finapp.queries import budget_queries, transaction_queries, user_queries
 from flask import Blueprint, render_template, redirect, url_for, request
 from flask_login import login_required
 from finapp.utils import helpers
@@ -16,19 +16,23 @@ def view_budget(id):
     year = request.args.get("year", 0, type=int)
     ytd = request.args.get("ytd") == "true"
 
-    budget = queries.get_budget(id)
-    budgets = queries.get_budgets(active_only=True)
+    budget = budget_queries.get_budget(id)
+    budgets = budget_queries.get_budgets(active_only=True)
 
     if ytd:
-        transactions, total, page, num_pages = queries.get_transactions_for_year(
-            budget_id=budget.id, year=year, page=page, paginate=True
+        transactions, total, page, num_pages = (
+            transaction_queries.get_transactions_for_year(
+                budget_id=budget.id, year=year, page=page, paginate=True
+            )
         )
     elif month:
-        transactions, total, page, num_pages = queries.get_transactions_for_month(
-            budget_id=budget.id, month=month, year=year, page=page, paginate=True
+        transactions, total, page, num_pages = (
+            transaction_queries.get_transactions_for_month(
+                budget_id=budget.id, month=month, year=year, page=page, paginate=True
+            )
         )
     else:
-        transactions, total, page, num_pages = queries.get_transactions(
+        transactions, total, page, num_pages = transaction_queries.get_transactions(
             budget_id=budget.id, page=page, paginate=True
         )
 
@@ -38,7 +42,7 @@ def view_budget(id):
     if budget.is_shared:
         shared_users = {
             u.id: u.to_dict()
-            for u in queries.get_shared_users_for_budget_id(budget_id=budget.id)
+            for u in user_queries.get_shared_users_for_budget_id(budget_id=budget.id)
         }
 
     return render_template(
@@ -71,23 +75,31 @@ def get_page(budget_id):
     except:
         sort_by = None
 
-    budget = queries.get_budget(budget_id)
+    budget = budget_queries.get_budget(budget_id)
 
     if ytd:
-        transactions, total, page, num_pages = queries.get_transactions_for_year(
-            budget_id=budget_id, year=year, page=page, sort_by=sort_by, paginate=True
+        transactions, total, page, num_pages = (
+            transaction_queries.get_transactions_for_year(
+                budget_id=budget_id,
+                year=year,
+                page=page,
+                sort_by=sort_by,
+                paginate=True,
+            )
         )
     elif month:
-        transactions, total, page, num_pages = queries.get_transactions_for_month(
-            budget_id=budget_id,
-            month=month,
-            year=year,
-            page=page,
-            sort_by=sort_by,
-            paginate=True,
+        transactions, total, page, num_pages = (
+            transaction_queries.get_transactions_for_month(
+                budget_id=budget_id,
+                month=month,
+                year=year,
+                page=page,
+                sort_by=sort_by,
+                paginate=True,
+            )
         )
     else:
-        transactions, total, page, num_pages = queries.get_transactions(
+        transactions, total, page, num_pages = transaction_queries.get_transactions(
             budget_id=budget_id, page=page, sort_by=sort_by, paginate=True
         )
 
@@ -162,7 +174,7 @@ def add_transaction(budget_id):
     date = helpers.get_date_from_string(str_date)
 
     if name and amount and budget_id:
-        queries.create_transaction(
+        transaction_queries.create_transaction(
             name=name, amount=amount, date=date, budget_id=budget_id
         )
 
@@ -179,13 +191,15 @@ def edit_transaction(b_id, t_id):
     page = page if page else 1
 
     new_date = helpers.get_date_from_string(new_date)
-    queries.update_transaction(
+    transaction_queries.update_transaction(
         b_id=b_id, t_id=t_id, name=new_name, amount=new_amount, new_date=new_date
     )
 
     return {
         "success": True,
-        "transaction": queries.get_transaction(budget_id=b_id, trans_id=t_id).to_json(),
+        "transaction": transaction_queries.get_transaction(
+            budget_id=b_id, trans_id=t_id
+        ).to_json(),
     }
 
 
@@ -194,7 +208,9 @@ def edit_transaction(b_id, t_id):
 def move_transaction(sb_id, t_id):
     new_budget_id = request.form.get("new_budget")
 
-    queries.update_transaction(b_id=sb_id, t_id=t_id, new_b_id=new_budget_id)
+    transaction_queries.update_transaction(
+        b_id=sb_id, t_id=t_id, new_b_id=new_budget_id
+    )
 
     return {"success": True}
 
@@ -205,6 +221,6 @@ def delete_transaction(b_id, t_id):
     page = request.form.get("page")
     page = page if page else 1
 
-    queries.delete_transaction(b_id, t_id)
+    transaction_queries.delete_transaction(b_id, t_id)
 
     return {"success": True}

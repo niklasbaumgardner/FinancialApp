@@ -1,4 +1,4 @@
-from finapp.utils import queries
+from finapp.queries import budget_queries, shared_budget_queries, user_queries
 from flask import Blueprint, redirect, url_for, request, abort
 from flask_login import login_required, current_user
 from finapp.utils.send_email import send_share_budget_email
@@ -14,18 +14,18 @@ def share_budget(budget_id):
     if email == current_user.email:
         abort(400)
 
-    user = queries.get_user_by_email(email=email)
+    user = user_queries.get_user_by_email(email=email)
     if not user:
         return abort(400)
 
-    shared_budget = queries.get_shared_budget_for_user_id(
+    shared_budget = shared_budget_queries.get_shared_budget_for_user_id(
         budget_id=budget_id, user_id=user.id
     )
     if shared_budget:
         # just return if the budget is already shared with this user
         return {"success": True}
 
-    budget = queries.get_budget(id=budget_id)
+    budget = budget_queries.get_budget(id=budget_id)
     token = budget.get_share_token(recipient_id=user.id)
 
     send_share_budget_email(
@@ -46,10 +46,10 @@ def accept_budget():
     if current_user.id != recipient_id:
         return redirect(url_for("index_bp.index"))
 
-    budget = queries.get_budget_for_id(budget_id)
+    budget = budget_queries.get_budget_for_id(budget_id)
 
     if budget:
-        queries.create_shared_budget(budget=budget)
+        shared_budget_queries.create_shared_budget(budget=budget)
         return redirect(url_for("viewbudget_bp.view_budget", id=budget.id))
 
     return redirect(url_for("index_bp.index"))

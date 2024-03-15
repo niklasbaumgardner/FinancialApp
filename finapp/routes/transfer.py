@@ -1,6 +1,7 @@
 from flask import Blueprint, request, redirect, render_template, url_for
 from flask_login import login_required
-from finapp.utils import queries, helpers
+from finapp.utils import helpers
+from finapp.queries import budget_queries, transaction_queries
 
 
 transfer_bp = Blueprint("transfer_bp", __name__)
@@ -23,14 +24,14 @@ def transfer():
         dest_budget = request.form.get("dest_budget")
 
         if name and amount and source_budget and dest_budget:
-            queries.create_transaction(
+            transaction_queries.create_transaction(
                 name=name,
                 amount=-amount,
                 date=date,
                 budget_id=source_budget,
                 is_transfer=True,
             )
-            queries.create_transaction(
+            transaction_queries.create_transaction(
                 name=name,
                 amount=amount,
                 date=date,
@@ -40,5 +41,5 @@ def transfer():
 
         return redirect(url_for("index_bp.index"))
 
-    budgets = queries.get_budgets(active_only=True)
+    budgets = budget_queries.get_budgets(active_only=True)
     return render_template("transfer.html", budgets=budgets, str=str)

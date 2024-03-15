@@ -1,5 +1,5 @@
 from flask_login import current_user
-from finapp.utils import queries
+from finapp.queries import theme_queries
 from flask import Blueprint
 
 context_processor_bp = Blueprint("context_processor_bp", __name__)
@@ -11,7 +11,7 @@ def utility_processor():
         if not current_user.is_authenticated:
             return None
 
-        theme = queries.get_theme()
+        theme = theme_queries.get_theme()
         return theme
 
     theme = get_theme()

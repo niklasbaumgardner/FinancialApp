@@ -4,7 +4,7 @@ from flask_login import UserMixin
 from itsdangerous import URLSafeTimedSerializer
 import os
 from finapp import db, login_manager
-from finapp.utils import queries
+from finapp.queries import user_queries
 
 
 @login_manager.user_loader
@@ -72,7 +72,8 @@ class Budget(db.Model):
 
         if self.is_shared:
             obj["sharedUserIds"] = [
-                u.id for u in queries.get_shared_users_for_budget_id(budget_id=self.id)
+                u.id
+                for u in user_queries.get_shared_users_for_budget_id(budget_id=self.id)
             ]
         return json.dumps(obj)
 
