@@ -164,31 +164,44 @@ class NBTransaction extends NikElement {
 
     if (this.editing) {
       return html`<sl-tooltip content="Delete"
-          ><sl-icon-button
-            class="icon-danger icon-fs-20"
-            name="trash"
+          ><sl-button
+            variant="text"
+            label="Delete"
+            class="danger font-size-large"
             @click=${this.handleDeleteClick}
-          ></sl-icon-button></sl-tooltip
-        ><sl-button
-          id="moveButton"
-          variant="default"
-          size="small"
-          @click=${this.handleMoveTransactionClick}
-          >Move</sl-button
-        ><sl-button
-          id="saveButton"
-          variant="primary"
-          size="small"
-          @click=${this.handleSaveClick}
-          >Save</sl-button
+            ><sl-icon
+              name="trash"
+              label="Delete"
+            ></sl-icon></sl-button></sl-tooltip
+        ><sl-tooltip content="Move transaction"
+          ><sl-button
+            id="moveButton"
+            variant="text"
+            label="Move transaction"
+            class="neutral font-size-large"
+            @click=${this.handleMoveTransactionClick}
+            ><sl-icon
+              name="arrows-move"
+              label="Move transaction"
+            ></sl-icon></sl-button></sl-tooltip
+        ><sl-tooltip content="Save"
+          ><sl-button
+            id="saveButton"
+            label="Save"
+            variant="text"
+            class="font-size-large"
+            @click=${this.handleSaveClick}
+            ><sl-icon
+              name="floppy-fill"
+              label="Save"
+            ></sl-icon></sl-button></sl-tooltip
         ><sl-tooltip content="Cancel"
-          ><sl-icon-button
-            class="icon-fs-20"
-            name="x-lg"
-            library="system"
+          ><sl-button
             label="Cancel"
+            variant="text"
+            class="default font-size-large"
             @click=${this.handleEditClick}
-          ></sl-icon-button
+            ><sl-icon name="x-lg" label="Cancel"></sl-icon></sl-button
         ></sl-tooltip>`;
     }
 

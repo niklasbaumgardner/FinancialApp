@@ -243,11 +243,6 @@ button:focus-visible {
   display: flex;
   justify-content: end;
   align-items: start;
-  gap: var(--sl-spacing-x-small);
-}
-
-nb-transaction[editing] .transaction-buttons {
-  align-items: center;
 }
 
 .transaction-buttons > * {
@@ -376,6 +371,50 @@ sl-button[variant="nik"]::part(base):active {
   background-color: var(--sl-color-neutral-900);
   color: var(--sl-color-neutral-0);
   border-color: var(--sl-color-neutral-900);
+}
+
+sl-button.danger::part(base) {
+  color: var(--sl-color-danger-600);
+}
+sl-button.danger::part(base):hover {
+  color: var(--sl-color-danger-500);
+}
+sl-button.danger::part(base):focus-visible {
+  color: var(--sl-color-danger-500);
+}
+sl-button.danger::part(base):active {
+  color: var(--sl-color-danger-700);
+}
+
+sl-button.neutral::part(base) {
+  color: var(--sl-color-neutral-800);
+}
+sl-button.neutral::part(base):hover {
+  color: var(--sl-color-neutral-700);
+}
+sl-button.neutral::part(base):focus-visible {
+  color: var(--sl-color-neutral-700);
+}
+sl-button.neutral::part(base):active {
+  color: var(--sl-color-neutral-900);
+}
+
+sl-button.default::part(base) {
+  color: var(--sl-color-neutral-600);
+}
+sl-button.default::part(base):hover {
+  color: var(--sl-color-primary-500);
+}
+sl-button.default::part(base):focus-visible {
+  color: var(--sl-color-primary-500);
+}
+sl-button.default::part(base):active {
+  color: var(--sl-color-primary-700);
+}
+
+.font-size-large,
+.font-size-large::part(base) {
+  font-size: var(--sl-font-size-large);
 }
 
 .background-preview {
