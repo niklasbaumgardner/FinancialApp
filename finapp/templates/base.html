@@ -73,18 +73,18 @@
                         </sl-menu>
                     </sl-dropdown>
                     {% if current_user.is_authenticated %}
-                        <!-- <sl-dropdown>
-                            <sl-button slot="trigger" variant="text" caret>
+                        <sl-dropdown>
+                            <sl-button slot="trigger" variant="text" class="neutral font-size-medium" caret>
                                 <sl-icon slot="prefix" name="person-circle"></sl-icon>
                                 {{ current_user.username }}
                             </sl-button>
                             <sl-menu>
                                 <sl-menu-item><a href="{{ url_for('preferences_bp.preferences') }}">Preferences</a></sl-menu-item>
-                                <sl-menu-item href="{{ url_for('profile_bp.profile') }}">Profile</sl-menu-item>
-                                <sl-menu-item href="{{ url_for('auth_bp.logout') }}">Logout</sl-menu-item>
+                                <sl-menu-item><a href="{{ url_for('profile_bp.profile') }}">Profile</a></sl-menu-item>
+                                <sl-menu-item><a href="{{ url_for('auth_bp.logout') }}">Logout</a></sl-menu-item>
                             </sl-menu>
-                        </sl-dropdown> -->
-                        <li class="nav-item dropdown">
+                        </sl-dropdown>
+                        <!-- <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 {{ current_user.username }}
                             </a>
@@ -93,7 +93,7 @@
                                 <li><a class="dropdown-item" href="{{ url_for('profile_bp.profile') }}">Profile</a></li>
                                 <li><a class="dropdown-item" href="{{ url_for('auth_bp.logout') }}">Logout</a></li>
                             </ul>
-                        </li>
+                        </li> -->
                     {% else %}
                         <li class="nav-item">
                             <a class="nav-link {% block login %}{% endblock login %}" href="{{ url_for('auth_bp.login') }}">Login</a>

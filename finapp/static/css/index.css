@@ -417,6 +417,11 @@ sl-button.default::part(base):active {
   font-size: var(--sl-font-size-large);
 }
 
+.font-size-medium,
+.font-size-medium::part(base) {
+  font-size: var(--sl-font-size-medium);
+}
+
 .background-preview {
   border: 2px solid var(--sl-color-neutral-1000);
   width: 100px;
