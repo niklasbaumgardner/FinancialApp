@@ -438,6 +438,17 @@ class NetSpendingManager {
         type: "fitGridWidth",
         defaultMinWidth: 200,
       },
+      onRowDataUpdated: (event) => {
+        let height =
+          document.querySelector(".ag-center-cols-container").scrollHeight +
+          document.querySelector(".ag-header-row").scrollHeight;
+
+        if (height < 192) {
+          height = 192;
+        }
+
+        this.spendingGridEl.style.height = `${height + 3}px`;
+      },
     };
     this.dataGrid = agGrid.createGrid(this.spendingGridEl, gridOptions);
   }
