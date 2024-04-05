@@ -191,6 +191,7 @@ class NBTransaction extends NikElement {
             variant="text"
             class="font-size-large"
             @click=${this.handleSaveClick}
+            @touchstart=${this.handleSaveClick}
             ><sl-icon
               name="floppy-fill"
               label="Save"
