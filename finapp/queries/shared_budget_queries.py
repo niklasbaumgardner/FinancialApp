@@ -36,8 +36,12 @@ def get_shared_budgets_query_by_budget():
 
 
 def get_shared_budgets_query_by_transaction():
-    return SharedBudget.query.filter_by(
-        user_id=current_user.id, budget_id=Transaction.budget_id
+    return SharedBudget.query.where(
+        or_(
+            current_user.id == Transaction.user_id,
+            SharedBudget.user_id == Transaction.user_id,
+        ),
+        SharedBudget.budget_id == Transaction.budget_id,
     )
 
 
