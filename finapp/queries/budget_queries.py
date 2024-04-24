@@ -100,7 +100,7 @@ def update_budget_total(b_id):
         total = 0
         for trans in transactions:
             total += trans.amount
-        budget.total = total
+        budget.total = round(budget.total, 2)
 
         db.session.commit()
 
@@ -108,6 +108,8 @@ def update_budget_total(b_id):
 def add_transaction_to_total(budget, transaction):
     if budget:
         budget.total += transaction.amount
+        budget.total = round(budget.total, 2)
+
         db.session.commit()
 
 

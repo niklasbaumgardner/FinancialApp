@@ -173,7 +173,7 @@ def add_transaction(budget_id):
     str_date = request.form.get("date")
     date = helpers.get_date_from_string(str_date)
 
-    if name and amount and budget_id:
+    if name is not None and amount is not None and budget_id is not None:
         transaction_queries.create_transaction(
             name=name, amount=amount, date=date, budget_id=budget_id
         )
