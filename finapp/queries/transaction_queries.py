@@ -41,7 +41,7 @@ def create_transaction(name, amount, date, budget_id, is_transfer=False):
         )
         db.session.add(trans)
         db.session.commit()
-        budget_queries.add_transaction_to_total(budget, trans)
+        budget_queries.update_budget_total(b_id=budget.id, budget=budget)
 
 
 def get_transaction(budget_id, trans_id):
@@ -110,7 +110,7 @@ def get_transactions(
         transactions = Transaction.query
 
     transactions = shared_budget_queries.get_shared_transactions_query(
-        budegt_id=budget_id
+        budget_id=budget_id
     )
 
     transactions = sort_transactions(sort_by=sort_by, transactionsQuery=transactions)
@@ -160,7 +160,7 @@ def get_transactions_for_month(
         transactions = Transaction.query
 
     transactions = shared_budget_queries.get_shared_transactions_query(
-        budegt_id=budget_id
+        budget_id=budget_id
     ).where(
         extract("month", Transaction.date) == month,
         extract("year", Transaction.date) == year,
@@ -203,7 +203,7 @@ def get_transactions_for_year(
         transactions = Transaction.query
 
     transactions = shared_budget_queries.get_shared_transactions_query(
-        budegt_id=budget_id
+        budget_id=budget_id
     ).where(
         extract("year", Transaction.date) == year,
     )
@@ -368,7 +368,7 @@ def search(
             )
 
         transactions = shared_budget_queries.get_shared_transactions_query(
-            budegt_id=budget_id, transactionsQuery=transactions
+            budget_id=budget_id, transactionsQuery=transactions
         )
 
         search_sum = transactions.with_entities(func.sum(Transaction.amount)).first()[0]
@@ -390,3 +390,13 @@ def search(
 
     # I want to return the number of pages as 1
     return ([], 0, 1, 1, 0)
+
+
+def get_transactions_sum(budget_id):
+    total = (
+        Transaction.query.filter_by(budget_id=budget_id)
+        .with_entities(func.sum(Transaction.amount))
+        .scalar()
+    )
+
+    return total

@@ -45,10 +45,10 @@ def get_shared_budgets_query_by_transaction():
     )
 
 
-def get_shared_transactions_query(budegt_id, transactionsQuery=None):
+def get_shared_transactions_query(budget_id, transactionsQuery=None):
     if transactionsQuery:
         return transactionsQuery.where(
-            Transaction.budget_id == budegt_id,
+            Transaction.budget_id == budget_id,
             or_(
                 current_user.id == Transaction.user_id,
                 get_shared_budgets_query_by_transaction().exists(),
@@ -56,7 +56,7 @@ def get_shared_transactions_query(budegt_id, transactionsQuery=None):
         )
 
     return Transaction.query.where(
-        Transaction.budget_id == budegt_id,
+        Transaction.budget_id == budget_id,
         or_(
             current_user.id == Transaction.user_id,
             get_shared_budgets_query_by_transaction().exists(),

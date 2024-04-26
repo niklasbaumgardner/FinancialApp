@@ -92,24 +92,12 @@ def update_budget(id, name=None, is_active=None):
         db.session.commit()
 
 
-def update_budget_total(b_id):
-    budget = get_budget(b_id)
+def update_budget_total(b_id, budget=None):
+    budget = get_budget(b_id) if budget is None else budget
 
     if budget:
-        transactions = transaction_queries.get_transactions(budget.id)
-        total = 0
-        for trans in transactions:
-            total += trans.amount
-        budget.total = round(budget.total, 2)
-
-        db.session.commit()
-
-
-def add_transaction_to_total(budget, transaction):
-    if budget:
-        budget.total += transaction.amount
-        budget.total = round(budget.total, 2)
-
+        total = transaction_queries.get_transactions_sum(budget_id=budget.id)
+        budget.total = round(total, 2)
         db.session.commit()
 
 
