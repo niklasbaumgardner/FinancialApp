@@ -202,7 +202,7 @@ export class Pagination {
 
     let data = await this.getPageData(this.currentPage);
     this.numTransactions = data.total;
-    if (data.budget_total) {
+    if (data.hasOwnProperty("budget_total")) {
       document.getElementById("budgetTotal").value = data.budget_total;
     }
 
