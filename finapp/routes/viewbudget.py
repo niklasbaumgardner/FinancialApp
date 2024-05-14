@@ -41,7 +41,7 @@ def view_budget(id):
 
     shared_users_map = {}
     if budget["is_shared"]:
-        users = user_queries.get_shared_users_for_budget_id(budget_id=budget.id)
+        users = user_queries.get_shared_users_for_budget_id(budget_id=budget["id"])
 
         budget["shared_users"] = [u.to_dict() for u in users]
 

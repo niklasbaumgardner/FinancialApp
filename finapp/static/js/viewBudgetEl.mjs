@@ -18,8 +18,10 @@ class ViewBudget extends NikElement {
   static get queries() {
     return {
       nameInputEl: "#name",
-      amountInputEl: "#name",
+      amountInputEl: "#amount",
       transactionSubmitButton: "#transaction-submit",
+      shareBudgetDialog: "#share-budget-dialog",
+      dateEl: "#date",
     };
   }
 
@@ -44,12 +46,18 @@ class ViewBudget extends NikElement {
     document.addEventListener("SortingChanged", this);
     document.addEventListener("ToggleSearching", this);
     document.addEventListener("UpdateTransactions", this);
+    window.addEventListener("keydown", this, { once: true });
 
     this.prevButton = document.getElementById("prev");
     this.nextButton = document.getElementById("next");
 
     this.prevButton.onclick = () => this.onPrevClick();
     this.nextButton.onclick = () => this.onNextClick();
+  }
+
+  firstUpdated() {
+    this.transactionSubmitButton.disabled = true;
+    this.dateEl.valueAsDate = new Date();
   }
 
   handleEvent(event) {
@@ -65,6 +73,12 @@ class ViewBudget extends NikElement {
         break;
       case "UpdateTransactions":
         this.transactions = event.detail.transactions;
+        break;
+      case "keydown":
+        if (event.key === "Tab") {
+          event.preventDefault();
+          this.nameInputEl.focus();
+        }
         break;
     }
   }
@@ -153,6 +167,10 @@ class ViewBudget extends NikElement {
     );
   }
 
+  handleShareButtonClick() {
+    this.shareBudgetDialog.show();
+  }
+
   checkTransactionInput() {
     let name = this.nameInputEl.value;
     let amount = this.amountInputEl.value;
@@ -209,17 +227,6 @@ class ViewBudget extends NikElement {
       </div>`;
     }
 
-    // for (let [index, transaction] of this.pageMap[
-    //     this.currentPage
-    //   ].entries()) {
-    //     this.transactionContainer.appendChild(transaction);
-    //     if (index < this.pageMap[this.currentPage].length - 1) {
-    //       this.transactionContainer.appendChild(
-    //         document.createElement("sl-divider")
-    //       );
-    //     }
-    //   }
-
     return this.transactions
       .flatMap((t) => [
         html`<nb-transaction .transaction=${t}></nb-transaction>`,
@@ -241,6 +248,7 @@ class ViewBudget extends NikElement {
                   id="share-budget-button"
                   name="share-fill"
                   label="Share this budget"
+                  @click=${this.handleShareButtonClick}
                 ></sl-icon-button>
               </sl-tooltip>
             </div>
