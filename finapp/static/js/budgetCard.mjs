@@ -28,7 +28,7 @@ class BudgetCard extends NikElement {
   }
 
   sharedUserTemplate() {
-    if (this.budget.isShared) {
+    if (this.budget.is_shared) {
       return html`<div class="col text-end">
         <sl-tooltip
           content="This budget is shared with ${this.getSharedUsers()}"
@@ -58,7 +58,7 @@ class BudgetCard extends NikElement {
         </div>
         <div class="col text-end">
           <sl-switch
-            ?checked=${this.budget.isActive}
+            ?checked=${this.budget.is_active}
             @click=${this.handleToggle}
             >Active</sl-switch
           >
@@ -73,7 +73,7 @@ class BudgetCard extends NikElement {
   }
 
   deleteButtonTemplate() {
-    if (!this.budget.isShared) {
+    if (!this.budget.is_shared) {
       return html`<sl-button
         variant="danger"
         outline
@@ -268,7 +268,7 @@ class BudgetCard extends NikElement {
   async handleToggle(event) {
     event.stopPropagation();
     const active = this.toggleEl.checked;
-    this.budget.isActive = active;
+    this.budget.is_active = active;
     // send request that
     await getRequest(this.budget.toggleActiveUrl, {
       id: this.budget.id,

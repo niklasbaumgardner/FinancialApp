@@ -1,132 +1,3 @@
-const storage = window["localStorage"];
-const PER_PAGE = 10;
-
-export class PaginationOwner {
-  constructor(transactions, numTransactions, currentPage, numPages) {
-    this.searching = false;
-    this.pagination = new Pagination(
-      transactions,
-      numTransactions,
-      currentPage,
-      numPages,
-      GET_PAGE_URL
-    );
-    this.pagination.init(currentPage);
-
-    this.currentPagination = this.pagination;
-
-    this.search = new Search([], 0, 1, 1, SEARCH_PAGE_URL);
-
-    document.addEventListener("RequestNewPages", this);
-    document.addEventListener("SortingChanged", this);
-    document.addEventListener("ToggleSearching", this);
-
-    this.prevButton = document.getElementById("prev");
-    this.nextButton = document.getElementById("next");
-
-    this.prevButton.onclick = () => this.onPrevClick();
-    this.nextButton.onclick = () => this.onNextClick();
-  }
-
-  handleEvent(event) {
-    switch (event.type) {
-      case "RequestNewPages":
-        this.requestNewPages(event.detail);
-        break;
-      case "SortingChanged":
-        this.handleSortingChanged(event);
-        break;
-      case "ToggleSearching":
-        this.toggleSearch(event.detail.searching);
-        break;
-    }
-  }
-
-  onPrevClick() {
-    if (this.prevButton.disabled) {
-      return;
-    }
-    this.currentPagination.setCurrentPage(
-      this.currentPagination.currentPage - 1
-    );
-  }
-
-  onNextClick() {
-    if (this.nextButton.disabled) {
-      return;
-    }
-    this.currentPagination.setCurrentPage(
-      this.currentPagination.currentPage + 1
-    );
-  }
-
-  toggleSearch(searching) {
-    this.searching = searching;
-
-    if (this.searching) {
-      this.search.init(1);
-      this.currentPagination = this.search;
-    } else {
-      this.pagination.init(1);
-      this.currentPagination = this.pagination;
-    }
-  }
-
-  handleSortingChanged(event) {
-    let sort = event.detail.sort;
-    this.currentPagination.sort = sort;
-
-    this.requestNewPages({
-      lessThanCurrentPage: true,
-      greaterThanCurrentPage: true,
-    });
-  }
-
-  async sortTransactions(event) {
-    let button = event.target;
-
-    if (this.searching) {
-      if (this.search.sort === button.value) {
-        return;
-      }
-
-      for (let sortButton of this.sortOptionsSearch) {
-        sortButton.classList.remove("active");
-      }
-
-      button.classList.add("active");
-
-      this.search.sort = button.value;
-
-      await this.search.requestNewPages({
-        lessThanCurrentPage: true,
-        greaterThanCurrentPage: true,
-      });
-    } else {
-      if (this.pagination.sort === button.value) {
-        return;
-      }
-
-      for (let sortButton of this.sortOptions) {
-        sortButton.classList.remove("active");
-      }
-
-      button.classList.add("active");
-
-      this.pagination.sort = button.value;
-
-      await this.pagination.requestNewPages({
-        lessThanCurrentPage: true,
-        greaterThanCurrentPage: true,
-      });
-    }
-  }
-
-  requestNewPages(options) {
-    this.currentPagination.requestNewPages(options);
-  }
-}
-
 export class Pagination {
   constructor(transactions, numTransactions, currentPage, numPages, url) {
     this.currentRequests = {};
@@ -352,22 +223,27 @@ export class Pagination {
       this.pageMap[this.currentPage] = this.getTransactionArray(data);
     }
 
-    let noTransactionsFound = document.getElementById("emptyTransaction");
-    if (this.pageMap[this.currentPage].length) {
-      noTransactionsFound.toggleAttribute("hidden", true);
-      for (let [index, transaction] of this.pageMap[
-        this.currentPage
-      ].entries()) {
-        this.transactionContainer.appendChild(transaction);
-        if (index < this.pageMap[this.currentPage].length - 1) {
-          this.transactionContainer.appendChild(
-            document.createElement("sl-divider")
-          );
-        }
-      }
-    } else {
-      noTransactionsFound.toggleAttribute("hidden", false);
-    }
+    document.dispatchEvent(
+      new CustomEvent("UpdateTransactions", {
+        detail: { transactions: this.pageMap[this.currentPage] },
+      })
+    );
+    // let noTransactionsFound = document.getElementById("emptyTransaction");
+    // if (this.pageMap[this.currentPage].length) {
+    //   noTransactionsFound.toggleAttribute("hidden", true);
+    //   for (let [index, transaction] of this.pageMap[
+    //     this.currentPage
+    //   ].entries()) {
+    //     this.transactionContainer.appendChild(transaction);
+    //     if (index < this.pageMap[this.currentPage].length - 1) {
+    //       this.transactionContainer.appendChild(
+    //         document.createElement("sl-divider")
+    //       );
+    //     }
+    //   }
+    // } else {
+    //   noTransactionsFound.toggleAttribute("hidden", false);
+    // }
   }
 
   clearTransactionContainer() {
@@ -380,7 +256,7 @@ export class Pagination {
   }
 
   updatePage() {
-    this.clearTransactionContainer();
+    // this.clearTransactionContainer();
     this.addTransactionsToContainer();
 
     let allPageNumberInputs = document.querySelectorAll(".page-number");
@@ -390,10 +266,11 @@ export class Pagination {
   }
 
   getTransactionArray(data) {
+    return data.transactions;
     let newTransactionArray = [];
     for (let t of data.transactions) {
       let transaction = document.createElement("nb-transaction");
-      transaction.transaction = JSON.parse(t);
+      transaction.transaction = t;
       newTransactionArray.push(transaction);
     }
 

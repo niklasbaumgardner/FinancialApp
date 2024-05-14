@@ -18,84 +18,44 @@
     const TOTAL_TRANSACTIONS = {{ total }};
     const CURRENT_PAGE = {{ page }};
     const NUM_PAGES = {{ num_pages }};
-    const budgetsArray = {{ budgets|budgets_array|tojson }};
-    const transactionsPy = {{ transactions|tojson }};
-    const SHARED_USERS = JSON.parse({{ shared_users_json|tojson }});
+    const BUDGETS = {{ budgets|tojson }};
     const IS_BUDGET_SHARED = "{{ budget.is_shared }}" === "True";
     const CURRENT_USER_ID = {{ current_user.id }};
+    const SHARED_USERS = {{ shared_users_map|tojson }};
 </script>
-<script src="/static/js/searchItem.mjs" type="module"></script>
+<script src="/static/js/viewBudgetEl.mjs" type="module"></script>
 
-<sl-card class="mb-4">
-    <div class="row" slot="header">
-        <div class="d-flex justify-content-between">
-            <div class="fs-1">
-                {{ budget.name }}
-            </div>
-            <div>
-                {% if budget.is_shared %}
-                    {% for _, u in shared_users.items() %}
-                        <sl-tooltip content="This budget is shared with {{ u['username'] }}">
-                            <sl-icon name="person-circle"></sl-icon>
-                        </sl-tooltip>
-                    {% endfor %}
-                {% endif %}
-                <sl-tooltip content="Share this budget">
-                    <sl-icon-button id="share-budget-button" name="share-fill" label="Share this budget"></sl-icon-button>
-                </sl-tooltip>
-            </div>
-        </div>
-        <div class="fs-5 mb-0 subhead">
-            Total: <sl-format-number id="budgetTotal" type="currency" currency="USD" value="{{ budget.total }}" lang="en-US"></sl-format-number>
-        </div>
-    </div>
+<view-budget-el
+    budget='{{ budget|tojson }}'
+    transactions='{{ transactions|tojson }}'
+    currentPage="{{ page }}"
+    numPages="{{ num_pages }}"
+    numTransactions="{{ total }}"
+    ></view-budget-el>
 
-    <form id="addTransaction" method="POST" action="{{ url_for('viewbudget_bp.add_transaction', budget_id=budget.id) }}">
-        <div class="row">
-            <div class="col-12 col-md-8 col-xl-6 mb-2">
-                <sl-input type="text" id="name" name="name" placeholder="Spent too much?" autocomplete="niklas" required></sl-input>
-            </div>
-            <div class="col-6 col-md-4 col-xl-2 mb-2">
-                <sl-input class="amount-input-86" type="number" step=".01" id="amount" name="amount" placeholder="0.00" autocomplete="niklas" required></sl-input>
-            </div>
-            <div class="col-6 col-md-4 col-xl-2 mb-2">
-                <sl-input type="date" id="date" name="date" required></sl-input>
-            </div>
-            <div class="col-12 col-md-8 col-xl-2 mb-2">
-                <sl-button class="w-100" variant="primary" id="transSubmit" type="submit" disabled>Add Transaction</sl-button>
-            </div>
-        </div>
-    </form>
-</sl-card>
+    <nav aria-label="...">
+        <sl-button-group label="Pagination" class="pagination">
+            <sl-button
+                id="prev"
+                variant="default"
+                label="Previous page"
+                ><sl-icon name="chevron-left"></sl-icon
+            ></sl-button>
+            <sl-button
+                id="next"
+                variant="default"
+                label="Next page"
+                ><sl-icon name="chevron-right"></sl-icon
+            ></sl-button>
+        </sl-button-group>
+    </nav>
 
-<search-budget-card></search-budget-card>
-
-<sl-card class="mb-4">
-    <div id="transactionList" class="">
-        <div id="emptyTransaction" class="" hidden="true">
-            <div class="d-flex justify-content-center">
-                <p class="fs-5">No transactions found</p>
-            </div>
-        </div>
-    </div>
-</sl-card>
-
-<nav aria-label="...">
-    <sl-button-group label="Pagination" class="pagination">
-        <sl-button id="prev" variant="default" label="Previous page"><sl-icon name="chevron-left"></sl-icon></sl-button>
-        <sl-button id="next" variant="default" label="Next page"><sl-icon name="chevron-right"></sl-icon></sl-button>
-    </sl-button-group>
-</nav>
-
-<div id="moveModals"></div>
-<div id="deleteModals"></div>
-<share-budget-dialog id="share-budget-dialog"></share-budget-dialog>
-
-
-    <script src="/static/js/setdate.js"></script>
-    <script src="/static/js/transaction.mjs" type="module"></script>
+    <!-- <script src="/static/js/setdate.js"></script> -->
+    <!-- <script src="/static/js/transaction.mjs" type="module"></script>
     <script src="/static/js/viewbudget.mjs" type="module"></script>
     <script src="/static/js/viewBudgetSearchCard.mjs" type="module"></script>
-    <script src="/static/js/shareBudgetElement.mjs" type="module"></script>
+    <script src="/static/js/shareBudgetElement.mjs" type="module"></script> -->
+
+
 
 {% endblock content %}

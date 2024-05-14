@@ -8,7 +8,7 @@ class NBTransaction extends NikElement {
   connectedCallback() {
     super.connectedCallback();
 
-    if (CURRENT_USER_ID !== this.transaction.userId) {
+    if (CURRENT_USER_ID !== this.transaction.user_id) {
       return;
     }
 
@@ -91,7 +91,7 @@ class NBTransaction extends NikElement {
   }
 
   transferTemplate() {
-    if (this.transaction.isTransfer) {
+    if (this.transaction.is_ransfer) {
       return html`<sl-tag
         class="width-fit-content fs-75"
         variant="primary"
@@ -156,9 +156,9 @@ class NBTransaction extends NikElement {
   }
 
   buttonsTempate() {
-    if (CURRENT_USER_ID !== this.transaction.userId) {
+    if (CURRENT_USER_ID !== this.transaction.user_id) {
       return html`<sl-tag variant="primary" size="small"
-        >${SHARED_USERS[this.transaction.userId].username}</sl-tag
+        >${SHARED_USERS[this.transaction.user_id].username}</sl-tag
       >`;
     }
 

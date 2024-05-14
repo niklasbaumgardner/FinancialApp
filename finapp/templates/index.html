@@ -6,7 +6,7 @@
 {% block content %}
 <script>
     const ADD_NEW_BUDGET_URL = "{{ url_for('index_bp.add_budget') }}";
-    const SHARED_USERS = JSON.parse({{ shared_users|tojson }});
+    const SHARED_USERS = {{ shared_users|tojson }};
 </script>
 
 <div class="row justify-content-between mx-0 welcome mb-5">
@@ -26,7 +26,7 @@
 {% for group in budgets %}
     <div class="index-grid mb-5 pb-5 budget-row">
         {% for budget in group %}
-            <budget-card id="budget{{ budget['id'] }}" class="button-div" budget="{{ budget|to_json }}" active="{{ budget['isActive'] }}"></budget-card>
+            <budget-card id="budget{{ budget['id'] }}" class="button-div" budget='{{ budget|tojson }}'></budget-card>
         {% endfor %}
     </div>
 {% endfor %}

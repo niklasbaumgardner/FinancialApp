@@ -18,17 +18,21 @@ index_bp = Blueprint("index_bp", __name__)
 def index():
     active, inactive = budget_queries.get_budgets(separate=True)
 
+    total = round(sum([x.total for x in active + inactive]), 2)
+
+    active = [b.to_dict() for b in active]
+    inactive = [b.to_dict() for b in inactive]
+
     shared_users = {
         u.id: u.to_dict() for u in user_queries.get_shared_users_for_all_budgets()
     }
 
-    total = round(sum([x.total for x in active + inactive]), 2)
     return render_template(
         "index.html",
         budgets=[active, inactive],
         round=round,
         total=helpers.format_to_money_string(total),
-        shared_users=json.dumps(shared_users),
+        shared_users=shared_users,
     )
 
 
@@ -71,7 +75,7 @@ def add_budget():
                     budget_id=budg.id,
                 )
 
-            return {"budget": budg.to_json()}
+            return {"budget": budg.to_dict()}
 
         abort(409)
     abort(400)
