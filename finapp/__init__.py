@@ -70,7 +70,3 @@ with app.app_context():
     db.create_all()
 
 migrate.init_app(app, db)
-
-from finapp.utils.jinja_filters import add_filters
-
-add_filters()

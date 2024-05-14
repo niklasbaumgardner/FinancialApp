@@ -17,7 +17,7 @@ def view_budget(id):
     ytd = request.args.get("ytd") == "true"
 
     budget = budget_queries.get_budget(id)
-    budgets = budget_queries.get_budgets(active_only=True)
+    budgets = [b.to_dict() for b in budget_queries.get_budgets(active_only=True)]
 
     if ytd:
         transactions, total, page, num_pages = (
@@ -36,25 +36,26 @@ def view_budget(id):
             budget_id=budget.id, page=page, paginate=True
         )
 
-    transactions = helpers.jsify_transactions(transactions)
+    budget = budget.to_dict()
+    transactions = [t.to_dict() for t in transactions]
 
-    shared_users = {}
-    if budget.is_shared:
-        shared_users = {
-            u.id: u.to_dict()
-            for u in user_queries.get_shared_users_for_budget_id(budget_id=budget.id)
-        }
+    shared_users_map = {}
+    if budget["is_shared"]:
+        users = user_queries.get_shared_users_for_budget_id(budget_id=budget.id)
+
+        budget["shared_users"] = [u.to_dict() for u in users]
+
+        shared_users_map = {u.id: u.to_dict() for u in users}
 
     return render_template(
         "viewbudget.html",
         budget=budget,
         transactions=transactions,
         budgets=budgets,
+        shared_users_map=shared_users_map,
         total=total,
         page=page,
         num_pages=num_pages,
-        shared_users=shared_users,
-        shared_users_json=json.dumps(shared_users),
     )
 
 
@@ -103,7 +104,7 @@ def get_page(budget_id):
             budget_id=budget_id, page=page, sort_by=sort_by, paginate=True
         )
 
-    transactions = helpers.jsify_transactions(transactions)
+    transactions = [t.to_dict() for t in transactions]
 
     return {
         "page": page,
@@ -150,7 +151,7 @@ def search(b_id):
         sort_by=sort_by,
     )
 
-    transactions = helpers.jsify_transactions(transactions)
+    transactions = [t.to_dict() for t in transactions]
 
     return {
         "page": page,
@@ -199,7 +200,7 @@ def edit_transaction(b_id, t_id):
         "success": True,
         "transaction": transaction_queries.get_transaction(
             budget_id=b_id, trans_id=t_id
-        ).to_json(),
+        ).to_dict(),
     }
 
 

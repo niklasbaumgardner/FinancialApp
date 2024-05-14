@@ -58,7 +58,8 @@
     <sl-dialog label="Copy amounts from a previous paycheck">
         <div class="dialog-body">
             {% for i, lst in enumerate(prefills) %}
-                <sl-details summary="Total Amount: {{ lst[0]|prettify_money }}">
+                <sl-details>
+                    <div slot="summary">Total Amount: <sl-format-number type="currency" currency="USD" value="{{ lst[0] }}" lang="en-US"></sl-format-number></div>
                     <div class="accordio-body">
                         <table id="table{{ i }}" class="table">
                             <thead>
@@ -71,7 +72,7 @@
                                 {% for budget in lst[1] %}
                                     <tr>
                                         <td>{{ budget[1] }}</td>
-                                        <td id={{ budget[0] }}>{{ budget[2]|prettify_money }}</td>
+                                        <td id="{{ budget[0] }}"><sl-format-number type="currency" currency="USD" value="{{ budget[2] }}" lang="en-US"></sl-format-number></td>
                                     </tr>
                                 {% endfor %}
                                 <tr>
