@@ -47,20 +47,14 @@ function fillBudgetAmountsFromPrefill(id, totalAmount) {
   closePreviousPaycheckDialog();
 
   let table = document.getElementById(id);
-  let list = [];
-  for (let r = 1; r < table.rows.length - 1; r++) {
-    let name = table.rows[r].cells[0].innerText;
-    let id = table.rows[r].cells[1].id;
-    let amount = table.rows[r].cells[1].innerText;
-    list.push({
-      id: name + id,
-      amount: amount.replace("$", "").replace(",", ""),
-    });
-  }
+  for (let row of table.querySelectorAll("tbody > tr")) {
+    let budgetName = row.innerText.trim();
+    let budgetId = row.cells[1].id;
+    let id = budgetName + budgetId;
+    let amount = row.querySelector("sl-format-number").value;
 
-  for (let prefill of list) {
-    let input = document.getElementById(prefill.id);
-    input.value = prefill.amount;
+    let input = document.getElementById(id);
+    input.value = amount;
   }
 
   if (!isPercentage()) {
