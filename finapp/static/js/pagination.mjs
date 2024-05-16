@@ -88,7 +88,7 @@ export class Pagination {
       );
     }
 
-    this.pageMap[this.currentPage] = this.getTransactionArray(data);
+    this.pageMap[this.currentPage] = data.transactions;
 
     this.setCurrentPage(this.currentPage, true);
   }
@@ -220,7 +220,7 @@ export class Pagination {
       } else {
         data = await this.getPageData(this.currentPage);
       }
-      this.pageMap[this.currentPage] = this.getTransactionArray(data);
+      this.pageMap[this.currentPage] = data.transactions;
     }
 
     document.dispatchEvent(
@@ -228,53 +228,15 @@ export class Pagination {
         detail: { transactions: this.pageMap[this.currentPage] },
       })
     );
-    // let noTransactionsFound = document.getElementById("emptyTransaction");
-    // if (this.pageMap[this.currentPage].length) {
-    //   noTransactionsFound.toggleAttribute("hidden", true);
-    //   for (let [index, transaction] of this.pageMap[
-    //     this.currentPage
-    //   ].entries()) {
-    //     this.transactionContainer.appendChild(transaction);
-    //     if (index < this.pageMap[this.currentPage].length - 1) {
-    //       this.transactionContainer.appendChild(
-    //         document.createElement("sl-divider")
-    //       );
-    //     }
-    //   }
-    // } else {
-    //   noTransactionsFound.toggleAttribute("hidden", false);
-    // }
-  }
-
-  clearTransactionContainer() {
-    let transactions = document.querySelectorAll(
-      "#transactionList > :not(div)"
-    );
-    for (let t of transactions) {
-      t.remove();
-    }
   }
 
   updatePage() {
-    // this.clearTransactionContainer();
     this.addTransactionsToContainer();
 
     let allPageNumberInputs = document.querySelectorAll(".page-number");
     for (let input of allPageNumberInputs) {
       input.setAttribute("value", this.currentPage);
     }
-  }
-
-  getTransactionArray(data) {
-    return data.transactions;
-    let newTransactionArray = [];
-    for (let t of data.transactions) {
-      let transaction = document.createElement("nb-transaction");
-      transaction.transaction = t;
-      newTransactionArray.push(transaction);
-    }
-
-    return newTransactionArray;
   }
 
   async getPageDataForPotentialPages() {
