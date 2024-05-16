@@ -29,52 +29,65 @@ class BudgetCard extends NikElement {
 
   sharedUserTemplate() {
     if (this.budget.is_shared) {
-      return html`<div class="col text-end">
-        <sl-tooltip
-          content="This budget is shared with ${this.getSharedUsers()}"
-        >
-          <sl-icon
-            name="person-circle"
-            style="padding: var(--sl-spacing-x-small);"
-          ></sl-icon
-        ></sl-tooltip>
-      </div>`;
+      return html` <sl-tooltip
+        content="This budget is shared with ${this.getSharedUsers()}"
+      >
+        <sl-icon
+          name="person-circle"
+          style="padding: var(--sl-spacing-x-small);"
+        ></sl-icon
+      ></sl-tooltip>`;
     }
   }
 
   nameTemplate() {
     if (this.editing) {
-      return html`<div class="col text-start">
-          <div class="d-flex flex-column">
-            <sl-input
-              id="budgetName"
-              name="name"
-              value="${this.budget.name}"
-              @input=${this.handleInput}
-              autocomplete="niklas"
-              required
-            ></sl-input>
-          </div>
-        </div>
-        <div class="col text-end">
-          <sl-switch
-            ?checked=${this.budget.is_active}
-            @click=${this.handleToggle}
-            >Active</sl-switch
-          >
-        </div>`;
+      return html`<div
+        class="d-flex justify-content-between"
+        style="height:40px;"
+      >
+        <sl-input
+          id="budgetName"
+          name="name"
+          value="${this.budget.name}"
+          @input=${this.handleInput}
+          autocomplete="niklas"
+          size="small"
+          required
+        ></sl-input
+        ><sl-tooltip content="Cancel"
+          ><sl-icon-button
+            name="x-lg"
+            library="system"
+            label="Cancel"
+            @click=${this.handleCancelClick}
+          ></sl-icon-button
+        ></sl-tooltip>
+      </div>`;
     }
-    return html`<div class="col text-start">
-        <div class="d-flex flex-column">
-          <p class="fs-4 mb-0">${this.budget.name}</p>
-        </div>
-      </div>
-      ${this.sharedUserTemplate()}`;
+    return html`<div
+      class="d-flex justify-content-between"
+      style="height:40px;"
+    >
+      <h3>${this.budget.name}</h3>
+      ${this.sharedUserTemplate()}
+    </div>`;
+  }
+
+  activeToggleTemplate() {
+    if (!this.editing) {
+      return null;
+    }
+
+    return html`<sl-switch ?checked=${this.budget.is_active}
+      >Active</sl-switch
+    >`;
   }
 
   deleteButtonTemplate() {
     if (!this.budget.is_shared) {
       return html`<sl-button
+        class="w-50"
         variant="danger"
         outline
         size="small"
@@ -88,22 +101,17 @@ class BudgetCard extends NikElement {
     if (this.editing) {
       return html`${this.deleteButtonTemplate()}<sl-button
           id="saveButton"
+          class="${this.budget.is_shared ? "w-100" : "w-50"}"
           variant="primary"
           size="small"
           @click=${this.handleSaveClick}
           >Save</sl-button
-        ><sl-tooltip content="Cancel"
-          ><sl-icon-button
-            name="x-lg"
-            library="system"
-            label="Cancel"
-            @click=${this.handleCancelClick}
-          ></sl-icon-button
-        ></sl-tooltip>`;
+        >`;
     }
 
     return html`<sl-tooltip content="Edit"
       ><sl-icon-button
+        style="margin-left:auto;"
         class="icon-primary"
         name="pencil-square"
         label="Settings"
@@ -114,7 +122,10 @@ class BudgetCard extends NikElement {
 
   template() {
     if (this.type === "new") {
-      return html`<div class="nb-row-sm">
+      return html`<div
+        class="d-flex flex-column"
+        style="gap:var(--sl-spacing-small);"
+      >
         <sl-input
           id="budgetName"
           name="name"
@@ -122,51 +133,55 @@ class BudgetCard extends NikElement {
           placeholder="Hello world"
           @input=${this.handleInput}
           autocomplete="niklas"
+          size="small"
         ></sl-input>
-        <div class="row">
-          <div class="col">
-            <sl-input
-              id="budgetAmount"
-              type="number"
-              name="amount"
-              label="Starting amout"
-              placeholder="$0.00"
-              autocomplete="niklas"
-            ></sl-input>
-          </div>
-          <div class="col d-flex justify-content-end align-items-end gx-2">
-            <sl-icon-button
-              name="x-lg"
-              library="system"
-              label="Cancel"
-              style="max-height:32px;"
-              @click=${this.handleCancelClick}
-            ></sl-icon-button>
-            <sl-button
-              id="saveButton"
-              variant="primary"
-              size="small"
-              @click=${this.handleSaveClick}
-              disabled
-              >Save</sl-button
-            >
-          </div>
+        <sl-input
+          id="budgetAmount"
+          type="number"
+          name="amount"
+          label="Starting amout"
+          placeholder="$0.00"
+          autocomplete="niklas"
+          size="small"
+        ></sl-input>
+        <div class="d-flex gx-2">
+          <sl-button
+            class="w-50"
+            variant="neutral"
+            size="small"
+            @click=${this.handleCancelClick}
+            outline
+            >Cancel</sl-button
+          >
+          <sl-button
+            class="w-50"
+            id="saveButton"
+            variant="primary"
+            size="small"
+            @click=${this.handleSaveClick}
+            disabled
+            >Save</sl-button
+          >
         </div>
       </div>`;
     }
 
-    return html`<div class="row">${this.nameTemplate()}</div>
-      <p class="mt-3">
+    return html`<div
+      class="d-flex flex-column"
+      style="gap:var(--sl-spacing-medium);"
+    >
+      ${this.nameTemplate()}
+      <div class="d-flex justify-content-between">
         <sl-format-number
           type="currency"
           currency="USD"
           value="${this.budget.total}"
           lang="en-US"
         ></sl-format-number>
-      </p>
-      <div class="d-flex justify-content-end gx-2">
-        ${this.buttonsTemplate()}
-      </div>`;
+        ${this.activeToggleTemplate()}
+      </div>
+      <div class="d-flex gx-2">${this.buttonsTemplate()}</div>
+    </div>`;
   }
 
   handleInput(event) {
@@ -242,17 +257,39 @@ class BudgetCard extends NikElement {
       }
     } else {
       // save budget
-      formData.set("name", this.nameInputEl.value);
-      let response = await postRequest(this.budget.editUrl, formData);
-      if (response.ok) {
-        this.budget.name = this.nameInputEl.value;
-        this.editing = false;
-      } else {
-        this.nameInputEl.setAttribute(
-          "help-text",
-          "This budget name already exists. Please choose another."
+      const active = this.toggleEl.checked;
+      if (active !== this.budget.is_active) {
+        this.budget.is_active = active;
+        // send request that
+        await getRequest(this.budget.toggleActiveUrl, {
+          id: this.budget.id,
+          active,
+        });
+
+        // send event to budget manager to move this to active/inactive
+        this.dispatchEvent(
+          new CustomEvent("Budget:ToggleActive", {
+            bubbles: true,
+          })
         );
       }
+
+      const name = this.nameInputEl.value;
+      if (name !== this.budget.name) {
+        formData.set("name", this.nameInputEl.value);
+        let response = await postRequest(this.budget.editUrl, formData);
+        if (response.ok) {
+          this.budget.name = this.nameInputEl.value;
+        } else {
+          this.nameInputEl.setAttribute(
+            "help-text",
+            "This budget name already exists. Please choose another."
+          );
+          return;
+        }
+      }
+
+      this.editing = false;
     }
   }
 
@@ -263,25 +300,6 @@ class BudgetCard extends NikElement {
     } else {
       this.editing = false;
     }
-  }
-
-  async handleToggle(event) {
-    event.stopPropagation();
-    const active = this.toggleEl.checked;
-    this.budget.is_active = active;
-    // send request that
-    await getRequest(this.budget.toggleActiveUrl, {
-      id: this.budget.id,
-      active,
-    });
-
-    // send event to budget manager to move this to active/inactive
-    this.dispatchEvent(
-      new CustomEvent("Budget:ToggleActive", {
-        bubbles: true,
-      })
-    );
-    this.editing = false;
   }
 
   render() {

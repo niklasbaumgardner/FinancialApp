@@ -99,7 +99,7 @@ class BudgetManager {
   handleToggleActive(event) {
     const budget = event.target;
     budget.remove();
-    const active = budget.budget.isActive;
+    const active = budget.budget.is_active;
 
     if (active) {
       let index = INACTIVE.findIndex((element) => element === budget);
