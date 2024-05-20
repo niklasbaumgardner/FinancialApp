@@ -78,8 +78,9 @@ class NBTransaction extends NikElement {
       let newTransaction = JSON.parse(response.transaction);
       this.transaction.name = newTransaction.name;
       this.transaction.amount = newTransaction.amount;
-      this.editing = false;
     }
+
+    this.editing = false;
   }
 
   handleMoveTransactionClick() {
