@@ -57,7 +57,11 @@ class ViewBudget extends NikElement {
 
   firstUpdated() {
     this.transactionSubmitButton.disabled = true;
-    this.dateEl.valueAsDate = new Date();
+    let dateNow = new Date();
+    // We only record date for transactions so
+    // just set hours to 0 so day is correct
+    dateNow.setHours(0);
+    this.dateEl.valueAsDate = dateNow;
   }
 
   handleEvent(event) {
