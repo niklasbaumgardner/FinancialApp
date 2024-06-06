@@ -37,28 +37,17 @@ def get_shared_budgets_query_by_budget():
 
 def get_shared_budgets_query_by_transaction():
     return SharedBudget.query.where(
-        or_(
-            current_user.id == Transaction.user_id,
-            SharedBudget.user_id == Transaction.user_id,
-        ),
         SharedBudget.budget_id == Transaction.budget_id,
     )
 
 
 def get_shared_transactions_query(budget_id, transactionsQuery=None):
-    if transactionsQuery:
-        return transactionsQuery.where(
-            Transaction.budget_id == budget_id,
-            or_(
-                current_user.id == Transaction.user_id,
-                get_shared_budgets_query_by_transaction().exists(),
-            ),
-        )
+    if not transactionsQuery:
+        transactionsQuery = Transaction.query
 
-    return Transaction.query.where(
-        Transaction.budget_id == budget_id,
+    return transactionsQuery.where(
         or_(
-            current_user.id == Transaction.user_id,
+            Transaction.budget_id == budget_id,
             get_shared_budgets_query_by_transaction().exists(),
         ),
     )
