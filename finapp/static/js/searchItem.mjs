@@ -14,6 +14,11 @@ export class SearchItem extends NikElement {
     this.dispatchEvent(new CustomEvent("SearchItemAdded", { bubbles: true }));
   }
 
+  async focus(options) {
+    await this.updateComplete;
+    this.inputEl.focus(options);
+  }
+
   handleClick(event) {
     if (event.target.id === "search-remove") {
       this.dispatchEvent(

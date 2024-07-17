@@ -101,6 +101,16 @@ class BudgetSearchCard extends NikElement {
     return searchValues;
   }
 
+  updated(changedProperties) {
+    console.log(changedProperties);
+
+    if (!changedProperties.has("searching") || !this.searching) {
+      return;
+    }
+
+    this.searchItems[0].focus({ focusVisible: true });
+  }
+
   toggleSearch(event) {
     this.searching = !this.searching;
 
@@ -152,6 +162,7 @@ class BudgetSearchCard extends NikElement {
 
   addNewSearchItem() {
     this.searchItems.push(document.createElement("search-item"));
+    this.searchItems.at(-1).focus({ focusVisible: true });
     this.numSearchItems += 1;
   }
 
@@ -161,6 +172,8 @@ class BudgetSearchCard extends NikElement {
     if (index > -1) {
       this.searchItems.splice(index, 1);
     }
+
+    this.searchItems.at(-1)?.focus({ focusVisible: true });
 
     this.numSearchItems -= 1;
   }

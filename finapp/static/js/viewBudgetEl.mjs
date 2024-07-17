@@ -46,7 +46,6 @@ class ViewBudget extends NikElement {
     document.addEventListener("SortingChanged", this);
     document.addEventListener("ToggleSearching", this);
     document.addEventListener("UpdateTransactions", this);
-    window.addEventListener("keydown", this, { once: true });
 
     this.prevButton = document.getElementById("prev");
     this.nextButton = document.getElementById("next");
@@ -55,13 +54,16 @@ class ViewBudget extends NikElement {
     this.nextButton.onclick = () => this.onNextClick();
   }
 
-  firstUpdated() {
+  async firstUpdated() {
     this.transactionSubmitButton.disabled = true;
     let dateNow = new Date();
     // We only record date for transactions so
     // just set hours to 0 so day is correct
     dateNow.setHours(0);
     this.dateEl.valueAsDate = dateNow;
+
+    await this.nameInputEl.updateComplete;
+    this.nameInputEl.focus({ focusVisible: true });
   }
 
   handleEvent(event) {
@@ -77,12 +79,6 @@ class ViewBudget extends NikElement {
         break;
       case "UpdateTransactions":
         this.transactions = event.detail.transactions;
-        break;
-      case "keydown":
-        if (event.key === "Tab") {
-          event.preventDefault();
-          this.nameInputEl.focus();
-        }
         break;
     }
   }
