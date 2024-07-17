@@ -65,20 +65,23 @@ class NBTransaction extends NikElement {
     formData.set("amount", newAmount);
     formData.set("date", newDate);
     let response = await postRequest(this.transaction.editUrl, formData);
+    response = await response.json();
+    let newTransaction = response.transaction;
+    this.transaction.name = newTransaction.name;
+    this.transaction.amount = newTransaction.amount;
 
-    if (newDate !== date || newAmount !== amount) {
-      this.dispatchEvent(
-        new CustomEvent("RequestNewPages", {
-          bubbles: true,
-          detail: options,
-        })
-      );
-    } else {
-      response = await response.json();
-      let newTransaction = response.transaction;
-      this.transaction.name = newTransaction.name;
-      this.transaction.amount = newTransaction.amount;
-    }
+    options.changed = {
+      name: newName !== name,
+      date: newDate !== date,
+      amount: newAmount !== amount,
+    };
+
+    this.dispatchEvent(
+      new CustomEvent("RequestNewPages", {
+        bubbles: true,
+        detail: options,
+      })
+    );
 
     this.editing = false;
   }
