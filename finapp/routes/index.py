@@ -7,7 +7,6 @@ from finapp.queries import (
 from flask import Blueprint, render_template, request, abort
 from flask_login import login_required
 from finapp.utils import helpers
-import json
 
 
 index_bp = Blueprint("index_bp", __name__)
