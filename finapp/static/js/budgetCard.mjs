@@ -65,11 +65,12 @@ class BudgetCard extends NikElement {
         ></sl-tooltip>
       </div>`;
     }
+
     return html`<div
       class="d-flex justify-content-between"
       style="height:40px;"
     >
-      <h3>${this.budget.name}</h3>
+      <h4>${this.budget.name}</h4>
       ${this.sharedUserTemplate()}
     </div>`;
   }
@@ -98,15 +99,23 @@ class BudgetCard extends NikElement {
   }
 
   buttonsTemplate() {
+    if (!this.editing) {
+      return null;
+    }
+
+    return html`${this.deleteButtonTemplate()}<sl-button
+        id="saveButton"
+        class="${this.budget.is_shared ? "w-100" : "w-50"}"
+        variant="primary"
+        size="small"
+        @click=${this.handleSaveClick}
+        >Save</sl-button
+      >`;
+  }
+
+  editButtonTemplate() {
     if (this.editing) {
-      return html`${this.deleteButtonTemplate()}<sl-button
-          id="saveButton"
-          class="${this.budget.is_shared ? "w-100" : "w-50"}"
-          variant="primary"
-          size="small"
-          @click=${this.handleSaveClick}
-          >Save</sl-button
-        >`;
+      return null;
     }
 
     return html`<sl-tooltip content="Edit"
@@ -178,7 +187,7 @@ class BudgetCard extends NikElement {
           value="${this.budget.total}"
           lang="en-US"
         ></sl-format-number>
-        ${this.activeToggleTemplate()}
+        ${this.activeToggleTemplate()} ${this.editButtonTemplate()}
       </div>
       <div class="d-flex gx-2">${this.buttonsTemplate()}</div>
     </div>`;
