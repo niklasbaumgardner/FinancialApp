@@ -66,7 +66,7 @@ class ViewBudget extends NikElement {
     this.nameInputEl.focus({ focusVisible: true });
   }
 
-  handleEvent(event) {
+  async handleEvent(event) {
     switch (event.type) {
       case "RequestNewPages":
         this.requestNewPages(event.detail);
@@ -78,6 +78,8 @@ class ViewBudget extends NikElement {
         this.toggleSearch(event.detail.searching);
         break;
       case "UpdateTransactions":
+        this.transactions = [];
+        await this.updateComplete;
         this.transactions = event.detail.transactions;
         break;
     }
@@ -232,7 +234,10 @@ class ViewBudget extends NikElement {
 
     return this.transactions
       .flatMap((t) => [
-        html`<nb-transaction .transaction=${t}></nb-transaction>`,
+        html`<nb-transaction
+          .transaction=${t}
+          ?editing=${t.editing ?? false}
+        ></nb-transaction>`,
         html`<sl-divider></sl-divider>`,
       ])
       .slice(0, -1);

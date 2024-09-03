@@ -36,6 +36,7 @@ class NBTransaction extends NikElement {
 
   handleEditClick() {
     this.editing = !this.editing;
+    this.transaction.editing = this.editing;
   }
 
   async handleSaveClick() {
@@ -194,8 +195,7 @@ class NBTransaction extends NikElement {
             label="Save"
             variant="text"
             class="font-size-large"
-            @mousedown=${this.handleSaveClick}
-            @touchstart=${this.handleSaveClick}
+            @click=${this.handleSaveClick}
             ><sl-icon
               name="floppy-fill"
               label="Save"
