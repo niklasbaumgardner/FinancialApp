@@ -14,10 +14,11 @@ from datetime import date
 def paginate_query(query, page):
     # transactions = transactions.paginate(page=page, per_page=10)
     num_pages = max(1, ((query.count() - 1) // 10) + 1)
+    total = query.count()
     query = query.limit(10).offset((page - 1) * 10).all()
     return (
         query,
-        len(query),
+        total,
         page,
         num_pages,
     )
