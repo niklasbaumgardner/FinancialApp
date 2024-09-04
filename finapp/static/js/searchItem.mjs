@@ -34,6 +34,7 @@ export class SearchItem extends NikElement {
         class="searchName w-100"
         type="text"
         placeholder="Search"
+        clearable
       ></sl-input
       ><sl-icon-button
         id="search-remove"
