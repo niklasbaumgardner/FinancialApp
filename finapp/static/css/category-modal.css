@@ -1,0 +1,12 @@
+.color-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sl-spacing-x-small);
+  justify-content: center;
+}
+
+.existing-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sl-spacing-2x-small);
+}

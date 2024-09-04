@@ -180,3 +180,19 @@ class PaycheckPrefill(db.Model, SerializerMixin):
     total_amount = db.Column(db.Float, nullable=False)
     budget_id = db.Column(db.Integer, db.ForeignKey("budget.id"), nullable=False)
     amount = db.Column(db.Float, nullable=False)
+
+
+class Category(db.Model, SerializerMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    name = db.Column(db.String, unique=True, nullable=False)
+    color = db.Column(db.String, nullable=False)
+
+
+class TransactionCategory(db.Model, SerializerMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    transaction_id = db.Column(
+        db.Integer, db.ForeignKey("transaction.id"), nullable=False
+    )
+    category_id = db.Column(db.Integer, db.ForeignKey("category.id"), nullable=False)
