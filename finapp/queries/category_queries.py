@@ -1,4 +1,4 @@
-from finapp.models import Category
+from finapp.models import Category, TransactionCategory
 from flask_login import current_user
 from finapp import db
 
@@ -18,3 +18,14 @@ def create_category(name, color):
     db.session.commit()
 
     return category
+
+
+def add_transaction_category(transaction_id, category_id):
+    t_category = TransactionCategory(
+        user_id=current_user.id, transaction_id=transaction_id, category_id=category_id
+    )
+
+    db.session.add(t_category)
+    db.session.commit()
+
+    return t_category

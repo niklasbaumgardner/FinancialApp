@@ -1,5 +1,5 @@
 from finapp.models import Transaction
-from finapp.queries import budget_queries, shared_budget_queries
+from finapp.queries import budget_queries, category_queries, shared_budget_queries
 from finapp import db
 from flask_login import current_user
 from sqlalchemy.sql import func, or_
@@ -29,7 +29,9 @@ def paginate_query(query, page):
 ##
 
 
-def create_transaction(name, amount, date, budget_id, is_transfer=False):
+def create_transaction(
+    name, amount, date, budget_id, is_transfer=False, categories=None
+):
     budget = budget_queries.get_budget(budget_id)
     if budget:
         trans = Transaction(
@@ -43,6 +45,11 @@ def create_transaction(name, amount, date, budget_id, is_transfer=False):
         db.session.add(trans)
         db.session.commit()
         budget_queries.update_budget_total(b_id=budget.id, budget=budget)
+
+        for c_id in categories:
+            category_queries.add_transaction_category(
+                transaction_id=trans.id, category_id=c_id
+            )
 
 
 def get_transaction(budget_id, trans_id):

@@ -142,6 +142,7 @@ class Transaction(db.Model, SerializerMixin):
         "date",
         "is_transfer",
         "editUrl",
+        "categories",
     )
 
     id = db.Column(db.Integer, primary_key=True)
@@ -151,6 +152,8 @@ class Transaction(db.Model, SerializerMixin):
     amount = db.Column(db.Float, nullable=False)
     date = db.Column(db.Date, nullable=False)
     is_transfer = db.Column(db.Boolean, nullable=True)
+
+    categories = db.relationship("TransactionCategory")
 
     def editUrl(self):
         return url_for(
@@ -196,3 +199,5 @@ class TransactionCategory(db.Model, SerializerMixin):
         db.Integer, db.ForeignKey("transaction.id"), nullable=False
     )
     category_id = db.Column(db.Integer, db.ForeignKey("category.id"), nullable=False)
+
+    category = db.relationship("Category")

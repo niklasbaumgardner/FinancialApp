@@ -228,8 +228,42 @@ class NBTransaction extends NikElement {
       <div class="buttons transaction-buttons">${this.buttonsTempate()}</div>`;
   }
 
+  categoriesTemplate() {
+    if (this.editing) {
+      return html`<div>
+        <sl-select
+          label="Select any categories"
+          name="categories"
+          value="${this.transaction.categories.reduce(
+            (acc, cur) => acc + " " + cur.category_id,
+            ""
+          )}"
+          multiple
+          clearable
+        >
+          ${CATEGORIES.map(
+            (c) =>
+              html`<sl-option value="${c.id}"
+                ><nb-category name="${c.name}" color="${c.color}"></nb-category
+              ></sl-option>`
+          )}
+        </sl-select>
+      </div>`;
+    }
+    return html`<div class="existing-categories mt-3">
+      ${this.transaction.categories.map(
+        (c) =>
+          html`<nb-category
+            name="${c.category.name}"
+            color="${c.category.color}"
+          ></nb-category>`
+      )}
+    </div>`;
+  }
+
   render() {
-    return html`<div class="transaction-grid">${this.template()}</div>`;
+    return html`<div class="transaction-grid">${this.template()}</div>
+      ${this.categoriesTemplate()}`;
   }
 }
 

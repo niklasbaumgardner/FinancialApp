@@ -1,4 +1,9 @@
-from finapp.queries import budget_queries, transaction_queries, user_queries
+from finapp.queries import (
+    budget_queries,
+    category_queries,
+    transaction_queries,
+    user_queries,
+)
 from flask import Blueprint, render_template, redirect, url_for, request
 from flask_login import login_required
 from finapp.utils import helpers
@@ -47,12 +52,15 @@ def view_budget(id):
 
         shared_users_map = {u.id: u.to_dict() for u in users}
 
+    categories = [c.to_dict() for c in category_queries.get_cetegories()]
+
     return render_template(
         "viewbudget.html",
         budget=budget,
         transactions=transactions,
         budgets=budgets,
         shared_users_map=shared_users_map,
+        categories=categories,
         total=total,
         page=page,
         num_pages=num_pages,
@@ -174,9 +182,15 @@ def add_transaction(budget_id):
     str_date = request.form.get("date")
     date = helpers.get_date_from_string(str_date)
 
+    categories = request.form.getlist("categories")
+
     if name is not None and amount is not None and budget_id is not None:
         transaction_queries.create_transaction(
-            name=name, amount=amount, date=date, budget_id=budget_id
+            name=name,
+            amount=amount,
+            date=date,
+            budget_id=budget_id,
+            categories=categories,
         )
 
     return redirect(url_for("viewbudget_bp.view_budget", id=budget_id))

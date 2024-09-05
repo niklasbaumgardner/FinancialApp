@@ -17,12 +17,14 @@
   const IS_BUDGET_SHARED = "{{ budget.is_shared }}" === "True";
   const CURRENT_USER_ID = {{ current_user.id }};
   const SHARED_USERS = {{ shared_users_map|tojson }};
+  const CATEGORIES = {{ categories|tojson }};
 </script>
 <script src="/static/js/viewBudgetEl.mjs" type="module"></script>
 
 <view-budget-el
   budget='{{ budget|tojson }}'
   transactions='{{ transactions|tojson }}'
+  categories='{{ categories|tojson }}'
   currentPage="{{ page }}"
   numPages="{{ num_pages }}"
   numTransactions="{{ total }}"

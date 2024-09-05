@@ -9,6 +9,7 @@ class ViewBudget extends NikElement {
   static properties = {
     budget: { type: Object },
     transactions: { type: Array },
+    categories: { type: Array },
     searching: { type: Boolean },
     numTransactions: { type: Number },
     currentPage: { type: Number },
@@ -315,6 +316,24 @@ class ViewBudget extends NikElement {
                 >Add Transaction</sl-button
               >
             </div>
+          </div>
+          <div class="row">
+            <sl-select
+              label="Select any categories"
+              name="categories"
+              multiple
+              clearable
+            >
+              ${this.categories.map(
+                (c) =>
+                  html`<sl-option value="${c.id}"
+                    ><nb-category
+                      name="${c.name}"
+                      color="${c.color}"
+                    ></nb-category
+                  ></sl-option>`
+              )}
+            </sl-select>
           </div>
         </form>
       </sl-card>
