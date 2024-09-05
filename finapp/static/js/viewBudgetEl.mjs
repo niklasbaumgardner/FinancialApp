@@ -150,7 +150,7 @@ class ViewBudget extends NikElement {
   requestNewPages(options) {
     this.currentPagination.requestNewPages(options);
     if (this.currentPagination === this.search) {
-      this.pagination.requestNewPages(options);
+      this.pagination.requestNewPages({ deleteOnly: true, ...options });
     }
   }
 

@@ -71,6 +71,10 @@ export class Pagination {
       }
     }
 
+    if (options.deleteOnly) {
+      return;
+    }
+
     let data = await this.getPageData(this.currentPage);
     this.numTransactions = data.total;
     if (data.hasOwnProperty("budget_total")) {
