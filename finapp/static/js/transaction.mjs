@@ -31,7 +31,22 @@ class NBTransaction extends NikElement {
       editDateEl: "#editDate",
       editAmountEl: "#editAmount",
       saveButtonEl: "#saveButton",
+      categoriesSelect: "sl-select",
     };
+  }
+
+  categoriesChange(oldCategories, newCategories) {
+    let oldCategoriesSet = new Set(oldCategories);
+    let newCategoriesSet = new Set(newCategories);
+
+    let categoriesAdded = Array.from(
+      newCategoriesSet.difference(oldCategoriesSet)
+    );
+    let categoriesDeleted = Array.from(
+      oldCategoriesSet.difference(newCategoriesSet)
+    );
+
+    return { categoriesAdded, categoriesDeleted };
   }
 
   handleEditClick() {
@@ -45,9 +60,25 @@ class NBTransaction extends NikElement {
     let newDate = this.editDateEl.value;
     let newAmount = Number(this.editAmountEl.value);
 
+    let currentCategories = this.transaction.categories.map(
+      (c) => c.category_id
+    );
+    let newCategories = this.categoriesSelect.value.map((id) => Number(id));
+
+    const { categoriesAdded, categoriesDeleted } = this.categoriesChange(
+      currentCategories,
+      newCategories
+    );
+
     let { name, date, amount } = this.transaction;
 
-    if (name === newName && date === newDate && amount === newAmount) {
+    if (
+      name === newName &&
+      date === newDate &&
+      amount === newAmount &&
+      !categoriesAdded.length &&
+      !categoriesDeleted.length
+    ) {
       this.editing = false;
       return;
     }
@@ -65,11 +96,19 @@ class NBTransaction extends NikElement {
     formData.set("name", newName);
     formData.set("amount", newAmount);
     formData.set("date", newDate);
+    for (let c_id of categoriesAdded) {
+      formData.append("categoriesAdded", c_id);
+    }
+    for (let c_id of categoriesDeleted) {
+      formData.append("categoriesDeleted", c_id);
+    }
+
     let response = await postRequest(this.transaction.editUrl, formData);
     response = await response.json();
     let newTransaction = response.transaction;
     this.transaction.name = newTransaction.name;
     this.transaction.amount = newTransaction.amount;
+    this.transaction.categories = newTransaction.categories;
 
     options.changed = {
       name: newName !== name,
@@ -238,6 +277,7 @@ class NBTransaction extends NikElement {
             (acc, cur) => acc + " " + cur.category_id,
             ""
           )}"
+          max-options-visible="0"
           multiple
           clearable
         >
@@ -250,6 +290,7 @@ class NBTransaction extends NikElement {
         </sl-select>
       </div>`;
     }
+
     return html`<div class="existing-categories mt-3">
       ${this.transaction.categories.map(
         (c) =>

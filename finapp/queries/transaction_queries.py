@@ -239,12 +239,28 @@ def get_transactions_for_year(
 
 
 def update_transaction(
-    b_id, t_id, new_b_id=None, name=None, amount=None, new_date=None, is_transfer=None
+    b_id,
+    t_id,
+    new_b_id=None,
+    name=None,
+    amount=None,
+    new_date=None,
+    is_transfer=None,
+    categories_added=None,
+    categories_deleted=None,
 ):
     transaction = get_transaction(b_id, t_id)
     if transaction:
         _update_transaction(
-            transaction, b_id, new_b_id, name, amount, new_date, is_transfer
+            transaction,
+            b_id,
+            new_b_id,
+            name,
+            amount,
+            new_date,
+            is_transfer,
+            categories_added,
+            categories_deleted,
         )
 
 
@@ -256,6 +272,8 @@ def _update_transaction(
     amount=None,
     new_date=None,
     is_transfer=None,
+    categories_added=None,
+    categories_deleted=None,
 ):
     should_update_budget_total = set()
 
@@ -276,6 +294,16 @@ def _update_transaction(
             transaction.date = new_date
         if is_transfer is not None:
             transaction.is_transfer = is_transfer
+        if len(categories_added) > 0:
+            for c_id in categories_added:
+                category_queries.add_transaction_category(
+                    transaction_id=transaction.id, category_id=c_id
+                )
+        if len(categories_deleted) > 0:
+            for c_id in categories_deleted:
+                category_queries.delete_transaction_category(
+                    transaction_id=transaction.id, category_id=c_id
+                )
 
         db.session.commit()
 

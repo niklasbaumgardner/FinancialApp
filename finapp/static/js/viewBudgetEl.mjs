@@ -321,6 +321,7 @@ class ViewBudget extends NikElement {
             <sl-select
               label="Select any categories"
               name="categories"
+              max-options-visible="0"
               multiple
               clearable
             >

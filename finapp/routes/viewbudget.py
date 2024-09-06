@@ -205,9 +205,18 @@ def edit_transaction(b_id, t_id):
     page = request.form.get("page")
     page = page if page else 1
 
+    categories_added = request.form.getlist("categoriesAdded")
+    categories_deleted = request.form.getlist("categoriesDeleted")
+
     new_date = helpers.get_date_from_string(new_date)
     transaction_queries.update_transaction(
-        b_id=b_id, t_id=t_id, name=new_name, amount=new_amount, new_date=new_date
+        b_id=b_id,
+        t_id=t_id,
+        name=new_name,
+        amount=new_amount,
+        new_date=new_date,
+        categories_added=categories_added,
+        categories_deleted=categories_deleted,
     )
 
     return {
