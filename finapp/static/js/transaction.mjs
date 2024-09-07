@@ -3,6 +3,7 @@ import { html } from "./imports.mjs";
 import { postRequest } from "./fetch.mjs";
 import { MoveTransactionModal } from "./moveTransactionElement.mjs";
 import { DeleteTransactionModal } from "./deleteTransactionElement.mjs";
+import "./nb-select.mjs";
 
 class NBTransaction extends NikElement {
   connectedCallback() {
@@ -31,7 +32,7 @@ class NBTransaction extends NikElement {
       editDateEl: "#editDate",
       editAmountEl: "#editAmount",
       saveButtonEl: "#saveButton",
-      categoriesSelect: "sl-select",
+      categoriesSelect: "nb-select",
     };
   }
 
@@ -270,7 +271,7 @@ class NBTransaction extends NikElement {
   categoriesTemplate() {
     if (this.editing) {
       return html`<div>
-        <sl-select
+        <nb-select
           label="Select any categories"
           name="categories"
           value="${this.transaction.categories.reduce(
@@ -287,7 +288,7 @@ class NBTransaction extends NikElement {
                 ><nb-category name="${c.name}" color="${c.color}"></nb-category
               ></sl-option>`
           )}
-        </sl-select>
+        </nb-select>
       </div>`;
     }
 

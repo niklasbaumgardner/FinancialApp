@@ -28,9 +28,39 @@ export class CreateCategoryModal extends NikElement {
       "#" + ((Math.random() * 0xffffff) << 0).toString(16).padStart(6, "0");
   }
 
+  arraysEqual(arr1, arr2) {
+    if (arr1 === arr2) return true;
+    if (arr1 == null || arr2 == null) return false;
+    if (arr1.length !== arr2.length) return false;
+
+    let arr1Sorted = arr1.toSorted((a, b) => a.id - b.id);
+    let arr2Sorted = arr2.toSorted((a, b) => a.id - b.id);
+
+    for (var i = 0; i < arr1Sorted.length; ++i) {
+      if (arr1Sorted[i].id !== arr2Sorted[i].id) return false;
+    }
+    return true;
+  }
+
+  setExistingCategories(newCategories) {
+    if (this.arraysEqual(this.existingCategories, newCategories)) {
+      return;
+    }
+    this.existingCategories = newCategories;
+
+    document.dispatchEvent(
+      new CustomEvent("CategoriesUpdated", {
+        bubbles: true,
+        composed: true,
+        detail: { categories: this.existingCategories },
+      })
+    );
+  }
+
   async show() {
     let request = await getRequest(GET_CATEGORIES_URL);
-    this.existingCategories = await request.json();
+    let newCategories = await request.json();
+    this.setExistingCategories(newCategories);
     this.dialog.show();
   }
 
@@ -48,7 +78,7 @@ export class CreateCategoryModal extends NikElement {
 
     this.submitButton.loading = false;
     this.form.reset();
-    this.existingCategories = data.categories;
+    this.setExistingCategories(data.categories);
   }
 
   render() {

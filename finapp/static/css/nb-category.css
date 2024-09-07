@@ -4,16 +4,13 @@ nb-category {
 
 .tag {
   display: flex;
+  gap: var(--sl-spacing-2x-small);
   align-items: center;
   border: solid 1px;
   line-height: 1;
   white-space: nowrap;
   user-select: none;
   -webkit-user-select: none;
-
-  /* background-color: var(--tag-background-color);
-  border-color: var(--tag-color);
-  color: var(--tag-color); */
 
   background-color: var(--sl-color-gray-50);
   border-color: var(--sl-color-gray-200);
@@ -26,6 +23,11 @@ nb-category {
   );
   border-radius: var(--sl-input-border-radius-small);
   padding: 0 var(--sl-spacing-x-small);
+
+  .tag__remove::part(base) {
+    color: inherit;
+    padding: 0px;
+  }
 
   /* Colors */
 

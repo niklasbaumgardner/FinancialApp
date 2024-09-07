@@ -22,7 +22,13 @@ export class Category extends NikElement {
   }
 
   handleRemoveClick() {
-    this.emit("sl-remove");
+    this.dispatchEvent(
+      new CustomEvent("sl-remove", {
+        bubbles: true,
+        cancelable: false,
+        composed: true,
+      })
+    );
   }
 
   render() {
@@ -30,11 +36,10 @@ export class Category extends NikElement {
       ><span>${this.name}</span>${this.removable
         ? html`
             <sl-icon-button
-              part="remove-button"
-              exportparts="base:remove-button__base"
+              class="tag__remove"
               name="x-lg"
               library="system"
-              label=${this.localize.term("remove")}
+              label="Remove"
               class="tag__remove"
               @click=${this.handleRemoveClick}
               tabindex="-1"

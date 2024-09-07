@@ -4,6 +4,7 @@ import { Pagination, Search } from "./pagination.mjs";
 import "./viewBudgetSearchCard.mjs";
 import "./shareBudgetElement.mjs";
 import "./transaction.mjs";
+import "./nb-select.mjs";
 
 class ViewBudget extends NikElement {
   static properties = {
@@ -210,6 +211,10 @@ class ViewBudget extends NikElement {
     this.transactionSubmitButton.disabled = true;
   }
 
+  openCategoriesModal() {
+    document.querySelector("create-category-modal").show();
+  }
+
   sharedUsersTemplate() {
     if (!this.budget.is_shared) {
       return null;
@@ -318,7 +323,7 @@ class ViewBudget extends NikElement {
             </div>
           </div>
           <div class="row">
-            <sl-select
+            <nb-select
               label="Select any categories"
               name="categories"
               max-options-visible="0"
@@ -334,7 +339,15 @@ class ViewBudget extends NikElement {
                     ></nb-category
                   ></sl-option>`
               )}
-            </sl-select>
+            </nb-select>
+            <div>
+              <sl-button
+                variant="text"
+                size="small"
+                @click=${this.openCategoriesModal}
+                >Create more categories</sl-button
+              >
+            </div>
           </div>
         </form>
       </sl-card>
