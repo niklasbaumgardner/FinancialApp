@@ -193,6 +193,8 @@ class Category(db.Model, SerializerMixin):
 
 
 class TransactionCategory(db.Model, SerializerMixin):
+    __table_args__ = (db.UniqueConstraint("transaction_id", "category_id"),)
+
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     transaction_id = db.Column(
