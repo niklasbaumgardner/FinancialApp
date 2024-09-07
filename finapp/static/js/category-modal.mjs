@@ -49,7 +49,7 @@ export class CreateCategoryModal extends NikElement {
     this.existingCategories = newCategories;
 
     document.dispatchEvent(
-      new CustomEvent("CategoriesUpdated", {
+      new CustomEvent("CategoriesChanged", {
         bubbles: true,
         composed: true,
         detail: { categories: this.existingCategories },

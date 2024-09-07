@@ -1,44 +1,56 @@
 {% extends "base.html" %} {% block title %}{{ budget.name }}{% endblock title %}
-{% block backButton %}<sl-button href="/" class="me-4" variant="primary" outline
-  ><sl-icon slot="prefix" name="caret-left"></sl-icon>Back</sl-button
->{% endblock backButton %} {% block content %}
+{% block backButton %}<sl-button href="/" class="me-4" variant="primary" outline><sl-icon slot="prefix"
+        name="caret-left"></sl-icon>Back</sl-button>{% endblock backButton %} {% block content %}
 <script>
-  const GET_PAGE_URL = "{{ url_for('viewbudget_bp.get_page', budget_id=budget.id) }}";
-  const SEARCH_PAGE_URL = "{{ url_for('viewbudget_bp.search', b_id=budget.id) }}";
-  const MOVE_TRANSACTION_URL = "{{ url_for('viewbudget_bp.move_transaction', sb_id=budget.id, t_id=0) }}".slice(0, -1);
-  const DELETE_TRANSACTION_URL = "{{ url_for('viewbudget_bp.delete_transaction', b_id=budget.id, t_id=0) }}".slice(0, -1);
-  const SHARE_BUDGET_URL = "{{ url_for('sharebudget_bp.share_budget', budget_id=budget.id) }}"
+    const GET_PAGE_URL = "{{ url_for('viewbudget_bp.get_page', budget_id=budget.id) }}";
+    const SEARCH_PAGE_URL = "{{ url_for('viewbudget_bp.search', b_id=budget.id) }}";
+    const MOVE_TRANSACTION_URL = "{{ url_for('viewbudget_bp.move_transaction', sb_id=budget.id, t_id=0) }}".slice(0, -1);
+    const DELETE_TRANSACTION_URL = "{{ url_for('viewbudget_bp.delete_transaction', b_id=budget.id, t_id=0) }}".slice(0, -1);
+    const SHARE_BUDGET_URL = "{{ url_for('sharebudget_bp.share_budget', budget_id=budget.id) }}";
 
-  const params = new URLSearchParams(window.location.search);
-  const TOTAL_TRANSACTIONS = {{ total }};
-  const CURRENT_PAGE = {{ page }};
-  const NUM_PAGES = {{ num_pages }};
-  const BUDGETS = {{ budgets|tojson }};
-  const IS_BUDGET_SHARED = "{{ budget.is_shared }}" === "True";
-  const CURRENT_USER_ID = {{ current_user.id }};
-  const SHARED_USERS = {{ shared_users_map|tojson }};
-  const CATEGORIES = {{ categories|tojson }};
+    const params = new URLSearchParams(window.location.search);
+    const TOTAL_TRANSACTIONS = {{ total }};
+    const CURRENT_PAGE = {{ page }};
+    const NUM_PAGES = {{ num_pages }};
+    const BUDGETS = {{ budgets| tojson }};
+    const IS_BUDGET_SHARED = "{{ budget.is_shared }}" === "True";
+    const CURRENT_USER_ID = {{ current_user.id }};
+    const SHARED_USERS = {{ shared_users_map| tojson }};
+    const CATEGORIES = {{ categories| tojson }};
+
+    function handleCategoriesChanged(event) {
+        let { categories } = event.detail;
+        if (!categories) return;
+
+        // clear out CATEGORIES
+        while (typeof CATEGORIES.shift() !== "undefined") { }
+
+        // Add new categories
+        CATEGORIES.push(...categories);
+
+        let viewBudgetEl = document.querySelector("view-budget-el");
+        viewBudgetEl.categories = categories;
+
+        let transcationEls = document.querySelectorAll("nb-transaction");
+        for (let t of transcationEls) {
+            if (t.editing) {
+                t.requestUpdate();
+            }
+        }
+    }
+    document.addEventListener("CategoriesChanged", handleCategoriesChanged);
 </script>
 <script src="/static/js/viewBudgetEl.mjs" type="module"></script>
 
-<view-budget-el
-  budget='{{ budget|tojson }}'
-  transactions='{{ transactions|tojson }}'
-  categories='{{ categories|tojson }}'
-  currentPage="{{ page }}"
-  numPages="{{ num_pages }}"
-  numTransactions="{{ total }}"
-></view-budget-el>
+<view-budget-el budget='{{ budget|tojson }}' transactions='{{ transactions|tojson }}'
+    categories='{{ categories|tojson }}' currentPage="{{ page }}" numPages="{{ num_pages }}"
+    numTransactions="{{ total }}"></view-budget-el>
 
 <nav aria-label="...">
-  <sl-button-group label="Pagination" class="pagination">
-    <sl-button id="prev" variant="default" label="Previous page"
-      ><sl-icon name="chevron-left"></sl-icon
-    ></sl-button>
-    <sl-button id="next" variant="default" label="Next page"
-      ><sl-icon name="chevron-right"></sl-icon
-    ></sl-button>
-  </sl-button-group>
+    <sl-button-group label="Pagination" class="pagination">
+        <sl-button id="prev" variant="default" label="Previous page"><sl-icon name="chevron-left"></sl-icon></sl-button>
+        <sl-button id="next" variant="default" label="Next page"><sl-icon name="chevron-right"></sl-icon></sl-button>
+    </sl-button-group>
 </nav>
 
 <!-- <script src="/static/js/setdate.js"></script> -->
