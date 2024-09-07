@@ -55,7 +55,7 @@
 
 
 {% if showPrefills %}
-    <sl-dialog label="Copy amounts from a previous paycheck">
+    <sl-dialog id="prefills" label="Copy amounts from a previous paycheck">
         <div class="dialog-body">
             {% for i, lst in enumerate(prefills) %}
                 <sl-details>

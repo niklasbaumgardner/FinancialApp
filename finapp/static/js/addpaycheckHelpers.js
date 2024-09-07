@@ -1,12 +1,12 @@
 "use strict";
 
 function openPreviousPaycheckDialog() {
-  const dialog = document.querySelector("sl-dialog");
+  const dialog = document.getElementById("prefills");
   dialog.show();
 }
 
 function closePreviousPaycheckDialog() {
-  const dialog = document.querySelector("sl-dialog");
+  const dialog = document.getElementById("prefills");
   dialog.hide();
 }
 
