@@ -46,10 +46,11 @@ def create_transaction(
         db.session.commit()
         budget_queries.update_budget_total(b_id=budget.id, budget=budget)
 
-        for c_id in categories:
-            category_queries.add_transaction_category(
-                transaction_id=trans.id, category_id=c_id
-            )
+        if categories:
+            for c_id in categories:
+                category_queries.add_transaction_category(
+                    transaction_id=trans.id, category_id=c_id
+                )
 
 
 def get_transaction(budget_id, trans_id):
