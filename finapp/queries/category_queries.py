@@ -8,8 +8,11 @@ from finapp import db
 ##
 
 
-def get_cetegories():
-    return Category.query.filter_by(user_id=current_user.id).all()
+def get_cetegories(sort=True):
+    query = Category.query.filter_by(user_id=current_user.id)
+    if sort:
+        query = query.order_by(Category.name)
+    return query.all()
 
 
 def create_category(name, color):

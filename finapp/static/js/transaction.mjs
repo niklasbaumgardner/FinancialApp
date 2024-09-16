@@ -19,6 +19,10 @@ class NBTransaction extends NikElement {
     if (!this.moveModal) {
       this.moveModal = new MoveTransactionModal(this);
     }
+
+    this.transaction.categories.sort((a, b) =>
+      a.category.name.localeCompare(b.category.name)
+    );
   }
 
   static properties = {
@@ -110,6 +114,9 @@ class NBTransaction extends NikElement {
     this.transaction.name = newTransaction.name;
     this.transaction.amount = newTransaction.amount;
     this.transaction.categories = newTransaction.categories;
+    this.transaction.categories.sort((a, b) =>
+      a.category.name.localeCompare(b.category.name)
+    );
 
     options.changed = {
       name: newName !== name,
