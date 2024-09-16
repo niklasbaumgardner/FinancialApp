@@ -186,9 +186,11 @@ class PaycheckPrefill(db.Model, SerializerMixin):
 
 
 class Category(db.Model, SerializerMixin):
+    __table_args__ = (db.UniqueConstraint("user_id", "name"),)
+
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    name = db.Column(db.String, unique=True, nullable=False)
+    name = db.Column(db.String, nullable=False)
     color = db.Column(db.String, nullable=False)
 
 
