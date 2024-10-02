@@ -319,6 +319,10 @@ def delete_transaction(b_id, t_id):
 
 def _delete_transaction(transaction, b_id):
     if transaction:
+        # delete transaction categories
+        for c in transaction.categories:
+            db.session.delete(c)
+
         db.session.delete(transaction)
         db.session.commit()
 
