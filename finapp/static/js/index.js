@@ -124,7 +124,7 @@ class BudgetManager {
     const budgetData = event.detail.budget;
     const budget = document.createElement("budget-card");
     budget.classList.add("button-div");
-    budget.budget = JSON.parse(budgetData);
+    budget.budget = budgetData;
 
     let newIndex = findNewIndex(budget.budget.name, true);
     ACTIVE.splice(newIndex, 0, budget);
