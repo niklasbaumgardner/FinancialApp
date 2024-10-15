@@ -37,7 +37,7 @@
             <sl-dialog id="delete{{ budget['id'] }}" label='Are you sure you want to delete this budget named "{{ budget["name"] }}" ?'>
                 <form method="DELETE" action="{{ url_for('index_bp.delete_budget', b_id=budget['id']) }}">
                     <sl-radio-group label="Select a budget to transfer the transactions to" name="new_budget" required>
-                        <sl-radio name="new_budget" value="None">Delete transactions along with this budget</sl-radio>
+                        <sl-radio name="new_budget" value="-1">Delete transactions along with this budget</sl-radio>
                         {% for group in budgets %}
                             {% for budg in group %}
                                 {% if budget['id'] != budg['id'] %}
