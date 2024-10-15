@@ -310,6 +310,9 @@ export class Search extends Pagination {
 
   setSearchParams() {
     params.set("name", this.searchValues?.name ?? "");
+    for (let category of this.searchValues?.categories) {
+      params.append("categories", category);
+    }
     if (this.searchValues?.amount) {
       params.set("amount", this.searchValues?.amount ?? "");
     } else {
@@ -322,6 +325,7 @@ export class Search extends Pagination {
 
   removeSearchParams() {
     params.delete("name");
+    params.delete("categories");
     params.delete("startDate");
     params.delete("endDate");
     params.delete("amount");

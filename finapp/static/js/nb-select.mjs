@@ -1,8 +1,9 @@
 import SlSelect from "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.16.0/cdn/components/select/select.js";
 import { html } from "./imports.mjs";
+import { NikElement } from "./customElement.mjs";
 import "./nb-category.mjs";
 
-class NBSelect extends SlSelect {
+class BaseNBSelect extends SlSelect {
   constructor() {
     super();
 
@@ -27,6 +28,41 @@ class NBSelect extends SlSelect {
       />${template}`;
   }
 }
-export default NBSelect;
+
+customElements.define("base-nb-select", BaseNBSelect);
+
+class NBSelect extends NikElement {
+  static properties = {
+    categories: { type: Array },
+    value: { type: Array },
+  };
+
+  static get queries() {
+    return {
+      select: "base-nb-select",
+    };
+  }
+
+  get value() {
+    return this.select.value;
+  }
+
+  render() {
+    return html`<base-nb-select
+      label="Select any categories"
+      name="categories"
+      max-options-visible="0"
+      multiple
+      clearable
+      >${this.categories.map(
+        (c) =>
+          html`<sl-option value="${c.id}"
+            ><nb-category name="${c.name}" color="${c.color}"></nb-category
+          ></sl-option>`
+      )}</base-nb-select
+    >`;
+  }
+}
+export default { NBSelect, BaseNBSelect };
 
 customElements.define("nb-select", NBSelect);

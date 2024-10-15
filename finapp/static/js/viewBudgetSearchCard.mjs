@@ -1,6 +1,8 @@
 import { html } from "./imports.mjs";
 import { NikElement } from "./customElement.mjs";
 import "./searchItem.mjs";
+import "./nb-select.mjs";
+import nbSelect from "./nb-select.mjs";
 
 class BudgetSearchCard extends NikElement {
   #sortingValues = {
@@ -32,6 +34,7 @@ class BudgetSearchCard extends NikElement {
     numSearchItems: { type: Number, reflect: true },
     exactAmount: { type: Boolean, reflect: true },
     exactDate: { type: Boolean, reflect: true },
+    categories: { type: Array },
   };
 
   static get queries() {
@@ -46,6 +49,7 @@ class BudgetSearchCard extends NikElement {
       endDateInputEl: "#endDate",
       searchCountEl: "#searchResultsCount",
       searchSumEl: "#searchResultsSum",
+      nbSelect: "nb-select",
     };
   }
 
@@ -82,6 +86,8 @@ class BudgetSearchCard extends NikElement {
 
     let searchValues = {};
     searchValues.name = this.searchItemValuesAsJsonString;
+
+    searchValues.categories = this.nbSelect.value;
 
     if (this.exactAmount) {
       searchValues.amount = this.amountInputEl.value;
@@ -382,6 +388,9 @@ class BudgetSearchCard extends NikElement {
             </sl-button>
           </div>
         </div>
+        <div class="row gy-2 mb-2">
+          <nb-select .categories=${this.categories}></nb-select>
+        </div>
         <div class="row gy-2 mb-2">${this.searchAmountTemplate()}</div>
         <div class="row gy-2">${this.dateTemplate()}</div>`;
     }
@@ -400,7 +409,7 @@ class BudgetSearchCard extends NikElement {
   }
 
   render() {
-    return html`<sl-card @input=${this.handleInputEvent} class="mb-4"
+    return html`<sl-card @sl-input=${this.handleInputEvent} class="mb-4"
       >${this.template()}</sl-card
     >`;
   }

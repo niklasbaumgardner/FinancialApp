@@ -1,4 +1,4 @@
-from finapp.models import Transaction
+from finapp.models import Transaction, TransactionCategory
 from finapp.queries import budget_queries, category_queries, shared_budget_queries
 from finapp import db
 from flask_login import current_user
@@ -329,9 +329,17 @@ def _delete_transaction(transaction, b_id):
         budget_queries.update_budget_total(b_id)
 
 
+def transaction_category_query(category_id):
+    return TransactionCategory.query.where(
+        Transaction.id == TransactionCategory.transaction_id,
+        category_id == TransactionCategory.category_id,
+    )
+
+
 def search(
     budget_id,
     name,
+    categories,
     start_date,
     end_date,
     amount,
@@ -374,6 +382,22 @@ def search(
                 if transactions
                 else Transaction.query.where(Transaction.amount <= max_amount)
             )
+    if categories:
+        transactions = (
+            transactions.where(
+                or_(
+                    transaction_category_query(category_id=c_id).exists()
+                    for c_id in categories
+                )
+            )
+            if transactions
+            else Transaction.query.where(
+                or_(
+                    transaction_category_query(category_id=c_id).exists()
+                    for c_id in categories
+                )
+            )
+        )
     if start_date:
         transactions = (
             transactions.where(Transaction.date >= start_date)

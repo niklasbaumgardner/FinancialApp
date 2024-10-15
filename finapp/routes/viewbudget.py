@@ -136,6 +136,7 @@ def search(b_id):
         name = json.loads(name)
     else:
         name = []
+    categories = request.args.getlist("categories", type=int)
     page = request.args.get("page", -1, type=int)
 
     month = request.args.get("month", 0, type=int)
@@ -147,6 +148,7 @@ def search(b_id):
     transactions, total, page, num_pages, search_sum = helpers.search_for(
         budget_id=b_id,
         name=name,
+        categories=categories,
         start_date=start_date,
         end_date=end_date,
         amount=amount,

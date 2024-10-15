@@ -323,23 +323,7 @@ class ViewBudget extends NikElement {
             </div>
           </div>
           <div class="row">
-            <nb-select
-              label="Select any categories"
-              name="categories"
-              max-options-visible="0"
-              multiple
-              clearable
-            >
-              ${this.categories.map(
-                (c) =>
-                  html`<sl-option value="${c.id}"
-                    ><nb-category
-                      name="${c.name}"
-                      color="${c.color}"
-                    ></nb-category
-                  ></sl-option>`
-              )}
-            </nb-select>
+            <nb-select .categories=${this.categories}></nb-select>
             <div>
               <sl-button
                 variant="text"
@@ -352,7 +336,7 @@ class ViewBudget extends NikElement {
         </form>
       </sl-card>
 
-      <search-budget-card></search-budget-card>
+      <search-budget-card .categories=${this.categories}></search-budget-card>
 
       <sl-card class="mb-4">
         <div id="transactionList" class="">${this.transactionsTemplate()}</div>

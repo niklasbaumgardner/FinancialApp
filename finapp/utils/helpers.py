@@ -292,6 +292,7 @@ def confirmBudgetsForPercentages(dic, amount):
 def search_for(
     budget_id,
     name,
+    categories,
     start_date,
     end_date,
     amount,
@@ -346,6 +347,7 @@ def search_for(
     return transaction_queries.search(
         budget_id=budget_id,
         name=name,
+        categories=categories,
         start_date=start_date,
         end_date=end_date,
         amount=amount,
