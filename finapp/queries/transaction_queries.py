@@ -48,6 +48,10 @@ def create_transaction(
 
         if categories:
             for c_id in categories:
+                # If not categories exists, c_id can be a empty string
+                if not c_id:
+                    continue
+
                 category_queries.add_transaction_category(
                     transaction_id=trans.id, category_id=c_id
                 )
