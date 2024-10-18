@@ -102,7 +102,7 @@ def delete_budget(b_id):
     new_budget_id = request.form.get("new_budget")
 
     # move or delete the transactions
-    new_budget = budget_queries.get_budget(new_budget_id)
+    new_budget = budget_queries.get_budget(new_budget_id) if new_budget else None
     if new_budget:
         transactions = transaction_queries.get_transactions(b_id)
         for t in transactions:
