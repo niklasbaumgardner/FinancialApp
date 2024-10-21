@@ -279,6 +279,15 @@ class NBTransaction extends NikElement {
     if (this.editing) {
       return html`<div>
         <nb-select
+          .categories=${CATEGORIES}
+          selected="${this.transaction.categories.reduce(
+            (acc, cur) => acc + " " + cur.category_id,
+            ""
+          )}"
+        ></nb-select>
+      </div>`;
+      return html`<div>
+        <nb-select
           label="Select any categories"
           name="categories"
           value="${this.transaction.categories.reduce(

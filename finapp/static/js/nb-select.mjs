@@ -35,6 +35,7 @@ class NBSelect extends NikElement {
   static properties = {
     categories: { type: Array },
     value: { type: Array },
+    selected: { type: String },
   };
 
   static get queries() {
@@ -54,6 +55,7 @@ class NBSelect extends NikElement {
       max-options-visible="0"
       multiple
       clearable
+      value="${this.selected}"
       >${this.categories.map(
         (c) =>
           html`<sl-option value="${c.id}"
