@@ -143,7 +143,7 @@ class NBTransaction extends NikElement {
   }
 
   transferTemplate() {
-    if (this.transaction.is_ransfer) {
+    if (this.transaction.is_transfer) {
       return html`<sl-tag
         class="width-fit-content fs-75"
         variant="primary"
