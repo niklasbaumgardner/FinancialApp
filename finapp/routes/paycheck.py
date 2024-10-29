@@ -9,7 +9,7 @@ paycheck_bp = Blueprint("paycheck_bp", __name__)
 @paycheck_bp.route("/add_paycheck", methods=["GET"])
 @login_required
 def add_paycheck():
-    budgets = budget_queries.get_budgets()
+    budgets = budget_queries.get_budgets(active_only=True)
     prefills = prefill_queries.get_prefill_paycheck()
     for k, v in prefills.items():
         for item in v:

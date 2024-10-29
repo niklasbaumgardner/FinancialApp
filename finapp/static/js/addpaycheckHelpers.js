@@ -54,7 +54,9 @@ function fillBudgetAmountsFromPrefill(id, totalAmount) {
     let amount = row.querySelector("sl-format-number").value;
 
     let input = document.getElementById(id);
-    input.value = amount;
+    if (input) {
+      input.value = amount;
+    }
   }
 
   if (!isPercentage()) {
