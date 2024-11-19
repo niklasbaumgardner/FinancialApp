@@ -35,7 +35,7 @@ def create_transaction(
     budget = budget_queries.get_budget(budget_id)
     if budget:
         trans = Transaction(
-            name=name,
+            name=name.strip(),
             budget_id=budget.id,
             user_id=current_user.id,
             amount=amount,
@@ -290,7 +290,7 @@ def _update_transaction(
                 should_update_budget_total.add(new_b_id)
                 should_update_budget_total.add(b_id)
         if name is not None:
-            transaction.name = name
+            transaction.name = name.strip()
         if amount is not None:
             if amount != transaction.amount:
                 transaction.amount = amount

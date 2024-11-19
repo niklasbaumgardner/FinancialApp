@@ -16,7 +16,7 @@ def get_cetegories(sort=True):
 
 
 def create_category(name, color):
-    category = Category(user_id=current_user.id, name=name, color=color)
+    category = Category(user_id=current_user.id, name=name.strip(), color=color)
     db.session.add(category)
     db.session.commit()
 

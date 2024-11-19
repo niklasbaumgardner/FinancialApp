@@ -12,7 +12,7 @@ from sqlalchemy.sql import or_
 
 def create_budget(name):
     budg = Budget(
-        name=name,
+        name=name.strip(),
         total=0,
         user_id=current_user.id,
         is_active=True,
@@ -79,14 +79,14 @@ def get_budgets(separate=False, active_only=False, inactive_only=False):
 
 
 def get_duplicate_budget_by_name(name):
-    return Budget.query.filter_by(name=name, user_id=current_user.id).first()
+    return Budget.query.filter_by(name=name.strip(), user_id=current_user.id).first()
 
 
 def update_budget(id, name=None, is_active=None):
     budget = get_budget(id)
     if budget:
         if name is not None:
-            budget.name = name
+            budget.name = name.strip()
         if is_active is not None:
             budget.is_active = is_active
         db.session.commit()
