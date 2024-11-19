@@ -152,6 +152,7 @@ class Transaction(db.Model, SerializerMixin):
     amount = db.Column(db.Float, nullable=False)
     date = db.Column(db.Date, nullable=False)
     is_transfer = db.Column(db.Boolean, nullable=True)
+    paycheck_id = db.Column(db.Integer, db.ForeignKey("paycheck.id"), nullable=True)
 
     categories = db.relationship("TransactionCategory")
 
@@ -183,6 +184,13 @@ class PaycheckPrefill(db.Model, SerializerMixin):
     total_amount = db.Column(db.Float, nullable=False)
     budget_id = db.Column(db.Integer, db.ForeignKey("budget.id"), nullable=False)
     amount = db.Column(db.Float, nullable=False)
+
+
+class Paycheck(db.Model, SerializerMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    total = db.Column(db.Float, nullable=False)
+    date = db.Column(db.Date, nullable=False)
 
 
 class Category(db.Model, SerializerMixin):
