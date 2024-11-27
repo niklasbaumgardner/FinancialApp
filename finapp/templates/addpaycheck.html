@@ -59,7 +59,7 @@
         <div class="dialog-body">
             {% for i, p in enumerate(prefills) %}
                 <sl-details>
-                    <div slot="summary">Total Amount: <sl-format-number type="currency" currency="USD" value="{{ p.total }}" lang="en-US"></sl-format-number></div>
+                    <div slot="summary">Paycheck on <sl-format-date month="long" day="numeric" year="numeric" date="{{ p.date }}"></sl-format-date> for <sl-format-number type="currency" currency="USD" value="{{ p.total }}" lang="en-US"></sl-format-number></div>
                     <div class="accordio-body">
                         <table id="table{{ i }}" class="table">
                             <thead>
