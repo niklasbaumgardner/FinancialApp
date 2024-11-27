@@ -192,6 +192,9 @@ class Paycheck(db.Model, SerializerMixin):
     total = db.Column(db.Float, nullable=False)
     date = db.Column(db.Date, nullable=False)
 
+    # I don't know if I want this
+    transactions = db.relationship("Transaction")
+
 
 class Category(db.Model, SerializerMixin):
     __table_args__ = (db.UniqueConstraint("user_id", "name"),)

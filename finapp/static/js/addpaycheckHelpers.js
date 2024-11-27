@@ -59,24 +59,14 @@ function fillBudgetAmountsFromPrefill(id, totalAmount) {
     }
   }
 
-  if (!isPercentage()) {
-    document.getElementById("paycheck_amount").value = totalAmount;
-  }
+  document.getElementById("paycheck_amount").value = totalAmount;
   isPaycheckValid();
 }
 
-const isPercentage = () => document.getElementById("isPercentage").checked;
-
 function isPaycheckValid() {
-  console.log("percent?", isPercentage());
-
   let amountValid;
 
-  if (isPercentage()) {
-    amountValid = isPercentagesValid();
-  } else {
-    amountValid = isDollarAmountsValid();
-  }
+  amountValid = isDollarAmountsValid();
 
   let nameValid = isPaycheckNameValid();
   console.log("name valid", nameValid);
@@ -164,22 +154,12 @@ function toggleBudgetBreakdown() {
   let budgets = document.getElementsByClassName("all-budgets");
   let budgetsLi = document.getElementsByClassName("all-budgets-li");
 
-  if (!isPercentage()) {
-    for (let b of budgets) {
-      b.placeholder = "$0.00";
-    }
-    for (let b of budgetsLi) {
-      let p = b.querySelector("p");
-      p.classList.add("display-none");
-    }
-  } else {
-    for (let b of budgets) {
-      b.placeholder = "0.00%";
-    }
-    for (let b of budgetsLi) {
-      let p = b.querySelector("p");
-      p.classList.remove("display-none");
-    }
+  for (let b of budgets) {
+    b.placeholder = "$0.00";
+  }
+  for (let b of budgetsLi) {
+    let p = b.querySelector("p");
+    p.classList.add("display-none");
   }
   isPaycheckValid();
 

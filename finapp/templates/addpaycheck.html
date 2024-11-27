@@ -17,7 +17,7 @@
                         <sl-input id="paycheckName" label="Paycheck Name" name="name" placeholder="I'm rich!" autocomplete="niklas" required></sl-input>
                         <sl-input id="paycheck_amount" label="Paycheck Amount" type="number" step=".01" name="amount" placeholder="$0.00" autocomplete="niklas" required></sl-input>
                         <sl-input class="mw-160 w-50" label="Date" type="date" id="date" name="date" required></sl-input>
-                        <sl-checkbox id="isPercentage" name="isPercentage" onclick="toggleBudgetBreakdown()">Use percentages for breakdown</sl-checkbox>
+                        <!-- <sl-checkbox id="isPercentage" name="isPercentage" onclick="toggleBudgetBreakdown()">Use percentages for breakdown</sl-checkbox> -->
                         {% if showPrefills %}
                             <sl-button variant="primary" outline onclick="openPreviousPaycheckDialog()">Copy amounts from previous paycheck</sl-button>
                         {% endif %}
@@ -57,9 +57,9 @@
 {% if showPrefills %}
     <sl-dialog id="prefills" label="Copy amounts from a previous paycheck">
         <div class="dialog-body">
-            {% for i, lst in enumerate(prefills) %}
+            {% for i, p in enumerate(prefills) %}
                 <sl-details>
-                    <div slot="summary">Total Amount: <sl-format-number type="currency" currency="USD" value="{{ lst[0] }}" lang="en-US"></sl-format-number></div>
+                    <div slot="summary">Total Amount: <sl-format-number type="currency" currency="USD" value="{{ p.total }}" lang="en-US"></sl-format-number></div>
                     <div class="accordio-body">
                         <table id="table{{ i }}" class="table">
                             <thead>
@@ -69,32 +69,24 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for budget in lst[1] %}
+                                {% for t in p.transactions %}
                                     <tr>
-                                        <td>{{ budget[1] }}</td>
-                                        <td id="{{ budget[0] }}"><sl-format-number type="currency" currency="USD" value="{{ budget[2] }}" lang="en-US"></sl-format-number></td>
+                                        <td>{{ t.budget.name }}</td>
+                                        <td id="{{ t.budget.id }}"><sl-format-number type="currency" currency="USD" value="{{ t.amount }}" lang="en-US"></sl-format-number></td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
                         <div class="row">
-                            <div class="col-5 p-1">
-                                <sl-button variant="danger" outline onclick="openDeletePrefillDialog('delete{{ lst[0] }}')" class="w-100">Delete</sl-button>
-                            </div>
-                            <div class="col-7 p-1">
-                                <sl-button variant="primary" onclick="fillBudgetAmountsFromPrefill('table{{ i }}', {{ lst[0] }});" class=" w-100">Select this previous amount</sl-button>
+                            <!-- <div class="col-5 p-1">
+                                <sl-button variant="danger" outline onclick="openDeletePrefillDialog('delete')" class="w-100">Delete</sl-button>
+                            </div> -->
+                            <div class="col-12 p-1">
+                                <sl-button variant="primary" onclick="fillBudgetAmountsFromPrefill('table{{ i }}', {{ p.total }});" class=" w-100">Select this previous amount</sl-button>
                             </div>
                         </div>
                     </div>
                 </sl-details>
-
-                <sl-dialog id="delete{{ lst[0] }}" label="Are you sure you want to this prefill?">
-                    Deleting this prefill with amount {{ lst[0] }} is irreverible.
-                    <div class="row" slot="footer">
-                        <sl-button class="w-50" variant="neutral" outline onclick="closeDeletePrefillDialog('delete{{ lst[0] }}')">Cancel</sl-button>
-                        <sl-button class="w-50" variant="danger" onclick="sendDeletePrefillRequest(event, 'delete{{ lst[0] }}', '{{ lst[0] }}', '{{ url_for('paycheck_bp.delete_prefill', amount=lst[0]) }}')">Delete anyway</sl-button>
-                    </div>
-                </sl-dialog>
             {% endfor %}
         </div>
         <div slot="footer">

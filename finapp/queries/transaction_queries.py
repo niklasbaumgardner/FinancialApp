@@ -30,7 +30,7 @@ def paginate_query(query, page):
 
 
 def create_transaction(
-    name, amount, date, budget_id, is_transfer=False, categories=None
+    name, amount, date, budget_id, is_transfer=False, categories=None, paycheck_id=None
 ):
     budget = budget_queries.get_budget(budget_id)
     if budget:
@@ -41,6 +41,7 @@ def create_transaction(
             amount=amount,
             date=date,
             is_transfer=is_transfer,
+            paycheck_id=paycheck_id,
         )
         db.session.add(trans)
         db.session.commit()
@@ -469,3 +470,9 @@ def get_transactions_sum(budget_id):
     )
 
     return total
+
+
+def get_transactions_for_paycheck_id(paycheck_id):
+    return Transaction.query.filter_by(
+        user_id=current_user.id, paycheck_id=paycheck_id
+    ).all()
