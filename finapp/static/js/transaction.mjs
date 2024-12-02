@@ -68,7 +68,7 @@ class NBTransaction extends NikElement {
     let currentCategories = this.transaction.categories.map(
       (c) => c.category_id
     );
-    let newCategories = this.categoriesSelect.value.map((id) => Number(id));
+    let newCategories = this.categoriesSelect.value;
 
     const { categoriesAdded, categoriesDeleted } = this.categoriesChange(
       currentCategories,

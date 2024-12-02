@@ -45,7 +45,9 @@ class NBSelect extends NikElement {
   }
 
   get value() {
-    return this.select.value;
+    let arrOfStrings = this.select.value;
+    // Convert to array of ints
+    return arrOfStrings.map((x) => parseInt(x, 10)).filter(Number);
   }
 
   render() {
