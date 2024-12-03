@@ -469,6 +469,8 @@ def get_transactions_sum(budget_id):
         .scalar()
     )
 
+    if total is None:
+        total = 0
     return total
 
 
