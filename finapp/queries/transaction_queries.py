@@ -1,5 +1,10 @@
 from finapp.models import Transaction, TransactionCategory
-from finapp.queries import budget_queries, category_queries, shared_budget_queries
+from finapp.queries import (
+    budget_queries,
+    category_queries,
+    paycheck_queries,
+    shared_budget_queries,
+)
 from finapp import db
 from flask_login import current_user
 from sqlalchemy.sql import func, or_
@@ -282,6 +287,7 @@ def _update_transaction(
     categories_deleted=None,
 ):
     should_update_budget_total = set()
+    update_paycheck = False
 
     if transaction:
         if new_b_id is not None:
@@ -296,6 +302,9 @@ def _update_transaction(
             if amount != transaction.amount:
                 transaction.amount = amount
                 should_update_budget_total.add(b_id)
+                if transaction.paycheck_id:
+                    update_paycheck = True
+
         if new_date is not None:
             transaction.date = new_date
         if is_transfer is not None:
@@ -315,6 +324,9 @@ def _update_transaction(
 
         for id in should_update_budget_total:
             budget_queries.update_budget_total(id)
+
+        if update_paycheck:
+            paycheck_queries.update_paycheck(transaction.paycheck_id)
 
 
 def delete_transaction(b_id, t_id):
@@ -474,7 +486,12 @@ def get_transactions_sum(budget_id):
     return total
 
 
-def get_transactions_for_paycheck_id(paycheck_id):
-    return Transaction.query.filter_by(
+def get_transactions_for_paycheck_id(paycheck_id, query=False):
+    transactions = Transaction.query.filter_by(
         user_id=current_user.id, paycheck_id=paycheck_id
-    ).all()
+    )
+
+    if query:
+        return transactions
+
+    return transactions.all()

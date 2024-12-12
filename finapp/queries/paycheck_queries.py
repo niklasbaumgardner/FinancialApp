@@ -1,7 +1,8 @@
-from finapp.models import Paycheck
+from finapp.models import Paycheck, Transaction
 from flask_login import current_user
 from finapp import db
 from finapp.queries import budget_queries, transaction_queries
+from sqlalchemy.sql import func
 
 
 ##
@@ -16,6 +17,10 @@ def create_paycheck(date, total):
     db.session.commit()
 
     return paycheck
+
+
+def get_paycheck_by_id(id):
+    return Paycheck.query.filter_by(id=id, user_id=current_user.id).first()
 
 
 def get_paychecks(sort=False):
@@ -62,3 +67,17 @@ def get_paycheck_prefills():
         p["transactions"] = transactions
 
     return paychecks
+
+
+def update_paycheck(paycheck_id):
+    paycheck = get_paycheck_by_id(id=paycheck_id)
+    if not paycheck:
+        return
+
+    transactions = transaction_queries.get_transactions_for_paycheck_id(
+        paycheck_id=paycheck.id, query=True
+    )
+    total = transactions.with_entities(func.sum(Transaction.amount)).first()[0]
+
+    paycheck.total = total
+    db.session.commit()
