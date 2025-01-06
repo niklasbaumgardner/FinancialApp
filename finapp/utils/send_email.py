@@ -25,6 +25,7 @@ def send_share_budget_email(sender_username, token, recipient):
     )
     msg.body = f"""To accept the budget, please click on the following link:
 {url_for('sharebudget_bp.accept_budget', token=token, _external=True)}
+This link will expire in 24 hours.
 If you do not want this or this was not intened for you then please ignore this email and no changes will be made.
 """
     mail.send(msg)
