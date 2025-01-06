@@ -123,7 +123,7 @@ async function getAllBudgetNames() {
 
 function currencyFormatter(params) {
   let rounded = Math.round(params.value * 100) / 100;
-  return USDFormatter.format(rounded);
+  return USDFormatter.format(rounded + 0);
 }
 
 class ChartManager {

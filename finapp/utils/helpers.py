@@ -80,7 +80,7 @@ def in_out_net(trans):
             in_ += tran.amount
         elif tran.amount < 0:
             out += tran.amount
-    net = in_ + out
+    net = round(in_ + out, 2)
     return in_, out, net
 
 
