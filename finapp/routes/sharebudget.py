@@ -40,7 +40,11 @@ def share_budget(budget_id):
 def accept_budget():
     token = request.args.get("token")
 
-    obj = Budget.verify_share_token(token=token)
+    try:
+        obj = Budget.verify_share_token(token=token)
+    except:
+        return redirect(url_for("index_bp.index"))
+
     budget_id, recipient_id = obj.get("budget_id"), obj.get("recipient_id")
 
     if current_user.id != recipient_id:
