@@ -1,4 +1,5 @@
-from finapp.queries import budget_queries, transaction_queries
+from unicodedata import category
+from finapp.queries import budget_queries, category_queries, transaction_queries
 from flask import Blueprint, render_template, request
 from flask_login import login_required
 from datetime import date
@@ -80,3 +81,16 @@ def get_net_spending():
     data = helpers.net_spending(month, year, ytd)
 
     return data
+
+
+@dashboard_bp.get("/get_spending_by_category")
+@login_required
+def get_spending_by_category():
+    current_date = request.args.get("date")
+
+    data = helpers.spending_by_category(current_date)
+    categories = {
+        c.id: c.to_dict() for c in category_queries.get_cetegories(sort=False)
+    }
+
+    return {"data": data, "categories": categories}

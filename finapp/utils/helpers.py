@@ -1,4 +1,6 @@
-from datetime import date
+from datetime import date, timedelta
+from unicodedata import category
+from dateutil.relativedelta import relativedelta
 from finapp.queries import budget_queries, transaction_queries
 import json
 
@@ -18,6 +20,7 @@ def get_date_from_string(str_date):
     if not str_date:
         return None
 
+    return date.fromisoformat(str_date)
     year, month, day = str_date.strip().split("-")
 
     return date(int(year), int(month), int(day))
@@ -359,3 +362,36 @@ def search_for(
         ytd=ytd,
         sort_by=sort_by,
     )
+
+
+def spending_by_category(current_date_str):
+    if not current_date_str:
+        return
+
+    start_date = None
+
+    current_date = get_date_from_string(current_date_str)
+    if not current_date:
+        return
+
+    current_day = current_date.day
+    start_date = current_date - relativedelta(months=11)
+
+    start_date -= timedelta(days=current_day - 1)
+
+    if not start_date:
+        return
+
+    data_query = transaction_queries.get_transactions_by_category(start_date=start_date)
+
+    data = {}  # category_id -> {month, sum}
+
+    for spent, category_id, month in data_query:
+        month = int(month)
+        if category_id in data:
+            data[category_id][month] = round(spent, 2)
+        else:
+            data[category_id] = {}
+            data[category_id][month] = round(spent, 2)
+
+    return data

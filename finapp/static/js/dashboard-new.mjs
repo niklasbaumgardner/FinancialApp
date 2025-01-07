@@ -122,6 +122,10 @@ async function getAllBudgetNames() {
 }
 
 function currencyFormatter(params) {
+  if (!params.value) {
+    return USDFormatter.format(0);
+  }
+
   let rounded = Math.round(params.value * 100) / 100;
   return USDFormatter.format(rounded + 0);
 }
@@ -380,7 +384,7 @@ class NetSpendingManager {
     this.netSpendingSelect = document.getElementById("netSpendingSelect");
     this.netSpendingSelect.addEventListener("sl-change", this);
 
-    this.spendingGridEl = document.getElementById("spending-grid");
+    this.spendingGridEl = document.getElementById("spending-by-budget-grid");
     this.createDataGrid();
 
     this.addOptions();
@@ -440,8 +444,9 @@ class NetSpendingManager {
       },
       onRowDataUpdated: (event) => {
         let height =
-          document.querySelector(".ag-center-cols-container").scrollHeight +
-          document.querySelector(".ag-header-row").scrollHeight;
+          this.spendingGridEl.querySelector(".ag-center-cols-container")
+            .scrollHeight +
+          this.spendingGridEl.querySelector(".ag-header-row").scrollHeight;
 
         if (height < 192) {
           height = 192;
@@ -456,7 +461,6 @@ class NetSpendingManager {
   async getData() {
     let data = await getNetSpending(this.currentSelection);
     this.dataCache[this.key] = data;
-    console.log(this.dataCache);
   }
 
   async handleEvent(event) {
@@ -543,5 +547,177 @@ class NetSpendingManager {
   }
 }
 
+class CategorySpendingManager {
+  constructor() {
+    this.init();
+  }
+
+  get currentDate() {
+    if (!this.strDate) {
+      let date = new Date();
+      let year = date.getFullYear();
+      let month = (date.getMonth() + 1).toString().padStart(2, "0");
+      let day = date.getDate().toString().padStart(2, "0");
+      this.strDate = year + "-" + month + "-" + day;
+    }
+    return this.strDate;
+  }
+
+  get cellColorRules() {
+    return {
+      "text-greater-than-zero": "x > 0",
+      "text-less-than-zero": "x < 0",
+    };
+  }
+
+  async init() {
+    this.spendingMonths = new Set();
+
+    this.categorySpendingGridEl = document.getElementById(
+      "spending-by-category-grid"
+    );
+    await this.getData();
+
+    this.createDataGrid();
+
+    this.updateSpendingGrid();
+
+    this.setupThemeWatcher();
+  }
+
+  createGridColumns() {
+    const columns = [
+      {
+        field: "id",
+        headerName: "Category Name",
+        cellRenderer: (param) => {
+          if (param.data.id) {
+            let c = this.categories[param.data.id];
+            return `<nb-category
+            name="${c.name}"
+            color="${c.color}"
+          ></nb-category>`;
+          }
+          return param.value;
+        },
+      },
+      {
+        field: "average",
+        headerName: "Average Spend",
+        valueFormatter: currencyFormatter,
+        cellClassRules: this.cellColorRules,
+      },
+    ];
+
+    let date = new Date();
+    let currentMonth = date.getMonth();
+    let currentYear = date.getFullYear();
+    for (let i = 0; i < 12; i++) {
+      let month = 1 + ((12 + currentMonth - i) % 12);
+      let monthName = MONTHS[month];
+
+      if (this.spendingMonths.has(monthName)) {
+        let year = "";
+        if (month > 1 + currentMonth) {
+          year = ` ${currentYear - 1}`;
+        }
+        columns.push({
+          field: monthName,
+          headerName: monthName + year,
+          valueFormatter: currencyFormatter,
+          cellClassRules: this.cellColorRules,
+        });
+      }
+    }
+
+    return columns;
+  }
+
+  createDataGrid() {
+    const columnDefs = this.createGridColumns();
+    const gridOptions = {
+      columnDefs,
+      rowData: [],
+      autoSizeStrategy: {
+        type: "fitGridWidth",
+        defaultMinWidth: 200,
+      },
+      onRowDataUpdated: (event) => {
+        let height =
+          this.categorySpendingGridEl.querySelector(".ag-center-cols-container")
+            .scrollHeight +
+          this.categorySpendingGridEl.querySelector(".ag-header-row")
+            .scrollHeight;
+
+        if (height < 192) {
+          height = 192;
+        }
+
+        this.categorySpendingGridEl.style.height = `${height + 3}px`;
+      },
+    };
+    this.dataGrid = agGrid.createGrid(this.categorySpendingGridEl, gridOptions);
+  }
+
+  async getData() {
+    let data = await getRequest(GET_CATEGORY_SPENDING_URL, {
+      date: this.currentDate,
+    });
+
+    this.parseData(data);
+  }
+
+  parseData(dataObj) {
+    let { data, categories } = dataObj;
+    this.categories = categories;
+    let rows = [];
+    for (let [cId, obj] of Object.entries(data)) {
+      let row = { id: categories[cId].id };
+      let average = 0;
+      for (let [m, spend] of Object.entries(obj)) {
+        let month = MONTHS[Number(m)];
+        this.spendingMonths.add(month);
+        row[month] = spend;
+        average += spend;
+      }
+      if (average !== 0) {
+        average = average / Object.keys(obj).length;
+      }
+      row.average = average;
+      rows.push(row);
+    }
+    rows.sort((a, b) =>
+      this.categories[a.id].name.localeCompare(this.categories[b.id].name)
+    );
+    this.rows = rows;
+  }
+
+  updateSpendingGrid() {
+    this.dataGrid.setGridOption("rowData", this.rows);
+  }
+
+  setupThemeWatcher() {
+    this.mutationObserver = new MutationObserver((params) =>
+      this.handleThemeChange(params)
+    );
+
+    this.mutationObserver.observe(document.documentElement, {
+      attributes: true,
+    });
+  }
+
+  handleThemeChange(params) {
+    console.log(params);
+
+    let theme = document.documentElement.getAttribute("data-bs-theme");
+    this.spendingGridEl.classList.toggle(
+      "ag-theme-alpine-dark",
+      theme === "dark"
+    );
+    this.spendingGridEl.classList.toggle("ag-theme-alpine", theme === "light");
+  }
+}
+
 new ChartManager();
 new NetSpendingManager();
+new CategorySpendingManager();

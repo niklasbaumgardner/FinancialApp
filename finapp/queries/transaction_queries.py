@@ -1,3 +1,4 @@
+from flask import session
 from finapp.models import Transaction, TransactionCategory
 from finapp.queries import (
     budget_queries,
@@ -114,7 +115,7 @@ def sort_transactions(sort_by, transactionsQuery):
 
 
 def get_transactions(
-    budget_id,
+    budget_id=None,
     start_date=None,
     end_date=None,
     include_all_transfers=True,
@@ -128,9 +129,10 @@ def get_transactions(
     if not transactions:
         transactions = Transaction.query
 
-    transactions = shared_budget_queries.get_shared_transactions_query(
-        budget_id=budget_id
-    )
+    if budget_id:
+        transactions = shared_budget_queries.get_shared_transactions_query(
+            budget_id=budget_id
+        )
 
     transactions = sort_transactions(sort_by=sort_by, transactionsQuery=transactions)
 
@@ -495,3 +497,25 @@ def get_transactions_for_paycheck_id(paycheck_id, query=False):
         return transactions
 
     return transactions.all()
+
+
+def get_transactions_by_category(start_date):
+    transactions = (
+        Transaction.query.join(
+            TransactionCategory, Transaction.id == TransactionCategory.transaction_id
+        )
+        .filter_by(user_id=current_user.id)
+        .where(Transaction.date >= start_date)
+        .with_entities(
+            func.sum(Transaction.amount),
+            TransactionCategory.category_id,
+            func.extract("month", Transaction.date),
+        )
+        .group_by(
+            TransactionCategory.category_id, func.extract("month", Transaction.date)
+        )
+        .order_by(func.extract("month", Transaction.date))
+        .all()
+    )
+
+    return transactions
