@@ -588,14 +588,13 @@ class CategorySpendingManager {
   createGridColumns() {
     const columns = [
       {
-        field: "id",
+        field: "name",
         headerName: "Category Name",
         cellRenderer: (param) => {
-          if (param.data.id) {
-            let c = this.categories[param.data.id];
+          if (param.data.name && param.data.color) {
             return `<nb-category
-            name="${c.name}"
-            color="${c.color}"
+            name="${param.data.name}"
+            color="${param.data.color}"
           ></nb-category>`;
           }
           return param.value;
@@ -672,7 +671,7 @@ class CategorySpendingManager {
     this.categories = categories;
     let rows = [];
     for (let [cId, obj] of Object.entries(data)) {
-      let row = { id: categories[cId].id };
+      let row = { ...categories[cId] };
       let average = 0;
       for (let [m, spend] of Object.entries(obj)) {
         let month = MONTHS[Number(m)];
