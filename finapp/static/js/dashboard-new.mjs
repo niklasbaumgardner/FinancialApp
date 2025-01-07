@@ -639,7 +639,7 @@ class CategorySpendingManager {
       rowData: [],
       autoSizeStrategy: {
         type: "fitGridWidth",
-        defaultMinWidth: 200,
+        defaultMinWidth: 150,
       },
       onRowDataUpdated: (event) => {
         let height =
