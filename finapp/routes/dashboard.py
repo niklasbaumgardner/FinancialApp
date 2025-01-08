@@ -87,8 +87,11 @@ def get_net_spending():
 @login_required
 def get_spending_by_category():
     current_date = request.args.get("date")
+    interval = request.args.get("interval", default="monthly")
 
-    data = helpers.spending_by_category(current_date)
+    data = helpers.spending_by_category(
+        current_date_str=current_date, interval=interval
+    )
     categories = {
         c.id: c.to_dict() for c in category_queries.get_cetegories(sort=False)
     }

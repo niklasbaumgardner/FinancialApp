@@ -63,6 +63,17 @@ block dashboard %}active{% endblock dashboard %} {% block backButton
 </sl-details>
 
 <sl-details summary="Spending by category" open>
+  <sl-select
+    id="categorySpendingSelect"
+    label="Spending interval"
+    value="monthly"
+    class="width-fit-content mb-3"
+    hoist
+  >
+    <sl-option value="monthly">Monthly</sl-option>
+    <sl-option value="weekly">Weekly</sl-option>
+  </sl-select>
+
   <div
     id="spending-by-category-grid"
     style="height: 500px"

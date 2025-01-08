@@ -364,7 +364,7 @@ def search_for(
     )
 
 
-def spending_by_category(current_date_str):
+def spending_by_category(current_date_str, interval):
     if not current_date_str:
         return
 
@@ -374,24 +374,33 @@ def spending_by_category(current_date_str):
     if not current_date:
         return
 
-    current_day = current_date.day
-    start_date = current_date - relativedelta(months=11)
+    if interval == "weekly":
+        day_of_week = current_date.weekday()
+        start_date = current_date - relativedelta(weeks=51)
 
-    start_date -= timedelta(days=current_day - 1)
+        start_date -= timedelta(days=day_of_week)
+
+    else:
+        current_day = current_date.day
+        start_date = current_date - relativedelta(months=11)
+
+        start_date -= timedelta(days=current_day - 1)
 
     if not start_date:
         return
 
-    data_query = transaction_queries.get_transactions_by_category(start_date=start_date)
+    data_query = transaction_queries.get_transactions_by_category(
+        start_date=start_date, interval=interval
+    )
 
     data = {}  # category_id -> {month, sum}
 
-    for spent, category_id, month in data_query:
-        month = int(month)
+    for spent, category_id, index, date in data_query:
+        index = int(index)
         if category_id in data:
-            data[category_id][month] = round(spent, 2)
+            data[category_id][index] = [round(spent, 2), date]
         else:
             data[category_id] = {}
-            data[category_id][month] = round(spent, 2)
+            data[category_id][index] = [round(spent, 2), date]
 
     return data

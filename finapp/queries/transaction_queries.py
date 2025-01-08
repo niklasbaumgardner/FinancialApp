@@ -499,7 +499,14 @@ def get_transactions_for_paycheck_id(paycheck_id, query=False):
     return transactions.all()
 
 
-def get_transactions_by_category(start_date):
+def get_transactions_by_category(start_date, interval=False):
+    if interval == "weekly":
+        interval_extract = func.extract("week", Transaction.date)
+        interval_trunc = func.date_trunc("week", Transaction.date)
+    else:
+        interval_extract = func.extract("month", Transaction.date)
+        interval_trunc = func.date_trunc("month", Transaction.date)
+
     transactions = (
         Transaction.query.join(
             TransactionCategory, Transaction.id == TransactionCategory.transaction_id
@@ -509,12 +516,11 @@ def get_transactions_by_category(start_date):
         .with_entities(
             func.sum(Transaction.amount),
             TransactionCategory.category_id,
-            func.extract("month", Transaction.date),
+            interval_extract,
+            interval_trunc,
         )
-        .group_by(
-            TransactionCategory.category_id, func.extract("month", Transaction.date)
-        )
-        .order_by(func.extract("month", Transaction.date))
+        .group_by(TransactionCategory.category_id, interval_extract, interval_trunc)
+        .order_by(interval_trunc)
         .all()
     )
 

@@ -570,8 +570,20 @@ class CategorySpendingManager {
     };
   }
 
+  get interval() {
+    return this.categorySpendingSelect.value;
+  }
+
   async init() {
     this.spendingMonths = new Set();
+    this.spendingWeeks = {};
+    this.dataCache = {};
+    this.columnsCache = {};
+
+    this.categorySpendingSelect = document.getElementById(
+      "categorySpendingSelect"
+    );
+    this.categorySpendingSelect.addEventListener("sl-change", this);
 
     this.categorySpendingGridEl = document.getElementById(
       "spending-by-category-grid"
@@ -608,32 +620,51 @@ class CategorySpendingManager {
       },
     ];
 
-    let date = new Date();
-    let currentMonth = date.getMonth();
-    let currentYear = date.getFullYear();
-    for (let i = 0; i < 12; i++) {
-      let month = 1 + ((12 + currentMonth - i) % 12);
-      let monthName = MONTHS[month];
+    if (this.interval === "weekly") {
+      let weekIndexes = Object.keys(this.spendingWeeks);
+      weekIndexes.sort((a, b) => this.spendingWeeks[b] - this.spendingWeeks[a]);
 
-      if (this.spendingMonths.has(monthName)) {
-        let year = "";
-        if (month > 1 + currentMonth) {
-          year = ` ${currentYear - 1}`;
-        }
+      for (let index of weekIndexes) {
+        let dateString = this.spendingWeeks[index].toLocaleDateString(
+          undefined,
+          { month: "short", day: "numeric", year: "numeric" }
+        );
         columns.push({
-          field: monthName,
-          headerName: monthName + year,
+          field: index,
+          headerName: `Week of ${dateString}`,
           valueFormatter: currencyFormatter,
           cellClassRules: this.cellColorRules,
         });
       }
+    } else {
+      let date = new Date();
+      let currentMonth = date.getMonth();
+      let currentYear = date.getFullYear();
+      for (let i = 0; i < 12; i++) {
+        let month = 1 + ((12 + currentMonth - i) % 12);
+        let monthName = MONTHS[month];
+
+        if (this.spendingMonths.has(monthName)) {
+          let year = "";
+          if (month > 1 + currentMonth) {
+            year = ` ${currentYear - 1}`;
+          }
+          columns.push({
+            field: monthName,
+            headerName: monthName + year,
+            valueFormatter: currencyFormatter,
+            cellClassRules: this.cellColorRules,
+          });
+        }
+      }
     }
 
-    return columns;
+    this.columnsCache[this.interval] = columns;
   }
 
   createDataGrid() {
-    const columnDefs = this.createGridColumns();
+    this.createGridColumns();
+    const columnDefs = this.columnsCache[this.interval];
     const gridOptions = {
       columnDefs,
       rowData: [],
@@ -658,12 +689,22 @@ class CategorySpendingManager {
     this.dataGrid = agGrid.createGrid(this.categorySpendingGridEl, gridOptions);
   }
 
+  async handleEvent(event) {
+    if (!this.dataCache[this.interval]) {
+      await this.getData();
+    }
+
+    this.updateSpendingGrid();
+  }
+
   async getData() {
     let data = await getRequest(GET_CATEGORY_SPENDING_URL, {
       date: this.currentDate,
+      interval: this.interval,
     });
 
     this.parseData(data);
+    this.createGridColumns();
   }
 
   parseData(dataObj) {
@@ -673,10 +714,18 @@ class CategorySpendingManager {
     for (let [cId, obj] of Object.entries(data)) {
       let row = { ...categories[cId] };
       let average = 0;
-      for (let [m, spend] of Object.entries(obj)) {
-        let month = MONTHS[Number(m)];
-        this.spendingMonths.add(month);
-        row[month] = spend;
+      for (let [i, spendList] of Object.entries(obj)) {
+        let [spend, date] = spendList;
+        let index = Number(i);
+        if (this.interval === "weekly") {
+          this.spendingWeeks[index] = new Date(date);
+          row[i] = spend;
+        } else {
+          let month = MONTHS[index];
+          this.spendingMonths.add(month);
+          row[month] = spend;
+        }
+
         average += spend;
       }
       if (average !== 0) {
@@ -688,11 +737,12 @@ class CategorySpendingManager {
     rows.sort((a, b) =>
       this.categories[a.id].name.localeCompare(this.categories[b.id].name)
     );
-    this.rows = rows;
+    this.dataCache[this.interval] = rows;
   }
 
   updateSpendingGrid() {
-    this.dataGrid.setGridOption("rowData", this.rows);
+    this.dataGrid.setGridOption("columnDefs", this.columnsCache[this.interval]);
+    this.dataGrid.setGridOption("rowData", this.dataCache[this.interval]);
   }
 
   setupThemeWatcher() {
