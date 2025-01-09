@@ -93,37 +93,46 @@ def net_spending(month, year, ytd):
     total_out = 0
     total_net = 0
     total_sum = 0
+
+    if ytd:
+        month = None
+
     all_budgets = budget_queries.get_budgets()
 
-    for budget in all_budgets:
-        total_sum += budget.total
+    income = transaction_queries.get_total_income(year=year, month=month)
+    spent = transaction_queries.get_total_spent(year=year, month=month)
 
-        if ytd:
-            b_trans = transaction_queries.get_transactions_for_year(
-                budget_id=budget.id, year=year, include_all_transfers=False
-            )
-        else:
-            b_trans = transaction_queries.get_transactions_for_month(
-                budget.id, month=month, year=year, include_all_transfers=False
-            )
+    data_dict = {
+        b.id: {
+            "id": b.id,
+            "name": b.name,
+            "in": 0,
+            "out": 0,
+            "net": 0,
+            "total": round(b.total, 2),
+        }
+        for b in all_budgets
+    }
 
-        if not b_trans:
-            continue
+    for total, b_id in spent:
+        rounded = round(total, 2)
+        data_dict[b_id]["out"] = rounded
+        total_out += rounded
 
-        in_, out, net = in_out_net(b_trans)
-        total_in += in_
-        total_out += out
+    for total, b_id in income:
+        rounded = round(total, 2)
+        data_dict[b_id]["in"] = rounded
+        total_in += rounded
 
-        data.append(
-            {
-                "id": budget.id,
-                "name": budget.name,
-                "in": in_,
-                "out": out,
-                "net": net,
-                "total": round(budget.total, 2),
-            }
-        )
+    for _, value in data_dict.items():
+        value["net"] = round(value["in"] + value["out"], 2)
+
+    total_sum = sum(b.total for b in all_budgets)
+    data = [
+        v
+        for v in list(data_dict.values())
+        if v["net"] != 0 or v["in"] != 0 or v["out"] != 0
+    ]
 
     total_net = total_in + total_out
     data = [

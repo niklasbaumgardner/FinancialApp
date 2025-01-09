@@ -395,7 +395,13 @@ class NetSpendingManager {
   }
 
   getURLForBudgetId(id) {
-    return `${DEFAULT_BUDGET_URL}/${id}?month=${this.currentSelection.month}&year=${this.currentSelection.year}&ytd=${this.currentSelection.ytd}`;
+    let searchParams = "";
+    if (this.currentSelection.month || this.currentSelection.year) {
+      searchParams =
+        "?" + new URLSearchParams(this.currentSelection).toString();
+    }
+
+    return `${DEFAULT_BUDGET_URL}/${id}${searchParams}`;
   }
 
   createDataGrid() {
@@ -509,6 +515,7 @@ class NetSpendingManager {
         )
       );
     }
+    options.push(this.createOptionElement("All time", null, null, false));
     options = options.reverse();
 
     return options;
@@ -522,7 +529,7 @@ class NetSpendingManager {
       this.netSpendingSelect.appendChild(option);
     }
 
-    this.netSpendingSelect.value = options[1].value;
+    this.netSpendingSelect.value = options[2].value;
   }
 
   setupThemeWatcher() {

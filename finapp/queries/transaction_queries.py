@@ -525,3 +525,34 @@ def get_transactions_by_category(start_date, interval=False):
     )
 
     return transactions
+
+
+def __get_net_spending__(condition, year=None, month=None):
+    query = (
+        Transaction.query.filter_by(user_id=current_user.id)
+        .where((Transaction.is_transfer == False) | (Transaction.is_transfer == None))
+        .with_entities(
+            func.sum(Transaction.amount),
+            Transaction.budget_id,
+        )
+        .group_by(Transaction.budget_id)
+    )
+
+    if year:
+        query = query.where(extract("year", Transaction.date) == year)
+    if month:
+        query = query.where(extract("month", Transaction.date) == month)
+
+    query = query.where(condition)
+
+    return query.all()
+
+
+def get_total_spent(year, month):
+    condition = Transaction.amount < 0
+    return __get_net_spending__(condition=condition, year=year, month=month)
+
+
+def get_total_income(year, month):
+    condition = Transaction.amount > 0
+    return __get_net_spending__(condition=condition, year=year, month=month)
