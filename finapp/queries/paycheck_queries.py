@@ -64,7 +64,9 @@ def get_paycheck_prefills():
             budget = budget_queries.get_budget_for_id(id=t["budget_id"]).to_dict()
             t["budget"] = budget
 
-        p["transactions"] = transactions
+        p["transactions"] = sorted(
+            transactions, key=lambda t: t["budget"]["name"].casefold()
+        )
 
     return paychecks
 
