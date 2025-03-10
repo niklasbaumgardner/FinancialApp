@@ -129,7 +129,7 @@ class SharedBudget(db.Model, SerializerMixin):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     budget_id = db.Column(db.Integer, db.ForeignKey("budget.id"), nullable=False)
 
-    budget = db.relationship("Budget")
+    budget = db.relationship("Budget", lazy="joined")
 
 
 class Transaction(db.Model, SerializerMixin):
@@ -154,7 +154,7 @@ class Transaction(db.Model, SerializerMixin):
     is_transfer = db.Column(db.Boolean, nullable=True)
     paycheck_id = db.Column(db.Integer, db.ForeignKey("paycheck.id"), nullable=True)
 
-    categories = db.relationship("TransactionCategory")
+    categories = db.relationship("TransactionCategory", lazy="joined")
 
     def editUrl(self):
         return url_for(
@@ -193,7 +193,7 @@ class Paycheck(db.Model, SerializerMixin):
     date = db.Column(db.Date, nullable=False)
 
     # I don't know if I want this
-    transactions = db.relationship("Transaction")
+    transactions = db.relationship("Transaction", lazy="joined")
 
 
 class Category(db.Model, SerializerMixin):
@@ -215,4 +215,4 @@ class TransactionCategory(db.Model, SerializerMixin):
     )
     category_id = db.Column(db.Integer, db.ForeignKey("category.id"), nullable=False)
 
-    category = db.relationship("Category")
+    category = db.relationship("Category", lazy="joined")
