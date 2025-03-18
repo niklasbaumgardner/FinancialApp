@@ -5,6 +5,7 @@ from flask_migrate import Migrate
 from flask_mail import Mail
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.pool import NullPool
 from apitally.flask import ApitallyMiddleware
 import os
 
@@ -13,13 +14,7 @@ bcrypt = Bcrypt()
 migrate = Migrate()
 mail = Mail()
 login_manager = LoginManager()
-db = SQLAlchemy(
-    engine_options=dict(
-        pool_pre_ping=True,
-        pool_size=10,
-        max_overflow=20,
-    )
-)
+db = SQLAlchemy(engine_options=dict(poolclass=NullPool))
 
 
 app = Flask(__name__)
