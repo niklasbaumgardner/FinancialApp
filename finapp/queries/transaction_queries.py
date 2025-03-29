@@ -382,6 +382,7 @@ def search(
                 or_(Transaction.name.ilike(f"%{search_name}%") for search_name in name)
             )
         )
+
     if amount is not None:
         transactions = (
             transactions.where(Transaction.amount == amount)
@@ -432,30 +433,24 @@ def search(
 
     if transactions:
         if ytd:
-            transactions = get_transactions_for_year(
-                budget_id=budget_id,
-                year=year,
-                page=page,
-                query=True,
-                transactions=transactions,
-                sort_by=sort_by,
+            transactions = transactions.where(
+                extract("year", Transaction.date) == year,
             )
         elif month:
-            transactions = get_transactions_for_month(
-                budget_id=budget_id,
-                month=month,
-                year=year,
-                page=page,
-                query=True,
-                transactions=transactions,
-                sort_by=sort_by,
+            transactions = transactions.where(
+                extract("month", Transaction.date) == month,
+                extract("year", Transaction.date) == year,
             )
 
         transactions = shared_budget_queries.get_shared_transactions_query(
             budget_id=budget_id, transactionsQuery=transactions
         )
 
-        search_sum = transactions.with_entities(func.sum(Transaction.amount)).first()[0]
+        search_sum = (
+            transactions.order_by(None)  # Remove order by for sum
+            .with_entities(func.sum(Transaction.amount))
+            .first()[0]
+        )
 
         transactions = sort_transactions(
             sort_by=sort_by, transactionsQuery=transactions
