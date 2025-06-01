@@ -1,10 +1,11 @@
 from finapp.queries import (
     budget_queries,
     prefill_queries,
+    shared_budget_queries,
     transaction_queries,
     user_queries,
 )
-from flask import Blueprint, render_template, request, abort
+from flask import Blueprint, render_template, request, abort, redirect, url_for
 from flask_login import login_required
 from finapp.utils import helpers
 
@@ -92,34 +93,42 @@ def edit_budget(id):
     abort(409)
 
 
-@index_bp.route("/delete_budget/<int:b_id>", methods=["DELETE"])
+@index_bp.post("/delete_budget/<int:b_id>")
 @login_required
 def delete_budget(b_id):
-    budget = budget_queries.get_budget(b_id, shared=False)
-    if not budget or budget.is_shared:
+    budget = budget_queries.get_budget(b_id)
+    if not budget:
         abort(400)
 
     new_budget_id = request.form.get("new_budget")
 
     # move or delete the transactions
     new_budget = budget_queries.get_budget(new_budget_id) if new_budget_id else None
+    transactions = transaction_queries.get_transactions(b_id)
     if new_budget:
-        transactions = transaction_queries.get_transactions(b_id)
-        for t in transactions:
-            transaction_queries._update_transaction(
-                transaction=t, b_id=b_id, new_b_id=new_budget.id
-            )
+        transaction_queries.updates_transactions_budget(
+            transactions=transactions, new_budget_id=new_budget.id
+        )
+
     else:
-        transactions = transaction_queries.get_transactions(b_id)
-        for trans in transactions:
-            transaction_queries._delete_transaction(trans, b_id)
+        transaction_queries.delete_transactions(transactions=transactions)
 
     # delete prefills
-    prefills = prefill_queries.get_prefills_by_budget(b_id)
-    for prefill in prefills:
-        prefill_queries._delete_prefill(prefill)
+    prefill_queries.delete_prefills_for_budget(budget_id=budget.id)
+
+    # update shared budgets
+    shared_budgets = shared_budget_queries.get_shared_budgets_by_budget_id(
+        budget_id=budget.id
+    )
+    if shared_budgets and new_budget:
+        shared_budget_queries.update_shared_budgets(
+            shared_budgets=shared_budgets, new_budget_id=new_budget.id
+        )
+        budget_queries.set_budget_shared(budget_id=new_budget.id)
+    elif shared_budgets:
+        shared_budget_queries.delete_shared_budgets(shared_budgets=shared_budgets)
 
     # finally delete the budget
     budget_queries.delete_budget(b_id)
 
-    return {"success": True}
+    return redirect(url_for("index_bp.index"))

@@ -311,12 +311,12 @@ def _update_transaction(
             transaction.date = new_date
         if is_transfer is not None:
             transaction.is_transfer = is_transfer
-        if len(categories_added) > 0:
+        if categories_added and len(categories_added) > 0:
             for c_id in categories_added:
                 category_queries.add_transaction_category(
                     transaction_id=transaction.id, category_id=c_id
                 )
-        if len(categories_deleted) > 0:
+        if categories_deleted and len(categories_deleted) > 0:
             for c_id in categories_deleted:
                 category_queries.delete_transaction_category(
                     transaction_id=transaction.id, category_id=c_id
@@ -329,6 +329,15 @@ def _update_transaction(
 
         if update_paycheck:
             paycheck_queries.update_paycheck(transaction.paycheck_id)
+
+
+def updates_transactions_budget(transactions, new_budget_id):
+    for t in transactions:
+        t.budget_id = new_budget_id
+
+    budget_queries.update_budget_total(new_budget_id)
+
+    db.session.commit()
 
 
 def delete_transaction(b_id, t_id):
@@ -346,6 +355,13 @@ def _delete_transaction(transaction, b_id):
         db.session.commit()
 
         budget_queries.update_budget_total(b_id)
+
+
+def delete_transactions(transactions):
+    for t in transactions:
+        db.session.delete(t)
+
+    db.session.commit()
 
 
 def transaction_category_query(category_id):

@@ -86,16 +86,14 @@ class BudgetCard extends NikElement {
   }
 
   deleteButtonTemplate() {
-    if (!this.budget.is_shared) {
-      return html`<sl-button
-        class="w-50"
-        variant="danger"
-        outline
-        size="small"
-        @click=${this.handleDeleteClick}
-        >Delete</sl-button
-      >`;
-    }
+    return html`<sl-button
+      class="w-50"
+      variant="danger"
+      outline
+      size="small"
+      @click=${this.handleDeleteClick}
+      >Delete</sl-button
+    >`;
   }
 
   buttonsTemplate() {
@@ -105,7 +103,7 @@ class BudgetCard extends NikElement {
 
     return html`${this.deleteButtonTemplate()}<sl-button
         id="saveButton"
-        class="${this.budget.is_shared ? "w-100" : "w-50"}"
+        class="w-50"
         variant="primary"
         size="small"
         @click=${this.handleSaveClick}

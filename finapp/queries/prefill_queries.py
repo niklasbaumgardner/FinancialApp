@@ -83,3 +83,11 @@ def _delete_prefill(prefill):
     if prefill:
         db.session.delete(prefill)
         db.session.commit()
+
+
+def delete_prefills_for_budget(budget_id):
+    prefills = get_prefills_by_budget(budget_id=budget_id)
+    for p in prefills:
+        db.session.delete(p)
+
+    db.session.commit()

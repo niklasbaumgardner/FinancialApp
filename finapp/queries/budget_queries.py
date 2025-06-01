@@ -101,6 +101,12 @@ def update_budget_total(b_id, budget=None):
         db.session.commit()
 
 
+def set_budget_shared(budget_id):
+    budget = get_budget_for_id(id=budget_id)
+    budget.is_shared = True
+    db.session.commit()
+
+
 def delete_budget(id):
     budget = get_budget(id, shared=False)
     _delete_budget(budget)

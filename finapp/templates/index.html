@@ -33,9 +33,9 @@
 
 {% for group in budgets %}
     {% for budget in group %}
-        {% if not budget.is_shared %}
+
             <sl-dialog id="delete{{ budget['id'] }}" label='Are you sure you want to delete this budget named "{{ budget["name"] }}" ?'>
-                <form method="DELETE" action="{{ url_for('index_bp.delete_budget', b_id=budget['id']) }}">
+                <form method="POST" id="formdelete{{ budget['id'] }}" action="{{ url_for('index_bp.delete_budget', b_id=budget['id']) }}">
                     <sl-radio-group label="Select a budget to transfer the transactions to" name="new_budget" required>
                         <sl-radio name="new_budget" value="-1">Delete transactions along with this budget</sl-radio>
                         {% for group in budgets %}
@@ -49,10 +49,10 @@
                 </form>
                 <div class="row" slot="footer">
                     <sl-button class="w-50" variant="neutral" outline onclick="closeDeleteBudgetDialog('delete{{ budget['id'] }}')">Cancel</sl-button>
-                    <sl-button class="w-50" variant="danger" onclick="deleteBudgetRequest(event, 'delete{{ budget['id'] }}')">Delete</sl-button>
+                    <sl-button class="w-50" variant="danger" type="submit" form="formdelete{{ budget['id'] }}">Delete</sl-button>
                 </div>
             </sl-dialog>
-        {% endif %}
+
     {% endfor %}
 {% endfor %}
 
