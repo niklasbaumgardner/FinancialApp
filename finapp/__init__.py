@@ -6,8 +6,6 @@ from flask_mail import Mail
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.pool import NullPool
-from apitally.flask import ApitallyMiddleware
-import os
 
 
 bcrypt = Bcrypt()
@@ -26,12 +24,6 @@ bcrypt.init_app(app)
 login_manager.init_app(app)
 login_manager.login_view = "auth_bp.login"
 login_manager.login_message_category = "alert-primary"
-
-app.wsgi_app = ApitallyMiddleware(
-    app,
-    client_id=os.environ.get("APITALLY_CLIENT_ID"),
-    env=os.environ.get("APITALLY_ENVIRONMENT"),
-)
 
 mail.init_app(app)
 
