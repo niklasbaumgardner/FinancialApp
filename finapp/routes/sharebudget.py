@@ -43,12 +43,12 @@ def accept_budget():
     try:
         obj = Budget.verify_share_token(token=token)
     except:
-        return redirect(url_for("index_bp.index"))
+        return redirect(url_for("viewbudgets_bp.viewbudgets"))
 
     budget_id, recipient_id = obj.get("budget_id"), obj.get("recipient_id")
 
     if current_user.id != recipient_id:
-        return redirect(url_for("index_bp.index"))
+        return redirect(url_for("viewbudgets_bp.viewbudgets"))
 
     budget = budget_queries.get_budget_for_id(budget_id)
 
@@ -56,4 +56,4 @@ def accept_budget():
         shared_budget_queries.create_shared_budget(budget=budget)
         return redirect(url_for("viewbudget_bp.view_budget", id=budget.id))
 
-    return redirect(url_for("index_bp.index"))
+    return redirect(url_for("viewbudgets_bp.viewbudgets"))

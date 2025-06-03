@@ -10,33 +10,10 @@ from flask_login import login_required
 from finapp.utils import helpers
 
 
-index_bp = Blueprint("index_bp", __name__)
+editbudget_bp = Blueprint("editbudget_bp", __name__)
 
 
-@index_bp.route("/", methods=["GET"])
-@login_required
-def index():
-    active, inactive = budget_queries.get_budgets(separate=True)
-
-    total = round(sum([x.total for x in active + inactive]), 2)
-
-    active = [b.to_dict() for b in active]
-    inactive = [b.to_dict() for b in inactive]
-
-    shared_users = {
-        u.id: u.to_dict() for u in user_queries.get_shared_users_for_all_budgets()
-    }
-
-    return render_template(
-        "index.html",
-        budgets=[active, inactive],
-        round=round,
-        total=helpers.format_to_money_string(total),
-        shared_users=shared_users,
-    )
-
-
-@index_bp.route("/toggle_budget", methods=["GET"])
+@editbudget_bp.get("/toggle_budget")
 @login_required
 def toggle_budget():
     active = request.args.get("active")
@@ -51,7 +28,7 @@ def toggle_budget():
     return {"success": False}
 
 
-@index_bp.route("/add_budget", methods=["POST"])
+@editbudget_bp.post("/add_budget")
 @login_required
 def add_budget():
     name = request.form.get("name")
@@ -81,7 +58,7 @@ def add_budget():
     abort(400)
 
 
-@index_bp.route("/edit_budget/<int:id>", methods=["POST"])
+@editbudget_bp.post("/edit_budget/<int:id>")
 @login_required
 def edit_budget(id):
     new_name = request.form.get("name")
@@ -93,7 +70,7 @@ def edit_budget(id):
     abort(409)
 
 
-@index_bp.post("/delete_budget/<int:b_id>")
+@editbudget_bp.post("/delete_budget/<int:b_id>")
 @login_required
 def delete_budget(b_id):
     budget = budget_queries.get_budget(b_id)
@@ -131,4 +108,4 @@ def delete_budget(b_id):
     # finally delete the budget
     budget_queries.delete_budget(b_id)
 
-    return redirect(url_for("index_bp.index"))
+    return redirect(url_for("viewbudgets_bp.viewbudgets"))

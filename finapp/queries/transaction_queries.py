@@ -1,4 +1,3 @@
-from flask import session
 from finapp.models import Transaction, TransactionCategory
 from finapp.queries import (
     budget_queries,
@@ -359,6 +358,10 @@ def _delete_transaction(transaction, b_id):
 
 def delete_transactions(transactions):
     for t in transactions:
+        # delete transaction categories
+        for c in t.categories:
+            db.session.delete(c)
+
         db.session.delete(t)
 
     db.session.commit()

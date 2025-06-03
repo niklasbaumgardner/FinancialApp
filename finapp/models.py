@@ -21,15 +21,6 @@ class User(db.Model, UserMixin, SerializerMixin):
     email = db.Column(db.String(60), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
 
-    # def to_dict(self):
-    #     return dict(
-    #         id=self.id,
-    #         username=self.username,
-    #     )
-
-    # def to_json(self):
-    #     return json.dumps(self.to_dict())
-
     def get_reset_token(self):
         s = URLSafeTimedSerializer(os.environ.get("SECRET_KEY"))
         return s.dumps({"user_id": self.id})
@@ -53,17 +44,13 @@ class Theme(db.Model):
 
 
 class Budget(db.Model, SerializerMixin):
-    serialize_only = (
-        "id",
-        "user_id",
-        "total",
-        "name",
-        "is_active",
-        "is_shared",
+    serialize_rules = (
         "url",
-        "editUrl",
-        "toggleActiveUrl",
-        "addTransactionUrl",
+        "edit_url",
+        "toggle_active_url",
+        "add_transaction_url",
+        "shared_users",
+        "delete_url",
     )
 
     id = db.Column(db.Integer, primary_key=True)
@@ -76,40 +63,28 @@ class Budget(db.Model, SerializerMixin):
     def url(self):
         return url_for("viewbudget_bp.view_budget", id=self.id)
 
-    def editUrl(self):
-        return url_for("index_bp.edit_budget", id=self.id)
+    def edit_url(self):
+        return url_for("editbudget_bp.edit_budget", id=self.id)
 
-    def toggleActiveUrl(self):
-        return url_for("index_bp.toggle_budget")
+    def toggle_active_url(self):
+        return url_for("editbudget_bp.toggle_budget")
 
-    def addTransactionUrl(self):
+    def add_transaction_url(self):
         return url_for("viewbudget_bp.add_transaction", budget_id=self.id)
+
+    def delete_url(self):
+        return url_for("editbudget_bp.delete_budget", b_id=self.id)
+
+    def shared_users(self):
+        users = user_queries.get_shared_users_for_budget_id(budget_id=self.id)
+        users = [u.to_dict() for u in users]
+        return users
 
     # I don't think this will work because of the shared_budget model
     # transactions = db.relationship("Transaction", uselist=False)
 
-    # def to_json(self):
-    #     obj = dict(
-    #         id=self.id,
-    #         user_id=self.user_id,
-    #         total=self.total,
-    #         name=self.name,
-    #         isActive=self.is_active,
-    #         isShared=self.is_shared,
-    #         url=url_for("viewbudget_bp.view_budget", id=self.id),
-    #         editUrl=url_for("index_bp.edit_budget", id=self.id),
-    #         toggleActiveUrl=url_for("index_bp.toggle_budget"),
-    #     )
-
-    #     if self.is_shared:
-    #         obj["sharedUserIds"] = [
-    #             u.id
-    #             for u in user_queries.get_shared_users_for_budget_id(budget_id=self.id)
-    #         ]
-    #     return json.dumps(obj)
-
     def __str__(self):
-        return f"{self.name : <30s}|{self.total : >10.2f}"
+        return f"{self.name: <30s}|{self.total: >10.2f}"
 
     def get_share_token(self, recipient_id):
         s = URLSafeTimedSerializer(os.environ.get("SECRET_KEY"))

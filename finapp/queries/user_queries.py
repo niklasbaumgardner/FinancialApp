@@ -77,16 +77,17 @@ def get_shared_users_for_budget_id(budget_id):
 
 
 def get_shared_users_for_all_budgets():
-    shared_budget_query = SharedBudget.query.filter_by(
-        budget_id=Budget.id, user_id=User.id
-    )
-    budget_shared_query = Budget.query.where(
-        or_(
-            and_(Budget.is_shared == True, Budget.user_id == User.id),
-            shared_budget_query.exists(),
+    budget_shared_query = db.session.query(Budget, SharedBudget).where(
+        and_(
+            or_(
+                Budget.user_id == current_user.id,
+                SharedBudget.user_id == current_user.id,
+            ),
+            SharedBudget.budget_id == Budget.id,
+            or_(User.id == SharedBudget.user_id, Budget.user_id == User.id),
         )
     )
 
     return User.query.where(
-        and_(current_user.id != User.id, budget_shared_query.exists())
+        and_(User.id != current_user.id, budget_shared_query.exists())
     ).all()
