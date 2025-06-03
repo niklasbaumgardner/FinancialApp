@@ -15,7 +15,6 @@
     const BUDGETS = {{ budgets| tojson }};
     const IS_BUDGET_SHARED = "{{ budget.is_shared }}" === "True";
     const CURRENT_USER = {{ current_user.to_dict()|tojson }};
-    const SHARED_USERS = {{ shared_users_map| tojson }};
     const CATEGORIES = {{ categories| tojson }};
 
     function handleCategoriesChanged(event) {

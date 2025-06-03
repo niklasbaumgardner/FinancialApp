@@ -45,17 +45,10 @@ def view_budget(id):
     budget = budget.to_dict()
     transactions = [t.to_dict() for t in transactions]
 
-    shared_users_map = {}
-    if budget["is_shared"]:
-        users = user_queries.get_shared_users_for_budget_id(budget_id=budget["id"])
-
-        budget["shared_users"] = [u.to_dict() for u in users]
-
-        shared_users_map = {u.id: u.to_dict() for u in users}
     categories = [
         c.to_dict()
         for c in category_queries.get_shared_categories(
-            user_ids=[current_user.id] + [u.id for u in users]
+            user_ids=[current_user.id] + [u["id"] for u in budget["shared_users"]]
         )
     ]
 
@@ -64,7 +57,6 @@ def view_budget(id):
         budget=budget,
         transactions=transactions,
         budgets=budgets,
-        shared_users_map=shared_users_map,
         categories=categories,
         total=total,
         page=page,

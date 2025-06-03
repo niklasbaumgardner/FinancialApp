@@ -108,7 +108,7 @@ class NBTransaction extends NikElement {
       formData.append("categoriesDeleted", c_id);
     }
 
-    let response = await postRequest(this.transaction.editUrl, formData);
+    let response = await postRequest(this.transaction.edit_url, formData);
     response = await response.json();
     let newTransaction = response.transaction;
     this.transaction.name = newTransaction.name;
@@ -210,7 +210,7 @@ class NBTransaction extends NikElement {
   buttonsTempate() {
     if (CURRENT_USER.id !== this.transaction.user_id) {
       return html`<sl-tag variant="primary" size="small"
-        >${SHARED_USERS[this.transaction.user_id].username}</sl-tag
+        >${this.transaction.user.username}</sl-tag
       >`;
     }
 

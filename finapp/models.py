@@ -116,8 +116,9 @@ class Transaction(db.Model, SerializerMixin):
         "amount",
         "date",
         "is_transfer",
-        "editUrl",
+        "edit_url",
         "categories",
+        "user",
     )
 
     id = db.Column(db.Integer, primary_key=True)
@@ -130,27 +131,12 @@ class Transaction(db.Model, SerializerMixin):
     paycheck_id = db.Column(db.Integer, db.ForeignKey("paycheck.id"), nullable=True)
 
     categories = db.relationship("TransactionCategory", lazy="joined")
+    user = db.relationship("User", lazy="joined")
 
-    def editUrl(self):
+    def edit_url(self):
         return url_for(
             "viewbudget_bp.edit_transaction", b_id=self.budget_id, t_id=self.id
         )
-
-    # def to_json(self):
-    #     return json.dumps(
-    #         dict(
-    #             id=self.id,
-    #             userId=self.user_id,
-    #             name=self.name,
-    #             budgetId=self.budget_id,
-    #             amount=self.amount,
-    #             date=self.date.strftime("%Y-%m-%d"),
-    #             isTransfer=self.is_transfer,
-    #             editUrl=url_for(
-    #                 "viewbudget_bp.edit_transaction", b_id=self.budget_id, t_id=self.id
-    #             ),
-    #         )
-    #     )
 
 
 class PaycheckPrefill(db.Model, SerializerMixin):
