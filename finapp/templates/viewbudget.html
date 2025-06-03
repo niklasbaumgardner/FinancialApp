@@ -14,7 +14,7 @@
     const NUM_PAGES = {{ num_pages }};
     const BUDGETS = {{ budgets| tojson }};
     const IS_BUDGET_SHARED = "{{ budget.is_shared }}" === "True";
-    const CURRENT_USER_ID = {{ current_user.id }};
+    const CURRENT_USER = {{ current_user.to_dict()|tojson }};
     const SHARED_USERS = {{ shared_users_map| tojson }};
     const CATEGORIES = {{ categories| tojson }};
 

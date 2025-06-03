@@ -1,7 +1,7 @@
 from finapp.models import Budget, SharedBudget, Transaction
 from finapp import db
 from flask_login import current_user
-from sqlalchemy.sql import or_
+from sqlalchemy.sql import or_, and_
 
 
 ##
@@ -70,3 +70,28 @@ def delete_shared_budgets(shared_budgets):
         db.session.delete(sb)
 
     db.session.commit()
+
+
+def can_add_transation_as_shared_user(budget_id, user_id):
+    count_of_shared_budgets = (
+        Budget.query.join(SharedBudget, SharedBudget.budget_id == Budget.id)
+        .where(
+            and_(
+                Budget.id == budget_id,
+                SharedBudget.budget_id == budget_id,
+                or_(
+                    and_(
+                        SharedBudget.user_id == user_id,
+                        Budget.user_id == current_user.id,
+                    ),
+                    and_(
+                        SharedBudget.user_id == current_user.id,
+                        Budget.user_id == user_id,
+                    ),
+                ),
+            ),
+        )
+        .count()
+    )
+
+    return count_of_shared_budgets > 0

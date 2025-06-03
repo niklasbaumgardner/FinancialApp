@@ -6,7 +6,7 @@ from finapp.queries import (
     user_queries,
 )
 from flask import Blueprint, render_template, request, abort, redirect, url_for
-from flask_login import login_required
+from flask_login import login_required, current_user
 from finapp.utils import helpers
 
 
@@ -46,6 +46,7 @@ def add_budget():
                 str_date = request.form.get("date")
                 date = helpers.get_date_from_string(str_date)
                 transaction_queries.create_transaction(
+                    user_id=current_user.id,
                     name=f"Initial Transaction for {name}",
                     amount=amount,
                     date=date,

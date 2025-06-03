@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, request
-from flask_login import login_required
+from flask_login import login_required, current_user
 from finapp.utils import helpers
 from finapp.queries import (
     budget_queries,
@@ -43,6 +43,7 @@ def paycheck():
             b_amt = request.form.get(budget.name + str(budget.id), type=float)
             if b_amt:
                 transaction_queries.create_transaction(
+                    user_id=current_user.id,
                     name=name,
                     amount=b_amt,
                     date=date,

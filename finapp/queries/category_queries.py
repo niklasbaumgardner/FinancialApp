@@ -8,6 +8,10 @@ from finapp import db
 ##
 
 
+def get_shared_categories(user_ids):
+    return Category.query.where(Category.user_id.in_(user_ids)).all()
+
+
 def get_cetegories(sort=True):
     query = Category.query.filter_by(user_id=current_user.id)
     if sort:
@@ -32,11 +36,11 @@ def get_transaction_category_by_transaction_and_category_id(
     transaction_id, category_id
 ):
     return TransactionCategory.query.filter_by(
-        user_id=current_user.id, transaction_id=transaction_id, category_id=category_id
+        transaction_id=transaction_id, category_id=category_id
     ).first()
 
 
-def add_transaction_category(transaction_id, category_id):
+def add_transaction_category(user_id, transaction_id, category_id):
     t_category = get_transaction_category_by_transaction_and_category_id(
         transaction_id=transaction_id, category_id=category_id
     )
@@ -44,7 +48,7 @@ def add_transaction_category(transaction_id, category_id):
         return t_category
 
     t_category = TransactionCategory(
-        user_id=current_user.id, transaction_id=transaction_id, category_id=category_id
+        user_id=user_id, transaction_id=transaction_id, category_id=category_id
     )
 
     db.session.add(t_category)

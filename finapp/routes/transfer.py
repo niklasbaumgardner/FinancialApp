@@ -1,5 +1,5 @@
 from flask import Blueprint, request, redirect, render_template, url_for
-from flask_login import login_required
+from flask_login import login_required, current_user
 from finapp.utils import helpers
 from finapp.queries import budget_queries, transaction_queries
 
@@ -25,6 +25,7 @@ def transfer():
 
         if name and amount and source_budget and dest_budget:
             transaction_queries.create_transaction(
+                user_id=current_user.id,
                 name=name,
                 amount=-amount,
                 date=date,
@@ -32,6 +33,7 @@ def transfer():
                 is_transfer=True,
             )
             transaction_queries.create_transaction(
+                user_id=current_user.id,
                 name=name,
                 amount=amount,
                 date=date,

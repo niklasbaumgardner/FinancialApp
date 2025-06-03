@@ -35,14 +35,21 @@ def paginate_query(query, page):
 
 
 def create_transaction(
-    name, amount, date, budget_id, is_transfer=False, categories=None, paycheck_id=None
+    user_id,
+    name,
+    amount,
+    date,
+    budget_id,
+    is_transfer=False,
+    categories=None,
+    paycheck_id=None,
 ):
     budget = budget_queries.get_budget(budget_id)
     if budget:
         trans = Transaction(
             name=name.strip(),
             budget_id=budget.id,
-            user_id=current_user.id,
+            user_id=user_id,
             amount=amount,
             date=date,
             is_transfer=is_transfer,
@@ -59,7 +66,7 @@ def create_transaction(
                     continue
 
                 category_queries.add_transaction_category(
-                    transaction_id=trans.id, category_id=c_id
+                    user_id=user_id, transaction_id=trans.id, category_id=c_id
                 )
 
 

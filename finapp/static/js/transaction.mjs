@@ -9,7 +9,7 @@ class NBTransaction extends NikElement {
   connectedCallback() {
     super.connectedCallback();
 
-    if (CURRENT_USER_ID !== this.transaction.user_id) {
+    if (CURRENT_USER.id !== this.transaction.user_id) {
       return;
     }
 
@@ -208,7 +208,7 @@ class NBTransaction extends NikElement {
   }
 
   buttonsTempate() {
-    if (CURRENT_USER_ID !== this.transaction.user_id) {
+    if (CURRENT_USER.id !== this.transaction.user_id) {
       return html`<sl-tag variant="primary" size="small"
         >${SHARED_USERS[this.transaction.user_id].username}</sl-tag
       >`;

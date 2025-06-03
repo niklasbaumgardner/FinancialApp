@@ -276,31 +276,6 @@ def sum_per_date_list(first, last, step, data, dates):
     return trimmed
 
 
-def confirmBudgetsForPercentages(dic, amount):
-    total = 0
-    for k, v in dic.items():
-        temp_total = round(v[0] * amount / 100, 2)
-        v.append(temp_total)
-        total += temp_total
-    rmdr = amount - total
-
-    if abs(rmdr) < (len(dic) / 100):
-        for k, v in dic.items():
-            if rmdr > 0:
-                rmdr -= 0.01
-                v[-1] += 0.01
-            elif rmdr < 0:
-                rmdr += 0.01
-                v[-1] -= 0.01
-            transaction_queries.create_transaction(
-                name=v[1], amount=v[-1], date=v[2], budget_id=k
-            )
-            return True
-
-    else:
-        return False
-
-
 def search_for(
     budget_id,
     name,

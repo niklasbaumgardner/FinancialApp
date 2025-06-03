@@ -1,11 +1,12 @@
 from finapp.queries import (
     budget_queries,
     category_queries,
+    shared_budget_queries,
     transaction_queries,
     user_queries,
 )
 from flask import Blueprint, render_template, redirect, url_for, request
-from flask_login import login_required
+from flask_login import login_required, current_user
 from finapp.utils import helpers
 import json
 
@@ -51,8 +52,12 @@ def view_budget(id):
         budget["shared_users"] = [u.to_dict() for u in users]
 
         shared_users_map = {u.id: u.to_dict() for u in users}
-
-    categories = [c.to_dict() for c in category_queries.get_cetegories()]
+    categories = [
+        c.to_dict()
+        for c in category_queries.get_shared_categories(
+            user_ids=[current_user.id] + [u.id for u in users]
+        )
+    ]
 
     return render_template(
         "viewbudget.html",
@@ -175,19 +180,26 @@ def search(b_id):
 @viewbudget_bp.route("/add_transaction/<int:budget_id>", methods=["POST"])
 @login_required
 def add_transaction(budget_id):
+    user_id = request.form.get("user", type=int)
     name = request.form.get("name")
-    try:
-        amount = float(request.form.get("amount"))
-    except:
-        amount = 0
-
+    amount = request.form.get("amount", type=float, default=0.0)
     str_date = request.form.get("date")
     date = helpers.get_date_from_string(str_date)
 
     categories = request.form.getlist("categories")
 
+    can_add_transaction = user_id == current_user.id
+    if user_id != current_user.id:
+        can_add_transaction = shared_budget_queries.can_add_transation_as_shared_user(
+            budget_id=budget_id, user_id=user_id
+        )
+
+    if not can_add_transaction:
+        return redirect(url_for("viewbudgets_bp.viewbudgets"))
+
     if name is not None and amount is not None and budget_id is not None:
         transaction_queries.create_transaction(
+            user_id=user_id,
             name=name,
             amount=amount,
             date=date,
@@ -201,9 +213,9 @@ def add_transaction(budget_id):
 @viewbudget_bp.route("/edit_transaction/<int:b_id>/<int:t_id>", methods=["POST"])
 @login_required
 def edit_transaction(b_id, t_id):
-    new_name = request.form.get(f"name")
-    new_amount = request.form.get(f"amount")
-    new_date = request.form.get(f"date")
+    new_name = request.form.get("name")
+    new_amount = request.form.get("amount", type=float)
+    new_date = request.form.get("date")
     page = request.form.get("page")
     page = page if page else 1
 

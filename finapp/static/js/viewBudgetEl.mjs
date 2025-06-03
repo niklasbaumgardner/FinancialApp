@@ -249,6 +249,37 @@ class ViewBudget extends NikElement {
       .slice(0, -1);
   }
 
+  sharedUsersOptionsTemplate() {
+    let templateArray = [];
+    templateArray.push(
+      html`<sl-option value=${CURRENT_USER.id}
+        >${CURRENT_USER.username}</sl-option
+      >`
+    );
+    templateArray.push(
+      ...this.budget.shared_users.map(
+        (su) => html`<sl-option value=${su.id}>${su.username}</sl-option>`
+      )
+    );
+
+    return templateArray;
+  }
+
+  sharedUsersSelectTemplate() {
+    if (!this.budget.is_shared || !this.budget.shared_users.length) {
+      return null;
+    }
+
+    return html`<div class="row">
+      <sl-select
+        label="Select user for this transaction"
+        name="user"
+        value=${CURRENT_USER.id}
+        >${this.sharedUsersOptionsTemplate()}</sl-select
+      >
+    </div>`;
+  }
+
   render() {
     return html`<sl-card class="mb-4">
         <div class="row" slot="header">
@@ -282,7 +313,7 @@ class ViewBudget extends NikElement {
         <form
           id="addTransaction"
           method="POST"
-          action="${this.budget.addTransactionUrl}"
+          action="${this.budget.add_transaction_url}"
         >
           <div class="row">
             <div class="col-12 col-md-8 col-xl-6 mb-2">
@@ -322,6 +353,7 @@ class ViewBudget extends NikElement {
               >
             </div>
           </div>
+          ${this.sharedUsersSelectTemplate()}
           <div class="row">
             <nb-select .categories=${this.categories}></nb-select>
             <div>
