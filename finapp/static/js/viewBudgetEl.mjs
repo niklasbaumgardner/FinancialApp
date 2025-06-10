@@ -3,7 +3,7 @@ import { NikElement } from "./customElement.mjs";
 import { Pagination, Search } from "./pagination.mjs";
 import "./viewBudgetSearchCard.mjs";
 import "./shareBudgetElement.mjs";
-import "./transaction.mjs";
+import "./nb-transaction.mjs";
 import "./nb-select.mjs";
 
 class ViewBudget extends NikElement {

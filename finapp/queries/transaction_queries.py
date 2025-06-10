@@ -1,4 +1,4 @@
-from finapp.models import Transaction, TransactionCategory
+from finapp.models import Budget, SharedBudget, Transaction, TransactionCategory
 from finapp.queries import (
     budget_queries,
     category_queries,
@@ -7,7 +7,7 @@ from finapp.queries import (
 )
 from finapp import db
 from flask_login import current_user
-from sqlalchemy.sql import func, or_
+from sqlalchemy.sql import func, or_, and_
 from sqlalchemy import extract
 from datetime import date
 
@@ -70,11 +70,22 @@ def create_transaction(
                 )
 
 
-def get_transaction(budget_id, trans_id):
-    transaction = Transaction.query.filter_by(
-        id=trans_id, budget_id=budget_id, user_id=current_user.id
-    ).first()
-    return transaction
+def get_transaction(transaction_id):
+    return (
+        Transaction.query.join(Budget, Budget.id == Transaction.budget_id)
+        .join(SharedBudget, SharedBudget.budget_id == Transaction.budget_id)
+        .where(
+            and_(
+                Transaction.id == transaction_id,
+                or_(
+                    Transaction.user_id == current_user.id,
+                    Budget.user_id == current_user.id,
+                    SharedBudget.user_id == current_user.id,
+                ),
+            )
+        )
+        .first()
+    )
 
 
 def get_first_transaction_date():
@@ -85,6 +96,26 @@ def get_first_transaction_date():
         .first()
     )
     return transaction.date
+
+
+def can_modify_transaction(transaction_id):
+    count_of_transactions = (
+        Transaction.query.join(Budget, Budget.id == Transaction.budget_id)
+        .join(SharedBudget, SharedBudget.budget_id == Transaction.budget_id)
+        .where(
+            and_(
+                Transaction.id == transaction_id,
+                or_(
+                    Transaction.user_id == current_user.id,
+                    Budget.user_id == current_user.id,
+                    SharedBudget.user_id == current_user.id,
+                ),
+            )
+        )
+        .count()
+    )
+
+    return count_of_transactions > 0
 
 
 def sort_transactions(sort_by, transactionsQuery):
@@ -268,7 +299,7 @@ def update_transaction(
     categories_added=None,
     categories_deleted=None,
 ):
-    transaction = get_transaction(b_id, t_id)
+    transaction = get_transaction(transaction_id=t_id)
     if transaction:
         _update_transaction(
             transaction,
@@ -320,7 +351,9 @@ def _update_transaction(
         if categories_added and len(categories_added) > 0:
             for c_id in categories_added:
                 category_queries.add_transaction_category(
-                    transaction_id=transaction.id, category_id=c_id
+                    user_id=transaction.user_id,
+                    transaction_id=transaction.id,
+                    category_id=c_id,
                 )
         if categories_deleted and len(categories_deleted) > 0:
             for c_id in categories_deleted:
@@ -346,12 +379,12 @@ def updates_transactions_budget(transactions, new_budget_id):
     db.session.commit()
 
 
-def delete_transaction(b_id, t_id):
-    trans = get_transaction(b_id, t_id)
-    _delete_transaction(trans, b_id)
+def delete_transaction(transaction_id):
+    transaction = get_transaction(transaction_id=transaction_id)
+    _delete_transaction(transaction=transaction)
 
 
-def _delete_transaction(transaction, b_id):
+def _delete_transaction(transaction):
     if transaction:
         # delete transaction categories
         for c in transaction.categories:
@@ -360,7 +393,7 @@ def _delete_transaction(transaction, b_id):
         db.session.delete(transaction)
         db.session.commit()
 
-        budget_queries.update_budget_total(b_id)
+        budget_queries.update_budget_total(b_id=transaction.budget_id)
 
 
 def delete_transactions(transactions):

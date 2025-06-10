@@ -108,17 +108,12 @@ class SharedBudget(db.Model, SerializerMixin):
 
 
 class Transaction(db.Model, SerializerMixin):
-    serialize_only = (
-        "id",
-        "user_id",
-        "budget_id",
-        "name",
-        "amount",
-        "date",
-        "is_transfer",
-        "edit_url",
+    serialize_rules = (
         "categories",
         "user",
+        "edit_url",
+        "move_transaction_url",
+        "delete_url",
     )
 
     id = db.Column(db.Integer, primary_key=True)
@@ -137,6 +132,14 @@ class Transaction(db.Model, SerializerMixin):
         return url_for(
             "viewbudget_bp.edit_transaction", b_id=self.budget_id, t_id=self.id
         )
+
+    def move_transaction_url(self):
+        return url_for(
+            "viewbudget_bp.move_transaction", sb_id=self.budget_id, t_id=self.id
+        )
+
+    def delete_url(self):
+        return url_for("viewbudget_bp.delete_transaction", t_id=self.id)
 
 
 class PaycheckPrefill(db.Model, SerializerMixin):

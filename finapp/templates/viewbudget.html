@@ -4,8 +4,6 @@
 <script>
     const GET_PAGE_URL = "{{ url_for('viewbudget_bp.get_page', budget_id=budget.id) }}";
     const SEARCH_PAGE_URL = "{{ url_for('viewbudget_bp.search', b_id=budget.id) }}";
-    const MOVE_TRANSACTION_URL = "{{ url_for('viewbudget_bp.move_transaction', sb_id=budget.id, t_id=0) }}".slice(0, -1);
-    const DELETE_TRANSACTION_URL = "{{ url_for('viewbudget_bp.delete_transaction', b_id=budget.id, t_id=0) }}".slice(0, -1);
     const SHARE_BUDGET_URL = "{{ url_for('sharebudget_bp.share_budget', budget_id=budget.id) }}";
 
     const params = new URLSearchParams(window.location.search);
