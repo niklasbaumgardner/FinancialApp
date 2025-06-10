@@ -50,6 +50,12 @@ class NBSelect extends NikElement {
     return arrOfStrings.map((x) => parseInt(x, 10)).filter(Number);
   }
 
+  connectedCallback() {
+    super.connectedCallback();
+
+    this.categories.sort((a, b) => a.name.localeCompare(b.name));
+  }
+
   render() {
     return html`<base-nb-select
       label="Select any categories"
