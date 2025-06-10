@@ -1,0 +1,14 @@
+{
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.8",
+    "tailwindcss": "^4.1.8"
+  },
+  "name": "budgetapp",
+  "version": "1.0.0",
+  "devDependencies": {},
+  "scripts": {
+    "watch": "npx @tailwindcss/cli -i ./finapp/static/css/tailwind.css -o ./finapp/static/css/output.css --watch",
+    "build": "npx @tailwindcss/cli -i ./finapp/static/css/tailwind.css -o ./finapp/static/css/output.css"
+  },
+  "author": "Niklas Baumgardner"
+}

@@ -1,9 +1,10 @@
 import SlSelect from "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.16.0/cdn/components/select/select.js";
+import WaSelect from "https://early.webawesome.com/webawesome@3.0.0-alpha.13/dist/components/select/select.js";
 import { html } from "./imports.mjs";
 import { NikElement } from "./customElement.mjs";
 import "./nb-category.mjs";
 
-class BaseNBSelect extends SlSelect {
+class BaseNBSelect extends WaSelect {
   constructor() {
     super();
 
@@ -66,9 +67,9 @@ class NBSelect extends NikElement {
       value="${this.selected}"
       >${this.categories.map(
         (c) =>
-          html`<sl-option value="${c.id}"
+          html`<wa-option value="${c.id}"
             ><nb-category name="${c.name}" color="${c.color}"></nb-category
-          ></sl-option>`
+          ></wa-option>`
       )}</base-nb-select
     >`;
   }

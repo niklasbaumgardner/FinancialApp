@@ -1,10 +1,9 @@
 {% extends "base.html" %} {% block title %}{{ budget.name }}{% endblock title %}
-{% block backButton %}<sl-button href="/" class="me-4" variant="primary" outline><sl-icon slot="prefix"
-        name="caret-left"></sl-icon>Back</sl-button>{% endblock backButton %} {% block content %}
+{% block backButton %}<wa-button href="/" class="me-4" variant="primary" appearance="outlined"><wa-icon slot="prefix"
+        name="caret-left"></wa-icon>Back</wa-button>{% endblock backButton %} {% block content %}
 <script>
     const GET_PAGE_URL = "{{ url_for('viewbudget_bp.get_page', budget_id=budget.id) }}";
     const SEARCH_PAGE_URL = "{{ url_for('viewbudget_bp.search', b_id=budget.id) }}";
-    const SHARE_BUDGET_URL = "{{ url_for('sharebudget_bp.share_budget', budget_id=budget.id) }}";
 
     const params = new URLSearchParams(window.location.search);
     const TOTAL_TRANSACTIONS = {{ total }};
@@ -37,23 +36,19 @@
     }
     document.addEventListener("CategoriesChanged", handleCategoriesChanged);
 </script>
-<script src="/static/js/viewBudgetEl.mjs" type="module"></script>
+<script src="/static/js/nb-view-budget.mjs" type="module"></script>
 
-<view-budget-el budget='{{ budget|tojson }}' transactions='{{ transactions|tojson }}'
+<nb-view-budget budget='{{ budget|tojson }}' transactions='{{ transactions|tojson }}'
     categories='{{ categories|tojson }}' currentPage="{{ page }}" numPages="{{ num_pages }}"
-    numTransactions="{{ total }}"></view-budget-el>
+    numTransactions="{{ total }}"></nb-view-budget>
+
 
 <nav aria-label="...">
-    <sl-button-group label="Pagination" class="pagination">
-        <sl-button id="prev" variant="default" label="Previous page"><sl-icon name="chevron-left"></sl-icon></sl-button>
-        <sl-button id="next" variant="default" label="Next page"><sl-icon name="chevron-right"></sl-icon></sl-button>
-    </sl-button-group>
+    <wa-button-group label="Pagination" class="pagination">
+        <wa-button id="prev" variant="default" label="Previous page"><wa-icon library="ion" name="chevron-forward-outline"></wa-icon></wa-button>
+        <wa-button id="next" variant="default" label="Next page"><wa-icon library="ion" name="chevron-back-outline"></wa-icon></wa-button>
+    </wa-button-group>
 </nav>
 
-<!-- <script src="/static/js/setdate.js"></script> -->
-<!-- <script src="/static/js/transaction.mjs" type="module"></script>
-    <script src="/static/js/viewbudget.mjs" type="module"></script>
-    <script src="/static/js/viewBudgetSearchCard.mjs" type="module"></script>
-    <script src="/static/js/shareBudgetElement.mjs" type="module"></script> -->
 
 {% endblock content %}

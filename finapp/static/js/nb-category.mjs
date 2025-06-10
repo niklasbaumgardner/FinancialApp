@@ -9,12 +9,6 @@ export class Category extends NikElement {
     removable: { type: Boolean },
   };
 
-  static get queries() {
-    return {
-      dialog: "sl-dialog",
-    };
-  }
-
   constructor() {
     super();
 
@@ -23,7 +17,7 @@ export class Category extends NikElement {
 
   handleRemoveClick() {
     this.dispatchEvent(
-      new CustomEvent("sl-remove", {
+      new CustomEvent("wa-remove", {
         bubbles: true,
         cancelable: false,
         composed: true,
@@ -35,15 +29,15 @@ export class Category extends NikElement {
     return html`<span class="tag ${this.color}" part="base"
       ><span>${this.name}</span>${this.removable
         ? html`
-            <sl-icon-button
+            <wa-icon-button
               class="tag__remove"
-              name="x-lg"
-              library="system"
+              name="system/close-large-line"
+              library="remix"
               label="Remove"
               class="tag__remove"
               @click=${this.handleRemoveClick}
               tabindex="-1"
-            ></sl-icon-button>
+            ></wa-icon-button>
           `
         : ""}</span
     >`;

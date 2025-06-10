@@ -120,8 +120,8 @@ export class ViewBudgets extends NikElement {
           </div>
         </div>
         <div class="col-auto pt-5 px-0 mr-0">
-          <sl-button variant="nik" outline @click=${this.handleAddBudgetClick}
-            >Add New Budget</sl-button
+          <wa-button variant="nik" outline @click=${this.handleAddBudgetClick}
+            >Add New Budget</wa-button
           >
         </div>
       </div>

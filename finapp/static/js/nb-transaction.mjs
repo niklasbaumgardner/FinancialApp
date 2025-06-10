@@ -149,50 +149,50 @@ export class Transaction extends NikElement {
 
   transferTemplate() {
     if (this.transaction.is_transfer) {
-      return html`<sl-tag
+      return html`<wa-tag
         class="width-fit-content fs-75"
         variant="primary"
         size="small"
         pill
-        >Transfer</sl-tag
+        >Transfer</wa-tag
       >`;
     }
   }
 
   nameTemplate() {
     if (this.editing) {
-      return html`<sl-input
+      return html`<wa-input
           id="editName"
           name="editName"
           autocomplete="niklas"
           value="${this.transaction.name}"
-        ></sl-input>
-        <sl-input
+        ></wa-input>
+        <wa-input
           id="editDate"
           class="width-fit-content"
           name="editDate"
           type="date"
           value="${this.transaction.date}"
           size="small"
-        ></sl-input>`;
+        ></wa-input>`;
     }
 
     return html`<p class="fs-5 my-0">${this.transaction.name}</p>
       <div class="d-flex align-items-center">
         <span class="fs-75 me-2"
-          ><sl-format-date
+          ><wa-format-date
             date=${this.transaction.date + "T00:00:00"}
             month="long"
             day="numeric"
             year="numeric"
-          ></sl-format-date></span
+          ></wa-format-date></span
         >${this.transferTemplate()}
       </div>`;
   }
 
   amountTemplate() {
     if (this.editing) {
-      return html`<sl-input
+      return html`<wa-input
         id="editAmount"
         name="editAmount"
         class="flex-shrink-0 edit-amount"
@@ -200,80 +200,74 @@ export class Transaction extends NikElement {
         step=".01"
         type="number"
         value="${this.transaction.amount}"
-      ></sl-input>`;
+      ></wa-input>`;
     }
 
-    return html`<sl-format-number
+    return html`<wa-format-number
       class="my-0 flex-shrink-0 width-fit-content"
       type="currency"
       currency="USD"
       value="${this.transaction.amount}"
       lang="en-US"
-    ></sl-format-number>`;
+    ></wa-format-number>`;
   }
 
   buttonsTempate() {
-    // if (CURRENT_USER.id !== this.transaction.user_id) {
-    //   return html`<sl-tag variant="primary" size="small"
-    //     >${this.transaction.user.username}</sl-tag
-    //   >`;
-    // }
-
     if (this.editing) {
-      return html`<sl-tooltip content="Delete"
-          ><sl-button
+      return html`<wa-tooltip content="Delete"
+          ><wa-button
             variant="text"
             label="Delete"
             class="danger font-size-large"
             @click=${this.handleDeleteClick}
-            ><sl-icon
+            ><wa-icon
               name="trash"
               label="Delete"
-            ></sl-icon></sl-button></sl-tooltip
-        ><sl-tooltip content="Move transaction"
-          ><sl-button
+            ></wa-icon></wa-button></wa-tooltip
+        ><wa-tooltip content="Move transaction"
+          ><wa-button
             id="moveButton"
             variant="text"
             label="Move transaction"
             class="neutral font-size-large"
             @click=${this.handleMoveTransactionClick}
-            ><sl-icon
+            ><wa-icon
               name="arrows-move"
               label="Move transaction"
-            ></sl-icon></sl-button></sl-tooltip
-        ><sl-tooltip content="Save"
-          ><sl-button
+            ></wa-icon></wa-button></wa-tooltip
+        ><wa-tooltip content="Save"
+          ><wa-button
             id="saveButton"
             label="Save"
             variant="text"
             class="font-size-large"
             @click=${this.handleSaveClick}
-            ><sl-icon
+            ><wa-icon
               name="floppy-fill"
               label="Save"
-            ></sl-icon></sl-button></sl-tooltip
-        ><sl-tooltip content="Cancel"
-          ><sl-button
+            ></wa-icon></wa-button></wa-tooltip
+        ><wa-tooltip content="Cancel"
+          ><wa-button
             label="Cancel"
             variant="text"
             class="default font-size-large"
             @click=${this.handleEditClick}
-            ><sl-icon name="x-lg" label="Cancel"></sl-icon></sl-button
-        ></sl-tooltip>`;
+            ><wa-icon name="x-lg" label="Cancel"></wa-icon></wa-button
+        ></wa-tooltip>`;
     }
 
     return html`${CURRENT_USER.id !== this.transaction.user_id
-        ? html`<sl-tag variant="primary" size="small"
-            >${this.transaction.user.username}</sl-tag
+        ? html`<wa-tag variant="primary" size="small"
+            >${this.transaction.user.username}</wa-tag
           >`
-        : null}<sl-tooltip content="Edit"
-        ><sl-icon-button
+        : null}<wa-tooltip content="Edit"
+        ><wa-icon-button
           class="icon-primary icon-fs-18"
           name="pencil-square"
           label="Settings"
           @click=${this.handleEditClick}
-        ></sl-icon-button
-      ></sl-tooltip>`;
+        ></wa-icon-button
+      ></wa-tooltip>`;
   }
 
   template() {
@@ -294,26 +288,6 @@ export class Transaction extends NikElement {
             ""
           )}"
         ></nb-select>
-      </div>`;
-      return html`<div>
-        <nb-select
-          label="Select any categories"
-          name="categories"
-          value="${this.transaction.categories.reduce(
-            (acc, cur) => acc + " " + cur.category_id,
-            ""
-          )}"
-          max-options-visible="0"
-          multiple
-          clearable
-        >
-          ${CATEGORIES.map(
-            (c) =>
-              html`<sl-option value="${c.id}"
-                ><nb-category name="${c.name}" color="${c.color}"></nb-category
-              ></sl-option>`
-          )}
-        </nb-select>
       </div>`;
     }
 

@@ -13,7 +13,7 @@ export class BudgetCard extends NikElement {
     saveButton: "#save-button",
     deleteButton: "#delete-button",
     nameInput: "#budget-name",
-    toggle: "sl-switch",
+    toggle: "wa-switch",
   };
 
   handleClick() {
@@ -131,22 +131,23 @@ export class BudgetCard extends NikElement {
 
   sharedUserTemplate() {
     if (this.budget.is_shared) {
-      return html`<sl-tooltip
+      return html`<wa-tooltip
         content="This budget is shared with ${this.getSharedUsers()}"
       >
-        <sl-icon
-          name="person-circle"
-          style="padding: var(--sl-spacing-x-small);"
-        ></sl-icon
-      ></sl-tooltip>`;
+        <wa-icon
+          library="ion"
+          name="person-circle-outline"
+          style="padding: var(--wa-space-xs);"
+        ></wa-icon
+      ></wa-tooltip>`;
     }
   }
 
   editingTemplate() {
-    return html`<sl-card
-      ><div class="d-flex flex-column" style="gap:var(--sl-spacing-medium);">
+    return html`<wa-card
+      ><div class="d-flex flex-column" style="gap:var(--wa-spacing-medium);">
         <div class="d-flex justify-content-between" style="height:40px;">
-          <sl-input
+          <wa-input
             id="budget-name"
             name="name"
             value="${this.budget.name}"
@@ -154,73 +155,73 @@ export class BudgetCard extends NikElement {
             autocomplete="niklas"
             size="small"
             required
-          ></sl-input
-          ><sl-tooltip content="Cancel"
-            ><sl-icon-button
+          ></wa-input
+          ><wa-tooltip content="Cancel"
+            ><wa-icon-button
               name="x-lg"
               library="system"
               label="Cancel"
               @click=${this.handleCancelClick}
-            ></sl-icon-button
-          ></sl-tooltip>
+            ></wa-icon-button
+          ></wa-tooltip>
         </div>
         <div class="d-flex justify-content-between">
-          <sl-format-number
+          <wa-format-number
             type="currency"
             currency="USD"
             value="${this.budget.total}"
             lang="en-US"
-          ></sl-format-number>
-          <sl-switch ?checked=${this.budget.is_active}>Active</sl-switch>
+          ></wa-format-number>
+          <wa-switch ?checked=${this.budget.is_active}>Active</wa-switch>
         </div>
         <div class="d-flex gx-2">
-          <sl-button
+          <wa-button
             class="w-50"
             variant="danger"
             id="delete-button"
             outline
             size="small"
             @click=${this.handleDeleteClick}
-            >Delete</sl-button
-          ><sl-button
+            >Delete</wa-button
+          ><wa-button
             id="save-button"
             class="w-50"
             variant="primary"
             size="small"
             @click=${this.handleSaveClick}
             disabled
-            >Save</sl-button
+            >Save</wa-button
           >
         </div>
-      </div></sl-card
+      </div></wa-card
     >`;
   }
 
   normalTemplate() {
-    return html`<sl-card @click=${this.handleClick}
-      ><div class="d-flex flex-column" style="gap:var(--sl-spacing-medium);">
+    return html`<wa-card @click=${this.handleClick}
+      ><div class="d-flex flex-column" style="gap:var(--wa-spacing-medium);">
         <div class="d-flex justify-content-between" style="height:40px;">
           <h4>${this.budget.name}</h4>
           ${this.sharedUserTemplate()}
         </div>
         <div class="d-flex justify-content-between">
-          <sl-format-number
+          <wa-format-number
             type="currency"
             currency="USD"
             value="${this.budget.total}"
             lang="en-US"
-          ></sl-format-number>
-          <sl-tooltip content="Edit"
-            ><sl-icon-button
+          ></wa-format-number>
+          <wa-tooltip content="Edit"
+            ><wa-icon-button
               style="margin-left:auto;"
               class="icon-primary"
               name="pencil-square"
               label="Settings"
               @click=${this.handleEditClick}
-            ></sl-icon-button
-          ></sl-tooltip>
+            ></wa-icon-button
+          ></wa-tooltip>
         </div></div
-    ></sl-card>`;
+    ></wa-card>`;
   }
 
   render() {
@@ -304,9 +305,9 @@ export class AddBudgetCard extends NikElement {
   }
 
   render() {
-    return html`<sl-card
-      ><div class="d-flex flex-column" style="gap:var(--sl-spacing-small);">
-        <sl-input
+    return html`<wa-card
+      ><div class="d-flex flex-column" style="gap:var(--wa-spacing-small);">
+        <wa-input
           id="budget-name"
           name="name"
           label="Budget name"
@@ -314,8 +315,8 @@ export class AddBudgetCard extends NikElement {
           @input=${this.handleInput}
           autocomplete="niklas"
           size="small"
-        ></sl-input>
-        <sl-input
+        ></wa-input>
+        <wa-input
           id="starting-budget-amount"
           type="number"
           name="amount"
@@ -323,27 +324,27 @@ export class AddBudgetCard extends NikElement {
           placeholder="$0.00"
           autocomplete="niklas"
           size="small"
-        ></sl-input>
+        ></wa-input>
         <div class="d-flex gx-2">
-          <sl-button
+          <wa-button
             class="w-50"
             variant="neutral"
             size="small"
             @click=${this.handleCancelClick}
             outline
-            >Cancel</sl-button
+            >Cancel</wa-button
           >
-          <sl-button
+          <wa-button
             class="w-50"
             id="save-button"
             variant="primary"
             size="small"
             @click=${this.handleSaveClick}
             disabled
-            >Save</sl-button
+            >Save</wa-button
           >
         </div>
-      </div></sl-card
+      </div></wa-card
     >`;
   }
 }

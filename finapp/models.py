@@ -51,6 +51,7 @@ class Budget(db.Model, SerializerMixin):
         "add_transaction_url",
         "shared_users",
         "delete_url",
+        "share_budget_url",
     )
 
     id = db.Column(db.Integer, primary_key=True)
@@ -74,6 +75,9 @@ class Budget(db.Model, SerializerMixin):
 
     def delete_url(self):
         return url_for("editbudget_bp.delete_budget", b_id=self.id)
+
+    def share_budget_url(self):
+        return url_for("sharebudget_bp.share_budget", budget_id=self.id)
 
     def shared_users(self):
         users = user_queries.get_shared_users_for_budget_id(budget_id=self.id)

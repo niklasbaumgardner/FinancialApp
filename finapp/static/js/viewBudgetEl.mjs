@@ -221,11 +221,11 @@ class ViewBudget extends NikElement {
     }
 
     return this.budget.shared_users.map(
-      (u) => html`<sl-tooltip
+      (u) => html`<wa-tooltip
         content="This budget is shared with ${u.username}"
       >
-        <sl-icon name="person-circle"></sl-icon>
-      </sl-tooltip>`
+        <wa-icon library="ion" name="person-circle-outline"></wa-icon>
+      </wa-tooltip>`
     );
   }
 
@@ -244,7 +244,7 @@ class ViewBudget extends NikElement {
           .transaction=${t}
           ?editing=${t.editing ?? false}
         ></nb-transaction>`,
-        html`<sl-divider></sl-divider>`,
+        html`<wa-divider></wa-divider>`,
       ])
       .slice(0, -1);
   }
@@ -252,13 +252,13 @@ class ViewBudget extends NikElement {
   sharedUsersOptionsTemplate() {
     let templateArray = [];
     templateArray.push(
-      html`<sl-option value=${CURRENT_USER.id}
-        >${CURRENT_USER.username}</sl-option
+      html`<wa-option value=${CURRENT_USER.id}
+        >${CURRENT_USER.username}</wa-option
       >`
     );
     templateArray.push(
       ...this.budget.shared_users.map(
-        (su) => html`<sl-option value=${su.id}>${su.username}</sl-option>`
+        (su) => html`<wa-option value=${su.id}>${su.username}</wa-option>`
       )
     );
 
@@ -271,42 +271,42 @@ class ViewBudget extends NikElement {
     }
 
     return html`<div class="row">
-      <sl-select
+      <wa-select
         label="Select user for this transaction"
         name="user"
         value=${CURRENT_USER.id}
-        >${this.sharedUsersOptionsTemplate()}</sl-select
+        >${this.sharedUsersOptionsTemplate()}</wa-select
       >
     </div>`;
   }
 
   render() {
-    return html`<sl-card class="mb-4">
+    return html`<wa-card class="mb-4">
         <div class="row" slot="header">
           <div class="d-flex justify-content-between">
             <div class="fs-1">${this.budget.name}</div>
             <div>
-              ${this.sharedUsersTemplate()}<sl-tooltip
+              ${this.sharedUsersTemplate()}<wa-tooltip
                 content="Share this budget"
               >
-                <sl-icon-button
+                <wa-icon-button
                   id="share-budget-button"
                   name="share-fill"
                   label="Share this budget"
                   @click=${this.handleShareButtonClick}
-                ></sl-icon-button>
-              </sl-tooltip>
+                ></wa-icon-button>
+              </wa-tooltip>
             </div>
           </div>
           <div class="fs-5 mb-0 subhead">
             Total:
-            <sl-format-number
+            <wa-format-number
               id="budgetTotal"
               type="currency"
               currency="USD"
               value="${this.budget.total}"
               lang="en-US"
-            ></sl-format-number>
+            ></wa-format-number>
           </div>
         </div>
 
@@ -317,7 +317,7 @@ class ViewBudget extends NikElement {
         >
           <div class="row">
             <div class="col-12 col-md-8 col-xl-6 mb-2">
-              <sl-input
+              <wa-input
                 type="text"
                 id="name"
                 name="name"
@@ -325,10 +325,10 @@ class ViewBudget extends NikElement {
                 autocomplete="niklas"
                 required
                 @input=${this.checkTransactionInput}
-              ></sl-input>
+              ></wa-input>
             </div>
             <div class="col-6 col-md-4 col-xl-2 mb-2">
-              <sl-input
+              <wa-input
                 class="amount-input-86"
                 type="number"
                 step=".01"
@@ -338,18 +338,18 @@ class ViewBudget extends NikElement {
                 autocomplete="niklas"
                 required
                 @input=${this.checkTransactionInput}
-              ></sl-input>
+              ></wa-input>
             </div>
             <div class="col-6 col-md-4 col-xl-2 mb-2">
-              <sl-input type="date" id="date" name="date" required></sl-input>
+              <wa-input type="date" id="date" name="date" required></wa-input>
             </div>
             <div class="col-12 col-md-8 col-xl-2 mb-2">
-              <sl-button
+              <wa-button
                 class="w-100"
                 variant="primary"
                 id="transaction-submit"
                 type="submit"
-                >Add Transaction</sl-button
+                >Add Transaction</wa-button
               >
             </div>
           </div>
@@ -357,22 +357,22 @@ class ViewBudget extends NikElement {
           <div class="row">
             <nb-select .categories=${this.categories}></nb-select>
             <div>
-              <sl-button
+              <wa-button
                 variant="text"
                 size="small"
                 @click=${this.openCategoriesModal}
-                >Create more categories</sl-button
+                >Create more categories</wa-button
               >
             </div>
           </div>
         </form>
-      </sl-card>
+      </wa-card>
 
       <search-budget-card .categories=${this.categories}></search-budget-card>
 
-      <sl-card class="mb-4">
+      <wa-card class="mb-4">
         <div id="transactionList" class="">${this.transactionsTemplate()}</div>
-      </sl-card>
+      </wa-card>
 
       <div id="moveModals"></div>
       <div id="deleteModals"></div>
