@@ -145,6 +145,7 @@ export class ViewBudget extends NikElement {
               type="date"
               id="date"
               name="date"
+              value=${new Date().toISOString().substring(0, 10)}
               required
             ></wa-input>
             <wa-button
