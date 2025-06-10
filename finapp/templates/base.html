@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="wa-{{ theme }} {{ color }}-primary">
+<html lang="en" class="wa-cloak wa-{{ theme }} {{ color }}-primary">
   <head>
     <!-- Required meta tags -->
     <meta charset="utf-8" />
@@ -21,7 +21,16 @@
     <link rel="icon" type="image/png" href="/static/images/logo.svg" />
     <script src="/static/js/fetch.js"></script>
     <script type="module" src="/static/js/category-modal.mjs"></script>
-    <script type="module" src="/static/js/nb-theme-selector.mjs"></script>
+    <script src="/static/js/nb-theme-selector.mjs" type="module"></script>
+    <script src="/static/js/nb-login.mjs" type="module"></script>
+    <script src="/static/js/nb-signup.mjs" type="module"></script>
+    <script
+      src="/static/js/nb-password-reset-request.mjs"
+      type="module"
+    ></script>
+    <script src="/static/js/nb-reset-password.mjs" type="module"></script>
+    <script src="/static/js/nb-profile.mjs" type="module"></script>
+    <script src="/static/js/nb-preferences.mjs" type="module"></script>
 
     <!-- Webawesome components -->
     <link
@@ -72,6 +81,14 @@
       const CREATE_CATEGORY_URL =
         "{{ url_for('category_bp.create_category') }}";
       const GET_CATEGORIES_URL = "{{ url_for('category_bp.get_categories') }}";
+
+      const LOGIN_URL = "{{ url_for('auth_bp.login') }}";
+      const SIGNUP_URL = "{{ url_for('auth_bp.signup') }}";
+      const PASSWORD_RESET_REQUEST_URL =
+        "{{ url_for('auth_bp.password_request') }}";
+      const PROFILE_URL = "{{ url_for('profile_bp.profile') }}";
+      const USERNAME_UNIQUE_URL = "{{ url_for('auth_bp.username_unique') }}";
+      const EMAIL_UNIQUE_URL = "{{ url_for('auth_bp.email_unique') }}";
     </script>
 
     <script
@@ -102,7 +119,7 @@
       </main></wa-page
     >
 
-    <create-category-modal></create-category-modal>
+    <!-- <create-category-modal></create-category-modal> -->
 
     <div class="">
       {% with messages = get_flashed_messages(with_categories=true) %}

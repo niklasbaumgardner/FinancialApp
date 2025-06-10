@@ -103,29 +103,26 @@ export class ViewBudgets extends NikElement {
         ></nb-budget-card>`
     );
 
-    return html`<div class="index-grid mb-5 pb-5 budget-row" id="active">
-        ${activeBudgets}
-      </div>
-      <div class="index-grid mb-5 pb-5 budget-row" id="inactive">
-        ${inactiveBudgets}
-      </div>`;
+    return html`<div class="wa-grid" id="active">${activeBudgets}</div>
+      <div class="wa-grid" id="inactive">${inactiveBudgets}</div>`;
   }
 
   render() {
-    return html`<div class="row justify-content-between mx-0 welcome mb-5">
-        <div class="col-auto me-auto px-0">
-          <div class="fs-1">Welcome</div>
-          <div class="fs-4 mb-0 subhead">
-            Your total of all budgets is ${this.total}
-          </div>
+    return html`<div class="wa-stack">
+      <div class="wa-split">
+        <div>
+          <h1>Welcome</h1>
+          <h3>Combined budget total: ${this.total}</h3>
         </div>
-        <div class="col-auto pt-5 px-0 mr-0">
-          <wa-button variant="nik" outline @click=${this.handleAddBudgetClick}
-            >Add New Budget</wa-button
-          >
-        </div>
+        <wa-button
+          variant="neutral"
+          appearance="outlined"
+          @click=${this.handleAddBudgetClick}
+          >Add New Budget</wa-button
+        >
       </div>
-      ${this.budgetsTemplate()}`;
+      ${this.budgetsTemplate()}
+    </div>`;
   }
 }
 customElements.define("nb-view-budgets", ViewBudgets);

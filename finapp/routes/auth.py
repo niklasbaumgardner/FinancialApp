@@ -17,11 +17,6 @@ def login():
     if email:
         return render_template("login.html", email=email)
 
-    def get_url_for_route(route, args):
-        if route == "accept_budget":
-            token = args.replace("?token=", "")
-            return url_for("sharebudget_bp.accept_budget", token=token)
-
     email = request.form.get("email")
     password = request.form.get("password")
     remember = request.form.get("remember")
@@ -32,6 +27,7 @@ def login():
         if user and bcrypt.check_password_hash(user.password, password):
             remember = True if remember == "True" else False
             login_user(user, remember=remember)
+
             next_url = request.args.get("next")
             if not next_url:
                 next_url = url_for("viewbudgets_bp.viewbudgets")
@@ -52,7 +48,6 @@ def signup():
         email = request.form.get("email")
         username = request.form.get("username")
         password1 = request.form.get("password1")
-        password2 = request.form.get("password2")
 
         if not user_queries.is_email_unique(email):
             flash("Email already exists. Please log in", "primary")
@@ -63,13 +58,14 @@ def signup():
                 "Username already exists. Please choose a different username",
                 "danger",
             )
-            return render_template("signup.html")
+            return redirect(url_for("auth_bp.signup"))
 
-        if password1 != password2:
-            flash("Passwords don't match. Try again", "warning")
-            return render_template("signup.html", email=email)
+        if len(password1) < 6:
+            flash("Password must be longer than 6 characters. Try again", "warning")
+            return redirect(url_for("auth_bp.signup"))
 
         user_queries.create_user(email=email, username=username, password=password1)
+
         flash("Sign up succesful", "success")
         return redirect(url_for("auth_bp.login"))
 
