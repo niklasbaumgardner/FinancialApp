@@ -89,7 +89,6 @@ export class ViewBudgets extends NikElement {
     let activeBudgets = active.map(
       (b) =>
         html`<nb-budget-card
-          class="button-div"
           .budget=${b}
           .transferBudgets=${active}
         ></nb-budget-card>`
@@ -97,14 +96,13 @@ export class ViewBudgets extends NikElement {
     let inactiveBudgets = inactive.map(
       (b) =>
         html`<nb-budget-card
-          class="button-div"
           .budget=${b}
           .transferBudgets=${active}
         ></nb-budget-card>`
     );
 
-    return html`<div class="wa-grid" id="active">${activeBudgets}</div>
-      <div class="wa-grid" id="inactive">${inactiveBudgets}</div>`;
+    return html`<div class="wa-cluster" id="active">${activeBudgets}</div>
+      <div class="wa-cluster" id="inactive">${inactiveBudgets}</div>`;
   }
 
   render() {
@@ -116,7 +114,7 @@ export class ViewBudgets extends NikElement {
         </div>
         <wa-button
           variant="neutral"
-          appearance="outlined"
+          appearance="filled outlined"
           @click=${this.handleAddBudgetClick}
           >Add New Budget</wa-button
         >

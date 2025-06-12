@@ -1,8 +1,8 @@
-from finapp.models import Budget
+from finapp.models import Budget, SharedBudget
 from finapp.queries import shared_budget_queries, transaction_queries
 from finapp import db
 from flask_login import current_user
-from sqlalchemy.sql import or_
+from sqlalchemy.sql import or_, and_
 
 
 ##
@@ -45,6 +45,24 @@ def get_budget(id, shared=True, query=False):
         return budget_query
 
     return budget_query.first()
+
+
+def can_modify_budget(budget_id):
+    budgets_count = (
+        Budget.query.join(SharedBudget, SharedBudget.budget_id == Budget.id)
+        .where(
+            and_(
+                Budget.id == budget_id,
+                or_(
+                    Budget.user_id == current_user.id,
+                    SharedBudget.user_id == current_user.id,
+                ),
+            )
+        )
+        .count()
+    )
+
+    return budgets_count > 0
 
 
 def get_budgets(separate=False, active_only=False, inactive_only=False):

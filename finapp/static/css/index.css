@@ -11,3 +11,12 @@
 wa-page > main {
   padding: var(--wa-space-m);
 }
+
+nb-budget-card {
+  display: flex;
+  width: fit-content;
+}
+
+wa-card.wa-card-p-0::part(body) {
+  padding: 0;
+}

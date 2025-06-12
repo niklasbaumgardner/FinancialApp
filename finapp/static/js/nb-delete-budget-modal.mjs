@@ -9,13 +9,15 @@ export class DeleteBudget extends NikElement {
 
   static queries = {
     deleteButton: "#delete-button",
-    dialog: "sl-dialog",
+    dialog: "wa-dialog",
   };
 
   show() {
-    this.updateComplete.then(() => {
-      this.dialog.updateComplete.then(() => {
-        this.dialog.show();
+    customElements.whenDefined("wa-dialog").then(() => {
+      this.updateComplete.then(() => {
+        this.dialog.updateComplete.then(() => {
+          this.dialog.show();
+        });
       });
     });
   }
@@ -27,7 +29,7 @@ export class DeleteBudget extends NikElement {
   transferBudgetsTemplate() {
     return this.transferBudgets.map(
       (b) =>
-        html`<sl-radio name="new_budget" value=${b.id}>${b.name}</sl-radio>`
+        html`<wa-radio name="new_budget" value=${b.id}>${b.name}</wa-radio>`
     );
   }
 
@@ -37,37 +39,41 @@ export class DeleteBudget extends NikElement {
   }
 
   render() {
-    return html`<sl-dialog
+    return html`<wa-dialog
       label='Are you sure you want to delete this budget named "${this.budget
         .name}" ?'
     >
       <form method="POST" id="delete-budget" action=${this.budget.delete_url}>
-        <sl-radio-group
+        <wa-radio-group
           label="Select a budget to transfer the transactions to"
           name="new_budget"
           required
         >
-          <sl-radio name="new_budget" value="-1"
-            >Delete transactions along with this budget</sl-radio
+          <wa-radio name="new_budget" value="-1"
+            >Delete transactions along with this budget</wa-radio
           >
           ${this.transferBudgetsTemplate()}
-        </sl-radio-group>
+        </wa-radio-group>
       </form>
-      <div class="row" slot="footer">
-        <sl-button class="w-50" variant="neutral" outline @click=${this.hide}
-          >Cancel</sl-button
+      <div class="w-full flex gap-(--wa-space-m)" slot="footer">
+        <wa-button
+          class="grow"
+          variant="neutral"
+          appearance="filled outlined"
+          data-dialog="close"
+          >Cancel</wa-button
         >
-        <sl-button
+        <wa-button
           @click=${this.handleDeleteClick}
           id="delete-button"
-          class="w-50"
+          class="grow"
           variant="danger"
           type="submit"
           form="delete-budget"
-          >Delete</sl-button
+          >Delete</wa-button
         >
       </div>
-    </sl-dialog>`;
+    </wa-dialog>`;
   }
 }
 customElements.define("nb-delete-budget-modal", DeleteBudget);

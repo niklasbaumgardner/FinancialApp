@@ -16,12 +16,8 @@ export class BudgetCard extends NikElement {
     toggle: "wa-switch",
   };
 
-  handleClick() {
-    window.location.href = this.budget.url;
-  }
-
   handleEditClick(event) {
-    event.stopPropagation();
+    event.preventDefault();
     this.editing = true;
   }
 
@@ -39,9 +35,7 @@ export class BudgetCard extends NikElement {
     this.editing = false;
   }
 
-  handleDeleteClick(event) {
-    event.stopPropagation();
-
+  handleDeleteClick() {
     if (!this.deleteModal) {
       this.deleteModal = document.createElement("nb-delete-budget-modal");
       this.deleteModal.budget = this.budget;
@@ -100,11 +94,13 @@ export class BudgetCard extends NikElement {
   }
 
   handleInput() {
-    if (
-      this.nameInput.value === "" ||
-      this.nameInput.value === this.budget.name
-    ) {
+    if (this.nameInput.value === "") {
       this.saveButton.disabled = true;
+      return;
+    }
+
+    if (this.nameInput.value === this.budget.name) {
+      this.saveButton.disabled = this.toggle.checked === this.budget.is_active;
       return;
     }
 
@@ -131,41 +127,43 @@ export class BudgetCard extends NikElement {
 
   sharedUserTemplate() {
     if (this.budget.is_shared) {
-      return html`<wa-tooltip
-        content="This budget is shared with ${this.getSharedUsers()}"
-      >
-        <wa-icon
+      return html`<wa-tooltip for="shared-user-budget-${this.budget.id}"
+          >This budget is shared with ${this.getSharedUsers()}</wa-tooltip
+        ><wa-icon
+          id="shared-user-budget-${this.budget.id}"
           library="ion"
           name="person-circle-outline"
-          style="padding: var(--wa-space-xs);"
-        ></wa-icon
-      ></wa-tooltip>`;
+        ></wa-icon>`;
     }
   }
 
   editingTemplate() {
-    return html`<wa-card
-      ><div class="d-flex flex-column" style="gap:var(--wa-spacing-medium);">
-        <div class="d-flex justify-content-between" style="height:40px;">
+    return html`<wa-card class="w-14"
+      ><div class="wa-stack" @input=${this.handleInput}>
+        <div class="wa-split flex-nowrap!">
           <wa-input
+            class="grow"
             id="budget-name"
             name="name"
             value="${this.budget.name}"
-            @input=${this.handleInput}
             autocomplete="niklas"
             size="small"
             required
-          ></wa-input
-          ><wa-tooltip content="Cancel"
-            ><wa-icon-button
-              name="x-lg"
-              library="system"
+          ></wa-input>
+          <div>
+            <wa-tooltip for="cancel-budget-${this.budget.id}"
+              >Cancel</wa-tooltip
+            >
+            <wa-icon-button
+              id="cancel-budget-${this.budget.id}"
+              name="system/close-large-line"
+              library="remix"
               label="Cancel"
               @click=${this.handleCancelClick}
-            ></wa-icon-button
-          ></wa-tooltip>
+            ></wa-icon-button>
+          </div>
         </div>
-        <div class="d-flex justify-content-between">
+        <div class="wa-split">
           <wa-format-number
             type="currency"
             currency="USD"
@@ -174,19 +172,19 @@ export class BudgetCard extends NikElement {
           ></wa-format-number>
           <wa-switch ?checked=${this.budget.is_active}>Active</wa-switch>
         </div>
-        <div class="d-flex gx-2">
+        <div class="flex gap-(--wa-space-m)">
           <wa-button
-            class="w-50"
+            class="grow"
             variant="danger"
             id="delete-button"
-            outline
+            appearance="outlined"
             size="small"
             @click=${this.handleDeleteClick}
             >Delete</wa-button
           ><wa-button
             id="save-button"
-            class="w-50"
-            variant="primary"
+            class="grow"
+            variant="brand"
             size="small"
             @click=${this.handleSaveClick}
             disabled
@@ -198,29 +196,36 @@ export class BudgetCard extends NikElement {
   }
 
   normalTemplate() {
-    return html`<wa-card @click=${this.handleClick}
-      ><div class="d-flex flex-column" style="gap:var(--wa-spacing-medium);">
-        <div class="d-flex justify-content-between" style="height:40px;">
-          <h4>${this.budget.name}</h4>
+    return html`<wa-card class="w-14 wa-card-p-0"
+      ><a
+        class="wa-stack text-[unset]! no-underline! p-(--spacing)"
+        href=${this.budget.url}
+      >
+        <div class="wa-split">
+          <span class="wa-heading-m">${this.budget.name}</span>
           ${this.sharedUserTemplate()}
         </div>
-        <div class="d-flex justify-content-between">
+        <div class="wa-split flex-nowrap!">
           <wa-format-number
             type="currency"
             currency="USD"
             value="${this.budget.total}"
             lang="en-US"
           ></wa-format-number>
-          <wa-tooltip content="Edit"
-            ><wa-icon-button
-              style="margin-left:auto;"
-              class="icon-primary"
-              name="pencil-square"
-              label="Settings"
+          <div>
+            <wa-tooltip for="edit-budget-${this.budget.id}">Edit</wa-tooltip>
+            <wa-button
+              appearance="plain"
+              variant="brand"
+              id="edit-budget-${this.budget.id}"
               @click=${this.handleEditClick}
-            ></wa-icon-button
-          ></wa-tooltip>
-        </div></div
+              ><wa-icon
+                library="ion"
+                name="create-outline"
+                class="text-(length:--wa-font-size-m)"
+              ></wa-icon
+            ></wa-button>
+          </div></div></a
     ></wa-card>`;
   }
 
@@ -305,16 +310,17 @@ export class AddBudgetCard extends NikElement {
   }
 
   render() {
-    return html`<wa-card
-      ><div class="d-flex flex-column" style="gap:var(--wa-spacing-small);">
+    return html`<wa-card class="w-14"
+      ><div class="wa-stack">
         <wa-input
           id="budget-name"
           name="name"
           label="Budget name"
           placeholder="Hello world"
-          @input=${this.handleInput}
           autocomplete="niklas"
           size="small"
+          @input=${this.handleInput}
+          required
         ></wa-input>
         <wa-input
           id="starting-budget-amount"
@@ -325,19 +331,19 @@ export class AddBudgetCard extends NikElement {
           autocomplete="niklas"
           size="small"
         ></wa-input>
-        <div class="d-flex gx-2">
+        <div class="flex gap-(--wa-space-m)">
           <wa-button
-            class="w-50"
+            class="grow"
             variant="neutral"
             size="small"
+            appearance="outlined"
             @click=${this.handleCancelClick}
-            outline
             >Cancel</wa-button
           >
           <wa-button
-            class="w-50"
+            class="grow"
             id="save-button"
-            variant="primary"
+            variant="brand"
             size="small"
             @click=${this.handleSaveClick}
             disabled

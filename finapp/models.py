@@ -129,7 +129,9 @@ class Transaction(db.Model, SerializerMixin):
     is_transfer = db.Column(db.Boolean, nullable=True)
     paycheck_id = db.Column(db.Integer, db.ForeignKey("paycheck.id"), nullable=True)
 
-    categories = db.relationship("TransactionCategory", lazy="joined")
+    categories = db.relationship(
+        "TransactionCategory", lazy="joined", passive_deletes=True
+    )
     user = db.relationship("User", lazy="joined")
 
     def edit_url(self):
@@ -180,6 +182,9 @@ class TransactionCategory(db.Model, SerializerMixin):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     transaction_id = db.Column(
         db.Integer, db.ForeignKey("transaction.id"), nullable=False
+    )
+    new_transaction_id = db.Column(
+        db.Integer, db.ForeignKey("transaction.id"), nullable=True
     )
     category_id = db.Column(db.Integer, db.ForeignKey("category.id"), nullable=False)
 

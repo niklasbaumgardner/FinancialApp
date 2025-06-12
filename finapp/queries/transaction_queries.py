@@ -407,6 +407,12 @@ def delete_transactions(transactions):
     db.session.commit()
 
 
+def delete_transactions_for_budget(budegt_id):
+    if budget_queries.can_modify_budget(budget_id=budegt_id):
+        Transaction.query.filter_by(budegt_id=budegt_id).delete()
+        db.session.commit()
+
+
 def transaction_category_query(category_id):
     return TransactionCategory.query.where(
         Transaction.id == TransactionCategory.transaction_id,
