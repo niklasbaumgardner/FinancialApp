@@ -181,7 +181,7 @@ class TransactionCategory(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     transaction_id = db.Column(
-        db.Integer, db.ForeignKey("transaction.id"), nullable=False
+        db.Integer, db.ForeignKey("transaction.id", ondelete="CASCADE"), nullable=False
     )
     new_transaction_id = db.Column(
         db.Integer, db.ForeignKey("transaction.id"), nullable=True
