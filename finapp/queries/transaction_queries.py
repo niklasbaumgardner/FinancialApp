@@ -8,7 +8,7 @@ from finapp.queries import (
 from finapp import db
 from flask_login import current_user
 from sqlalchemy.sql import func, or_, and_
-from sqlalchemy import extract
+from sqlalchemy import extract, update
 from datetime import date
 
 
@@ -379,6 +379,30 @@ def updates_transactions_budget(transactions, new_budget_id):
     db.session.commit()
 
 
+def bulk_update_transactions_budget(old_budget_id, new_budget_id):
+    print(
+        "old budget",
+        old_budget_id,
+        budget_queries.can_modify_budget(budget_id=old_budget_id),
+    )
+    print(
+        "new budget",
+        new_budget_id,
+        budget_queries.can_modify_budget(budget_id=new_budget_id),
+    )
+    if budget_queries.can_modify_budget(
+        budget_id=old_budget_id
+    ) and budget_queries.can_modify_budget(budget_id=new_budget_id):
+        print("updating transactions")
+        transactions_update = (
+            update(Transaction)
+            .where(Transaction.budget_id == old_budget_id)
+            .values(budget_id=new_budget_id)
+        )
+        db.session.execute(transactions_update)
+        db.session.commit()
+
+
 def delete_transaction(transaction_id):
     transaction = get_transaction(transaction_id=transaction_id)
     _delete_transaction(transaction=transaction)
@@ -407,7 +431,7 @@ def delete_transactions(transactions):
     db.session.commit()
 
 
-def delete_transactions_for_budget(budegt_id):
+def bulk_delete_transactions_for_budget(budegt_id):
     if budget_queries.can_modify_budget(budget_id=budegt_id):
         Transaction.query.filter_by(budegt_id=budegt_id).delete()
         db.session.commit()

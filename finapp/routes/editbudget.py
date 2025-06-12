@@ -82,17 +82,6 @@ def delete_budget(b_id):
 
     # move or delete the transactions
     new_budget = budget_queries.get_budget(new_budget_id) if new_budget_id else None
-    transactions = transaction_queries.get_transactions(b_id)
-    if new_budget:
-        transaction_queries.updates_transactions_budget(
-            transactions=transactions, new_budget_id=new_budget.id
-        )
-
-    else:
-        transaction_queries.delete_transactions(transactions=transactions)
-
-    # delete prefills
-    prefill_queries.delete_prefills_for_budget(budget_id=budget.id)
 
     # update shared budgets
     shared_budgets = shared_budget_queries.get_shared_budgets_by_budget_id(
@@ -105,6 +94,22 @@ def delete_budget(b_id):
         budget_queries.set_budget_shared(budget_id=new_budget.id)
     elif shared_budgets:
         shared_budget_queries.delete_shared_budgets(shared_budgets=shared_budgets)
+
+    # transactions = transaction_queries.get_transactions(b_id)
+    if new_budget:
+        # transaction_queries.updates_transactions_budget(
+        #     transactions=transactions, new_budget_id=new_budget.id
+        # )
+        transaction_queries.bulk_update_transactions_budget(
+            old_budget_id=b_id, new_budget_id=new_budget_id
+        )
+
+    else:
+        # transaction_queries.delete_transactions(transactions=transactions)
+        transaction_queries.bulk_delete_transactions_for_budget(budegt_id=b_id)
+
+    # delete prefills
+    prefill_queries.delete_prefills_for_budget(budget_id=budget.id)
 
     # finally delete the budget
     budget_queries.delete_budget(b_id)

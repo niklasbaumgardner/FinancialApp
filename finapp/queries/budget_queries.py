@@ -48,21 +48,12 @@ def get_budget(id, shared=True, query=False):
 
 
 def can_modify_budget(budget_id):
-    budgets_count = (
-        Budget.query.join(SharedBudget, SharedBudget.budget_id == Budget.id)
-        .where(
-            and_(
-                Budget.id == budget_id,
-                or_(
-                    Budget.user_id == current_user.id,
-                    SharedBudget.user_id == current_user.id,
-                ),
-            )
-        )
-        .count()
-    )
+    budget_count = Budget.query.filter_by(id=budget_id, user_id=current_user.id).count()
+    shared_budget_count = SharedBudget.query.filter_by(
+        budget_id=budget_id, user_id=current_user.id
+    ).count()
 
-    return budgets_count > 0
+    return (budget_count + shared_budget_count) > 0
 
 
 def get_budgets(separate=False, active_only=False, inactive_only=False):

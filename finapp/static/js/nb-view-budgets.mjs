@@ -46,27 +46,15 @@ export class ViewBudgets extends NikElement {
   }
 
   handleToggleActive(event) {
-    const budget = event.target;
-    budget.remove();
-    const active = budget.budget.is_active;
+    const budgetEl = event.target;
+    const budget = budgetEl.budget;
+    budgetEl.remove();
+    const isActive = budget.is_active;
 
-    if (active) {
-      let index = INACTIVE.findIndex((element) => element === budget);
-      INACTIVE.splice(index, 1);
+    let newIndex = this.findNewIndex(budget.name, isActive);
+    this.budgets[isActive ? 0 : 1].splice(newIndex, 0, budget);
 
-      let newIndex = findNewIndex(budget.budget.name, active);
-      ACTIVE.splice(newIndex, 0, budget);
-
-      addToActive(newIndex, budget);
-    } else {
-      let index = ACTIVE.findIndex((element) => element === budget);
-      ACTIVE.splice(index, 1);
-
-      let newIndex = findNewIndex(budget.budget.name, active);
-      INACTIVE.splice(newIndex, 0, budget);
-
-      addToInactive(newIndex, budget);
-    }
+    this.requestUpdate();
   }
 
   handleAddBudget(event) {
