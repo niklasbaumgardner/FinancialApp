@@ -183,9 +183,6 @@ class TransactionCategory(db.Model, SerializerMixin):
     transaction_id = db.Column(
         db.Integer, db.ForeignKey("transaction.id", ondelete="CASCADE"), nullable=False
     )
-    new_transaction_id = db.Column(
-        db.Integer, db.ForeignKey("transaction.id"), nullable=True
-    )
     category_id = db.Column(db.Integer, db.ForeignKey("category.id"), nullable=False)
 
     category = db.relationship("Category", lazy="joined")
