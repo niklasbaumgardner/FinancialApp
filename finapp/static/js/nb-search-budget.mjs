@@ -1,10 +1,9 @@
 import { html } from "./imports.mjs";
 import { NikElement } from "./customElement.mjs";
-import "./searchItem.mjs";
+import "./nb-search-item.mjs";
 import "./nb-categories-select.mjs";
-import nbSelect from "./nb-categories-select.mjs";
 
-class BudgetSearchCard extends NikElement {
+export class SearchBudget extends NikElement {
   #sortingValues = {
     0: '{"date":"desc"}',
     1: '{"date":"asc"}',
@@ -20,7 +19,7 @@ class BudgetSearchCard extends NikElement {
     super();
 
     this.numSearchItems = 1;
-    this.searchItems = [document.createElement("search-item")];
+    this.searchItems = [document.createElement("nb-search-item")];
     this.exactAmount = true;
     this.exactDate = true;
 
@@ -39,8 +38,8 @@ class BudgetSearchCard extends NikElement {
 
   static get queries() {
     return {
-      dropdownItems: { all: "sl-menu-item" },
-      inputEls: { all: "sl-input" },
+      dropdownItems: { all: "wa-menu-item" },
+      inputEls: { all: "wa-input" },
       amountInputEl: "#searchAmount",
       maxAmountInputEl: "#maxAmount",
       minAmountInputEl: "#minAmount",
@@ -49,12 +48,16 @@ class BudgetSearchCard extends NikElement {
       endDateInputEl: "#endDate",
       searchCountEl: "#searchResultsCount",
       searchSumEl: "#searchResultsSum",
-      nbSelect: "nb-select",
+      nbSelect: "nb-categories-select",
     };
   }
 
   get currentSortValue() {
     return this.searching ? this.#searchingSortValue : this.#defaultSortValue;
+  }
+
+  get currentSortValueAsJson() {
+    return this.#sortingValues[this.currentSortValue ?? 0];
   }
 
   set currentSortValue(val) {
@@ -167,7 +170,7 @@ class BudgetSearchCard extends NikElement {
   }
 
   addNewSearchItem() {
-    this.searchItems.push(document.createElement("search-item"));
+    this.searchItems.push(document.createElement("nb-search-item"));
     this.searchItems.at(-1).focus({ focusVisible: true });
     this.numSearchItems += 1;
   }
@@ -213,208 +216,228 @@ class BudgetSearchCard extends NikElement {
   }
 
   sortTemplate() {
-    return html`<sl-dropdown @sl-select=${this.handleSortingSelcted}>
-      <sl-button slot="trigger" caret>Sort by</sl-button>
-      <sl-menu>
-        <sl-menu-item
+    return html`<wa-dropdown @select=${this.handleSortingSelcted}>
+      <wa-button slot="trigger" caret appearance="outlined">Sort by</wa-button>
+      <wa-menu>
+        <wa-menu-item
           type="checkbox"
           value="0"
           ?checked=${0 === this.currentSortValue}
-          >Date: Newest to oldest</sl-menu-item
+          >Date: Newest to oldest</wa-menu-item
         >
-        <sl-menu-item
+        <wa-menu-item
           type="checkbox"
           value="1"
           ?checked=${1 === this.currentSortValue}
-          >Date: Oldest to newest</sl-menu-item
+          >Date: Oldest to newest</wa-menu-item
         >
-        <sl-divider></sl-divider>
-        <sl-menu-item
+        <wa-divider></wa-divider>
+        <wa-menu-item
           type="checkbox"
           value="2"
           ?checked=${2 === this.currentSortValue}
-          >Name: Alphabetical</sl-menu-item
+          >Name: Alphabetical</wa-menu-item
         >
-        <sl-menu-item
+        <wa-menu-item
           type="checkbox"
           value="3"
           ?checked=${3 === this.currentSortValue}
-          >Name: Reverse alphabetical</sl-menu-item
+          >Name: Reverse alphabetical</wa-menu-item
         >
-        <sl-divider></sl-divider>
-        <sl-menu-item
+        <wa-divider></wa-divider>
+        <wa-menu-item
           type="checkbox"
           value="4"
           ?checked=${4 === this.currentSortValue}
-          >Amount: Most income</sl-menu-item
+          >Amount: Most income</wa-menu-item
         >
-        <sl-menu-item
+        <wa-menu-item
           type="checkbox"
           value="5"
           ?checked=${5 === this.currentSortValue}
-          >Amount: Most expensive</sl-menu-item
+          >Amount: Most expensive</wa-menu-item
         >
-      </sl-menu>
-    </sl-dropdown>`;
+      </wa-menu>
+    </wa-dropdown>`;
   }
 
   searchAmountTemplate() {
     if (this.exactAmount) {
-      return html`<div class="col-12 col-lg-7">
-          <sl-input
-            label="Amount"
-            type="number"
-            step=".01"
-            id="searchAmount"
-            placeholder="0.00"
-            help-text="Use + for positive numbers (income) and no symbol for negative (spent)."
-          ></sl-input>
-        </div>
-        <div class="col-12 col-lg-5 d-flex align-items-center">
-          <sl-button
-            variant="primary"
-            outline
-            class="w-100"
-            @click=${this.toggleAmountSearch}
-          >
-            Search by amount range
-          </sl-button>
-        </div>`;
-    }
-
-    return html`<div class="col-12 col-md-6 col-xl-4">
-        <sl-input
-          label="Min amount"
+      return html`<div class="wa-cluster items-center!">
+        <wa-input
+          label="Amount"
           type="number"
           step=".01"
-          id="minAmount"
+          id="searchAmount"
           placeholder="0.00"
-          help-text="+ for positive numbers and - / no symbol for negative"
-        ></sl-input>
-      </div>
-      <div class="col-12 col-md-6 col-xl-4">
-        <sl-input
-          label="Max amount"
-          type="number"
-          step=".01"
-          id="maxAmount"
-          placeholder="0.00"
-          help-text="+ for positive numbers and - / no symbol for negative"
-        ></sl-input>
-      </div>
-      <div class="col-12 col-xl-4 d-flex align-items-center">
-        <sl-button
-          variant="primary"
-          outline
-          class="w-100"
+          hint="Use + for positive numbers (income) and no symbol for negative (spent)."
+          class="grow"
+        ></wa-input>
+        <wa-button
+          variant="brand"
+          appearance="outlined"
+          class="grow"
           @click=${this.toggleAmountSearch}
         >
-          Search by exact amount
-        </sl-button>
+          Search by amount range
+        </wa-button>
       </div>`;
+    }
+
+    return html`<div class="wa-cluster items-center!">
+      <wa-input
+        class="grow"
+        label="Min amount"
+        type="number"
+        step=".01"
+        id="minAmount"
+        placeholder="0.00"
+        hint="+ for positive numbers and - / no symbol for negative"
+      ></wa-input>
+
+      <wa-input
+        class="grow"
+        label="Max amount"
+        type="number"
+        step=".01"
+        id="maxAmount"
+        placeholder="0.00"
+        hint="+ for positive numbers and - / no symbol for negative"
+      ></wa-input>
+
+      <wa-button
+        variant="brand"
+        appearance="outlined"
+        class="grow"
+        @click=${this.toggleAmountSearch}
+      >
+        Search by exact amount
+      </wa-button>
+    </div>`;
   }
 
   dateTemplate() {
     if (this.exactDate) {
-      return html`<div class="col-12 col-md-6">
-          <sl-input label="Date" type="date" id="exactDate"></sl-input>
-        </div>
-        <div class="col-12 col-md-6 d-flex align-items-end">
-          <sl-button
-            variant="primary"
-            outline
-            class="w-100"
-            @click=${this.toggleDateSearch}
-          >
-            Search by start and end date
-          </sl-button>
-        </div>`;
-    }
+      return html`<div class="wa-cluster items-end!">
+        <wa-input
+          class="grow"
+          label="Date"
+          type="date"
+          id="exactDate"
+        ></wa-input>
 
-    return html`<div class="col-12 col-xl-5">
-        <sl-input label="Start date" type="date" id="startDate"></sl-input>
-      </div>
-      <div class="col-12 col-xl-5">
-        <sl-input label="End date" type="date" id="endDate"></sl-input>
-      </div>
-      <div class="col-12 col-xl-2 d-flex align-items-end">
-        <sl-button
-          variant="primary"
-          outline
-          class="w-100"
+        <wa-button
+          variant="brand"
+          appearance="outlined"
+          class="grow"
           @click=${this.toggleDateSearch}
         >
-          Search by exact date
-        </sl-button>
+          Search by start and end date
+        </wa-button>
       </div>`;
+    }
+
+    return html`<div class="wa-cluster items-end!">
+      <wa-input
+        class="grow"
+        label="Start date"
+        type="date"
+        id="startDate"
+      ></wa-input>
+
+      <wa-input
+        class="grow"
+        label="End date"
+        type="date"
+        id="endDate"
+      ></wa-input>
+
+      <wa-button
+        variant="brand"
+        appearance="outlined"
+        class="grow"
+        @click=${this.toggleDateSearch}
+      >
+        Search by exact date
+      </wa-button>
+    </div>`;
   }
 
   template() {
     if (this.searching) {
-      return html`<div class="row mb-3">
-          <div class="col">
-            <div class="row gy-2">
-              <div class="col-12 col-md-3">${this.sortTemplate()}</div>
-              <div class="col">
-                <p class="fs-4">
-                  <span id="searchResultsCount">0 transactions</span> totalling
-                  <span class="fw-bold" id="searchResultsSum">$0</span>
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="col-2 col-md-1 text-end">
-            <sl-icon-button
-              name="x-lg"
-              library="system"
-              label="Cancel"
-              @click=${this.toggleSearch}
-              style="font-size: 22px;"
-            ></sl-icon-button>
-          </div>
-        </div>
-        <div class="row mb-2">
-          <div
-            class="col search-items-grid"
-            @SearchItemRemoved=${this.handleSearchItemRemoved}
-          >
-            ${this.searchItems}<sl-button
-              variant="primary"
-              class="col-12 col-md-5 col-lg-4 col-xl-3"
-              outline
-              @click=${this.addNewSearchItem}
-            >
-              Add new search term
-            </sl-button>
-          </div>
-        </div>
-        <div class="row gy-2 mb-2">
-          <nb-select .categories=${this.categories}></nb-select>
-        </div>
-        <div class="row gy-2 mb-2">${this.searchAmountTemplate()}</div>
-        <div class="row gy-2">${this.dateTemplate()}</div>`;
+      return html``;
     }
 
-    return html`<div class="row">
-      <div class="col">${this.sortTemplate()}</div>
-      <div class="col text-end">
-        <sl-icon-button
-          name="search"
-          label="Search"
-          @click=${this.toggleSearch}
-          style="font-size: 22px;"
-        ></sl-icon-button>
-      </div>
+    return html``;
+  }
+
+  viewTemplate() {
+    return html`<div class="wa-split">
+      ${this.sortTemplate()}
+      <wa-button appearance="plain" label="Search" @click=${this.toggleSearch}>
+        <wa-icon
+          class="text-(length:--wa-font-size-xl)"
+          library="ion"
+          name="search-outline"
+        ></wa-icon>
+      </wa-button>
     </div>`;
   }
 
+  searchTemplate() {
+    return html`<div class="wa-stack">
+      <div class="wa-split">
+        ${this.sortTemplate()}
+        <span class="wa-body-l">
+          <span id="searchResultsCount">0 transactions</span> totalling
+          <span class="wa-heading-m" id="searchResultsSum">$0</span>
+        </span>
+        <wa-button
+          id="cancel-search"
+          label="Cancel"
+          appearance="plain"
+          @click=${this.toggleSearch}
+          ><wa-icon
+            library="remix"
+            name="system/close-large-line"
+            label="Cancel"
+            class="text-(length:--wa-font-size-xl)"
+          ></wa-icon
+        ></wa-button>
+      </div>
+
+      <div
+        class="wa-cluster flex-nowrap"
+        @SearchItemRemoved=${this.handleSearchItemRemoved}
+      >
+        ${this.searchItems}
+        <wa-button
+          variant="brand"
+          appearance="outlined"
+          @click=${this.addNewSearchItem}
+        >
+          Add new search term
+        </wa-button>
+      </div>
+      <nb-categories-select
+        .categories=${this.categories}
+      ></nb-categories-select>
+      <div class="">${this.searchAmountTemplate()}</div>
+      <div class="">${this.dateTemplate()}</div>
+    </div> `;
+  }
+
   render() {
-    return html`<sl-card @sl-input=${this.handleInputEvent} class="mb-4"
-      >${this.template()}</sl-card
+    if (this.searching) {
+      return html`<wa-card @input=${this.handleInputEvent}
+        >${this.searchTemplate()}</wa-card
+      >`;
+    }
+
+    return html`<wa-card @input=${this.handleInputEvent}
+      >${this.viewTemplate()}</wa-card
     >`;
   }
 }
 
-export default BudgetSearchCard;
-
-customElements.define("search-budget-card", BudgetSearchCard);
+customElements.define("nb-search-budget", SearchBudget);

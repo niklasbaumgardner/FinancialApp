@@ -73,7 +73,9 @@ def create_transaction(
 def get_transaction(transaction_id):
     return (
         Transaction.query.join(Budget, Budget.id == Transaction.budget_id)
-        .join(SharedBudget, SharedBudget.budget_id == Transaction.budget_id)
+        .join(
+            SharedBudget, SharedBudget.budget_id == Transaction.budget_id, isouter=True
+        )
         .where(
             and_(
                 Transaction.id == transaction_id,
@@ -380,20 +382,9 @@ def updates_transactions_budget(transactions, new_budget_id):
 
 
 def bulk_update_transactions_budget(old_budget_id, new_budget_id):
-    print(
-        "old budget",
-        old_budget_id,
-        budget_queries.can_modify_budget(budget_id=old_budget_id),
-    )
-    print(
-        "new budget",
-        new_budget_id,
-        budget_queries.can_modify_budget(budget_id=new_budget_id),
-    )
     if budget_queries.can_modify_budget(
         budget_id=old_budget_id
     ) and budget_queries.can_modify_budget(budget_id=new_budget_id):
-        print("updating transactions")
         transactions_update = (
             update(Transaction)
             .where(Transaction.budget_id == old_budget_id)
@@ -403,37 +394,28 @@ def bulk_update_transactions_budget(old_budget_id, new_budget_id):
         db.session.commit()
 
 
-def delete_transaction(transaction_id):
-    transaction = get_transaction(transaction_id=transaction_id)
-    _delete_transaction(transaction=transaction)
-
-
-def _delete_transaction(transaction):
-    if transaction:
-        # delete transaction categories
-        for c in transaction.categories:
-            db.session.delete(c)
-
-        db.session.delete(transaction)
+def delete_transaction(transaction_id, budget_id):
+    if can_modify_transaction(transaction_id=transaction_id):
+        Transaction.query.filter_by(id=transaction_id).delete()
         db.session.commit()
 
-        budget_queries.update_budget_total(b_id=transaction.budget_id)
+        budget_queries.update_budget_total(b_id=budget_id)
 
 
-def delete_transactions(transactions):
-    for t in transactions:
-        # delete transaction categories
-        for c in t.categories:
-            db.session.delete(c)
+# def delete_transactions(transactions):
+#     for t in transactions:
+#         # delete transaction categories
+#         for c in t.categories:
+#             db.session.delete(c)
 
-        db.session.delete(t)
+#         db.session.delete(t)
 
-    db.session.commit()
+#     db.session.commit()
 
 
-def bulk_delete_transactions_for_budget(budegt_id):
-    if budget_queries.can_modify_budget(budget_id=budegt_id):
-        Transaction.query.filter_by(budegt_id=budegt_id).delete()
+def bulk_delete_transactions_for_budget(budget_id):
+    if budget_queries.can_modify_budget(budget_id=budget_id):
+        Transaction.query.filter_by(budget_id=budget_id).delete()
         db.session.commit()
 
 

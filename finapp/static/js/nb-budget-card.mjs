@@ -195,7 +195,7 @@ export class BudgetCard extends NikElement {
     >`;
   }
 
-  normalTemplate() {
+  viewTemplate() {
     return html`<wa-card class="w-14 wa-card-p-0"
       ><a
         class="wa-stack text-[unset]! no-underline! p-(--spacing)"
@@ -234,7 +234,7 @@ export class BudgetCard extends NikElement {
       return this.editingTemplate();
     }
 
-    return this.normalTemplate();
+    return this.viewTemplate();
   }
 }
 customElements.define("nb-budget-card", BudgetCard);

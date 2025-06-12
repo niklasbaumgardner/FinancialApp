@@ -145,7 +145,9 @@ class Transaction(db.Model, SerializerMixin):
         )
 
     def delete_url(self):
-        return url_for("viewbudget_bp.delete_transaction", t_id=self.id)
+        return url_for(
+            "viewbudget_bp.delete_transaction", b_id=self.budget_id, t_id=self.id
+        )
 
 
 class PaycheckPrefill(db.Model, SerializerMixin):

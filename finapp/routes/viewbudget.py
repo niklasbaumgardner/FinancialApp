@@ -245,12 +245,12 @@ def move_transaction(sb_id, t_id):
     return {"success": True}
 
 
-@viewbudget_bp.route("/delete_transaction/<int:t_id>", methods=["DELETE"])
+@viewbudget_bp.route("/delete_transaction/<int:b_id>/<int:t_id>", methods=["DELETE"])
 @login_required
-def delete_transaction(t_id):
+def delete_transaction(b_id, t_id):
     page = request.form.get("page")
     page = page if page else 1
 
-    transaction_queries.delete_transaction(transaction_id=t_id)
+    transaction_queries.delete_transaction(transaction_id=t_id, budget_id=b_id)
 
     return {"success": True}

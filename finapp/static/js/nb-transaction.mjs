@@ -1,7 +1,6 @@
 import { NikElement } from "./customElement.mjs";
 import { html } from "./imports.mjs";
-import { postRequest } from "./fetch.mjs";
-import "./nb-select.mjs";
+import "./nb-categories-select.mjs";
 import "./nb-move-transaction.mjs";
 import "./nb-delete-transaction.mjs";
 
@@ -21,11 +20,13 @@ export class Transaction extends NikElement {
 
   static get queries() {
     return {
-      editNameEl: "#editName",
-      editDateEl: "#editDate",
-      editAmountEl: "#editAmount",
-      saveButtonEl: "#saveButton",
-      categoriesSelect: "nb-select",
+      nameInput: "#name",
+      dateInput: "#date",
+      amountInput: "#amount",
+      saveButton: "#save-button",
+      categoriesSelect: "nb-categories-select",
+      form: "form",
+      buttons: { all: "wa-button" },
     };
   }
 
@@ -43,17 +44,29 @@ export class Transaction extends NikElement {
     return { categoriesAdded, categoriesDeleted };
   }
 
-  handleEditClick() {
-    this.editing = !this.editing;
+  setEditingState() {
+    this.editing = true;
+  }
+
+  setViewingState() {
+    for (let button of this.buttons) {
+      button.disabled = false;
+    }
+
+    this.saveButton.loading = false;
+    this.editing = false;
   }
 
   async handleSaveClick() {
-    this.saveButtonEl.loading = true;
-    this.saveButtonEl.disabled = true;
+    this.saveButton.loading = true;
 
-    let newName = this.editNameEl.value;
-    let newDate = this.editDateEl.value;
-    let newAmount = Number(this.editAmountEl.value);
+    for (let button of this.buttons) {
+      button.disabled = true;
+    }
+
+    let newName = this.nameInput.value;
+    let newDate = this.dateInput.value;
+    let newAmount = Number(this.amountInput.value);
 
     let currentCategories = this.transaction.categories.map(
       (c) => c.category_id
@@ -74,7 +87,7 @@ export class Transaction extends NikElement {
       !categoriesAdded.length &&
       !categoriesDeleted.length
     ) {
-      this.editing = false;
+      this.setViewingState();
       return;
     }
 
@@ -85,12 +98,8 @@ export class Transaction extends NikElement {
       options.lessThanCurrentPage = true;
     }
 
-    console.log(options);
+    let formData = new FormData(this.form);
 
-    let formData = new FormData();
-    formData.set("name", newName);
-    formData.set("amount", newAmount);
-    formData.set("date", newDate);
     for (let c_id of categoriesAdded) {
       formData.append("categoriesAdded", c_id);
     }
@@ -98,12 +107,13 @@ export class Transaction extends NikElement {
       formData.append("categoriesDeleted", c_id);
     }
 
-    let response = await postRequest(this.transaction.edit_url, formData);
+    let response = await fetch(this.transaction.edit_url, {
+      method: "POST",
+      body: formData,
+    });
     response = await response.json();
-    let newTransaction = response.transaction;
-    this.transaction.name = newTransaction.name;
-    this.transaction.amount = newTransaction.amount;
-    this.transaction.categories = newTransaction.categories;
+
+    this.transaction = response.transaction;
     this.transaction.categories.sort((a, b) =>
       a.category.name.localeCompare(b.category.name)
     );
@@ -121,9 +131,7 @@ export class Transaction extends NikElement {
       })
     );
 
-    this.saveButtonEl.loading = false;
-    this.saveButtonEl.disabled = false;
-    this.editing = false;
+    this.setViewingState();
   }
 
   handleMoveTransactionClick() {
@@ -159,152 +167,177 @@ export class Transaction extends NikElement {
     }
   }
 
-  nameTemplate() {
-    if (this.editing) {
-      return html`<wa-input
-          id="editName"
-          name="editName"
-          autocomplete="niklas"
-          value="${this.transaction.name}"
-        ></wa-input>
-        <wa-input
-          id="editDate"
-          class="width-fit-content"
-          name="editDate"
-          type="date"
-          value="${this.transaction.date}"
-          size="small"
-        ></wa-input>`;
-    }
-
-    return html`<p class="fs-5 my-0">${this.transaction.name}</p>
-      <div class="d-flex align-items-center">
-        <span class="fs-75 me-2"
-          ><wa-format-date
-            date=${this.transaction.date + "T00:00:00"}
-            month="long"
-            day="numeric"
-            year="numeric"
-          ></wa-format-date></span
-        >${this.transferTemplate()}
-      </div>`;
+  editButtonsTempate() {
+    return html`<wa-tooltip for="delete-transaction-${this.transaction.id}"
+        >Delete</wa-tooltip
+      ><wa-button
+        id="delete-transaction-${this.transaction.id}"
+        label="Delete"
+        variant="danger"
+        appearance="plain"
+        @click=${this.handleDeleteClick}
+        ><wa-icon
+          library="ion"
+          name="trash-outline"
+          label="Delete"
+          class="text-(length:--wa-font-size-l)"
+        ></wa-icon></wa-button
+      ><wa-tooltip for="move-transaction-${this.transaction.id}"
+        >Move Transaction</wa-tooltip
+      ><wa-button
+        id="move-transaction-${this.transaction.id}"
+        appearance="plain"
+        label="Move Transaction"
+        @click=${this.handleMoveTransactionClick}
+        ><wa-icon
+          library="ion"
+          name="move-outline"
+          label="Move Transaction"
+          class="text-(length:--wa-font-size-l)"
+        ></wa-icon></wa-button
+      ><wa-tooltip for="save-button">Save</wa-tooltip
+      ><wa-button
+        id="save-button"
+        label="Save"
+        appearance="plain"
+        variant="brand"
+        @click=${this.handleSaveClick}
+        ><wa-icon
+          library="ion"
+          name="save"
+          label="Save"
+          class="text-(length:--wa-font-size-l)"
+        ></wa-icon></wa-button
+      ><wa-tooltip for="cancel-${this.transaction.id}">Cancel</wa-tooltip
+      ><wa-button
+        id="cancel-${this.transaction.id}"
+        label="Cancel"
+        appearance="plain"
+        @click=${this.setViewingState}
+        ><wa-icon
+          library="remix"
+          name="system/close-large-line"
+          label="Cancel"
+          class="text-(length:--wa-font-size-l)"
+        ></wa-icon
+      ></wa-button>`;
   }
 
-  amountTemplate() {
-    if (this.editing) {
-      return html`<wa-input
-        id="editAmount"
-        name="editAmount"
-        class="flex-shrink-0 edit-amount"
-        autocomplete="niklas"
-        step=".01"
-        type="number"
-        value="${this.transaction.amount}"
-      ></wa-input>`;
-    }
-
-    return html`<wa-format-number
-      class="my-0 flex-shrink-0 width-fit-content"
-      type="currency"
-      currency="USD"
-      value="${this.transaction.amount}"
-      lang="en-US"
-    ></wa-format-number>`;
-  }
-
-  buttonsTempate() {
-    if (this.editing) {
-      return html`<wa-tooltip content="Delete"
-          ><wa-button
-            variant="text"
-            label="Delete"
-            class="danger font-size-large"
-            @click=${this.handleDeleteClick}
-            ><wa-icon
-              name="trash"
-              label="Delete"
-            ></wa-icon></wa-button></wa-tooltip
-        ><wa-tooltip content="Move transaction"
-          ><wa-button
-            id="moveButton"
-            variant="text"
-            label="Move transaction"
-            class="neutral font-size-large"
-            @click=${this.handleMoveTransactionClick}
-            ><wa-icon
-              name="arrows-move"
-              label="Move transaction"
-            ></wa-icon></wa-button></wa-tooltip
-        ><wa-tooltip content="Save"
-          ><wa-button
-            id="saveButton"
-            label="Save"
-            variant="text"
-            class="font-size-large"
-            @click=${this.handleSaveClick}
-            ><wa-icon
-              name="floppy-fill"
-              label="Save"
-            ></wa-icon></wa-button></wa-tooltip
-        ><wa-tooltip content="Cancel"
-          ><wa-button
-            label="Cancel"
-            variant="text"
-            class="default font-size-large"
-            @click=${this.handleEditClick}
-            ><wa-icon name="x-lg" label="Cancel"></wa-icon></wa-button
-        ></wa-tooltip>`;
-    }
-
+  viewButtonsTemplate() {
     return html`${CURRENT_USER.id !== this.transaction.user_id
         ? html`<wa-tag variant="primary" size="small"
             >${this.transaction.user.username}</wa-tag
           >`
-        : null}<wa-tooltip content="Edit"
-        ><wa-icon-button
-          class="icon-primary icon-fs-18"
-          name="pencil-square"
-          label="Settings"
-          @click=${this.handleEditClick}
-        ></wa-icon-button
-      ></wa-tooltip>`;
+        : null}
+      <wa-tooltip for="edit-transaction-${this.transaction.id}"
+        >Edit</wa-tooltip
+      >
+      <wa-button
+        appearance="plain"
+        variant="brand"
+        id="edit-transaction-${this.transaction.id}"
+        @click=${this.setEditingState}
+        ><wa-icon
+          library="ion"
+          name="create-outline"
+          class="text-(length:--wa-font-size-l)"
+        ></wa-icon
+      ></wa-button>`;
   }
 
-  template() {
-    return html`<div class="name">
-        <div class="column-flex">${this.nameTemplate()}</div>
+  viewTemplate() {
+    return html`<div class="wa-stack">
+      <div class="wa-grid">
+        <div class="name">
+          <div class="wa-stack gap-(--wa-space-xs)!">
+            <span class="wa-body-xl">${this.transaction.name}</span>
+            <div class="wa-cluster">
+              <wa-format-date
+                class="w-fit wa-body-xs"
+                date=${this.transaction.date + "T00:00:00"}
+                month="long"
+                day="numeric"
+                year="numeric"
+              ></wa-format-date
+              >${this.transferTemplate()}
+            </div>
+          </div>
+        </div>
+        <div class="flex justify-center items-start">
+          <wa-format-number
+            class="wa-body-m"
+            type="currency"
+            currency="USD"
+            value=${this.transaction.amount}
+            lang="en-US"
+          ></wa-format-number>
+        </div>
+        <div class="flex justify-end">${this.viewButtonsTemplate()}</div>
       </div>
-      <div class="amount">${this.amountTemplate()}</div>
-      <div class="buttons transaction-buttons">${this.buttonsTempate()}</div>`;
-  }
-
-  categoriesTemplate() {
-    if (this.editing) {
-      return html`<div>
-        <nb-select
-          .categories=${CATEGORIES}
-          selected="${this.transaction.categories.reduce(
-            (acc, cur) => acc + " " + cur.category_id,
-            ""
-          )}"
-        ></nb-select>
-      </div>`;
-    }
-
-    return html`<div class="existing-categories mt-3">
-      ${this.transaction.categories.map(
-        (c) =>
-          html`<nb-category
-            name="${c.category.name}"
-            color="${c.category.color}"
-          ></nb-category>`
-      )}
+      <div class="wa-cluster gap-(--wa-space-2xs)!">
+        ${this.transaction.categories.map(
+          (c) =>
+            html`<nb-category
+              name="${c.category.name}"
+              color="${c.category.color}"
+            ></nb-category>`
+        )}
+      </div>
     </div>`;
   }
 
+  editTemplate() {
+    return html`<form class="wa-stack">
+      <div class="wa-grid">
+        <div class="name">
+          <div class="wa-stack gap-(--wa-space-xs)!">
+            <wa-input
+              id="name"
+              name="name"
+              autocomplete="niklas"
+              value=${this.transaction.name}
+              required
+            ></wa-input>
+            <wa-input
+              id="date"
+              class="width-fit-content"
+              name="date"
+              type="date"
+              value=${this.transaction.date}
+              size="small"
+              required
+            ></wa-input>
+          </div>
+        </div>
+        <div class="flex justify-center items-start">
+          <wa-input
+            id="amount"
+            name="amount"
+            autocomplete="niklas"
+            step=".01"
+            type="number"
+            value=${this.transaction.amount}
+            required
+          ></wa-input>
+        </div>
+        <div class="flex justify-end">${this.editButtonsTempate()}</div>
+      </div>
+
+      <nb-categories-select
+        .categories=${CATEGORIES}
+        selected="${this.transaction.categories.reduce(
+          (acc, cur) => acc + " " + cur.category_id,
+          ""
+        )}"
+      ></nb-categories-select>
+    </form>`;
+  }
+
   render() {
-    return html`<div class="transaction-grid">${this.template()}</div>
-      ${this.categoriesTemplate()}`;
+    if (this.editing) {
+      return this.editTemplate();
+    }
+    return this.viewTemplate();
   }
 }
 

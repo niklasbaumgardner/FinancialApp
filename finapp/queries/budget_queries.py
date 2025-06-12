@@ -29,14 +29,14 @@ def get_budget_for_id(id):
 
 
 def get_budget(id, shared=True, query=False):
-    budget_query = Budget.query.where(
-        Budget.id == id,
-        or_(
-            Budget.user_id == current_user.id,
-            (
-                shared_budget_queries.get_shared_budgets_query_by_budget().exists()
-                if shared
-                else False
+    budget_query = Budget.query.join(
+        SharedBudget, Budget.id == SharedBudget.budget_id, isouter=True
+    ).where(
+        and_(
+            Budget.id == id,
+            or_(
+                Budget.user_id == current_user.id,
+                SharedBudget.user_id == current_user.id,
             ),
         ),
     )

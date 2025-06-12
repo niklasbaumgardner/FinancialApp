@@ -1,10 +1,9 @@
-import SlSelect from "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.16.0/cdn/components/select/select.js";
 import WaSelect from "https://early.webawesome.com/webawesome@3.0.0-alpha.13/dist/components/select/select.js";
 import { html } from "./imports.mjs";
 import { NikElement } from "./customElement.mjs";
 import "./nb-category.mjs";
 
-class BaseNBSelect extends WaSelect {
+export class BaseSelect extends WaSelect {
   constructor() {
     super();
 
@@ -30,9 +29,9 @@ class BaseNBSelect extends WaSelect {
   }
 }
 
-customElements.define("base-nb-select", BaseNBSelect);
+customElements.define("nb-base-select", BaseSelect);
 
-class NBSelect extends NikElement {
+export class CategoriesSelect extends NikElement {
   static properties = {
     categories: { type: Array },
     value: { type: Array },
@@ -41,7 +40,7 @@ class NBSelect extends NikElement {
 
   static get queries() {
     return {
-      select: "base-nb-select",
+      select: "nb-base-select",
     };
   }
 
@@ -58,8 +57,8 @@ class NBSelect extends NikElement {
   }
 
   render() {
-    return html`<base-nb-select
-      label="Select any categories"
+    return html`<nb-base-select
+      label="Select Categories"
       name="categories"
       max-options-visible="0"
       multiple
@@ -70,10 +69,9 @@ class NBSelect extends NikElement {
           html`<wa-option value="${c.id}"
             ><nb-category name="${c.name}" color="${c.color}"></nb-category
           ></wa-option>`
-      )}</base-nb-select
+      )}</nb-base-select
     >`;
   }
 }
-export default { NBSelect, BaseNBSelect };
 
-customElements.define("nb-select", NBSelect);
+customElements.define("nb-categories-select", CategoriesSelect);

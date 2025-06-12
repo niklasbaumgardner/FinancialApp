@@ -2,12 +2,10 @@ import { NikElement } from "./customElement.mjs";
 import { html } from "./imports.mjs";
 
 export class SearchItem extends NikElement {
-  static get queries() {
-    return {
-      inputEl: "#search-name",
-      removeButtonEl: "#search-remove",
-    };
-  }
+  static queries = {
+    input: "#search-name",
+    removeButton: "wa-icon-button",
+  };
 
   connectedCallback() {
     super.connectedCallback();
@@ -16,11 +14,11 @@ export class SearchItem extends NikElement {
 
   async focus(options) {
     await this.updateComplete;
-    this.inputEl.focus(options);
+    this.input.focus(options);
   }
 
   handleClick(event) {
-    if (event.target.id === "search-remove") {
+    if (event.target === this.removeButton) {
       this.dispatchEvent(
         new CustomEvent("SearchItemRemoved", { bubbles: true, composed: true })
       );
@@ -29,20 +27,23 @@ export class SearchItem extends NikElement {
   }
 
   render() {
-    return html`<sl-input
+    return html`<div class="wa-cluster gap-(--wa-space-xs)! grow">
+      <wa-input
         id="search-name"
-        class="searchName w-100"
+        class="grow"
         type="text"
         placeholder="Search"
         clearable
-      ></sl-input
-      ><sl-icon-button
-        id="search-remove"
-        name="x-lg"
+      ></wa-input>
+      <wa-icon-button
+        class="text-(length:--wa-font-size-l) danger-icon-button"
+        library="ion"
+        name="trash-outline"
         label="Remove"
-        style="font-size: 22px;"
+        appearance="plain"
         @click=${this.handleClick}
-      ></sl-icon-button>`;
+      ></wa-icon-button>
+    </div>`;
   }
 }
-customElements.define("search-item", SearchItem);
+customElements.define("nb-search-item", SearchItem);

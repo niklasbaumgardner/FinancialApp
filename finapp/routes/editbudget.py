@@ -106,7 +106,7 @@ def delete_budget(b_id):
 
     else:
         # transaction_queries.delete_transactions(transactions=transactions)
-        transaction_queries.bulk_delete_transactions_for_budget(budegt_id=b_id)
+        transaction_queries.bulk_delete_transactions_for_budget(budget_id=b_id)
 
     # delete prefills
     prefill_queries.delete_prefills_for_budget(budget_id=budget.id)
