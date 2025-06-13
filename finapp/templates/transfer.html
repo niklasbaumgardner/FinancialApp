@@ -1,89 +1,17 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block title %}Transfer{% endblock title %} {% block
+transfer %}active{% endblock transfer %} {% block backButton %}<sl-button
+  href="/"
+  class="me-4"
+  variant="primary"
+  outline
+  ><sl-icon slot="prefix" name="caret-left"></sl-icon>Back</sl-button
+>{% endblock backButton %} {% block content %}
 
-{% block title %}Transfer{% endblock title %}
-{% block transfer %}active{% endblock transfer %}
-{% block backButton %}<sl-button href="/" class="me-4" variant="primary" outline><sl-icon slot="prefix" name="caret-left"></sl-icon>Back</sl-button>{% endblock backButton %}
-
-
-
-{% block content %}
-
-<div class="row justify-content-center align-items-center">
-    <div class="col-12 col-lg-8">
-        <sl-card>
-            <p class="card-title fs-2 mb-3">Transfer money</p>
-            <sl-divider></sl-divider>
-            <form action="{{ url_for('transfer_bp.transfer') }}" method="POST">
-                <input type="date" id="date" name="date" hidden>
-                <div class="row g-4 mb-4">
-                    <div class="col-sm-6 col-lg-12">
-                        <div class="row">
-                            <div class="col-12 col-lg-6 mb-3">
-                                <sl-input label="Transaction name" id="paycheckName" name="name" placeholder="Transfer Me" autocomplete="niklas" required></sl-input>
-                            </div>
-                            <div class="col-12 col-lg-6 mb-3">
-                                <sl-input label="Transfer amount" type="number" step=".01" id="paycheck_amount" name="amount" placeholder="0.00" autocomplete="niklas" required></sl-input>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-lg-12">
-                        <div class="row">
-                            <div class="col-12 col-lg-6 mb-3">
-                                <sl-select label="Source budget" placeholder="Please select" name="source_budget" id="source_budget" onchange="remove_from_dest()" required>
-                                    {% for budget in budgets %}
-                                        <sl-option class="source" id="source{{ budget.id }}" value="{{ budget.id }}">{{ str(budget) }}</sl-option>
-                                    {% endfor %}
-                                </sl-select>
-                            </div>
-                            <div class="col-12 col-lg-6 mb-3">
-                                <sl-select label="Destination budget" placeholder="Please select" name="dest_budget" id="dest_budget" onchange="remove_from_source()" required>
-                                    {% for budget in budgets %}
-                                        <sl-option class="dest" id="dest{{ budget.id }}" value="{{ budget.id }}">{{ str(budget) }}</sl-option>
-                                    {% endfor %}
-                                </sl-select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row mb-2">
-                    <sl-button class="w-100" variant="primary" type="submit">Transfer</sl-button>
-                </div>
-            </form>
-        </sl-card>
-    </div>
-</div>
-
-
-<script src="/static/js/setdate.js"></script>
 <script>
-    let sourceSelectEl = document.getElementById("source_budget");
-    let destSelectEl = document.getElementById("dest_budget");
-
-    sourceSelectEl.addEventListener("sl-change", removeFromDest);
-    destSelectEl.addEventListener("sl-change", removeFromSource);
-
-    function removeFromSource() {
-        let sources = document.getElementsByClassName("source");
-        for (let source of sources) {
-            source.style.display = "block";
-        }
-
-        let d_select_id = document.getElementById("dest_budget").value;
-        let source_select = document.getElementById("source" + d_select_id);
-        source_select.style.display = "none";
-    }
-
-    function removeFromDest() {
-        let dests = document.getElementsByClassName("dest");
-        for (let dest of dests) {
-            dest.style.display = "block";
-        }
-
-        let s_select_id = document.getElementById('source_budget').value;
-        let dest_select = document.getElementById("dest" + s_select_id);
-        dest_select.style.display = "none";
-    }
-
+  const TRANSFER_URL = "{{ url_for('transfer_bp.transfer') }}";
 </script>
+<script src="/static/js/nb-transfer.mjs" type="module"></script>
+
+<nb-transfer class="main-card" budgets='{{ budgets|tojson }}'></nb-transfer>
 
 {% endblock content %}

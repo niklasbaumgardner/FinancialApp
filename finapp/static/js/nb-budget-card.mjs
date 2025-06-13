@@ -167,7 +167,7 @@ export class BudgetCard extends NikElement {
           <wa-format-number
             type="currency"
             currency="USD"
-            value="${this.budget.total}"
+            value=${this.budget.total}
             lang="en-US"
           ></wa-format-number>
           <wa-switch ?checked=${this.budget.is_active}>Active</wa-switch>

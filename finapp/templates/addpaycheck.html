@@ -9,6 +9,7 @@ block addtransaction %}active{% endblock addtransaction %} {% block backButton
 <script src="/static/js/nb-add-paycheck.mjs" type="module"></script>
 
 <nb-add-paycheck
+  class="main-card"
   budgets='{{ budgets|tojson }}'
   paychecks='{{ paychecks|tojson }}'
 ></nb-add-paycheck>

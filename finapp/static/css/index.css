@@ -8,6 +8,16 @@
   }
 }
 
+.main-card {
+  display: flex;
+  justify-content: center;
+
+  wa-card {
+    max-width: 100%;
+    width: 60rem;
+  }
+}
+
 wa-page > main {
   padding: var(--wa-space-m) var(--wa-space-m) var(--wa-space-4xl);
 }

@@ -44,4 +44,5 @@ def transfer():
         return redirect(url_for("viewbudgets_bp.viewbudgets"))
 
     budgets = budget_queries.get_budgets(active_only=True)
-    return render_template("transfer.html", budgets=budgets, str=str)
+    budgets = [b.to_dict() for b in budgets]
+    return render_template("transfer.html", budgets=budgets)
