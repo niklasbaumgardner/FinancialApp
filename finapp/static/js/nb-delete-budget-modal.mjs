@@ -23,7 +23,7 @@ export class DeleteBudget extends NikElement {
   }
 
   hide() {
-    this.dialog.hide();
+    this.dialog.open = false;
   }
 
   transferBudgetsTemplate() {

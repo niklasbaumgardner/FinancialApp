@@ -1,64 +1,16 @@
-{% extends "base.html" %}
-
-{% block title %}Add Paycheck{% endblock title %}
-{% block addtransaction %}active{% endblock addtransaction %}
-{% block backButton %}<sl-button href="/" class="me-4" variant="primary" outline><sl-icon slot="prefix" name="caret-left"></sl-icon>Back</sl-button>{% endblock backButton %}
-
-
-{% block content %}
+{% extends "base.html" %} {% block title %}Add Paycheck{% endblock title %} {%
+block addtransaction %}active{% endblock addtransaction %} {% block backButton
+%}<sl-button href="/" class="me-4" variant="primary" outline
+  ><sl-icon slot="prefix" name="caret-left"></sl-icon>Back</sl-button
+>{% endblock backButton %} {% block content %}
 <script>
-    const ADD_PAYCHECK_URL = "{{ url_for('paycheck_bp.paycheck') }}";
+  const ADD_PAYCHECK_URL = "{{ url_for('paycheck_bp.paycheck') }}";
 </script>
 <script src="/static/js/nb-add-paycheck.mjs" type="module"></script>
 
-
-<nb-add-paycheck budgets='{{ budgets|tojson }}'></nb-add-paycheck>
-
-
-
-{% if false %}
-    <sl-dialog id="prefills" label="Copy amounts from a previous paycheck">
-        <div class="dialog-body">
-            {% for i, p in enumerate(prefills) %}
-                <sl-details>
-                    <div slot="summary">Paycheck on <sl-format-date month="long" day="numeric" year="numeric" date="{{ p.date }}T00:00:00"></sl-format-date> for <sl-format-number type="currency" currency="USD" value="{{ p.total }}" lang="en-US"></sl-format-number></div>
-                    <div class="accordio-body">
-                        <table id="table{{ i }}" class="table">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Budget Name</th>
-                                    <th scope="col">Amount</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for t in p.transactions %}
-                                    <tr>
-                                        <td>{{ t.budget.name }}</td>
-                                        <td id="{{ t.budget.id }}"><sl-format-number type="currency" currency="USD" value="{{ t.amount }}" lang="en-US"></sl-format-number></td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                        <div class="row">
-                            <!-- <div class="col-5 p-1">
-                                <sl-button variant="danger" outline onclick="openDeletePrefillDialog('delete')" class="w-100">Delete</sl-button>
-                            </div> -->
-                            <div class="col-12 p-1">
-                                <sl-button variant="primary" onclick="fillBudgetAmountsFromPrefill('table{{ i }}', {{ p.total }});" class=" w-100">Select this previous amount</sl-button>
-                            </div>
-                        </div>
-                    </div>
-                </sl-details>
-            {% endfor %}
-        </div>
-        <div slot="footer">
-            <sl-divider></sl-divider>
-            <sl-button class="w-100" variant="neutral" outline onclick="closePreviousPaycheckDialog()">Cancel</sl-button>
-        </div>
-    </sl-dialog>
-{% endif %}
-
-<!-- <script src="/static/js/setdate.js"></script>
-<script src="/static/js/addpaycheckHelpers.js"></script> -->
+<nb-add-paycheck
+  budgets='{{ budgets|tojson }}'
+  paychecks='{{ paychecks|tojson }}'
+></nb-add-paycheck>
 
 {% endblock content %}

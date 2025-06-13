@@ -22,10 +22,7 @@ def add_paycheck():
     return render_template(
         "addpaycheck.html",
         budgets=budgets,
-        str=str,
-        prefills=paychecks,
-        enumerate=enumerate,
-        showPrefills=len(paychecks) > 0,
+        paychecks=paychecks,
     )
 
 
@@ -42,7 +39,7 @@ def paycheck():
         paycheck = paycheck_queries.create_paycheck(date=date, total=amount)
 
         for budget in budgets:
-            b_amt = request.form.get(budget.name + str(budget.id), type=float)
+            b_amt = request.form.get(f"{budget.name}{budget.id}", type=float)
             if b_amt:
                 transaction_queries.create_transaction(
                     user_id=current_user.id,

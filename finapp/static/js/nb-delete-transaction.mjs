@@ -21,7 +21,7 @@ export class DeleteTransactionModal extends NikElement {
   }
 
   hide() {
-    this.dialog.hide();
+    this.dialog.open = false;
   }
 
   async handleTransactionDelete() {
