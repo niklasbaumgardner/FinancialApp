@@ -6,55 +6,17 @@
 
 
 {% block content %}
-<div class="row justify-content-center align-items-center">
-    <div class="col-12 col-lg-8">
-        <sl-card>
-            <p class="card-title fs-2 mb-3">Add paycheck</p>
-            <sl-divider></sl-divider>
-            <form action="{{ url_for('paycheck_bp.paycheck') }}" method="POST">
-                <div class="row mb-5">
-                    <div class="col-sm nb-row mb-4">
-                        <sl-input id="paycheckName" label="Paycheck Name" name="name" placeholder="I'm rich!" autocomplete="niklas" required></sl-input>
-                        <sl-input id="paycheck_amount" label="Paycheck Amount" type="number" step=".01" name="amount" placeholder="$0.00" autocomplete="niklas" required></sl-input>
-                        <sl-input class="mw-160 w-50" label="Date" type="date" id="date" name="date" required></sl-input>
-                        <!-- <sl-checkbox id="isPercentage" name="isPercentage" onclick="toggleBudgetBreakdown()">Use percentages for breakdown</sl-checkbox> -->
-                        {% if showPrefills %}
-                            <sl-button variant="primary" outline onclick="openPreviousPaycheckDialog()">Copy amounts from previous paycheck</sl-button>
-                        {% endif %}
-                    </div>
-                    <div class="col-sm">
-                        <label class="" for="budget-amounts" style="margin-bottom: var(--sl-spacing-3x-small);">Budget amount breakdown</label>
-                        <ul name="budget-amounts" class="list-group better-scroll border" style="max-height: 400px;overflow-y: scroll;">
-                            {% for budget in budgets %}
-                                <li class="list-group-ite all-budgets-li">
-                                    <sl-card>
-                                        <div class="row mb-1">
-                                            <div class="col">{{ budget.name }}</div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-8">
-                                                <sl-input type="number" step=".01" class="all-budgets" id="{{ budget.name }}{{ budget.id }}" name="{{ budget.name }}{{ budget.id }}" placeholder="$0.00" autocomplete="niklas">
-                                            </div>
-                                            <div class="col-4">
-                                                <p class="display-none mt-2 mb-0" id="{{ budget.id }}_amount"></p>
-                                            </div>
-                                        </div>
-                                    </sl-card>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-                <div class="row mb-2">
-                    <sl-button id="paycheckBtn" class="w-100" type="submit" variant="primary" disabled>Add paycheck</sl-button>
-                </div>
-            </form>
-        </sl-card>
-    </div>
-</div>
+<script>
+    const ADD_PAYCHECK_URL = "{{ url_for('paycheck_bp.paycheck') }}";
+</script>
+<script src="/static/js/nb-add-paycheck.mjs" type="module"></script>
 
 
-{% if showPrefills %}
+<nb-add-paycheck budgets='{{ budgets|tojson }}'></nb-add-paycheck>
+
+
+
+{% if false %}
     <sl-dialog id="prefills" label="Copy amounts from a previous paycheck">
         <div class="dialog-body">
             {% for i, p in enumerate(prefills) %}
@@ -96,7 +58,7 @@
     </sl-dialog>
 {% endif %}
 
-<script src="/static/js/setdate.js"></script>
-<script src="/static/js/addpaycheckHelpers.js"></script>
+<!-- <script src="/static/js/setdate.js"></script>
+<script src="/static/js/addpaycheckHelpers.js"></script> -->
 
 {% endblock content %}

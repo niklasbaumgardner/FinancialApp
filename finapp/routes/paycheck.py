@@ -17,6 +17,8 @@ def add_paycheck():
     budgets = budget_queries.get_budgets(active_only=True)
     paychecks = paycheck_queries.get_paycheck_prefills()
 
+    budgets = [b.to_dict() for b in budgets]
+
     return render_template(
         "addpaycheck.html",
         budgets=budgets,
