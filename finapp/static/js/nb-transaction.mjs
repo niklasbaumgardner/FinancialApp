@@ -311,6 +311,7 @@ export class Transaction extends NikElement {
           <wa-input
             id="amount"
             name="amount"
+            class="min-w-[0]"
             autocomplete="niklas"
             step=".01"
             type="number"
