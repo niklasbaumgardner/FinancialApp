@@ -73,6 +73,13 @@ nb-transaction {
         "name buttons";
       grid-template-columns: repeat(2, minmax(min(20px, 100%), 1fr)) !important;
     }
+
+    @media (width < 32rem) {
+      grid-template-areas:
+        "name amount"
+        "name amount"
+        "buttons buttons";
+    }
   }
 
   .name {
