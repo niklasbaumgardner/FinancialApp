@@ -16,10 +16,10 @@ export class Transfer extends NikElement {
     const availBudgets = Array.from(
       this.budgets.filter((b) => b.id != this.destBudgetSelect?.value)
     );
-    console.log(availBudgets, this.budgets);
+
     return availBudgets.map(
-      (b) => html` <wa-option value=${b.id}
-        >${b.name} |
+      (b) => html`<wa-option value=${b.id}
+        ><span class="wa-heading-s">${b.name}</span>:
         ${new Intl.NumberFormat(undefined, {
           style: "currency",
           currency: "USD",
@@ -45,10 +45,10 @@ export class Transfer extends NikElement {
     const availBudgets = Array.from(
       this.budgets.filter((b) => b.id != this.sourceBudgetSelect?.value)
     );
-    console.log(availBudgets, this.budgets);
+
     return availBudgets.map(
-      (b) => html` <wa-option value=${b.id}
-        >${b.name} |
+      (b) => html`<wa-option value=${b.id}
+        ><span class="wa-heading-s">${b.name}</span>:
         ${new Intl.NumberFormat(undefined, {
           style: "currency",
           currency: "USD",
@@ -70,15 +70,21 @@ export class Transfer extends NikElement {
     </wa-select>`;
   }
 
-  handleInput(event) {
-    console.log(event);
+  handleInput() {
     this.requestUpdate();
   }
 
   render() {
     return html`<wa-card>
       <form action=${TRANSFER_URL} method="POST" class="wa-stack">
-        <input type="date" id="date" name="date" hidden class="hidden" />
+        <input
+          type="date"
+          id="date"
+          name="date"
+          hidden
+          class="hidden"
+          value=${new Date().toISOString().substring(0, 10)}
+        />
         <h2>Transfer money</h2>
         <div class="wa-grid" style="--min-column-size: 20rem;">
           <wa-input
