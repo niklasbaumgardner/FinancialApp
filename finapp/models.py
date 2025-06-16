@@ -35,12 +35,19 @@ class User(db.Model, UserMixin, SerializerMixin):
         return User.query.get(user_id)
 
 
-class Theme(db.Model):
+class Theme(db.Model, SerializerMixin):
+    serialize_rules = (
+        "-id",
+        "-user_id",
+    )
+
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    theme = db.Column(db.String, nullable=True)
-    backgroundColor = db.Column(db.String, nullable=True)
-    color = db.Column(db.String, nullable=True)
+    theme = db.Column(db.String, nullable=True)  # default, classic, custom, etc...
+    mode = db.Column(db.String, nullable=True)  # light, dark
+    primary_color = db.Column(db.String, nullable=True)  # red, blue, green, etc...
+    color_contrast = db.Column(db.String, nullable=True)  # web-awesome values
+    color_palette = db.Column(db.String, nullable=True)  # web-awesome values
 
 
 class Budget(db.Model, SerializerMixin):
