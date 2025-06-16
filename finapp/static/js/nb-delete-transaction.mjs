@@ -7,15 +7,17 @@ export class DeleteTransactionModal extends NikElement {
   };
 
   static queries = {
-    dialog: "sl-dialog",
+    dialog: "wa-dialog",
     deleteButton: "#delete-button",
     form: "form",
   };
 
   show() {
-    this.updateComplete.then(() => {
-      this.dialog.updateComplete.then(() => {
-        this.dialog.show();
+    customElements.whenDefined("wa-dialog").then(() => {
+      this.updateComplete.then(() => {
+        this.dialog.updateComplete.then(() => {
+          this.dialog.open = true;
+        });
       });
     });
   }
@@ -23,7 +25,6 @@ export class DeleteTransactionModal extends NikElement {
   hide() {
     this.dialog.open = false;
   }
-
   async handleTransactionDelete() {
     this.deleteButton.loading = true;
     this.deleteButton.disabled = true;
@@ -44,36 +45,38 @@ export class DeleteTransactionModal extends NikElement {
   }
 
   render() {
-    return html`<sl-dialog
+    return html`<wa-dialog
       label="Are you sure you want to delete this transaction?"
     >
-      <p>Transaction name: ${this.transaction.name}</p>
-      <p>
-        Transaction amount:
-        <sl-format-number
-          type="currency"
-          currency="USD"
-          value="${this.transaction.amount}"
-          lang="en-US"
-        ></sl-format-number>
-      </p>
-      <div class="row" slot="footer">
-        <sl-button
+      <div class="wa-stack">
+        <p>Transaction name: ${this.transaction.name}</p>
+        <p>
+          Transaction amount:
+          <wa-format-number
+            type="currency"
+            currency="USD"
+            value="${this.transaction.amount}"
+            lang="en-US"
+          ></wa-format-number>
+        </p>
+      </div>
+      <div class="wa-cluster w-full" slot="footer">
+        <wa-button
           id="close-button"
-          class="w-50"
+          class="grow"
           variant="neutral"
-          outline
-          @click=${this.hide}
-          >Cancel</sl-button
-        ><sl-button
+          appearance="outlined"
+          data-dialog="close"
+          >Cancel</wa-button
+        ><wa-button
           id="delete-button"
-          class="w-50"
+          class="grow"
           variant="danger"
           @click=${this.handleTransactionDelete}
-          >Delete</sl-button
+          >Delete</wa-button
         >
       </div>
-    </sl-dialog>`;
+    </wa-dialog>`;
   }
 }
 customElements.define("nb-delete-transaction", DeleteTransactionModal);

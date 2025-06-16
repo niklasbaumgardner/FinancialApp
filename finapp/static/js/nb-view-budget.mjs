@@ -59,6 +59,7 @@ export class ViewBudget extends NikElement {
 
     document.addEventListener("RequestNewPages", this);
     document.addEventListener("SortingChanged", this);
+    document.addEventListener("CategoriesChanged", this);
   }
 
   handleEvent(event) {
@@ -68,6 +69,9 @@ export class ViewBudget extends NikElement {
         break;
       case "SortingChanged":
         this.handleSortingChanged(event);
+        break;
+      case "CategoriesChanged":
+        this.handleCategoriesChanged(event);
         break;
     }
   }
@@ -87,6 +91,22 @@ export class ViewBudget extends NikElement {
       lessThanCurrentPage: true,
       greaterThanCurrentPage: true,
     });
+  }
+
+  handleCategoriesChanged(event) {
+    let { categories } = event.detail;
+    if (!categories) {
+      return;
+    }
+
+    this.categories = categories;
+
+    let transcationEls = document.querySelectorAll("nb-transaction");
+    for (let t of transcationEls) {
+      if (t.editing) {
+        t.requestUpdate();
+      }
+    }
   }
 
   toggleSearch(event) {
@@ -168,6 +188,7 @@ export class ViewBudget extends NikElement {
       .flatMap((t) => [
         html`<nb-transaction
           .transaction=${t}
+          .categories=${this.categories}
           ?editing=${t.editing ?? false}
         ></nb-transaction>`,
         html`<wa-divider></wa-divider>`,
@@ -228,7 +249,9 @@ export class ViewBudget extends NikElement {
       paginationResultsText = "Showing 0 to 0 of 0 Results";
     } else {
       paginationResultsText = `Showing ${(this.currentPage - 1) * 10 + 1} to
-          ${this.currentPage * 10} of ${this.numTransactions} Results`;
+          ${Math.min(this.numTransactions, this.currentPage * 10)} of ${
+        this.numTransactions
+      } Results`;
     }
 
     return html`<div class="wa-split">
@@ -267,6 +290,10 @@ export class ViewBudget extends NikElement {
         </wa-button>
       </wa-button-group>
     </div>`;
+  }
+
+  openCategoriesModal() {
+    document.querySelector("nb-category-modal").show();
   }
 
   render() {

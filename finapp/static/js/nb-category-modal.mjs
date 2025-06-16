@@ -1,6 +1,5 @@
 import { NikElement } from "./customElement.mjs";
 import { html } from "./imports.mjs";
-import { getRequest, postRequest } from "./fetch.mjs";
 import "./nb-category.mjs";
 import "./nb-radio.mjs";
 
@@ -11,9 +10,9 @@ export class CreateCategoryModal extends NikElement {
 
   static get queries() {
     return {
-      dialog: "sl-dialog",
+      dialog: "wa-dialog",
       form: "form",
-      input: "sl-input",
+      input: "wa-input",
       submitButton: "#submit-button",
       cancelButton: "#cancel-button",
     };
@@ -23,9 +22,6 @@ export class CreateCategoryModal extends NikElement {
     super();
 
     this.existingCategories = [];
-
-    this.randomColor =
-      "#" + ((Math.random() * 0xffffff) << 0).toString(16).padStart(6, "0");
   }
 
   arraysEqual(arr1, arr2) {
@@ -36,7 +32,7 @@ export class CreateCategoryModal extends NikElement {
     let arr1Sorted = arr1.toSorted((a, b) => a.id - b.id);
     let arr2Sorted = arr2.toSorted((a, b) => a.id - b.id);
 
-    for (var i = 0; i < arr1Sorted.length; ++i) {
+    for (let i = 0; i < arr1Sorted.length; ++i) {
       if (arr1Sorted[i].id !== arr2Sorted[i].id) return false;
     }
     return true;
@@ -58,42 +54,57 @@ export class CreateCategoryModal extends NikElement {
   }
 
   async show() {
-    let request = await getRequest(GET_CATEGORIES_URL);
+    let request = await fetch(GET_CATEGORIES_URL);
     let newCategories = await request.json();
     this.setExistingCategories(newCategories);
-    this.dialog.show();
+
+    customElements.whenDefined("wa-dialog").then(() => {
+      this.updateComplete.then(() => {
+        this.dialog.updateComplete.then(() => {
+          this.dialog.open = true;
+        });
+      });
+    });
   }
 
   hide() {
-    this.dialog.hide();
+    this.dialog.open = false;
   }
 
-  async handleSubmitClick(event) {
-    event.preventDefault();
+  async handleSubmitClick() {
+    if (!this.form.checkValidity) {
+      return true;
+    }
+
     this.submitButton.loading = true;
+    this.submitButton.disabled = true;
     let formData = new FormData(this.form);
 
-    let request = await postRequest(CREATE_CATEGORY_URL, formData);
+    let request = await fetch(CREATE_CATEGORY_URL, {
+      method: "POST",
+      body: formData,
+    });
     let data = await request.json();
 
     this.submitButton.loading = false;
+    this.submitButton.disabled = false;
     this.form.reset();
     this.setExistingCategories(data.categories);
   }
 
   render() {
-    return html`<sl-dialog label="Create a new category"
-      ><form method="POST" @submit=${this.handleSubmitClick}>
-        <div class="nb-row">
-          <sl-input
+    return html`<wa-dialog label="Create a new category">
+      <form>
+        <div class="wa-stack">
+          <wa-input
             label="Category name:"
             placeholder="Food"
             name="name"
             required
-          ></sl-input>
+          ></wa-input>
           <div>
             <div>Select a color: *</div>
-            <div class="color-picker">
+            <div class="wa-cluster">
               <nb-radio value="red" name="color" label="Red"></nb-radio>
               <nb-radio value="gray" name="color" label="Gray"></nb-radio>
               <nb-radio value="orange" name="color" label="Orange"></nb-radio>
@@ -114,9 +125,9 @@ export class CreateCategoryModal extends NikElement {
               <nb-radio value="rose" name="color" label="Rose"></nb-radio>
             </div>
           </div>
-          <sl-card
+          <wa-card
             ><div>Existing categories</div>
-            <div class="existing-categories">
+            <div class="wa-cluster gap-(--wa-space-2xs)!">
               ${this.existingCategories.map(
                 (c) =>
                   html`<nb-category
@@ -124,30 +135,29 @@ export class CreateCategoryModal extends NikElement {
                     color="${c.color}"
                   ></nb-category>`
               )}
-            </div></sl-card
+            </div></wa-card
           >
-          <div class="row" slot="footer">
-            <sl-button
+          <div class="wa-cluster w-full" slot="footer">
+            <wa-button
               id="close-button"
-              class="w-50"
-              variant="neutral"
-              outline
-              @click=${this.hide}
-              >Cancel</sl-button
+              class="grow"
+              appearance="outlined"
+              data-dialog="close"
+              >Cancel</wa-button
             >
-            <sl-button
+            <wa-button
               id="submit-button"
-              class="w-50"
-              variant="primary"
+              class="grow"
+              variant="brand"
               type="submit"
-              >Create category</sl-button
+              @click=${this.handleSubmitClick}
+              >Create category</wa-button
             >
           </div>
         </div>
-      </form></sl-dialog
+      </form></wa-dialog
     >`;
   }
 }
-export default CreateCategoryModal;
 
-customElements.define("create-category-modal", CreateCategoryModal);
+customElements.define("nb-category-modal", CreateCategoryModal);

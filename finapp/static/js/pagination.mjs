@@ -29,7 +29,10 @@ export class Pagination {
 
   set transactions(newTransactions) {
     this.#transactions = newTransactions;
-    this.#controller.transactions = this.transactions;
+    this.#controller.transactions = [];
+    this.#controller.updateComplete.then(() => {
+      this.#controller.transactions = this.transactions;
+    });
   }
   get transactions() {
     return this.#transactions;

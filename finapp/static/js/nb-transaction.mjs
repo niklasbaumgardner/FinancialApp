@@ -5,17 +5,10 @@ import "./nb-move-transaction.mjs";
 import "./nb-delete-transaction.mjs";
 
 export class Transaction extends NikElement {
-  connectedCallback() {
-    super.connectedCallback();
-
-    this.transaction.categories.sort((a, b) =>
-      a.category.name.localeCompare(b.category.name)
-    );
-  }
-
   static properties = {
     editing: { type: Boolean, reflect: true },
     transaction: { type: Object },
+    categories: { type: Array },
   };
 
   static get queries() {
@@ -28,6 +21,14 @@ export class Transaction extends NikElement {
       form: "form",
       buttons: { all: "wa-button" },
     };
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+
+    this.transaction.categories.sort((a, b) =>
+      a.category.name.localeCompare(b.category.name)
+    );
   }
 
   categoriesChange(oldCategories, newCategories) {
@@ -323,7 +324,7 @@ export class Transaction extends NikElement {
       </div>
 
       <nb-categories-select
-        .categories=${CATEGORIES}
+        .categories=${this.categories}
         selected="${this.transaction.categories.reduce(
           (acc, cur) => acc + " " + cur.category_id,
           ""

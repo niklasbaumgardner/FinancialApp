@@ -26,11 +26,7 @@ export class NBRadio extends NikElement {
   }
 
   render() {
-    return html`<button
-      type="button"
-      class="nb-radio"
-      @click=${this.handleClick}
-    >
+    return html`<div class="nb-radio" @click=${this.handleClick} tabindex="0">
       <input
         type="radio"
         id="${this.value}"
@@ -40,7 +36,7 @@ export class NBRadio extends NikElement {
       />
       <div class="circle ${this.value}"></div>
       <label for="${this.value}">${this.label}</label>
-    </button>`;
+    </div>`;
   }
 }
 export default NBRadio;

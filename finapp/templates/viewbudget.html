@@ -1,51 +1,23 @@
 {% extends "base.html" %} {% block title %}{{ budget.name }}{% endblock title %}
 {% block backButton %}<wa-button href="/" variant="brand" appearance="outlined">
-  <wa-icon library="ion" name="chevron-back-outline"></wa-icon
-  > Back</wa-button
+  <wa-icon library="ion" name="chevron-back-outline"></wa-icon> Back</wa-button
 >{% endblock backButton %} {% block content %}
 <script>
-    const GET_PAGE_URL = "{{ url_for('viewbudget_bp.get_page', budget_id=budget.id) }}";
-    const SEARCH_PAGE_URL = "{{ url_for('viewbudget_bp.search', b_id=budget.id) }}";
+  const GET_PAGE_URL = "{{ url_for('viewbudget_bp.get_page', budget_id=budget.id) }}";
+  const SEARCH_PAGE_URL = "{{ url_for('viewbudget_bp.search', b_id=budget.id) }}";
 
-    const params = new URLSearchParams(window.location.search);
-    const TOTAL_TRANSACTIONS = {{ total }};
-    const CURRENT_PAGE = {{ page }};
-    const NUM_PAGES = {{ num_pages }};
-    const BUDGETS = {{ budgets| tojson }};
-    const IS_BUDGET_SHARED = "{{ budget.is_shared }}" === "True";
-    const CURRENT_USER = {{ current_user.to_dict()|tojson }};
-    const CATEGORIES = {{ categories| tojson }};
 
-    function handleCategoriesChanged(event) {
-        let { categories } = event.detail;
-        if (!categories) return;
-
-        // clear out CATEGORIES
-        while (typeof CATEGORIES.shift() !== "undefined") { }
-
-        // Add new categories
-        CATEGORIES.push(...categories);
-
-        let viewBudgetEl = document.querySelector("view-budget-el");
-        viewBudgetEl.categories = categories;
-
-        let transcationEls = document.querySelectorAll("nb-transaction");
-        for (let t of transcationEls) {
-            if (t.editing) {
-                t.requestUpdate();
-            }
-        }
-    }
-    document.addEventListener("CategoriesChanged", handleCategoriesChanged);
+  const CURRENT_USER = {{ current_user.to_dict()|tojson }};
 </script>
 <script src="/static/js/nb-view-budget.mjs" type="module"></script>
 
-<nb-view-budget budget='{{ budget|tojson }}' transactions='{{ transactions|tojson }}'
-    categories='{{ categories|tojson }}' currentPage="{{ page }}" numPages="{{ num_pages }}"
-    numTransactions="{{ total }}"></nb-view-budget>
-
-
-
-
+<nb-view-budget
+  budget='{{ budget|tojson }}'
+  transactions='{{ transactions|tojson }}'
+  categories='{{ categories|tojson }}'
+  currentPage="{{ page }}"
+  numPages="{{ num_pages }}"
+  numTransactions="{{ total }}"
+></nb-view-budget>
 
 {% endblock content %}

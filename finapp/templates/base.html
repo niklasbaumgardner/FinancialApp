@@ -122,7 +122,7 @@
     </script>
     <script src="/static/js/nb-theme-selector.mjs" type="module"></script>
     <script src="/static/js/nb-preferences.mjs" type="module"></script>
-    <script src="/static/js/category-modal.mjs" type="module"></script>
+    <script src="/static/js/nb-category-modal.mjs" type="module"></script>
     <script src="/static/js/nb-login.mjs" type="module"></script>
     <script src="/static/js/nb-signup.mjs" type="module"></script>
     <script
@@ -272,15 +272,15 @@
       </main></wa-page
     >
 
-    <!-- <create-category-modal></create-category-modal> -->
+    <nb-category-modal></nb-category-modal>
 
     <div class="">
       {% with messages = get_flashed_messages(with_categories=true) %}
       <div id="alerts" class="">
         {% if messages %} {% for category, message in messages %}
-        <sl-alert variant="primary" duration="5000" open closable>
+        <wa-alert variant="category" duration="5000" open closable>
           {{ message }}
-        </sl-alert>
+        </wa-alert>
         {% endfor %} {% endif %}
       </div>
       {% endwith %}

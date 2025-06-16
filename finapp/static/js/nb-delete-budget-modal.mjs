@@ -16,7 +16,7 @@ export class DeleteBudget extends NikElement {
     customElements.whenDefined("wa-dialog").then(() => {
       this.updateComplete.then(() => {
         this.dialog.updateComplete.then(() => {
-          this.dialog.show();
+          this.dialog.open = true;
         });
       });
     });
@@ -55,7 +55,7 @@ export class DeleteBudget extends NikElement {
           ${this.transferBudgetsTemplate()}
         </wa-radio-group>
       </form>
-      <div class="w-full flex gap-(--wa-space-m)" slot="footer">
+      <div class="wa-cluster w-full" slot="footer">
         <wa-button
           class="grow"
           variant="neutral"

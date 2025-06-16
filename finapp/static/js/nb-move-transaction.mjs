@@ -8,7 +8,7 @@ export class MoveTransactionModal extends NikElement {
   };
 
   static queries = {
-    dialog: "sl-dialog",
+    dialog: "wa-dialog",
     submitButton: "#submit-button",
     form: "form",
   };
@@ -28,33 +28,34 @@ export class MoveTransactionModal extends NikElement {
     return this.budgets.filter((b) => b.id !== this.transaction.budget_id);
   }
 
-  handleEvent(event) {
-    if (event.target.id === "submit-button") {
-      this.handleTransactionMove();
-    } else if (event.target.id === "close-button") {
-      this.hide();
-    }
-  }
-
   show() {
-    this.updateComplete.then(() => {
-      this.dialog.updateComplete.then(() => {
-        this.dialog.show();
+    customElements.whenDefined("wa-dialog").then(() => {
+      this.updateComplete.then(() => {
+        this.dialog.updateComplete.then(() => {
+          this.dialog.open = true;
+        });
       });
     });
   }
 
   hide() {
-    this.dialog.hide();
+    this.dialog.open = false;
   }
 
   async handleTransactionMove() {
+    if (!this.form.checkValidity()) {
+      return;
+    }
+
     this.submitButton.loading = true;
     this.submitButton.disabled = true;
 
     let formData = new FormData(this.form);
 
-    await postRequest(this.transaction.url, formData);
+    await fetch(this.transaction.move_transaction_url, {
+      method: "POST",
+      body: formData,
+    });
 
     this.dispatchEvent(
       new CustomEvent("RequestNewPages", {
@@ -71,7 +72,7 @@ export class MoveTransactionModal extends NikElement {
     const moveableBudgets = this.availableBudgets;
 
     if (moveableBudgets.length) {
-      return html`<sl-radio-group
+      return html`<wa-select
         id="new_budget"
         name="new_budget"
         label="Select a budget"
@@ -79,9 +80,15 @@ export class MoveTransactionModal extends NikElement {
       >
         ${moveableBudgets.map(
           (budget) =>
-            html`<sl-radio value="${budget.id}">${budget.name}</sl-radio>`
+            html`<wa-option value="${budget.id}"
+              ><span class="wa-heading-s">${budget.name}</span>:
+              ${new Intl.NumberFormat(undefined, {
+                style: "currency",
+                currency: "USD",
+              }).format(budget.total)}</wa-option
+            >`
         )}
-      </sl-radio-group>`;
+      </wa-select>`;
     }
 
     return html`There are no other budgets shared with
@@ -90,38 +97,29 @@ export class MoveTransactionModal extends NikElement {
   }
 
   render() {
-    return html`<sl-dialog
+    return html`<wa-dialog
       label="Move transaction named ${this.transaction.name}?"
     >
-      <form>
-        <input
-          class="page-number"
-          name="page"
-          hidden=""
-          type="number"
-          value="1"
-        />
-        ${this.availableNewBudgetsTemplate()}
-      </form>
+      <form>${this.availableNewBudgetsTemplate()}</form>
 
-      <div class="row" slot="footer">
-        <sl-button
+      <div class="wa-cluster w-full" slot="footer">
+        <wa-button
           id="close-button"
-          class="w-50"
+          class="grow"
           variant="neutral"
-          outline
-          @click=${this.hide}
-          >Cancel</sl-button
+          appearance="outlined"
+          data-dialog="close"
+          >Cancel</wa-button
         >
-        <sl-button
+        <wa-button
           id="submit-button"
-          class="w-50"
-          variant="primary"
+          class="grow"
+          variant="brand"
           @click=${this.handleTransactionMove}
-          >Move</sl-button
+          >Move</wa-button
         >
       </div>
-    </sl-dialog>`;
+    </wa-dialog>`;
   }
 }
 customElements.define("nb-move-transaction", MoveTransactionModal);
