@@ -1,8 +1,10 @@
 {% extends "base.html" %} {% block title %}Profile{% endblock title %} {% block
 profile %}active{% endblock profile %} {% block content %}
+
 <nb-profile
   class="auth-card"
   username="{{ username }}"
   email="{{ email }}"
 ></nb-profile>
+
 {% endblock content %}

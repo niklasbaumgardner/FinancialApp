@@ -1,12 +1,8 @@
 {% extends "base.html" %} {% block title %}Add Paycheck{% endblock title %} {%
 block addtransaction %}active{% endblock addtransaction %} {% block backButton
-%}<sl-button href="/" class="me-4" variant="primary" outline
-  ><sl-icon slot="prefix" name="caret-left"></sl-icon>Back</sl-button
+%}<wa-button href="/" variant="brand" appearance="outlined">
+  <wa-icon library="ion" name="chevron-back-outline"></wa-icon> Back</wa-button
 >{% endblock backButton %} {% block content %}
-<script>
-  const ADD_PAYCHECK_URL = "{{ url_for('paycheck_bp.paycheck') }}";
-</script>
-<script src="/static/js/nb-add-paycheck.mjs" type="module"></script>
 
 <nb-add-paycheck
   class="main-card"

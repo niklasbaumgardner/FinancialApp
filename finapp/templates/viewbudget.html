@@ -1,6 +1,8 @@
 {% extends "base.html" %} {% block title %}{{ budget.name }}{% endblock title %}
-{% block backButton %}<wa-button href="/" class="me-4" variant="primary" appearance="outlined"><wa-icon slot="prefix"
-        name="caret-left"></wa-icon>Back</wa-button>{% endblock backButton %} {% block content %}
+{% block backButton %}<wa-button href="/" variant="brand" appearance="outlined">
+  <wa-icon library="ion" name="chevron-back-outline"></wa-icon
+  > Back</wa-button
+>{% endblock backButton %} {% block content %}
 <script>
     const GET_PAGE_URL = "{{ url_for('viewbudget_bp.get_page', budget_id=budget.id) }}";
     const SEARCH_PAGE_URL = "{{ url_for('viewbudget_bp.search', b_id=budget.id) }}";

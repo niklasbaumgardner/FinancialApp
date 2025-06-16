@@ -1,16 +1,11 @@
 {% extends "base.html" %} {% block title %}Transfer{% endblock title %} {% block
-transfer %}active{% endblock transfer %} {% block backButton %}<sl-button
+transfer %}active{% endblock transfer %} {% block backButton %}<wa-button
   href="/"
-  class="me-4"
-  variant="primary"
-  outline
-  ><sl-icon slot="prefix" name="caret-left"></sl-icon>Back</sl-button
+  variant="brand"
+  appearance="outlined"
+>
+  <wa-icon library="ion" name="chevron-back-outline"></wa-icon> Back</wa-button
 >{% endblock backButton %} {% block content %}
-
-<script>
-  const TRANSFER_URL = "{{ url_for('transfer_bp.transfer') }}";
-</script>
-<script src="/static/js/nb-transfer.mjs" type="module"></script>
 
 <nb-transfer class="main-card" budgets='{{ budgets|tojson }}'></nb-transfer>
 

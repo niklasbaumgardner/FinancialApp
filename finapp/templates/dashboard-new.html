@@ -1,11 +1,12 @@
 {% extends "base.html" %} {% block title %}Dashboard{% endblock title %} {%
 block dashboard %}active{% endblock dashboard %} {% block backButton
-%}<wa-button href="/" class="me-4" variant="primary" outline
-  ><wa-icon slot="prefix" name="caret-left"></wa-icon>Back</wa-button
->{% endblock backButton %} {% block content %}
+%}<wa-button href="/" variant="brand" appearance="outlined">
+  <wa-icon library="ion" name="chevron-back-outline"></wa-icon> Back</wa-button
+>{% endblock backButton %} {% block head %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@31.0.3/dist/ag-grid-community.min.js"></script>
+<script src="/static/js/dashboard-new.mjs" type="module"></script>
 
 <script>
   const DEFAULT_BUDGET_URL =
@@ -22,6 +23,7 @@ block dashboard %}active{% endblock dashboard %} {% block backButton
 
   const START_DATE = "{{ startDate }}";
 </script>
+{% endblock head %} {% block content %}
 
 <div class="wa-stack">
   <wa-details summary="Budgets line chart" open>
@@ -85,7 +87,5 @@ block dashboard %}active{% endblock dashboard %} {% block backButton
     </div>
   </wa-details>
 </div>
-
-<script src="/static/js/dashboard-new.mjs" type="module"></script>
 
 {% endblock content %}

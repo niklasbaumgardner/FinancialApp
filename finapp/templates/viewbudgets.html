@@ -1,14 +1,9 @@
 {% extends "base.html" %} {% block title %}Home{% endblock title %} {% block
 content %}
-<script>
-  const ADD_NEW_BUDGET_URL = "{{ url_for('editbudget_bp.add_budget') }}";
-</script>
 
 <nb-view-budgets
   total="{{ total }}"
   budgets='{{ budgets|tojson }}'
 ></nb-view-budgets>
-
-<script src="/static/js/nb-view-budgets.mjs" type="module"></script>
 
 {% endblock content %}
