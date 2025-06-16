@@ -318,7 +318,7 @@ export class ViewBudget extends NikElement {
               @input=${this.checkTransactionInput}
             ></wa-input>
             <wa-input
-              class="grow"
+              class="grow basis-[0]"
               type="number"
               step=".01"
               id="amount"
@@ -329,7 +329,7 @@ export class ViewBudget extends NikElement {
               @input=${this.checkTransactionInput}
             ></wa-input>
             <wa-input
-              class="grow"
+              class="grow basis-[0]"
               type="date"
               id="date"
               name="date"
@@ -337,7 +337,7 @@ export class ViewBudget extends NikElement {
               required
             ></wa-input>
             <wa-button
-              class="grow"
+              class="grow basis-full"
               variant="brand"
               id="transaction-submit"
               type="submit"
