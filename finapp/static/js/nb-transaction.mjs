@@ -157,11 +157,7 @@ export class Transaction extends NikElement {
 
   transferTemplate() {
     if (this.transaction.is_transfer) {
-      return html`<wa-tag
-        class="width-fit-content fs-75"
-        variant="primary"
-        size="small"
-        pill
+      return html`<wa-tag class="w-fit" variant="primary" size="small" pill
         >Transfer</wa-tag
       >`;
     }
@@ -247,7 +243,7 @@ export class Transaction extends NikElement {
 
   viewTemplate() {
     return html`<div class="wa-stack">
-      <div class="wa-grid">
+      <div class="wa-grid transaction-grid">
         <div class="name">
           <div class="wa-stack gap-(--wa-space-xs)!">
             <span class="wa-body-xl">${this.transaction.name}</span>
@@ -263,7 +259,7 @@ export class Transaction extends NikElement {
             </div>
           </div>
         </div>
-        <div class="flex justify-center items-start">
+        <div class="flex justify-center items-start amount">
           <wa-format-number
             class="wa-body-m"
             type="currency"
@@ -272,7 +268,9 @@ export class Transaction extends NikElement {
             lang="en-US"
           ></wa-format-number>
         </div>
-        <div class="flex justify-end">${this.viewButtonsTemplate()}</div>
+        <div class="flex justify-end buttons">
+          ${this.viewButtonsTemplate()}
+        </div>
       </div>
       <div class="wa-cluster gap-(--wa-space-2xs)!">
         ${this.transaction.categories.map(
@@ -288,7 +286,7 @@ export class Transaction extends NikElement {
 
   editTemplate() {
     return html`<form class="wa-stack">
-      <div class="wa-grid">
+      <div class="wa-grid transaction-grid">
         <div class="name">
           <div class="wa-stack gap-(--wa-space-xs)!">
             <wa-input
@@ -300,7 +298,7 @@ export class Transaction extends NikElement {
             ></wa-input>
             <wa-input
               id="date"
-              class="width-fit-content"
+              class="w-fit"
               name="date"
               type="date"
               value=${this.transaction.date}
@@ -309,7 +307,7 @@ export class Transaction extends NikElement {
             ></wa-input>
           </div>
         </div>
-        <div class="flex justify-center items-start">
+        <div class="flex justify-center items-start amount">
           <wa-input
             id="amount"
             name="amount"
@@ -320,7 +318,7 @@ export class Transaction extends NikElement {
             required
           ></wa-input>
         </div>
-        <div class="flex justify-end">${this.editButtonsTempate()}</div>
+        <div class="flex justify-end buttons">${this.editButtonsTempate()}</div>
       </div>
 
       <nb-categories-select

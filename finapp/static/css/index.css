@@ -24,7 +24,11 @@ wa-page > main {
 
 nb-budget-card {
   display: flex;
-  width: fit-content;
+  width: 100%;
+
+  > wa-card {
+    width: 100%;
+  }
 }
 
 wa-card.wa-card-p-0::part(body) {
@@ -54,4 +58,49 @@ nb-search-item {
     transparent 20%
   );
   --wa-color-text-quiet: var(--wa-color-on-quiet);
+}
+
+nb-transaction {
+  .transaction-grid {
+    grid-template: "name amount buttons";
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+
+  &[editing] .transaction-grid {
+    @media (width < 48rem) {
+      grid-template-areas:
+        "name amount"
+        "name buttons";
+      grid-template-columns: repeat(2, minmax(min(20px, 100%), 1fr)) !important;
+    }
+  }
+
+  .name {
+    grid-area: name;
+  }
+
+  .amount {
+    grid-area: amount;
+  }
+
+  .buttons {
+    grid-area: buttons;
+  }
+}
+
+nb-view-budgets {
+  .view-budgets-grid {
+    grid-template-columns: repeat(3, minmax(min(200px, 100%), 1fr)) !important;
+
+    @media (width < 48rem) {
+      grid-template-columns: repeat(
+        2,
+        minmax(min(200px, 100%), 1fr)
+      ) !important;
+    }
+
+    @media (width < 32rem) {
+      grid-template-columns: repeat(1, 1fr) !important;
+    }
+  }
 }

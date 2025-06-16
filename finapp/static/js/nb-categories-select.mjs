@@ -61,9 +61,9 @@ export class CategoriesSelect extends NikElement {
       label="Select Categories"
       name="categories"
       max-options-visible="0"
+      value=${this.selected}
       multiple
       clearable
-      value="${this.selected}"
       >${this.categories.map(
         (c) =>
           html`<wa-option value="${c.id}"

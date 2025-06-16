@@ -1,52 +1,135 @@
 export class Pagination {
-  constructor(transactions, numTransactions, currentPage, numPages, url) {
+  #transactions = null;
+  #numTransactions = null;
+  #currentPage = null;
+  #numPages = null;
+  #url = null;
+  #controller = null;
+
+  constructor(
+    transactions,
+    numTransactions,
+    currentPage,
+    numPages,
+    url,
+    controller
+  ) {
     this.currentRequests = {};
-    this.visibleButtons = [];
     this.pageMap = {};
-    this.numTransactions = numTransactions;
-    this.numPages = numPages;
-    this.URL = url;
-    this.BUTTONS_VISIBLE = 5;
-    this.sort = '{"date":"desc"}';
 
     this.pageMap[currentPage] = transactions;
 
-    this.transactionContainer = document.getElementById("transactionList");
-    this.prevButton = document.getElementById("prev");
-    this.nextButton = document.getElementById("next");
+    this.#transactions = transactions;
+    this.#numTransactions = numTransactions;
+    this.#currentPage = currentPage;
+    this.#numPages = numPages;
+    this.#url = url;
+    this.#controller = controller;
   }
 
-  init(currentPage) {
-    this.createAllPageButtons();
-    this.setCurrentPage(1 * currentPage, true);
+  set transactions(newTransactions) {
+    this.#transactions = newTransactions;
+    this.#controller.transactions = this.transactions;
+  }
+  get transactions() {
+    return this.#transactions;
   }
 
-  pageUrlWithParams(page) {
+  set numTransactions(newNumTransactions) {
+    this.#numTransactions = newNumTransactions;
+    this.#controller.numTransactions = this.numTransactions;
+  }
+  get numTransactions() {
+    return this.#numTransactions;
+  }
+
+  set currentPage(newCurrentPage) {
+    this.#currentPage = newCurrentPage;
+    this.#controller.currentPage = this.currentPage;
+  }
+  get currentPage() {
+    return this.#currentPage;
+  }
+
+  set numPages(newNumPages) {
+    this.#numPages = newNumPages;
+    this.#controller.numPages = this.numPages;
+  }
+  get numPages() {
+    return this.#numPages;
+  }
+
+  get url() {
+    return this.#url;
+  }
+
+  get controller() {
+    return this.#controller;
+  }
+
+  get currentSort() {
+    return (
+      this.controller.nbSearchBudget?.currentSortValueAsJson ??
+      '{"date":"desc"}'
+    );
+  }
+
+  // TODO: Store transaction based sort
+  getPage(page) {
+    return this.pageMap[this.currentSort][page];
+  }
+
+  setPage(page, transactions) {
+    this.pageMap[this.currentSort][page] = transactions;
+  }
+
+  deletePage(page) {
+    delete this.pageMap[this.currentSort][page];
+  }
+
+  init() {
+    this.requestNewPages({
+      lessThanCurrentPage: true,
+      greaterThanCurrentPage: true,
+    });
+  }
+
+  getParams(page) {
+    let params = new URLSearchParams();
     params.set("page", page);
-    params.set("sort", this.sort);
-    return this.URL + "?" + params;
+    params.set("sort", this.currentSort);
+
+    return params;
+  }
+
+  urlForPage(page) {
+    let params = this.getParams(page);
+    return this.url + "?" + params;
+  }
+
+  requestPageData(page) {
+    let url = this.urlForPage(page);
+    return fetch(url);
   }
 
   async getPageData(page) {
-    let url = this.pageUrlWithParams(page);
-    let response = await fetch(url);
+    let response = await this.requestPageData(page);
     response = await response.json();
     return response;
   }
 
-  requestPageData(page) {
-    let url = this.pageUrlWithParams(page);
-    let request = fetch(url);
-    return request;
+  earlyFetchPages() {
+    for (let pageNum of this.controller.getVisibleButtonNumbers()) {
+      if (this.pageMap[pageNum] || this.currentRequests[pageNum]) {
+        continue;
+      }
+
+      let request = this.requestPageData(pageNum);
+
+      this.currentRequests[pageNum] = request;
+    }
   }
 
-  /**
-   * options object
-   *  {
-   *    lessThanCurrentPage
-   *    greatherThanCurrentPage
-   *  }
-   */
   async requestNewPages(options) {
     delete this.pageMap[this.currentPage];
     console.log("deleting pageMap key", this.currentPage);
@@ -78,148 +161,30 @@ export class Pagination {
     let data = await this.getPageData(this.currentPage);
     this.numTransactions = data.total;
     if (data.hasOwnProperty("budget_total")) {
-      document.getElementById("budgetTotal").value = data.budget_total;
+      this.controller.budget.total = data.budget_total;
     }
 
     this.numPages = data.num_pages;
-    this.createAllPageButtons();
 
-    if (data.search_sum) {
-      document.dispatchEvent(
-        new CustomEvent("SearchTotalChanged", {
-          detail: { searchSum: data.search_sum, searchCount: data.total },
-        })
-      );
-    }
+    // if (data.search_sum) {
+    //   document.dispatchEvent(
+    //     new CustomEvent("SearchTotalChanged", {
+    //       detail: { searchSum: data.search_sum, searchCount: data.total },
+    //     })
+    //   );
+    // }
 
     this.pageMap[this.currentPage] = data.transactions;
 
     this.setCurrentPage(this.currentPage, true);
   }
 
-  createAllPageButtons() {
-    if (this.allPageButtons) {
-      for (let button of this.allPageButtons) {
-        button.remove();
-      }
-    }
-    this.allPageButtons = [];
-    for (let i = 1; i <= this.numPages; i++) {
-      let button = this.createButton(i);
-      this.allPageButtons.push(button);
-    }
-
-    this.BUTTONS_VISIBLE = Math.min(this.numPages, 5);
-  }
-
-  createButton(pageNum) {
-    let button = document.createElement("sl-button");
-    button.textContent = pageNum;
-    button.variant = "default";
-    button.onclick = () => this.setCurrentPage(pageNum);
-
-    return button;
-  }
-
-  togglePrevButton(disable = false) {
-    this.prevButton.disabled = disable;
-  }
-
-  toggleNextButton(disable = false) {
-    this.nextButton.disabled = disable;
-  }
-
-  setCurrentPage(newPage, flush = false) {
-    if (!flush && newPage === this.currentPage) {
-      return;
-    }
-
-    this.togglePrevButton();
-    this.toggleNextButton();
-
-    this.currentPage = newPage;
-
-    if (newPage >= this.numPages) {
-      this.currentPage = this.numPages;
-      this.toggleNextButton(true);
-    }
-
-    if (newPage <= 1) {
-      this.currentPage = 1;
-      this.togglePrevButton(true);
-    }
-
-    this.updatePage();
-    this.updatePageButtons();
-    this.getPageDataForPotentialPages();
-  }
-
-  clearPageButtons() {
-    let buttons = document.querySelectorAll(".pagination > sl-button");
-    for (let i = 1; i < buttons.length - 1; i++) {
-      buttons[i].remove();
-    }
-    this.visibleButtons = [];
-  }
-
-  updateVisibleButtons() {
-    let arr = [];
-    for (let i = -2; i < this.BUTTONS_VISIBLE - 2; i++) {
-      arr.push(this.currentPage + i);
-    }
-
-    let leftOOR = arr.filter((ele) => ele < 1).length;
-    arr = arr.slice(leftOOR);
-
-    if (arr.length < this.BUTTONS_VISIBLE) {
-    }
-    while (arr.length < this.BUTTONS_VISIBLE) {
-      let num = arr[arr.length - 1];
-      if (num) {
-        num += 1;
-      } else {
-        num = 1;
-      }
-      arr.push(num);
-    }
-
-    let rightOOR = arr.filter((ele) => ele > this.allPageButtons.length);
-    for (let _ of rightOOR) {
-      arr.pop();
-    }
-
-    if (leftOOR === 0) {
-      while (arr.length < this.BUTTONS_VISIBLE) {
-        arr.unshift(arr[0] - 1);
-      }
-    }
-    console.log(arr);
-
-    let start = arr[0] - 1;
-    let end = arr[arr.length - 1];
-
-    let buttonsListEle = document.querySelector(".pagination");
-
-    for (let i = start; i < end; i++) {
-      let button = this.allPageButtons[i];
-      button.variant = i + 1 === this.currentPage ? "primary" : "default";
-      buttonsListEle.insertBefore(button, this.nextButton);
-    }
-
-    this.visibleButtons = arr;
-  }
-
-  updatePageButtons() {
-    this.clearPageButtons();
-    this.updateVisibleButtons();
-  }
-
-  async addTransactionsToContainer() {
+  async setTransactions() {
     if (!this.pageMap[this.currentPage]) {
       let data;
       if (this.currentRequests[this.currentPage]) {
-        let request = await this.currentRequests[this.currentPage];
-        data = await request.json();
+        let response = await this.currentRequests[this.currentPage];
+        data = await response.json();
         this.currentRequests[this.currentPage] = null;
       } else {
         data = await this.getPageData(this.currentPage);
@@ -227,38 +192,42 @@ export class Pagination {
       this.pageMap[this.currentPage] = data.transactions;
     }
 
-    document.dispatchEvent(
-      new CustomEvent("UpdateTransactions", {
-        detail: { transactions: this.pageMap[this.currentPage] },
-      })
-    );
+    this.transactions = this.pageMap[this.currentPage];
   }
 
-  updatePage() {
-    this.addTransactionsToContainer();
-
-    let allPageNumberInputs = document.querySelectorAll(".page-number");
-    for (let input of allPageNumberInputs) {
-      input.setAttribute("value", this.currentPage);
+  setCurrentPage(newPage, force = false) {
+    newPage = Number(newPage);
+    if (
+      (!force && newPage === this.currentPage) ||
+      newPage < 1 ||
+      newPage > this.numPages
+    ) {
+      return;
     }
-  }
 
-  async getPageDataForPotentialPages() {
-    for (let pageNum of this.visibleButtons) {
-      if (this.pageMap[pageNum] || this.currentRequests[pageNum]) {
-        continue;
-      }
-
-      let request = this.requestPageData(pageNum);
-
-      this.currentRequests[pageNum] = request;
-    }
+    this.currentPage = newPage;
+    this.setTransactions();
+    this.earlyFetchPages();
   }
 }
 
 export class Search extends Pagination {
-  constructor(transactions, numTransactions, currentPage, numPages, url) {
-    super(transactions, numTransactions, currentPage, numPages, url);
+  constructor(
+    transactions,
+    numTransactions,
+    currentPage,
+    numPages,
+    url,
+    controller
+  ) {
+    super(
+      transactions,
+      numTransactions,
+      currentPage,
+      numPages,
+      url,
+      controller
+    );
 
     document.addEventListener("SearchInputChanged", this);
   }
@@ -271,12 +240,24 @@ export class Search extends Pagination {
     }
   }
 
-  pageUrlWithParams(page) {
-    this.setSearchParams();
-    let url = super.pageUrlWithParams(page);
-    this.removeSearchParams();
+  urlForPage(page) {
+    let params = super.getParams(page);
 
-    return url;
+    // Search params
+    params.set("name", this.searchValues?.name ?? "");
+    for (let category of this.searchValues?.categories ?? []) {
+      params.append("categories", category);
+    }
+    if (this.searchValues?.amount) {
+      params.set("amount", this.searchValues?.amount ?? "");
+    } else {
+      params.set("minAmount", this.searchValues?.minAmount ?? "");
+      params.set("maxAmount", this.searchValues?.maxAmount ?? "");
+    }
+    params.set("startDate", this.searchValues?.startDate ?? "");
+    params.set("endDate", this.searchValues?.endDate ?? "");
+
+    return this.url + "?" + params;
   }
 
   debounce(callback, wait) {
@@ -300,36 +281,8 @@ export class Search extends Pagination {
         lessThanCurrentPage: true,
         greaterThanCurrentPage: true,
       });
-
-      this.createAllPageButtons();
-      this.updatePageButtons();
     }, 300)();
 
     this.lastSearchValues = this.searchValues;
-  }
-
-  setSearchParams() {
-    params.set("name", this.searchValues?.name ?? "");
-    for (let category of this.searchValues?.categories) {
-      params.append("categories", category);
-    }
-    if (this.searchValues?.amount) {
-      params.set("amount", this.searchValues?.amount ?? "");
-    } else {
-      params.set("minAmount", this.searchValues?.minAmount ?? "");
-      params.set("maxAmount", this.searchValues?.maxAmount ?? "");
-    }
-    params.set("startDate", this.searchValues?.startDate ?? "");
-    params.set("endDate", this.searchValues?.endDate ?? "");
-  }
-
-  removeSearchParams() {
-    params.delete("name");
-    params.delete("categories");
-    params.delete("startDate");
-    params.delete("endDate");
-    params.delete("amount");
-    params.delete("minAmount");
-    params.delete("maxAmount");
   }
 }

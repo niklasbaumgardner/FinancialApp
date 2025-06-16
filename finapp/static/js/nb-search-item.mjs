@@ -27,7 +27,7 @@ export class SearchItem extends NikElement {
   }
 
   render() {
-    return html`<div class="wa-cluster gap-(--wa-space-xs)! grow">
+    return html`<div class="wa-cluster gap-(--wa-space-xs)! grow flex-nowrap!">
       <wa-input
         id="search-name"
         class="grow"

@@ -39,13 +39,13 @@ export class SearchBudget extends NikElement {
   static get queries() {
     return {
       dropdownItems: { all: "wa-menu-item" },
-      inputEls: { all: "wa-input" },
-      amountInputEl: "#searchAmount",
-      maxAmountInputEl: "#maxAmount",
-      minAmountInputEl: "#minAmount",
-      dateInputEl: "#exactDate",
-      startDateInputEl: "#startDate",
-      endDateInputEl: "#endDate",
+      inputs: { all: "wa-input" },
+      amountInput: "#searchAmount",
+      maxAmountInput: "#maxAmount",
+      minAmountInput: "#minAmount",
+      dateInput: "#exactDate",
+      startDateInput: "#startDate",
+      endDateInput: "#endDate",
       searchCountEl: "#searchResultsCount",
       searchSumEl: "#searchResultsSum",
       nbSelect: "nb-categories-select",
@@ -70,15 +70,15 @@ export class SearchBudget extends NikElement {
 
   get searchItemValuesAsString() {
     return this.searchItems.reduce(
-      (string, item) => string + item.inputEl.value,
+      (string, item) => string + item.input.value,
       ""
     );
   }
 
   get searchItemValuesAsJsonString() {
     let array = this.searchItems
-      .filter((item) => item.inputEl.value.length > 0)
-      .map((item) => item.inputEl.value);
+      .filter((item) => item.input.value?.length > 0)
+      .map((item) => item.input.value);
     return JSON.stringify(array);
   }
 
@@ -93,18 +93,18 @@ export class SearchBudget extends NikElement {
     searchValues.categories = this.nbSelect.value;
 
     if (this.exactAmount) {
-      searchValues.amount = this.amountInputEl.value;
+      searchValues.amount = this.amountInput.value;
     } else {
-      searchValues.minAmount = this.minAmountInputEl.value;
-      searchValues.maxAmount = this.maxAmountInputEl.value;
+      searchValues.minAmount = this.minAmountInput.value;
+      searchValues.maxAmount = this.maxAmountInput.value;
     }
 
     if (this.exactDate) {
-      searchValues.startDate = this.dateInputEl.value;
-      searchValues.endDate = this.dateInputEl.value;
+      searchValues.startDate = this.dateInput.value;
+      searchValues.endDate = this.dateInput.value;
     } else {
-      searchValues.startDate = this.startDateInputEl.value;
-      searchValues.endDate = this.endDateInputEl.value;
+      searchValues.startDate = this.startDateInput.value;
+      searchValues.endDate = this.endDateInput.value;
     }
 
     return searchValues;
@@ -188,6 +188,7 @@ export class SearchBudget extends NikElement {
   }
 
   handleInputEvent(event) {
+    console.log(event);
     if (this.lastSearchValues === JSON.stringify(this.searchValuesObject)) {
       return;
     }
@@ -197,6 +198,7 @@ export class SearchBudget extends NikElement {
     this.dispatchEvent(
       new CustomEvent("SearchInputChanged", {
         bubbles: true,
+        composed: true,
         detail: this.searchValuesObject,
       })
     );
@@ -216,9 +218,9 @@ export class SearchBudget extends NikElement {
   }
 
   sortTemplate() {
-    return html`<wa-dropdown @select=${this.handleSortingSelcted}>
+    return html`<wa-dropdown>
       <wa-button slot="trigger" caret appearance="outlined">Sort by</wa-button>
-      <wa-menu>
+      <wa-menu @wa-select=${this.handleSortingSelcted}>
         <wa-menu-item
           type="checkbox"
           value="0"
@@ -385,7 +387,11 @@ export class SearchBudget extends NikElement {
   }
 
   searchTemplate() {
-    return html`<div class="wa-stack">
+    return html`<div
+      class="wa-stack"
+      @input=${this.handleInputEvent}
+      @change=${this.handleInputEvent}
+    >
       <div class="wa-split">
         ${this.sortTemplate()}
         <span class="wa-body-l">
@@ -429,14 +435,10 @@ export class SearchBudget extends NikElement {
 
   render() {
     if (this.searching) {
-      return html`<wa-card @input=${this.handleInputEvent}
-        >${this.searchTemplate()}</wa-card
-      >`;
+      return html`<wa-card>${this.searchTemplate()}</wa-card>`;
     }
 
-    return html`<wa-card @input=${this.handleInputEvent}
-      >${this.viewTemplate()}</wa-card
-    >`;
+    return html`<wa-card>${this.viewTemplate()}</wa-card>`;
   }
 }
 

@@ -89,8 +89,12 @@ export class ViewBudgets extends NikElement {
         ></nb-budget-card>`
     );
 
-    return html`<div class="wa-cluster" id="active">${activeBudgets}</div>
-      <div class="wa-cluster" id="inactive">${inactiveBudgets}</div>`;
+    return html`<div class="wa-grid view-budgets-grid" id="active">
+        ${activeBudgets}
+      </div>
+      <div class="wa-grid view-budgets-grid" id="inactive">
+        ${inactiveBudgets}
+      </div>`;
   }
 
   render() {

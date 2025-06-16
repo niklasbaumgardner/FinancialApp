@@ -138,7 +138,7 @@ export class BudgetCard extends NikElement {
   }
 
   editingTemplate() {
-    return html`<wa-card class="w-14"
+    return html`<wa-card
       ><div class="wa-stack" @input=${this.handleInput}>
         <div class="wa-split flex-nowrap!">
           <wa-input
@@ -196,7 +196,7 @@ export class BudgetCard extends NikElement {
   }
 
   viewTemplate() {
-    return html`<wa-card class="w-14 wa-card-p-0"
+    return html`<wa-card class="wa-card-p-0"
       ><a
         class="wa-stack text-[unset]! no-underline! p-(--spacing)"
         href=${this.budget.url}
@@ -310,7 +310,7 @@ export class AddBudgetCard extends NikElement {
   }
 
   render() {
-    return html`<wa-card class="w-14"
+    return html`<wa-card
       ><div class="wa-stack">
         <wa-input
           id="budget-name"
