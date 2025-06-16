@@ -246,7 +246,7 @@ export class Transaction extends NikElement {
       <div class="wa-grid transaction-grid">
         <div class="name">
           <div class="wa-stack gap-(--wa-space-xs)!">
-            <span class="wa-body-xl">${this.transaction.name}</span>
+            <span class="wa-body-m">${this.transaction.name}</span>
             <div class="wa-cluster">
               <wa-format-date
                 class="w-fit wa-body-xs"
