@@ -1,7 +1,7 @@
 {% extends "base.html" %} {% block title %}Dashboard{% endblock title %} {%
 block dashboard %}active{% endblock dashboard %} {% block backButton
-%}<sl-button href="/" class="me-4" variant="primary" outline
-  ><sl-icon slot="prefix" name="caret-left"></sl-icon>Back</sl-button
+%}<wa-button href="/" class="me-4" variant="primary" outline
+  ><wa-icon slot="prefix" name="caret-left"></wa-icon>Back</wa-button
 >{% endblock backButton %} {% block content %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
@@ -23,63 +23,68 @@ block dashboard %}active{% endblock dashboard %} {% block backButton
   const START_DATE = "{{ startDate }}";
 </script>
 
-<sl-details class="mb-5" summary="Budgets line chart" open>
-  <sl-select
-    id="budgets"
-    value="allBudgets"
-    label="Select the budgets to show"
-    class="width-fit-content"
-    multiple
-    hoist
-    disabled
-  >
-    <sl-option value="allBudgets">All budgets</sl-option>
-  </sl-select>
-  <sl-input
-    class="width-fit-content"
-    id="startDate"
-    type="date"
-    label="Start date"
-  ></sl-input>
-  <div class="row">
-    <canvas id="lineChart"></canvas>
-  </div>
-</sl-details>
+<div class="wa-stack">
+  <wa-details summary="Budgets line chart" open>
+    <div class="wa-stack">
+      <div class="wa-split">
+        <wa-select
+          id="budgets"
+          value="allBudgets"
+          label="Select the budgets to show"
+          class="w-fit"
+          multiple
+          hoist
+          disabled
+        >
+          <wa-option value="allBudgets">All budgets</wa-option>
+        </wa-select>
+        <wa-input
+          class="w-fit"
+          id="startDate"
+          type="date"
+          label="Start date"
+        ></wa-input>
+      </div>
+      <div>
+        <canvas id="lineChart"></canvas>
+      </div>
+    </div>
+  </wa-details>
 
-<sl-details class="mb-5" summary="Spending by budget" open>
-  <sl-select
-    id="netSpendingSelect"
-    label="Spending in"
-    class="width-fit-content mb-3"
-    hoist
-  >
-  </sl-select>
+  <wa-details summary="Spending by budget" open>
+    <div class="wa-stack">
+      <wa-select id="netSpendingSelect" label="Spending in" class="w-fit" hoist>
+      </wa-select>
 
-  <div
-    id="spending-by-budget-grid"
-    style="height: 500px"
-    class="{% if theme == 'dark' %}ag-theme-alpine-dark{% else %}ag-theme-alpine{% endif %}"
-  ></div>
-</sl-details>
+      <div
+        id="spending-by-budget-grid"
+        style="height: 500px"
+        class="{% if theme == 'dark' %}ag-theme-alpine-dark{% else %}ag-theme-alpine{% endif %}"
+      ></div>
+    </div>
+  </wa-details>
 
-<sl-details summary="Spending by category" open>
-  <sl-select
-    id="categorySpendingSelect"
-    label="Spending interval"
-    value="monthly"
-    class="width-fit-content mb-3"
-    hoist
-  >
-    <sl-option value="monthly">Monthly</sl-option>
-    <sl-option value="weekly">Weekly</sl-option>
-  </sl-select>
+  <wa-details summary="Spending by category" open>
+    <div class="wa-stack">
+      <wa-select
+        id="categorySpendingSelect"
+        label="Spending interval"
+        value="monthly"
+        class="w-fit"
+        hoist
+      >
+        <wa-option value="monthly">Monthly</wa-option>
+        <wa-option value="weekly">Weekly</wa-option>
+      </wa-select>
 
-  <div
-    id="spending-by-category-grid"
-    style="height: 500px"
-    class="{% if theme == 'dark' %}ag-theme-alpine-dark{% else %}ag-theme-alpine{% endif %}"
-  ></div>
-</sl-details>
+      <div
+        id="spending-by-category-grid"
+        style="height: 500px"
+        class="{% if theme == 'dark' %}ag-theme-alpine-dark{% else %}ag-theme-alpine{% endif %}"
+      ></div>
+    </div>
+  </wa-details>
+</div>
 
 <script src="/static/js/dashboard-new.mjs" type="module"></script>
 

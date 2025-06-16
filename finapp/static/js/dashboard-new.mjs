@@ -1,5 +1,3 @@
-import "./dashboardBudgetCard.mjs";
-
 const dashboardStorage = window["localStorage"];
 
 const COLORS_OBJECT = {
@@ -138,10 +136,10 @@ class ChartManager {
 
   async init() {
     this.startDateEl = document.getElementById("startDate");
-    this.startDateEl.addEventListener("sl-change", this);
+    this.startDateEl.addEventListener("change", this);
 
     this.selectEl = document.getElementById("budgets");
-    this.selectEl.addEventListener("sl-change", () => this.updateLineChart());
+    this.selectEl.addEventListener("change", () => this.updateLineChart());
 
     await this.createLineChart();
     this.addBudgetsToLineChart();
@@ -149,7 +147,7 @@ class ChartManager {
 
   handleEvent(event) {
     switch (event.type) {
-      case "sl-change":
+      case "change":
         this.handleSlChangeEvent(event);
     }
   }
@@ -184,7 +182,7 @@ class ChartManager {
         continue;
       }
 
-      let item = document.createElement("sl-option");
+      let item = document.createElement("wa-option");
       item.value = name.replaceAll(" ", "_");
       item.textContent = name;
 
@@ -382,7 +380,7 @@ class NetSpendingManager {
 
   async init() {
     this.netSpendingSelect = document.getElementById("netSpendingSelect");
-    this.netSpendingSelect.addEventListener("sl-change", this);
+    this.netSpendingSelect.addEventListener("change", this);
 
     this.spendingGridEl = document.getElementById("spending-by-budget-grid");
     this.createDataGrid();
@@ -482,7 +480,7 @@ class NetSpendingManager {
   }
 
   createOptionElement(string, month, year, ytd) {
-    let option = document.createElement("sl-option");
+    let option = document.createElement("wa-option");
     let obj = { month, year, ytd };
     option.value = JSON.stringify(obj);
     option.textContent = string;
@@ -542,10 +540,10 @@ class NetSpendingManager {
     });
   }
 
-  handleThemeChange(params) {
-    console.log(params);
-
-    let theme = document.documentElement.getAttribute("data-bs-theme");
+  handleThemeChange() {
+    let theme = document.documentElement.classList.contains("wa-dark")
+      ? "dark"
+      : "light";
     this.spendingGridEl.classList.toggle(
       "ag-theme-alpine-dark",
       theme === "dark"
@@ -590,7 +588,7 @@ class CategorySpendingManager {
     this.categorySpendingSelect = document.getElementById(
       "categorySpendingSelect"
     );
-    this.categorySpendingSelect.addEventListener("sl-change", this);
+    this.categorySpendingSelect.addEventListener("change", this);
 
     this.categorySpendingGridEl = document.getElementById(
       "spending-by-category-grid"
@@ -762,15 +760,18 @@ class CategorySpendingManager {
     });
   }
 
-  handleThemeChange(params) {
-    console.log(params);
-
-    let theme = document.documentElement.getAttribute("data-bs-theme");
-    this.spendingGridEl.classList.toggle(
+  handleThemeChange() {
+    let theme = document.documentElement.classList.contains("wa-dark")
+      ? "dark"
+      : "light";
+    this.categorySpendingGridEl.classList.toggle(
       "ag-theme-alpine-dark",
       theme === "dark"
     );
-    this.spendingGridEl.classList.toggle("ag-theme-alpine", theme === "light");
+    this.categorySpendingGridEl.classList.toggle(
+      "ag-theme-alpine",
+      theme === "light"
+    );
   }
 }
 
