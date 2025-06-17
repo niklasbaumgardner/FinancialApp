@@ -37,108 +37,108 @@ input:focus-visible + circle {
   &.gray {
     background-color: var(--wa-color-gray-05);
     border-color: var(--wa-color-gray-20);
-    color: var(--wa-color-gray-30);
+    color: var(--wa-color-gray-40);
   }
 
   &.red {
     background-color: var(--wa-color-red-05);
     border-color: var(--wa-color-red-20);
-    color: var(--wa-color-red-30);
+    color: var(--wa-color-red-40);
   }
 
   &.orange {
     background-color: var(--wa-color-orange-05);
     border-color: var(--wa-color-orange-20);
-    color: var(--wa-color-orange-30);
+    color: var(--wa-color-orange-40);
   }
 
   &.amber {
     background-color: var(--wa-color-amber-05);
     border-color: var(--wa-color-amber-20);
-    color: var(--wa-color-amber-30);
+    color: var(--wa-color-amber-40);
   }
 
   &.yellow {
     background-color: var(--wa-color-yellow-05);
     border-color: var(--wa-color-yellow-20);
-    color: var(--wa-color-yellow-30);
+    color: var(--wa-color-yellow-40);
   }
 
   &.lime {
     background-color: var(--wa-color-lime-05);
     border-color: var(--wa-color-lime-20);
-    color: var(--wa-color-lime-30);
+    color: var(--wa-color-lime-40);
   }
 
   &.green {
     background-color: var(--wa-color-green-05);
     border-color: var(--wa-color-green-20);
-    color: var(--wa-color-green-30);
+    color: var(--wa-color-green-40);
   }
 
   &.emerald {
     background-color: var(--wa-color-emerald-05);
     border-color: var(--wa-color-emerald-20);
-    color: var(--wa-color-emerald-30);
+    color: var(--wa-color-emerald-40);
   }
 
   &.teal {
     background-color: var(--wa-color-teal-05);
     border-color: var(--wa-color-teal-20);
-    color: var(--wa-color-teal-30);
+    color: var(--wa-color-teal-40);
   }
 
   &.cyan {
     background-color: var(--wa-color-cyan-05);
     border-color: var(--wa-color-cyan-20);
-    color: var(--wa-color-cyan-30);
+    color: var(--wa-color-cyan-40);
   }
 
   &.sky {
     background-color: var(--wa-color-sky-05);
     border-color: var(--wa-color-sky-20);
-    color: var(--wa-color-sky-30);
+    color: var(--wa-color-sky-40);
   }
 
   &.blue {
     background-color: var(--wa-color-blue-05);
     border-color: var(--wa-color-blue-20);
-    color: var(--wa-color-blue-30);
+    color: var(--wa-color-blue-40);
   }
 
   &.indigo {
     background-color: var(--wa-color-indigo-05);
     border-color: var(--wa-color-indigo-20);
-    color: var(--wa-color-indigo-30);
+    color: var(--wa-color-indigo-40);
   }
 
   &.violet {
     background-color: var(--wa-color-violet-05);
     border-color: var(--wa-color-violet-20);
-    color: var(--wa-color-violet-30);
+    color: var(--wa-color-violet-40);
   }
 
   &.purple {
     background-color: var(--wa-color-purple-05);
     border-color: var(--wa-color-purple-20);
-    color: var(--wa-color-purple-30);
+    color: var(--wa-color-purple-40);
   }
 
   &.fuchsia {
     background-color: var(--wa-color-fuchsia-05);
     border-color: var(--wa-color-fuchsia-20);
-    color: var(--wa-color-fuchsia-30);
+    color: var(--wa-color-fuchsia-40);
   }
 
   &.pink {
     background-color: var(--wa-color-pink-05);
     border-color: var(--wa-color-pink-20);
-    color: var(--wa-color-pink-30);
+    color: var(--wa-color-pink-40);
   }
 
   &.rose {
     background-color: var(--wa-color-rose-05);
     border-color: var(--wa-color-rose-20);
-    color: var(--wa-color-rose-30);
+    color: var(--wa-color-rose-40);
   }
 }

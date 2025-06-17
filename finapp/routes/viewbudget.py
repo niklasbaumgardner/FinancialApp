@@ -172,7 +172,7 @@ def search(b_id):
 @viewbudget_bp.route("/add_transaction/<int:budget_id>", methods=["POST"])
 @login_required
 def add_transaction(budget_id):
-    user_id = request.form.get("user", type=int)
+    user_id = request.form.get("user", type=int, default=current_user.id)
     name = request.form.get("name")
     amount = request.form.get("amount", type=float, default=0.0)
     str_date = request.form.get("date")

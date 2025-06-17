@@ -72,7 +72,7 @@ export class CreateCategoryModal extends NikElement {
   }
 
   async handleSubmitClick() {
-    if (!this.form.checkValidity) {
+    if (!this.form.checkValidity()) {
       return true;
     }
 
@@ -102,7 +102,7 @@ export class CreateCategoryModal extends NikElement {
             name="name"
             required
           ></wa-input>
-          <div>
+          <div class="wa-stack gap-(--wa-space-xs)!">
             <div>Select a color: *</div>
             <div class="wa-cluster">
               <nb-radio value="red" name="color" label="Red"></nb-radio>
@@ -149,7 +149,6 @@ export class CreateCategoryModal extends NikElement {
               id="submit-button"
               class="grow"
               variant="brand"
-              type="submit"
               @click=${this.handleSubmitClick}
               >Create category</wa-button
             >
