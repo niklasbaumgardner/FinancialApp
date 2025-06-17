@@ -9,13 +9,19 @@ from finapp import db
 
 
 def create_theme(
-    theme=None, mode=None, primary_color=None, color_contrast=None, color_palette=None
+    theme=None,
+    mode=None,
+    primary_color=None,
+    background_color=None,
+    color_contrast=None,
+    color_palette=None,
 ):
     theme = Theme(
         user_id=current_user.id,
         theme=theme or None,
         mode=mode or None,
         primary_color=primary_color or None,
+        background_color=background_color or None,
         color_contrast=color_contrast or None,
         color_palette=color_palette or None,
     )
@@ -84,13 +90,21 @@ def set_primary_color(primary_color):
     if primary_color not in [
         "red",
         "orange",
+        "amber",
         "yellow",
+        "lime",
         "green",
+        "emerald",
+        "teal",
         "cyan",
+        "sky",
         "blue",
         "indigo",
+        "violet",
         "purple",
+        "fuchsia",
         "pink",
+        "rose",
         "gray",
     ]:
         primary_color = None
@@ -102,6 +116,44 @@ def set_primary_color(primary_color):
         db.session.commit()
     else:
         create_theme(theme="classic", mode="light", primary_color=primary_color)
+
+    return theme
+
+
+def set_background_color(background_color):
+    if not current_user.is_authenticated:
+        return
+
+    if background_color not in [
+        "niks-favorite",
+        "red",
+        "gray",
+        "orange",
+        "amber",
+        "yellow",
+        "lime",
+        "green",
+        "emerald",
+        "teal",
+        "cyan",
+        "sky",
+        "blue",
+        "indigo",
+        "violet",
+        "purple",
+        "fuchsia",
+        "pink",
+        "rose",
+    ]:
+        background_color = None
+
+    theme = get_theme()
+
+    if theme:
+        theme.background_color = background_color
+        db.session.commit()
+    else:
+        create_theme(theme="classic", mode="light", background_color=background_color)
 
     return theme
 

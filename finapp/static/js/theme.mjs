@@ -1,9 +1,95 @@
 const themeStorage = window.localStorage;
 
+export const THEME_LIST = [
+  "default",
+  "classic",
+  "awesome",
+  "mellow",
+  "active",
+  "brutalist",
+  "glossy",
+  "matter",
+  "playful",
+  "premium",
+  "tailspin",
+];
+
+export const THEME_MODE_LIST = ["light", "dark"];
+
+export const PRIMARY_COLOR_LIST = [
+  "red",
+  "orange",
+  "amber",
+  "yellow",
+  "lime",
+  "green",
+  "emerald",
+  "teal",
+  "cyan",
+  "sky",
+  "blue",
+  "indigo",
+  "violet",
+  "purple",
+  "fuchsia",
+  "pink",
+  "rose",
+  "gray",
+];
+
+export const BACKGROUND_COLOR_LIST = [
+  "niks-favorite",
+  "red",
+  "gray",
+  "orange",
+  "amber",
+  "yellow",
+  "lime",
+  "green",
+  "emerald",
+  "teal",
+  "cyan",
+  "sky",
+  "blue",
+  "indigo",
+  "violet",
+  "purple",
+  "fuchsia",
+  "pink",
+  "rose",
+];
+
+export const COLOR_CONTRAST_LIST = [
+  "default",
+  "classic",
+  "awesome",
+  "mellow",
+  "active",
+  "brutalist",
+  "glossy",
+  "matter",
+  "playful",
+  "premium",
+  "tailspin",
+];
+
+export const COLOR_PALETTE_LIST = [
+  "default",
+  "anodized",
+  "bright",
+  "classic",
+  "elegant",
+  "mild",
+  "natural",
+  "rudimentary",
+  "vogue",
+];
+
 export class Theme {
   #theme;
   #mode;
   #primaryColor;
+  #backgroundColor;
   #colorContrast;
   #colorPalette;
 
@@ -11,6 +97,7 @@ export class Theme {
     this.theme = theme.theme;
     this.mode = theme.mode;
     this.primaryColor = theme.primary_color;
+    this.backgroundColor = theme.background_color;
     this.colorContrast = theme.color_contrast;
     this.colorPalette = theme.color_palette;
 
@@ -31,6 +118,10 @@ export class Theme {
     return this.#primaryColor;
   }
 
+  get backgroundColor() {
+    return this.#backgroundColor;
+  }
+
   get colorContrast() {
     return this.#colorContrast;
   }
@@ -44,24 +135,10 @@ export class Theme {
       return;
     }
 
-    switch (theme) {
-      case "default":
-      case "classic":
-      case "awesome":
-      case "mellow":
-      case "active":
-      case "brutalist":
-      case "glossy":
-      case "matter":
-      case "playful":
-      case "premium":
-      case "tailspin":
-        this.#theme = theme;
-        break;
-      default: {
-        this.#theme = null;
-        break;
-      }
+    if (THEME_LIST.includes(theme)) {
+      this.#theme = theme;
+    } else {
+      this.#theme = null;
     }
 
     themeStorage.setItem("theme", this.theme);
@@ -76,15 +153,10 @@ export class Theme {
       return;
     }
 
-    switch (mode) {
-      case "light":
-      case "dark":
-        this.#mode = mode;
-        break;
-      default: {
-        this.#mode = null;
-        break;
-      }
+    if (THEME_MODE_LIST.includes(mode)) {
+      this.#mode = mode;
+    } else {
+      this.#mode = null;
     }
 
     themeStorage.setItem("mode", this.mode);
@@ -99,34 +171,30 @@ export class Theme {
     fetch(SET_THEME_MODE_URL + "?" + new URLSearchParams({ mode: this.mode }));
   }
 
+  /**
+   * Sets the primary color
+   */
   set primaryColor(primaryColor) {
     if (primaryColor === this.primaryColor) {
       return;
     }
 
-    switch (primaryColor) {
-      case "red":
-      case "orange":
-      case "yellow":
-      case "green":
-      case "cyan":
-      case "blue":
-      case "indigo":
-      case "purple":
-      case "pink":
-      case "gray":
-        this.#primaryColor = primaryColor;
-        break;
-      default: {
-        this.#primaryColor = null;
-        break;
-      }
+    document.documentElement.classList.remove(`${this.primaryColor}-brand`);
+
+    if (PRIMARY_COLOR_LIST.includes(primaryColor)) {
+      this.#primaryColor = primaryColor;
+    } else {
+      this.#primaryColor = null;
     }
 
     themeStorage.setItem("primaryColor", this.primaryColor);
     document.getElementById("primary-color-stylesheet").href = this.primaryColor
       ? `https://early.webawesome.com/webawesome@3.0.0-alpha.13/dist/styles/brand/${this.primaryColor}.css`
       : "";
+    if (this.primaryColor) {
+      document.documentElement.classList.add(`${this.primaryColor}-brand`);
+    }
+
     fetch(
       SET_PRIMARY_COLOR_URL +
         "?" +
@@ -134,29 +202,56 @@ export class Theme {
     );
   }
 
+  /**
+   * Sets the background color
+   */
+  set backgroundColor(backgroundColor) {
+    if (backgroundColor === this.backgroundColor) {
+      return;
+    }
+
+    document
+      .querySelector("main")
+      .classList.remove(`${this.backgroundColor}-background`);
+    document
+      .querySelector("wa-page")
+      .classList.remove(`${this.backgroundColor}-background`);
+
+    if (BACKGROUND_COLOR_LIST.includes(backgroundColor)) {
+      this.#backgroundColor = backgroundColor;
+    } else {
+      this.#backgroundColor = null;
+    }
+
+    themeStorage.setItem("backgroundColor", this.backgroundColor);
+    if (this.backgroundColor) {
+      document
+        .querySelector("main")
+        .classList.add(`${this.backgroundColor}-background`);
+      document
+        .querySelector("wa-page")
+        .classList.add(`${this.backgroundColor}-background`);
+    }
+
+    fetch(
+      SET_BACKGROUND_COLOR_URL +
+        "?" +
+        new URLSearchParams({ background_color: this.backgroundColor })
+    );
+  }
+
+  /**
+   * Sets the color contrast
+   */
   set colorContrast(colorContrast) {
     if (colorContrast === this.colorContrast) {
       return;
     }
 
-    switch (colorContrast) {
-      case "default":
-      case "classic":
-      case "awesome":
-      case "mellow":
-      case "active":
-      case "brutalist":
-      case "glossy":
-      case "matter":
-      case "playful":
-      case "premium":
-      case "tailspin":
-        this.#colorContrast = colorContrast;
-        break;
-      default: {
-        this.#colorContrast = null;
-        break;
-      }
+    if (COLOR_CONTRAST_LIST.includes(colorContrast)) {
+      this.#colorContrast = colorContrast;
+    } else {
+      this.#colorContrast = null;
     }
 
     themeStorage.setItem("colorContrast", this.colorContrast);
@@ -171,27 +266,18 @@ export class Theme {
     );
   }
 
+  /**
+   * Sets the color palette
+   */
   set colorPalette(colorPalette) {
-    if (colorPalette === this.colorPalete) {
+    if (colorPalette === this.colorPalette) {
       return;
     }
 
-    switch (colorPalette) {
-      case "default":
-      case "anodized":
-      case "bright":
-      case "classic":
-      case "elegant":
-      case "mild":
-      case "natural":
-      case "rudimentary":
-      case "vogue":
-        this.#colorPalette = colorPalette;
-        break;
-      default: {
-        this.#colorPalette = null;
-        break;
-      }
+    if (COLOR_PALETTE_LIST.includes(colorPalette)) {
+      this.#colorPalette = colorPalette;
+    } else {
+      this.#colorPalette = null;
     }
 
     themeStorage.setItem("colorPalette", this.colorPalette);

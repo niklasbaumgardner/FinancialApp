@@ -97,6 +97,9 @@
   .w-full {
     width: 100%;
   }
+  .max-w-\[80rem\] {
+    max-width: 80rem;
+  }
   .min-w-\[0\] {
     min-width: 0;
   }

@@ -46,6 +46,7 @@ class Theme(db.Model, SerializerMixin):
     theme = db.Column(db.String, nullable=True)  # default, classic, custom, etc...
     mode = db.Column(db.String, nullable=True)  # light, dark
     primary_color = db.Column(db.String, nullable=True)  # red, blue, green, etc...
+    background_color = db.Column(db.String, nullable=True)
     color_contrast = db.Column(db.String, nullable=True)  # web-awesome values
     color_palette = db.Column(db.String, nullable=True)  # web-awesome values
 

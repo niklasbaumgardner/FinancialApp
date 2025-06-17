@@ -1,5 +1,16 @@
 import { NikElement } from "./customElement.mjs";
 import { html } from "./imports.mjs";
+import {
+  THEME_LIST,
+  PRIMARY_COLOR_LIST,
+  BACKGROUND_COLOR_LIST,
+  COLOR_CONTRAST_LIST,
+  COLOR_PALETTE_LIST,
+} from "./theme.mjs";
+
+function toUpper(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
 export class PreferencesCard extends NikElement {
   static properties = {
@@ -10,6 +21,7 @@ export class PreferencesCard extends NikElement {
     themesSelect: "#themes",
     modeSelect: "#mode",
     primaryColorSelect: "#primary-color",
+    backgroundColorSelect: "#background-color",
     colorContrastSelect: "#color-contrast",
     colorPaletteSelect: "#color-palette",
   };
@@ -44,6 +56,13 @@ export class PreferencesCard extends NikElement {
     this.theme.primaryColor = primaryColor;
   }
 
+  handleBackgroundColorChange() {
+    let backgroundColor = this.backgroundColorSelect.value;
+    console.log(backgroundColor);
+
+    this.theme.backgroundColor = backgroundColor;
+  }
+
   handleColorPaletteChange() {
     let colorPalette = this.colorPaletteSelect.value;
     console.log(colorPalette);
@@ -73,17 +92,10 @@ export class PreferencesCard extends NikElement {
           label="Builtin Themes"
           value=${this.theme.theme}
           @input=${this.handleThemeChange}
-          ><wa-option value="default">Default</wa-option
-          ><wa-option value="classic">Classic</wa-option
-          ><wa-option value="awesome">Awesome</wa-option
-          ><wa-option value="mellow">Mellow</wa-option
-          ><wa-option value="active">Actvie</wa-option
-          ><wa-option value="brutalist">Brutalist</wa-option
-          ><wa-option value="glossy">Glossy</wa-option
-          ><wa-option value="matter">Matter</wa-option
-          ><wa-option value="playful">Playful</wa-option
-          ><wa-option value="premium">Premium</wa-option
-          ><wa-option value="tailspin">Tailspin</wa-option></wa-select
+          >${THEME_LIST.map(
+            (theme) =>
+              html`<wa-option value=${theme}>${toUpper(theme)}</wa-option>`
+          )}</wa-select
         >
 
         <wa-select
@@ -105,16 +117,22 @@ export class PreferencesCard extends NikElement {
           label="Primary Color"
           value=${this.theme.primaryColor}
           @input=${this.handlePrimaryColorChange}
-          ><wa-option value="red">Red</wa-option
-          ><wa-option value="orange">Orange</wa-option
-          ><wa-option value="yellow">Yellow</wa-option
-          ><wa-option value="green">Green</wa-option
-          ><wa-option value="cyan">Cyan</wa-option
-          ><wa-option value="blue">Blue</wa-option
-          ><wa-option value="indigo">Indigo</wa-option
-          ><wa-option value="purple">Purple</wa-option
-          ><wa-option value="pink">Pink</wa-option
-          ><wa-option value="gray">Gray</wa-option></wa-select
+          >${PRIMARY_COLOR_LIST.map(
+            (color) =>
+              html`<wa-option value=${color}>${toUpper(color)}</wa-option>`
+          )}</wa-select
+        >
+
+        <wa-select
+          clearable
+          id="background-color"
+          label="Background Color"
+          value=${this.theme.backgroundColor}
+          @input=${this.handleBackgroundColorChange}
+          >${BACKGROUND_COLOR_LIST.map(
+            (color) =>
+              html`<wa-option value=${color}>${toUpper(color)}</wa-option>`
+          )}</wa-select
         >
 
         <wa-select
@@ -123,15 +141,10 @@ export class PreferencesCard extends NikElement {
           label="Color Palette"
           value=${this.theme.colorPalette}
           @input=${this.handleColorPaletteChange}
-          ><wa-option value="default">Default</wa-option
-          ><wa-option value="anodized">Anodized</wa-option
-          ><wa-option value="bright">Bright</wa-option
-          ><wa-option value="classic">Classic</wa-option
-          ><wa-option value="elegant">Elegant</wa-option
-          ><wa-option value="mild">Mild</wa-option
-          ><wa-option value="natural">Natural</wa-option
-          ><wa-option value="rudimentary">Rudimentary</wa-option
-          ><wa-option value="vogue">Vouge</wa-option></wa-select
+          >${COLOR_PALETTE_LIST.map(
+            (color) =>
+              html`<wa-option value=${color}>${toUpper(color)}</wa-option>`
+          )}</wa-select
         >
 
         <wa-select
@@ -140,17 +153,10 @@ export class PreferencesCard extends NikElement {
           label="Color Contrast"
           value=${this.theme.colorContrast}
           @input=${this.handleColorContrastChange}
-          ><wa-option value="default">Default</wa-option
-          ><wa-option value="classic">Classic</wa-option
-          ><wa-option value="awesome">Awesome</wa-option
-          ><wa-option value="mellow">Mellow</wa-option
-          ><wa-option value="active">Actvie</wa-option
-          ><wa-option value="brutalist">Brutalist</wa-option
-          ><wa-option value="glossy">Glossy</wa-option
-          ><wa-option value="matter">Matter</wa-option
-          ><wa-option value="playful">Playful</wa-option
-          ><wa-option value="premium">Premium</wa-option
-          ><wa-option value="tailspin">Tailspin</wa-option></wa-select
+          >${COLOR_CONTRAST_LIST.map(
+            (color) =>
+              html`<wa-option value=${color}>${toUpper(color)}</wa-option>`
+          )}</wa-select
         >
       </div>
     </wa-card>`;

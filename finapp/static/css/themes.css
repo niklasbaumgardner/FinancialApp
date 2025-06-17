@@ -1,8 +1,4 @@
 .sl-theme-light {
-  .nb-nav-bg {
-    background-color: var(--sl-color-neutral-100);
-  }
-
   .niks-favorite-background {
     background: linear-gradient(
       to right,
@@ -84,11 +80,7 @@
   }
 }
 
-.sl-theme-dark {
-  .nb-nav-bg {
-    background-color: var(--sl-color-neutral-50);
-  }
-
+.wa-dark {
   .niks-favorite-background {
     background: linear-gradient(
       to right,
@@ -170,255 +162,116 @@
   }
 }
 
-/* Primary color themes */
-.red-primary {
-  --sl-color-primary-50: var(--sl-color-red-50);
-  --sl-color-primary-100: var(--sl-color-red-100);
-  --sl-color-primary-200: var(--sl-color-red-200);
-  --sl-color-primary-300: var(--sl-color-red-300);
-  --sl-color-primary-400: var(--sl-color-red-400);
-  --sl-color-primary-500: var(--sl-color-red-500);
-  --sl-color-primary-600: var(--sl-color-red-600);
-  --sl-color-primary-700: var(--sl-color-red-700);
-  --sl-color-primary-800: var(--sl-color-red-800);
-  --sl-color-primary-900: var(--sl-color-red-900);
-  --sl-color-primary-950: var(--sl-color-red-950);
+/* brand color themes */
+
+.amber-brand {
+  --wa-color-brand-05: var(--wa-color-amber-05);
+  --wa-color-brand-10: var(--wa-color-amber-10);
+  --wa-color-brand-20: var(--wa-color-amber-20);
+  --wa-color-brand-30: var(--wa-color-amber-30);
+  --wa-color-brand-40: var(--wa-color-amber-40);
+  --wa-color-brand-50: var(--wa-color-amber-50);
+  --wa-color-brand-60: var(--wa-color-amber-60);
+  --wa-color-brand-70: var(--wa-color-amber-70);
+  --wa-color-brand-80: var(--wa-color-amber-80);
+  --wa-color-brand-90: var(--wa-color-amber-90);
+  --wa-color-brand-95: var(--wa-color-amber-95);
 }
 
-.gray-primary {
-  --sl-color-primary-50: var(--sl-color-gray-50);
-  --sl-color-primary-100: var(--sl-color-gray-100);
-  --sl-color-primary-200: var(--sl-color-gray-200);
-  --sl-color-primary-300: var(--sl-color-gray-300);
-  --sl-color-primary-400: var(--sl-color-gray-400);
-  --sl-color-primary-500: var(--sl-color-gray-500);
-  --sl-color-primary-600: var(--sl-color-gray-600);
-  --sl-color-primary-700: var(--sl-color-gray-700);
-  --sl-color-primary-800: var(--sl-color-gray-800);
-  --sl-color-primary-900: var(--sl-color-gray-900);
-  --sl-color-primary-950: var(--sl-color-gray-950);
+.lime-brand {
+  --wa-color-brand-05: var(--wa-color-lime-05);
+  --wa-color-brand-10: var(--wa-color-lime-10);
+  --wa-color-brand-20: var(--wa-color-lime-20);
+  --wa-color-brand-30: var(--wa-color-lime-30);
+  --wa-color-brand-40: var(--wa-color-lime-40);
+  --wa-color-brand-50: var(--wa-color-lime-50);
+  --wa-color-brand-60: var(--wa-color-lime-60);
+  --wa-color-brand-70: var(--wa-color-lime-70);
+  --wa-color-brand-80: var(--wa-color-lime-80);
+  --wa-color-brand-90: var(--wa-color-lime-90);
+  --wa-color-brand-95: var(--wa-color-lime-95);
 }
 
-.orange-primary {
-  --sl-color-primary-50: var(--sl-color-orange-50);
-  --sl-color-primary-100: var(--sl-color-orange-100);
-  --sl-color-primary-200: var(--sl-color-orange-200);
-  --sl-color-primary-300: var(--sl-color-orange-300);
-  --sl-color-primary-400: var(--sl-color-orange-400);
-  --sl-color-primary-500: var(--sl-color-orange-500);
-  --sl-color-primary-600: var(--sl-color-orange-600);
-  --sl-color-primary-700: var(--sl-color-orange-700);
-  --sl-color-primary-800: var(--sl-color-orange-800);
-  --sl-color-primary-900: var(--sl-color-orange-900);
-  --sl-color-primary-950: var(--sl-color-orange-950);
+.emerald-brand {
+  --wa-color-brand-05: var(--wa-color-emerald-05);
+  --wa-color-brand-10: var(--wa-color-emerald-10);
+  --wa-color-brand-20: var(--wa-color-emerald-20);
+  --wa-color-brand-30: var(--wa-color-emerald-30);
+  --wa-color-brand-40: var(--wa-color-emerald-40);
+  --wa-color-brand-50: var(--wa-color-emerald-50);
+  --wa-color-brand-60: var(--wa-color-emerald-60);
+  --wa-color-brand-70: var(--wa-color-emerald-70);
+  --wa-color-brand-80: var(--wa-color-emerald-80);
+  --wa-color-brand-90: var(--wa-color-emerald-90);
+  --wa-color-brand-95: var(--wa-color-emerald-95);
 }
 
-.amber-primary {
-  --sl-color-primary-50: var(--sl-color-amber-50);
-  --sl-color-primary-100: var(--sl-color-amber-100);
-  --sl-color-primary-200: var(--sl-color-amber-200);
-  --sl-color-primary-300: var(--sl-color-amber-300);
-  --sl-color-primary-400: var(--sl-color-amber-400);
-  --sl-color-primary-500: var(--sl-color-amber-500);
-  --sl-color-primary-600: var(--sl-color-amber-600);
-  --sl-color-primary-700: var(--sl-color-amber-700);
-  --sl-color-primary-800: var(--sl-color-amber-800);
-  --sl-color-primary-900: var(--sl-color-amber-900);
-  --sl-color-primary-950: var(--sl-color-amber-950);
+.teal-brand {
+  --wa-color-brand-05: var(--wa-color-teal-05);
+  --wa-color-brand-10: var(--wa-color-teal-10);
+  --wa-color-brand-20: var(--wa-color-teal-20);
+  --wa-color-brand-30: var(--wa-color-teal-30);
+  --wa-color-brand-40: var(--wa-color-teal-40);
+  --wa-color-brand-50: var(--wa-color-teal-50);
+  --wa-color-brand-60: var(--wa-color-teal-60);
+  --wa-color-brand-70: var(--wa-color-teal-70);
+  --wa-color-brand-80: var(--wa-color-teal-80);
+  --wa-color-brand-90: var(--wa-color-teal-90);
+  --wa-color-brand-95: var(--wa-color-teal-95);
 }
 
-.yellow-primary {
-  --sl-color-primary-50: var(--sl-color-yellow-50);
-  --sl-color-primary-100: var(--sl-color-yellow-100);
-  --sl-color-primary-200: var(--sl-color-yellow-200);
-  --sl-color-primary-300: var(--sl-color-yellow-300);
-  --sl-color-primary-400: var(--sl-color-yellow-400);
-  --sl-color-primary-500: var(--sl-color-yellow-500);
-  --sl-color-primary-600: var(--sl-color-yellow-600);
-  --sl-color-primary-700: var(--sl-color-yellow-700);
-  --sl-color-primary-800: var(--sl-color-yellow-800);
-  --sl-color-primary-900: var(--sl-color-yellow-900);
-  --sl-color-primary-950: var(--sl-color-yellow-950);
+.sky-brand {
+  --wa-color-brand-05: var(--wa-color-sky-05);
+  --wa-color-brand-10: var(--wa-color-sky-10);
+  --wa-color-brand-20: var(--wa-color-sky-20);
+  --wa-color-brand-30: var(--wa-color-sky-30);
+  --wa-color-brand-40: var(--wa-color-sky-40);
+  --wa-color-brand-50: var(--wa-color-sky-50);
+  --wa-color-brand-60: var(--wa-color-sky-60);
+  --wa-color-brand-70: var(--wa-color-sky-70);
+  --wa-color-brand-80: var(--wa-color-sky-80);
+  --wa-color-brand-90: var(--wa-color-sky-90);
+  --wa-color-brand-95: var(--wa-color-sky-95);
 }
 
-.lime-primary {
-  --sl-color-primary-50: var(--sl-color-lime-50);
-  --sl-color-primary-100: var(--sl-color-lime-100);
-  --sl-color-primary-200: var(--sl-color-lime-200);
-  --sl-color-primary-300: var(--sl-color-lime-300);
-  --sl-color-primary-400: var(--sl-color-lime-400);
-  --sl-color-primary-500: var(--sl-color-lime-500);
-  --sl-color-primary-600: var(--sl-color-lime-600);
-  --sl-color-primary-700: var(--sl-color-lime-700);
-  --sl-color-primary-800: var(--sl-color-lime-800);
-  --sl-color-primary-900: var(--sl-color-lime-900);
-  --sl-color-primary-950: var(--sl-color-lime-950);
+.violet-brand {
+  --wa-color-brand-05: var(--wa-color-violet-05);
+  --wa-color-brand-10: var(--wa-color-violet-10);
+  --wa-color-brand-20: var(--wa-color-violet-20);
+  --wa-color-brand-30: var(--wa-color-violet-30);
+  --wa-color-brand-40: var(--wa-color-violet-40);
+  --wa-color-brand-50: var(--wa-color-violet-50);
+  --wa-color-brand-60: var(--wa-color-violet-60);
+  --wa-color-brand-70: var(--wa-color-violet-70);
+  --wa-color-brand-80: var(--wa-color-violet-80);
+  --wa-color-brand-90: var(--wa-color-violet-90);
+  --wa-color-brand-95: var(--wa-color-violet-95);
 }
 
-.green-primary {
-  --sl-color-primary-50: var(--sl-color-green-50);
-  --sl-color-primary-100: var(--sl-color-green-100);
-  --sl-color-primary-200: var(--sl-color-green-200);
-  --sl-color-primary-300: var(--sl-color-green-300);
-  --sl-color-primary-400: var(--sl-color-green-400);
-  --sl-color-primary-500: var(--sl-color-green-500);
-  --sl-color-primary-600: var(--sl-color-green-600);
-  --sl-color-primary-700: var(--sl-color-green-700);
-  --sl-color-primary-800: var(--sl-color-green-800);
-  --sl-color-primary-900: var(--sl-color-green-900);
-  --sl-color-primary-950: var(--sl-color-green-950);
+.fuchsia-brand {
+  --wa-color-brand-05: var(--wa-color-fuchsia-05);
+  --wa-color-brand-10: var(--wa-color-fuchsia-10);
+  --wa-color-brand-20: var(--wa-color-fuchsia-20);
+  --wa-color-brand-30: var(--wa-color-fuchsia-30);
+  --wa-color-brand-40: var(--wa-color-fuchsia-40);
+  --wa-color-brand-50: var(--wa-color-fuchsia-50);
+  --wa-color-brand-60: var(--wa-color-fuchsia-60);
+  --wa-color-brand-70: var(--wa-color-fuchsia-70);
+  --wa-color-brand-80: var(--wa-color-fuchsia-80);
+  --wa-color-brand-90: var(--wa-color-fuchsia-90);
+  --wa-color-brand-95: var(--wa-color-fuchsia-95);
 }
 
-.emerald-primary {
-  --sl-color-primary-50: var(--sl-color-emerald-50);
-  --sl-color-primary-100: var(--sl-color-emerald-100);
-  --sl-color-primary-200: var(--sl-color-emerald-200);
-  --sl-color-primary-300: var(--sl-color-emerald-300);
-  --sl-color-primary-400: var(--sl-color-emerald-400);
-  --sl-color-primary-500: var(--sl-color-emerald-500);
-  --sl-color-primary-600: var(--sl-color-emerald-600);
-  --sl-color-primary-700: var(--sl-color-emerald-700);
-  --sl-color-primary-800: var(--sl-color-emerald-800);
-  --sl-color-primary-900: var(--sl-color-emerald-900);
-  --sl-color-primary-950: var(--sl-color-emerald-950);
-}
-
-.teal-primary {
-  --sl-color-primary-50: var(--sl-color-teal-50);
-  --sl-color-primary-100: var(--sl-color-teal-100);
-  --sl-color-primary-200: var(--sl-color-teal-200);
-  --sl-color-primary-300: var(--sl-color-teal-300);
-  --sl-color-primary-400: var(--sl-color-teal-400);
-  --sl-color-primary-500: var(--sl-color-teal-500);
-  --sl-color-primary-600: var(--sl-color-teal-600);
-  --sl-color-primary-700: var(--sl-color-teal-700);
-  --sl-color-primary-800: var(--sl-color-teal-800);
-  --sl-color-primary-900: var(--sl-color-teal-900);
-  --sl-color-primary-950: var(--sl-color-teal-950);
-}
-
-.cyan-primary {
-  --sl-color-primary-50: var(--sl-color-cyan-50);
-  --sl-color-primary-100: var(--sl-color-cyan-100);
-  --sl-color-primary-200: var(--sl-color-cyan-200);
-  --sl-color-primary-300: var(--sl-color-cyan-300);
-  --sl-color-primary-400: var(--sl-color-cyan-400);
-  --sl-color-primary-500: var(--sl-color-cyan-500);
-  --sl-color-primary-600: var(--sl-color-cyan-600);
-  --sl-color-primary-700: var(--sl-color-cyan-700);
-  --sl-color-primary-800: var(--sl-color-cyan-800);
-  --sl-color-primary-900: var(--sl-color-cyan-900);
-  --sl-color-primary-950: var(--sl-color-cyan-950);
-}
-
-.sky-primary {
-  --sl-color-primary-50: var(--sl-color-sky-50);
-  --sl-color-primary-100: var(--sl-color-sky-100);
-  --sl-color-primary-200: var(--sl-color-sky-200);
-  --sl-color-primary-300: var(--sl-color-sky-300);
-  --sl-color-primary-400: var(--sl-color-sky-400);
-  --sl-color-primary-500: var(--sl-color-sky-500);
-  --sl-color-primary-600: var(--sl-color-sky-600);
-  --sl-color-primary-700: var(--sl-color-sky-700);
-  --sl-color-primary-800: var(--sl-color-sky-800);
-  --sl-color-primary-900: var(--sl-color-sky-900);
-  --sl-color-primary-950: var(--sl-color-sky-950);
-}
-
-.blue-primary {
-  --sl-color-primary-50: var(--sl-color-blue-50);
-  --sl-color-primary-100: var(--sl-color-blue-100);
-  --sl-color-primary-200: var(--sl-color-blue-200);
-  --sl-color-primary-300: var(--sl-color-blue-300);
-  --sl-color-primary-400: var(--sl-color-blue-400);
-  --sl-color-primary-500: var(--sl-color-blue-500);
-  --sl-color-primary-600: var(--sl-color-blue-600);
-  --sl-color-primary-700: var(--sl-color-blue-700);
-  --sl-color-primary-800: var(--sl-color-blue-800);
-  --sl-color-primary-900: var(--sl-color-blue-900);
-  --sl-color-primary-950: var(--sl-color-blue-950);
-}
-
-.indigo-primary {
-  --sl-color-primary-50: var(--sl-color-indigo-50);
-  --sl-color-primary-100: var(--sl-color-indigo-100);
-  --sl-color-primary-200: var(--sl-color-indigo-200);
-  --sl-color-primary-300: var(--sl-color-indigo-300);
-  --sl-color-primary-400: var(--sl-color-indigo-400);
-  --sl-color-primary-500: var(--sl-color-indigo-500);
-  --sl-color-primary-600: var(--sl-color-indigo-600);
-  --sl-color-primary-700: var(--sl-color-indigo-700);
-  --sl-color-primary-800: var(--sl-color-indigo-800);
-  --sl-color-primary-900: var(--sl-color-indigo-900);
-  --sl-color-primary-950: var(--sl-color-indigo-950);
-}
-
-.violet-primary {
-  --sl-color-primary-50: var(--sl-color-violet-50);
-  --sl-color-primary-100: var(--sl-color-violet-100);
-  --sl-color-primary-200: var(--sl-color-violet-200);
-  --sl-color-primary-300: var(--sl-color-violet-300);
-  --sl-color-primary-400: var(--sl-color-violet-400);
-  --sl-color-primary-500: var(--sl-color-violet-500);
-  --sl-color-primary-600: var(--sl-color-violet-600);
-  --sl-color-primary-700: var(--sl-color-violet-700);
-  --sl-color-primary-800: var(--sl-color-violet-800);
-  --sl-color-primary-900: var(--sl-color-violet-900);
-  --sl-color-primary-950: var(--sl-color-violet-950);
-}
-
-.purple-primary {
-  --sl-color-primary-50: var(--sl-color-purple-50);
-  --sl-color-primary-100: var(--sl-color-purple-100);
-  --sl-color-primary-200: var(--sl-color-purple-200);
-  --sl-color-primary-300: var(--sl-color-purple-300);
-  --sl-color-primary-400: var(--sl-color-purple-400);
-  --sl-color-primary-500: var(--sl-color-purple-500);
-  --sl-color-primary-600: var(--sl-color-purple-600);
-  --sl-color-primary-700: var(--sl-color-purple-700);
-  --sl-color-primary-800: var(--sl-color-purple-800);
-  --sl-color-primary-900: var(--sl-color-purple-900);
-  --sl-color-primary-950: var(--sl-color-purple-950);
-}
-
-.fuchsia-primary {
-  --sl-color-primary-50: var(--sl-color-fuchsia-50);
-  --sl-color-primary-100: var(--sl-color-fuchsia-100);
-  --sl-color-primary-200: var(--sl-color-fuchsia-200);
-  --sl-color-primary-300: var(--sl-color-fuchsia-300);
-  --sl-color-primary-400: var(--sl-color-fuchsia-400);
-  --sl-color-primary-500: var(--sl-color-fuchsia-500);
-  --sl-color-primary-600: var(--sl-color-fuchsia-600);
-  --sl-color-primary-700: var(--sl-color-fuchsia-700);
-  --sl-color-primary-800: var(--sl-color-fuchsia-800);
-  --sl-color-primary-900: var(--sl-color-fuchsia-900);
-  --sl-color-primary-950: var(--sl-color-fuchsia-950);
-}
-
-.pink-primary {
-  --sl-color-primary-50: var(--sl-color-pink-50);
-  --sl-color-primary-100: var(--sl-color-pink-100);
-  --sl-color-primary-200: var(--sl-color-pink-200);
-  --sl-color-primary-300: var(--sl-color-pink-300);
-  --sl-color-primary-400: var(--sl-color-pink-400);
-  --sl-color-primary-500: var(--sl-color-pink-500);
-  --sl-color-primary-600: var(--sl-color-pink-600);
-  --sl-color-primary-700: var(--sl-color-pink-700);
-  --sl-color-primary-800: var(--sl-color-pink-800);
-  --sl-color-primary-900: var(--sl-color-pink-900);
-  --sl-color-primary-950: var(--sl-color-pink-950);
-}
-
-.rose-primary {
-  --sl-color-primary-50: var(--sl-color-rose-50);
-  --sl-color-primary-100: var(--sl-color-rose-100);
-  --sl-color-primary-200: var(--sl-color-rose-200);
-  --sl-color-primary-300: var(--sl-color-rose-300);
-  --sl-color-primary-400: var(--sl-color-rose-400);
-  --sl-color-primary-500: var(--sl-color-rose-500);
-  --sl-color-primary-600: var(--sl-color-rose-600);
-  --sl-color-primary-700: var(--sl-color-rose-700);
-  --sl-color-primary-800: var(--sl-color-rose-800);
-  --sl-color-primary-900: var(--sl-color-rose-900);
-  --sl-color-primary-950: var(--sl-color-rose-950);
+.rose-brand {
+  --wa-color-brand-05: var(--wa-color-rose-05);
+  --wa-color-brand-10: var(--wa-color-rose-10);
+  --wa-color-brand-20: var(--wa-color-rose-20);
+  --wa-color-brand-30: var(--wa-color-rose-30);
+  --wa-color-brand-40: var(--wa-color-rose-40);
+  --wa-color-brand-50: var(--wa-color-rose-50);
+  --wa-color-brand-60: var(--wa-color-rose-60);
+  --wa-color-brand-70: var(--wa-color-rose-70);
+  --wa-color-brand-80: var(--wa-color-rose-80);
+  --wa-color-brand-90: var(--wa-color-rose-90);
+  --wa-color-brand-95: var(--wa-color-rose-95);
 }
