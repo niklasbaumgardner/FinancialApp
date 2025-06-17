@@ -96,14 +96,21 @@ export class TransactionsGrid extends NikElement {
         },
       },
       {
-        field: "date",
-        filter: "agDateColumnFilter",
+        field: "user",
+        filter: "agTextColumnFilter",
         cellRenderer: (param) => {
-          let date = param.data.date;
+          let user = param.data.user;
 
-          return `<wa-format-date month="long" day="numeric" year="numeric" date="${
-            date + "T00:00:00"
-          }"></sl-format-date>`;
+          return user.username;
+        },
+      },
+      {
+        field: "budget",
+        filter: "agTextColumnFilter",
+        cellRenderer: (param) => {
+          let budget = param.data.budget;
+
+          return `<a href="${budget.url}">${budget.name}</a>`;
         },
       },
       {
@@ -138,21 +145,14 @@ export class TransactionsGrid extends NikElement {
         },
       },
       {
-        field: "user",
-        filter: "agTextColumnFilter",
+        field: "date",
+        filter: "agDateColumnFilter",
         cellRenderer: (param) => {
-          let user = param.data.user;
+          let date = param.data.date;
 
-          return user.username;
-        },
-      },
-      {
-        field: "budget",
-        filter: "agTextColumnFilter",
-        cellRenderer: (param) => {
-          let budget = param.data.budget;
-
-          return budget.name;
+          return `<wa-format-date month="long" day="numeric" year="numeric" date="${
+            date + "T00:00:00"
+          }"></sl-format-date>`;
         },
       },
     ];
