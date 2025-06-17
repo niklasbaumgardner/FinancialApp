@@ -69,6 +69,18 @@ class Budget(db.Model, SerializerMixin):
     is_active = db.Column(db.Boolean, nullable=False)
     is_shared = db.Column(db.Boolean, nullable=False)
 
+    user = db.relationship("User", lazy="joined")
+
+    shared_users = db.relationship(
+        "User",
+        lazy="joined",
+        secondary="shared_budget",
+        primaryjoin="SharedBudget.budget_id == Budget.id",
+        secondaryjoin="User.id == SharedBudget.user_id",
+        uselist=True,
+        viewonly=True,
+    )
+
     def url(self):
         return url_for("viewbudget_bp.view_budget", id=self.id)
 
@@ -86,11 +98,6 @@ class Budget(db.Model, SerializerMixin):
 
     def share_budget_url(self):
         return url_for("sharebudget_bp.share_budget", budget_id=self.id)
-
-    def shared_users(self):
-        users = user_queries.get_shared_users_for_budget_id(budget_id=self.id)
-        users = [u.to_dict() for u in users]
-        return users
 
     # I don't think this will work because of the shared_budget model
     # transactions = db.relationship("Transaction", uselist=False)
@@ -141,6 +148,7 @@ class Transaction(db.Model, SerializerMixin):
         "TransactionCategory", lazy="joined", passive_deletes=True
     )
     user = db.relationship("User", lazy="joined")
+    budget = db.relationship("Budget", lazy="noload")
 
     def edit_url(self):
         return url_for(

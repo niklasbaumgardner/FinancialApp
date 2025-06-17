@@ -1,8 +1,10 @@
-from finapp.models import Budget, SharedBudget
+from finapp.models import Budget, SharedBudget, User
 from finapp.queries import shared_budget_queries, transaction_queries
 from finapp import db
 from flask_login import current_user
 from sqlalchemy.sql import or_, and_
+from sqlalchemy import select
+from sqlalchemy.orm import joinedload
 
 
 ##
@@ -29,17 +31,23 @@ def get_budget_for_id(id):
 
 
 def get_budget(budget_id, shared=True, query=False):
-    budget_query = Budget.query.join(
-        SharedBudget, Budget.id == SharedBudget.budget_id, isouter=True
-    ).where(
-        and_(
-            Budget.id == budget_id,
-            or_(
-                Budget.user_id == current_user.id,
-                SharedBudget.user_id == current_user.id,
+    budget_query = (
+        Budget.query.join(
+            SharedBudget, Budget.id == SharedBudget.budget_id, isouter=True
+        )
+        .where(
+            and_(
+                Budget.id == budget_id,
+                or_(
+                    Budget.user_id == current_user.id,
+                    SharedBudget.user_id == current_user.id,
+                ),
             ),
-        ),
+        )
+        .options(joinedload(Budget.shared_users))
     )
+
+    # budget_query = Budget.query.filter_by(id=budget_id)
 
     if query:
         return budget_query
@@ -57,26 +65,28 @@ def can_modify_budget(budget_id):
 
 
 def get_budgets(separate=False, active_only=False, inactive_only=False):
-    budgets = Budget.query.where(
+    budgets = Budget.query.join(
+        SharedBudget, Budget.id == SharedBudget.budget_id, isouter=True
+    ).where(
         or_(
             Budget.user_id == current_user.id,
-            shared_budget_queries.get_shared_budgets_query_by_budget().exists(),
-        )
+            SharedBudget.user_id == current_user.id,
+        ),
     )
 
     if active_only:
-        active = budgets.filter_by(is_active=True).all()
+        active = budgets.where(Budget.is_active == True).all()
         active.sort(key=lambda x: x.name.lower())
         return active
 
     elif inactive_only:
-        inactive = budgets.filter_by(is_active=False).all()
+        inactive = budgets.where(Budget.is_active == False).all()
         inactive.sort(key=lambda x: x.name.lower())
         return inactive
 
     elif separate:
-        active = budgets.filter_by(is_active=True).all()
-        inactive = budgets.filter_by(is_active=False).all()
+        active = budgets.where(Budget.is_active == True).all()
+        inactive = budgets.where(Budget.is_active == False).all()
         active.sort(key=lambda x: x.name.lower())
         inactive.sort(key=lambda x: x.name.lower())
         return active, inactive

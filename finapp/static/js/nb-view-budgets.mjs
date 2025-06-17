@@ -107,7 +107,15 @@ export class ViewBudgets extends NikElement {
       <div class="wa-split">
         <div>
           <h1>Welcome</h1>
-          <h3>Combined budget total: ${this.total}</h3>
+          <h3>
+            Combined budget total:
+            <wa-format-number
+              type="currency"
+              currency="USD"
+              value=${this.total}
+              lang="en-US"
+            ></wa-format-number>
+          </h3>
         </div>
         <wa-button
           variant="neutral"

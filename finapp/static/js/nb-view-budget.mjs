@@ -149,19 +149,12 @@ export class ViewBudget extends NikElement {
   }
 
   sharedUsersOptionsTemplate() {
-    let templateArray = [];
-    templateArray.push(
-      html`<wa-option value=${CURRENT_USER.id}
-        >${CURRENT_USER.username}</wa-option
-      >`
-    );
-    templateArray.push(
-      ...this.budget.shared_users.map(
-        (su) => html`<wa-option value=${su.id}>${su.username}</wa-option>`
-      )
-    );
+    let users = [this.budget.user];
+    users.push(...this.budget.shared_users);
 
-    return templateArray;
+    return users.map(
+      (u) => html`<wa-option value=${u.id}>${u.username}</wa-option>`
+    );
   }
 
   sharedUsersSelectTemplate() {

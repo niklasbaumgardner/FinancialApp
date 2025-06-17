@@ -26,5 +26,14 @@ def viewbudgets():
     return render_template(
         "viewbudgets.html",
         budgets=[active, inactive],
-        total=helpers.format_to_money_string(total),
+        total=total,
     )
+
+
+@viewbudgets_bp.get("/recent_transactions")
+@login_required
+def recent_transactions():
+    transactions = transaction_queries.get_recent_transactions()
+    transactions = [t.to_dict() for t in transactions]
+
+    return render_template("index.html", transactions=transactions)

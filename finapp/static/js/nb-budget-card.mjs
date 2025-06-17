@@ -122,7 +122,14 @@ export class BudgetCard extends NikElement {
   }
 
   getSharedUsers() {
-    return this.budget.shared_users?.map((u) => u.username).join(", ");
+    if (!this.budget.shared_users?.length) {
+      return;
+    }
+
+    let users = [this.budget.user];
+    users.push(...this.budget.shared_users);
+
+    return users?.map((u) => u.username).join(", ");
   }
 
   sharedUserTemplate() {

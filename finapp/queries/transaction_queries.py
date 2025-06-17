@@ -8,6 +8,7 @@ from finapp.queries import (
 from finapp import db
 from flask_login import current_user
 from sqlalchemy.sql import func, or_, and_
+from sqlalchemy.orm import joinedload
 from sqlalchemy import extract, update
 from datetime import date
 
@@ -32,6 +33,41 @@ def paginate_query(query, page):
 ##
 ## Transaction queries
 ##
+
+
+def get_transaction_query(transaction_id):
+    return (
+        Transaction.query.join(Budget, Budget.id == Transaction.budget_id)
+        .join(
+            SharedBudget, SharedBudget.budget_id == Transaction.budget_id, isouter=True
+        )
+        .where(
+            and_(
+                Transaction.id == transaction_id,
+                or_(
+                    Transaction.user_id == current_user.id,
+                    Budget.user_id == current_user.id,
+                    SharedBudget.user_id == current_user.id,
+                ),
+            )
+        )
+    )
+
+
+def get_transactions_query():
+    return (
+        Transaction.query.join(Budget, Budget.id == Transaction.budget_id)
+        .join(
+            SharedBudget, SharedBudget.budget_id == Transaction.budget_id, isouter=True
+        )
+        .where(
+            or_(
+                Transaction.user_id == current_user.id,
+                Budget.user_id == current_user.id,
+                SharedBudget.user_id == current_user.id,
+            ),
+        )
+    )
 
 
 def create_transaction(
@@ -71,23 +107,7 @@ def create_transaction(
 
 
 def get_transaction(transaction_id):
-    return (
-        Transaction.query.join(Budget, Budget.id == Transaction.budget_id)
-        .join(
-            SharedBudget, SharedBudget.budget_id == Transaction.budget_id, isouter=True
-        )
-        .where(
-            and_(
-                Transaction.id == transaction_id,
-                or_(
-                    Transaction.user_id == current_user.id,
-                    Budget.user_id == current_user.id,
-                    SharedBudget.user_id == current_user.id,
-                ),
-            )
-        )
-        .first()
-    )
+    return get_transaction_query(transaction_id=transaction_id).first()
 
 
 def get_first_transaction_date():
@@ -101,21 +121,7 @@ def get_first_transaction_date():
 
 
 def can_modify_transaction(transaction_id):
-    count_of_transactions = (
-        Transaction.query.join(Budget, Budget.id == Transaction.budget_id)
-        .join(SharedBudget, SharedBudget.budget_id == Transaction.budget_id)
-        .where(
-            and_(
-                Transaction.id == transaction_id,
-                or_(
-                    Transaction.user_id == current_user.id,
-                    Budget.user_id == current_user.id,
-                    SharedBudget.user_id == current_user.id,
-                ),
-            )
-        )
-        .count()
-    )
+    count_of_transactions = get_transaction_query(transaction_id=transaction_id).count()
 
     return count_of_transactions > 0
 
@@ -151,6 +157,17 @@ def sort_transactions(sort_by, transactionsQuery):
         )
 
     return transactionsQuery
+
+
+def get_recent_transactions():
+    transactions = (
+        get_transactions_query()
+        .order_by(Transaction.date.desc(), Transaction.id.desc())
+        .options(joinedload(Transaction.budget))
+        .all()
+    )
+
+    return transactions
 
 
 def get_transactions(
