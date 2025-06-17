@@ -74,14 +74,16 @@ def edit_budget(id):
 @editbudget_bp.post("/delete_budget/<int:b_id>")
 @login_required
 def delete_budget(b_id):
-    budget = budget_queries.get_budget(b_id)
+    budget = budget_queries.get_budget(budget_id=b_id)
     if not budget:
         abort(400)
 
     new_budget_id = request.form.get("new_budget")
 
     # move or delete the transactions
-    new_budget = budget_queries.get_budget(new_budget_id) if new_budget_id else None
+    new_budget = (
+        budget_queries.get_budget(budget_id=new_budget_id) if new_budget_id else None
+    )
 
     # update shared budgets
     shared_budgets = shared_budget_queries.get_shared_budgets_by_budget_id(

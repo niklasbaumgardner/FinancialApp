@@ -72,7 +72,7 @@ export class CreateCategoryModal extends NikElement {
   }
 
   async handleSubmitClick() {
-    if (!this.form.checkValidity()) {
+    if (!this.form.reportValidity()) {
       return true;
     }
 

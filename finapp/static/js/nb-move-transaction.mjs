@@ -43,7 +43,7 @@ export class MoveTransactionModal extends NikElement {
   }
 
   async handleTransactionMove() {
-    if (!this.form.checkValidity()) {
+    if (!this.form.reportValidity()) {
       return;
     }
 

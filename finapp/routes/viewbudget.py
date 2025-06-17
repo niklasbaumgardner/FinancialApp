@@ -22,7 +22,7 @@ def view_budget(id):
     year = request.args.get("year", 0, type=int)
     ytd = request.args.get("ytd") == "true"
 
-    budget = budget_queries.get_budget(id)
+    budget = budget_queries.get_budget(budget_id=id)
     budgets = [b.to_dict() for b in budget_queries.get_budgets(active_only=True)]
 
     if ytd:
@@ -81,7 +81,7 @@ def get_page(budget_id):
     except:
         sort_by = None
 
-    budget = budget_queries.get_budget(budget_id)
+    budget = budget_queries.get_budget(budget_id=budget_id)
 
     if ytd:
         transactions, total, page, num_pages = (

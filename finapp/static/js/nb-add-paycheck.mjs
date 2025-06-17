@@ -96,7 +96,7 @@ export class AddPaycheck extends NikElement {
   validateForm() {
     let nameValid = this.checkPaycheckName();
     let amountValid = this.checkPaycheckAmount();
-    let formValid = this.form.checkValidity();
+    let formValid = this.form.reportValidity();
     this.formValid = nameValid && amountValid && formValid;
   }
 

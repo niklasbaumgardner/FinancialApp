@@ -1,6 +1,7 @@
 import { NikElement } from "./customElement.mjs";
 import { html } from "./imports.mjs";
 import "./nb-budget-card.mjs";
+import "./nb-add-budget.mjs";
 
 export class ViewBudgets extends NikElement {
   static properties = {
@@ -67,8 +68,12 @@ export class ViewBudgets extends NikElement {
   }
 
   handleAddBudgetClick() {
-    let newBudgetCard = document.createElement("nb-add-budget-card");
-    this.active.insertBefore(newBudgetCard, this.active.firstChild);
+    if (!this.newBudget) {
+      this.newBudget = document.createElement("nb-add-budget");
+      document.body.append(this.newBudget);
+    }
+
+    this.newBudget.show();
   }
 
   budgetsTemplate() {
@@ -89,9 +94,9 @@ export class ViewBudgets extends NikElement {
         ></nb-budget-card>`
     );
 
-    return html`<div class="wa-grid view-budgets-grid" id="active">
-        ${activeBudgets}
-      </div>
+    return html`<label for="active" class="wa-heading-m">Active Budgets:</label>
+      <div class="wa-grid view-budgets-grid" id="active">${activeBudgets}</div>
+      <label for="inactive" class="wa-heading-m">Inactive Budgets:</label>
       <div class="wa-grid view-budgets-grid" id="inactive">
         ${inactiveBudgets}
       </div>`;

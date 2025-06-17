@@ -25,7 +25,7 @@ def share_budget(budget_id):
         # just return if the budget is already shared with this user
         return {"success": True}
 
-    budget = budget_queries.get_budget(id=budget_id)
+    budget = budget_queries.get_budget(budget_id=budget_id)
     token = budget.get_share_token(recipient_id=user.id)
 
     send_share_budget_email(

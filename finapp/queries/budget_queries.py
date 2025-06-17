@@ -28,12 +28,12 @@ def get_budget_for_id(id):
     return Budget.query.filter_by(id=id).first()
 
 
-def get_budget(id, shared=True, query=False):
+def get_budget(budget_id, shared=True, query=False):
     budget_query = Budget.query.join(
         SharedBudget, Budget.id == SharedBudget.budget_id, isouter=True
     ).where(
         and_(
-            Budget.id == id,
+            Budget.id == budget_id,
             or_(
                 Budget.user_id == current_user.id,
                 SharedBudget.user_id == current_user.id,
@@ -92,7 +92,7 @@ def get_duplicate_budget_by_name(name):
 
 
 def update_budget(id, name=None, is_active=None):
-    budget = get_budget(id)
+    budget = get_budget(budget_id=id)
     if budget:
         if name is not None:
             budget.name = name.strip()
@@ -102,7 +102,7 @@ def update_budget(id, name=None, is_active=None):
 
 
 def update_budget_total(b_id, budget=None):
-    budget = get_budget(b_id) if budget is None else budget
+    budget = get_budget(budget_id=b_id) if budget is None else budget
 
     if budget:
         total = transaction_queries.get_transactions_sum(budget_id=budget.id)
@@ -117,7 +117,7 @@ def set_budget_shared(budget_id):
 
 
 def delete_budget(id):
-    budget = get_budget(id, shared=False)
+    budget = get_budget(budget_id=id, shared=False)
     _delete_budget(budget)
 
 

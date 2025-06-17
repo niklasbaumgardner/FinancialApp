@@ -44,7 +44,7 @@ def create_transaction(
     categories=None,
     paycheck_id=None,
 ):
-    budget = budget_queries.get_budget(budget_id)
+    budget = budget_queries.get_budget(budget_id=budget_id)
     if budget:
         trans = Transaction(
             name=name.strip(),
@@ -332,7 +332,7 @@ def _update_transaction(
 
     if transaction:
         if new_b_id is not None:
-            new_budget = budget_queries.get_budget(new_b_id)
+            new_budget = budget_queries.get_budget(budget_id=new_b_id)
             if new_budget:
                 transaction.budget_id = new_b_id
                 should_update_budget_total.add(new_b_id)
