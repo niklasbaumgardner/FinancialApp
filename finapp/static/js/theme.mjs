@@ -34,7 +34,11 @@ export const PRIMARY_COLOR_LIST = [
   "fuchsia",
   "pink",
   "rose",
+  "slate",
   "gray",
+  "zinc",
+  "neutral",
+  "stone",
 ];
 
 export const BACKGROUND_COLOR_LIST = [

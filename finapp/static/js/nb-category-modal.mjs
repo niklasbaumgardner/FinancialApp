@@ -2,6 +2,11 @@ import { NikElement } from "./customElement.mjs";
 import { html } from "./imports.mjs";
 import "./nb-category.mjs";
 import "./nb-radio.mjs";
+import { PRIMARY_COLOR_LIST } from "./theme.mjs";
+
+function toUpper(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
 export class CreateCategoryModal extends NikElement {
   static properties = {
@@ -105,24 +110,14 @@ export class CreateCategoryModal extends NikElement {
           <div class="wa-stack gap-(--wa-space-xs)!">
             <div>Select a color: *</div>
             <div class="wa-cluster">
-              <nb-radio value="red" name="color" label="Red"></nb-radio>
-              <nb-radio value="gray" name="color" label="Gray"></nb-radio>
-              <nb-radio value="orange" name="color" label="Orange"></nb-radio>
-              <nb-radio value="amber" name="color" label="Amber"></nb-radio>
-              <nb-radio value="yellow" name="color" label="Yellow"></nb-radio>
-              <nb-radio value="lime" name="color" label="Lime"></nb-radio>
-              <nb-radio value="green" name="color" label="Green"></nb-radio>
-              <nb-radio value="emerald" name="color" label="Emerald"></nb-radio>
-              <nb-radio value="teal" name="color" label="Teal"></nb-radio>
-              <nb-radio value="cyan" name="color" label="Cyan"></nb-radio>
-              <nb-radio value="sky" name="color" label="Sky"></nb-radio>
-              <nb-radio value="blue" name="color" label="Blue"></nb-radio>
-              <nb-radio value="indigo" name="color" label="Indigo"></nb-radio>
-              <nb-radio value="violet" name="color" label="Violet"></nb-radio>
-              <nb-radio value="purple" name="color" label="Purple"></nb-radio>
-              <nb-radio value="fuchsia" name="color" label="Fuchsia"></nb-radio>
-              <nb-radio value="pink" name="color" label="Pink"></nb-radio>
-              <nb-radio value="rose" name="color" label="Rose"></nb-radio>
+              ${PRIMARY_COLOR_LIST.map(
+                (color) =>
+                  html`<nb-radio
+                    name="color"
+                    value=${color}
+                    label=${toUpper(color)}
+                  ></nb-radio>`
+              )}
             </div>
           </div>
           <wa-card

@@ -105,7 +105,11 @@ def set_primary_color(primary_color):
         "fuchsia",
         "pink",
         "rose",
+        "slate",
         "gray",
+        "zinc",
+        "neutral",
+        "stone",
     ]:
         primary_color = None
 
