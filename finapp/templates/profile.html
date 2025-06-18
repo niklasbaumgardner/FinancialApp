@@ -1,5 +1,11 @@
 {% extends "base.html" %} {% block title %}Profile{% endblock title %} {% block
-profile %}active{% endblock profile %} {% block content %}
+profile %}active{% endblock profile %} {% block backButton %}
+
+<wa-button href="/" id="back-button" variant="brand" appearance="outlined">
+  <wa-icon library="ion" name="chevron-back-outline"></wa-icon> Back</wa-button
+>
+
+{% endblock backButton %} {% block content %}
 
 <nb-profile
   class="auth-card"

@@ -1,5 +1,10 @@
 {% extends "base.html" %} {% block title %}{{ budget.name }}{% endblock title %}
-{% block backButton %}<wa-button href="/" variant="brand" appearance="outlined">
+{% block backButton %}<wa-button
+  href="/"
+  id="back-button"
+  variant="brand"
+  appearance="outlined"
+>
   <wa-icon library="ion" name="chevron-back-outline"></wa-icon> Back</wa-button
 >{% endblock backButton %} {% block content %}
 <script>

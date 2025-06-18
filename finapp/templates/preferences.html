@@ -1,5 +1,11 @@
 {% extends "base.html" %} {% block title %}Preferences{% endblock title %} {%
-block preferences %}active{% endblock preferences %} {% block content %}
+block preferences %}active{% endblock preferences %} {% block backButton %}
+
+<wa-button href="/" id="back-button" variant="brand" appearance="outlined">
+  <wa-icon library="ion" name="chevron-back-outline"></wa-icon> Back</wa-button
+>
+
+{% endblock backButton %} {% block content %}
 
 <nb-preferences class="main-card"></nb-preferences>
 
