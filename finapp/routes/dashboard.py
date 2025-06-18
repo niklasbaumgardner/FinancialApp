@@ -92,8 +92,6 @@ def get_spending_by_category():
     data = helpers.spending_by_category(
         current_date_str=current_date, interval=interval
     )
-    categories = {
-        c.id: c.to_dict() for c in category_queries.get_cetegories(sort=False)
-    }
+    categories = {c.id: c.to_dict() for c in category_queries.get_categories_shared()}
 
     return {"data": data, "categories": categories}

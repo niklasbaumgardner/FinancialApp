@@ -142,6 +142,9 @@
   .p-\(--spacing\) {
     padding: var(--spacing);
   }
+  .p-\(--wa-space-2xs\) {
+    padding: var(--wa-space-2xs);
+  }
   .text-end {
     text-align: end;
   }
@@ -153,6 +156,13 @@
   }
   .text-\(length\:--wa-font-size-xl\) {
     font-size: var(--wa-font-size-xl);
+  }
+  .leading-\(--wa-line-height-normal\)\! {
+    --tw-leading: var(--wa-line-height-normal) !important;
+    line-height: var(--wa-line-height-normal) !important;
+  }
+  .text-wrap {
+    text-wrap: wrap;
   }
   .text-\[unset\]\! {
     color: unset !important;
@@ -172,6 +182,10 @@
       flex-wrap: nowrap !important;
     }
   }
+}
+@property --tw-leading {
+  syntax: "*";
+  inherits: false;
 }
 @property --tw-outline-style {
   syntax: "*";
@@ -234,6 +248,7 @@
 @layer properties {
   @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
     *, ::before, ::after, ::backdrop {
+      --tw-leading: initial;
       --tw-outline-style: solid;
       --tw-blur: initial;
       --tw-brightness: initial;

@@ -68,54 +68,63 @@ const USDFormatter = new Intl.NumberFormat("en-US", options);
 class Colors {
   constructor(chartManager) {
     this.chartManager = chartManager;
-    this.storage = window["localStorage"];
+    this.theme = THEME;
+
     this.themeObserver = new MutationObserver(() => {
-      this.setTheme();
       this.chartManager.updateChartColors();
     });
     this.themeObserver.observe(document.documentElement, { attributes: true });
-    this.setTheme();
-  }
-
-  setTheme() {
-    this.theme = this.storage.getItem("theme") === "light" ? "light" : "dark";
   }
 
   getColor(color) {
-    return COLORS_OBJECT[this.theme][color];
+    return COLORS_OBJECT[this.theme.mode][color];
   }
 }
 
 async function getPieData(date = "") {
   let result;
   if (date !== "") {
-    result = await getRequest(GET_PIE_DATA_URL, {
-      date,
-    });
+    result = await fetch(
+      GET_PIE_DATA_URL +
+        "?" +
+        new URLSearchParams({
+          date,
+        })
+    );
   } else {
-    result = await getRequest(GET_PIE_DATA_URL);
+    result = await fetch(GET_PIE_DATA_URL);
   }
   return result;
 }
 
 async function getAllBudgetsLineData(startDate = "") {
-  let result = await getRequest(GET_ALL_BUDGETS_LINE_DATA_URL, { startDate });
+  let result = await fetch(
+    GET_ALL_BUDGETS_LINE_DATA_URL +
+      "?" +
+      new URLSearchParams({
+        startDate,
+      })
+  );
   return result;
 }
 
 async function getNetSpending(object) {
-  let result = await getRequest(GET_NET_SPENDING_URL, object);
+  let result = await fetch(
+    GET_NET_SPENDING_URL + "?" + new URLSearchParams(object)
+  );
   return result;
 }
 
 async function getMonthSpending(value) {
   let object = JSON.parse(value);
-  let result = await getRequest(GET_SPENDING_FOR_MONTH_URL, object);
+  let result = await fetch(
+    GET_SPENDING_FOR_MONTH_URL + "?" + new URLSearchParams(object)
+  );
   return result;
 }
 
 async function getAllBudgetNames() {
-  let result = await getRequest(GET_BUDGET_NAME_URL);
+  let result = await fetch(GET_BUDGET_NAME_URL);
   return result;
 }
 
@@ -161,8 +170,9 @@ class ChartManager {
     }
 
     let response = await getAllBudgetsLineData(date);
-    this.lineChartData = response.data;
-    this.lineChartKeys = response.keys;
+    let { data, keys } = await response.json();
+    this.lineChartData = data;
+    this.lineChartKeys = keys;
 
     this.updateLineChart();
   }
@@ -172,7 +182,9 @@ class ChartManager {
   }
 
   async addBudgetsToLineChart() {
-    this.names = (await getAllBudgetNames()).names;
+    let response = await getAllBudgetNames();
+    let { names } = await response.json();
+    this.names = names;
 
     for (let name of this.names) {
       if (
@@ -188,6 +200,9 @@ class ChartManager {
 
       this.selectEl.appendChild(item);
     }
+
+    this.selectEl.value = "";
+    this.selectEl.value = ["allBudgets"];
 
     this.selectEl.disabled = false;
   }
@@ -248,7 +263,7 @@ class ChartManager {
   async createLineChart() {
     let response = await getAllBudgetsLineData();
 
-    let { data, keys } = response;
+    let { data, keys } = await response.json();
     this.lineChartKeys = keys;
     this.setLineBudgetStartDate(this.lineChartKeys[0], true);
     this.lineChartData = data;
@@ -364,11 +379,11 @@ class NetSpendingManager {
   }
 
   get currentSelection() {
-    return JSON.parse(this.netSpendingSelect.value);
+    return JSON.parse(this.netSpendingSelect.getAttribute("value"));
   }
 
   get key() {
-    return this.netSpendingSelect.value;
+    return this.netSpendingSelect.getAttribute("value");
   }
 
   get cellColorRules() {
@@ -376,6 +391,16 @@ class NetSpendingManager {
       "text-greater-than-zero": "x > 0",
       "text-less-than-zero": "x < 0",
     };
+  }
+
+  get currentColorScheme() {
+    let theme = document.documentElement.classList.contains("wa-dark")
+      ? "dark"
+      : "light";
+
+    let colorScheme =
+      theme === "dark" ? agGrid.colorSchemeDark : agGrid.colorSchemeLight;
+    return colorScheme;
   }
 
   async init() {
@@ -386,6 +411,7 @@ class NetSpendingManager {
     this.createDataGrid();
 
     this.addOptions();
+
     await this.getData();
     this.updateSpendingGrid();
 
@@ -446,24 +472,16 @@ class NetSpendingManager {
         type: "fitGridWidth",
         defaultMinWidth: 200,
       },
-      onRowDataUpdated: (event) => {
-        let height =
-          this.spendingGridEl.querySelector(".ag-center-cols-container")
-            .scrollHeight +
-          this.spendingGridEl.querySelector(".ag-header-row").scrollHeight;
-
-        if (height < 192) {
-          height = 192;
-        }
-
-        this.spendingGridEl.style.height = `${height + 3}px`;
-      },
+      domLayout: "autoHeight",
+      theme: agGrid.themeAlpine.withPart(this.currentColorScheme),
     };
     this.dataGrid = agGrid.createGrid(this.spendingGridEl, gridOptions);
   }
 
   async getData() {
-    let data = await getNetSpending(this.currentSelection);
+    let response = await getNetSpending(this.currentSelection);
+    let data = await response.json();
+
     this.dataCache[this.key] = data;
   }
 
@@ -527,12 +545,12 @@ class NetSpendingManager {
       this.netSpendingSelect.appendChild(option);
     }
 
-    this.netSpendingSelect.value = options[2].value;
+    this.netSpendingSelect.setAttribute("value", options[2].value);
   }
 
   setupThemeWatcher() {
-    this.mutationObserver = new MutationObserver((params) =>
-      this.handleThemeChange(params)
+    this.mutationObserver = new MutationObserver(() =>
+      this.handleThemeChange()
     );
 
     this.mutationObserver.observe(document.documentElement, {
@@ -541,14 +559,10 @@ class NetSpendingManager {
   }
 
   handleThemeChange() {
-    let theme = document.documentElement.classList.contains("wa-dark")
-      ? "dark"
-      : "light";
-    this.spendingGridEl.classList.toggle(
-      "ag-theme-alpine-dark",
-      theme === "dark"
+    this.dataGrid.setGridOption(
+      "theme",
+      agGrid.themeAlpine.withPart(this.currentColorScheme)
     );
-    this.spendingGridEl.classList.toggle("ag-theme-alpine", theme === "light");
   }
 }
 
@@ -579,6 +593,16 @@ class CategorySpendingManager {
     return this.categorySpendingSelect.value;
   }
 
+  get currentColorScheme() {
+    let theme = document.documentElement.classList.contains("wa-dark")
+      ? "dark"
+      : "light";
+
+    let colorScheme =
+      theme === "dark" ? agGrid.colorSchemeDark : agGrid.colorSchemeLight;
+    return colorScheme;
+  }
+
   async init() {
     this.spendingMonths = new Set();
     this.spendingWeeks = {};
@@ -593,6 +617,9 @@ class CategorySpendingManager {
     this.categorySpendingGridEl = document.getElementById(
       "spending-by-category-grid"
     );
+    this.categorySpendingSelect.value = "";
+    this.categorySpendingSelect.value = "monthly";
+
     await this.getData();
 
     this.createDataGrid();
@@ -677,19 +704,8 @@ class CategorySpendingManager {
         type: "fitGridWidth",
         defaultMinWidth: 150,
       },
-      onRowDataUpdated: (event) => {
-        let height =
-          this.categorySpendingGridEl.querySelector(".ag-center-cols-container")
-            .scrollHeight +
-          this.categorySpendingGridEl.querySelector(".ag-header-row")
-            .scrollHeight;
-
-        if (height < 192) {
-          height = 192;
-        }
-
-        this.categorySpendingGridEl.style.height = `${height + 3}px`;
-      },
+      domLayout: "autoHeight",
+      theme: agGrid.themeAlpine.withPart(this.currentColorScheme),
     };
     this.dataGrid = agGrid.createGrid(this.categorySpendingGridEl, gridOptions);
   }
@@ -703,10 +719,16 @@ class CategorySpendingManager {
   }
 
   async getData() {
-    let data = await getRequest(GET_CATEGORY_SPENDING_URL, {
-      date: this.currentDate,
-      interval: this.interval,
-    });
+    let response = await fetch(
+      GET_CATEGORY_SPENDING_URL +
+        "?" +
+        new URLSearchParams({
+          date: this.currentDate,
+          interval: this.interval,
+        })
+    );
+
+    let data = await response.json();
 
     this.parseData(data);
     this.createGridColumns();
@@ -751,8 +773,8 @@ class CategorySpendingManager {
   }
 
   setupThemeWatcher() {
-    this.mutationObserver = new MutationObserver((params) =>
-      this.handleThemeChange(params)
+    this.mutationObserver = new MutationObserver(() =>
+      this.handleThemeChange()
     );
 
     this.mutationObserver.observe(document.documentElement, {
@@ -761,20 +783,18 @@ class CategorySpendingManager {
   }
 
   handleThemeChange() {
-    let theme = document.documentElement.classList.contains("wa-dark")
-      ? "dark"
-      : "light";
-    this.categorySpendingGridEl.classList.toggle(
-      "ag-theme-alpine-dark",
-      theme === "dark"
-    );
-    this.categorySpendingGridEl.classList.toggle(
-      "ag-theme-alpine",
-      theme === "light"
+    this.dataGrid.setGridOption(
+      "theme",
+      agGrid.themeAlpine.withPart(this.currentColorScheme)
     );
   }
 }
 
-new ChartManager();
-new NetSpendingManager();
-new CategorySpendingManager();
+Promise.all([
+  customElements.whenDefined("wa-select"),
+  customElements.whenDefined("wa-option"),
+]).then(() => {
+  new ChartManager();
+  new NetSpendingManager();
+  new CategorySpendingManager();
+});

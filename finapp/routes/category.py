@@ -12,7 +12,7 @@ def create_category():
     color = request.form.get("color")
 
     category_queries.create_category(name=name, color=color)
-    categories = category_queries.get_cetegories()
+    categories = category_queries.get_categories_shared()
 
     return {"success": True, "categories": [c.to_dict() for c in categories]}
 
@@ -20,6 +20,6 @@ def create_category():
 @category_bp.get("/get_categories")
 @login_required
 def get_categories():
-    categories = category_queries.get_cetegories()
+    categories = category_queries.get_categories_shared()
 
     return [c.to_dict() for c in categories]

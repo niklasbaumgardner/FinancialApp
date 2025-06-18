@@ -61,6 +61,16 @@ export class TransactionsGrid extends NikElement {
     transactionsGridEl: "#grid",
   };
 
+  get currentColorScheme() {
+    let theme = document.documentElement.classList.contains("wa-dark")
+      ? "dark"
+      : "light";
+
+    let colorScheme =
+      theme === "dark" ? agGrid.colorSchemeDark : agGrid.colorSchemeLight;
+    return colorScheme;
+  }
+
   firstUpdated() {
     this.init();
   }
@@ -81,6 +91,13 @@ export class TransactionsGrid extends NikElement {
       {
         field: "name",
         filter: "agTextColumnFilter",
+        autoHeight: true,
+        cellRenderer: (param) => {
+          let name = param.data.name;
+
+          return `<span class="text-wrap">${name}</span>`;
+        },
+        cellClass: ["leading-(--wa-line-height-normal)!", "p-(--wa-space-2xs)"],
       },
       {
         field: "amount",
@@ -103,6 +120,9 @@ export class TransactionsGrid extends NikElement {
 
           return `<a href="${budget.url}">${budget.name}</a>`;
         },
+        valueGetter: (p) => {
+          return p.data.budget.name;
+        },
       },
       {
         field: "user",
@@ -116,6 +136,7 @@ export class TransactionsGrid extends NikElement {
       {
         field: "categories",
         filter: "agTextColumnFilter",
+        autoHeight: true,
         cellRenderer: (param) => {
           let categories = param.data.categories;
           categories.sort((a, b) =>
@@ -137,11 +158,17 @@ export class TransactionsGrid extends NikElement {
             "w-full",
             "h-full",
             "gap-(--wa-space-2xs)!",
-            "items-center"
+            "items-center",
+            "p-(--wa-space-2xs)"
           );
           div.append(...nbCategories);
 
           return div;
+        },
+        valueGetter: (p) => {
+          let categories = p.data.categories;
+
+          return categories.map((c) => c.category.name).join(" ");
         },
       },
       {
@@ -152,7 +179,7 @@ export class TransactionsGrid extends NikElement {
 
           return `<wa-format-date month="long" day="numeric" year="numeric" date="${
             date + "T00:00:00"
-          }"></sl-format-date>`;
+          }"></wa-format-date>`;
         },
       },
     ];
@@ -206,13 +233,14 @@ export class TransactionsGrid extends NikElement {
       pagination: true,
       paginationPageSize: 20,
       paginationPageSizeSelector: false,
+      theme: agGrid.themeAlpine.withPart(this.currentColorScheme),
     };
     this.dataGrid = agGrid.createGrid(this.transactionsGridEl, gridOptions);
   }
 
   setupThemeWatcher() {
-    this.mutationObserver = new MutationObserver((params) =>
-      this.handleThemeChange(params)
+    this.mutationObserver = new MutationObserver(() =>
+      this.handleThemeChange()
     );
 
     this.mutationObserver.observe(document.documentElement, {
@@ -223,16 +251,9 @@ export class TransactionsGrid extends NikElement {
   }
 
   handleThemeChange() {
-    let theme = document.documentElement.classList.contains("wa-dark")
-      ? "dark"
-      : "light";
-    this.transactionsGridEl.classList.toggle(
-      "ag-theme-alpine-dark",
-      theme === "dark"
-    );
-    this.transactionsGridEl.classList.toggle(
-      "ag-theme-alpine",
-      theme === "light"
+    this.dataGrid.setGridOption(
+      "theme",
+      agGrid.themeAlpine.withPart(this.currentColorScheme)
     );
   }
 
@@ -241,13 +262,7 @@ export class TransactionsGrid extends NikElement {
       return null;
     }
 
-    return html`<div
-      id="grid"
-      style="--ag-grid-size: 4px;"
-      class=${this.theme === "dark"
-        ? "ag-theme-alpine-dark"
-        : "ag-theme-alpine"}
-    ></div>`;
+    return html`<div id="grid" style="--ag-grid-size: 4px;"></div>`;
   }
 }
 

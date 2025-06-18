@@ -5,7 +5,7 @@ block dashboard %}active{% endblock dashboard %} {% block backButton
 >{% endblock backButton %} {% block head %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/ag-grid-community@31.0.3/dist/ag-grid-community.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.2/dist/ag-grid-community.min.js"></script>
 <script src="/static/js/dashboard-new.mjs" type="module"></script>
 
 <script>
@@ -26,7 +26,7 @@ block dashboard %}active{% endblock dashboard %} {% block backButton
 {% endblock head %} {% block content %}
 
 <div class="wa-stack">
-  <wa-details summary="Budgets line chart" open>
+  <wa-details summary="Budgets line chart" appearance="filled outlined" open>
     <div class="wa-stack">
       <div class="wa-split">
         <wa-select
@@ -53,20 +53,19 @@ block dashboard %}active{% endblock dashboard %} {% block backButton
     </div>
   </wa-details>
 
-  <wa-details summary="Spending by budget" open>
+  <wa-details summary="Spending by budget" appearance="filled outlined" open>
     <div class="wa-stack">
       <wa-select id="netSpendingSelect" label="Spending in" class="w-fit" hoist>
       </wa-select>
 
       <div
         id="spending-by-budget-grid"
-        style="height: 500px"
         class="{% if theme == 'dark' %}ag-theme-alpine-dark{% else %}ag-theme-alpine{% endif %}"
       ></div>
     </div>
   </wa-details>
 
-  <wa-details summary="Spending by category" open>
+  <wa-details summary="Spending by category" appearance="filled outlined" open>
     <div class="wa-stack">
       <wa-select
         id="categorySpendingSelect"
@@ -81,7 +80,6 @@ block dashboard %}active{% endblock dashboard %} {% block backButton
 
       <div
         id="spending-by-category-grid"
-        style="height: 500px"
         class="{% if theme == 'dark' %}ag-theme-alpine-dark{% else %}ag-theme-alpine{% endif %}"
       ></div>
     </div>

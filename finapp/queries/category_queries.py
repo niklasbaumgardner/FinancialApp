@@ -1,6 +1,8 @@
-from finapp.models import Category, TransactionCategory
+from finapp.models import Budget, Category, SharedBudget, TransactionCategory
+from finapp.queries import user_queries
 from flask_login import current_user
 from finapp import db
+from sqlalchemy.sql import or_, and_
 
 
 ##
@@ -12,11 +14,17 @@ def get_shared_categories(user_ids):
     return Category.query.where(Category.user_id.in_(user_ids)).all()
 
 
-def get_cetegories(sort=True):
+def get_categories(sort=True):
     query = Category.query.filter_by(user_id=current_user.id)
     if sort:
         query = query.order_by(Category.name)
     return query.all()
+
+
+def get_categories_shared():
+    users = user_queries.get_shared_users_for_all_budgets(include_current_user=True)
+
+    return get_shared_categories([u.id for u in users])
 
 
 def create_category(name, color):

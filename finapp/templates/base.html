@@ -283,9 +283,9 @@
       {% with messages = get_flashed_messages(with_categories=true) %}
       <div id="alerts" class="">
         {% if messages %} {% for category, message in messages %}
-        <wa-alert variant="category" duration="5000" open closable>
+        <wa-callout variant="{{ category }}" duration="5000" open closable>
           {{ message }}
-        </wa-alert>
+        </wa-callout>
         {% endfor %} {% endif %}
       </div>
       {% endwith %}

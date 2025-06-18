@@ -76,7 +76,7 @@ def get_shared_users_for_budget_id(budget_id):
     ).all()
 
 
-def get_shared_users_for_all_budgets():
+def get_shared_users_for_all_budgets(include_current_user=False):
     budget_shared_query = db.session.query(Budget, SharedBudget).where(
         and_(
             or_(
@@ -87,6 +87,9 @@ def get_shared_users_for_all_budgets():
             or_(User.id == SharedBudget.user_id, Budget.user_id == User.id),
         )
     )
+
+    if include_current_user:
+        return User.query.where(budget_shared_query.exists()).all()
 
     return User.query.where(
         and_(User.id != current_user.id, budget_shared_query.exists())
