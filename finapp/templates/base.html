@@ -112,6 +112,8 @@
 
       // URL for adding new budget
       const ADD_NEW_BUDGET_URL = "{{ url_for('editbudget_bp.add_budget') }}";
+
+      const CURRENT_USER = {{ current_user.to_dict()|tojson }};
     </script>
 
     <script type="module">
@@ -168,6 +170,11 @@
             <div class="wa-cluster">
               {% block backButton %}{% endblock backButton %}
               <a class="wa-heading-l" href="/">NB Budgets</a>
+              <a
+                class="wa-desktop-only wa-heading-m"
+                href="{{ url_for('viewbudgets_bp.viewbudgets') }}"
+                >Budgets</a
+              >
               <a
                 class="wa-desktop-only wa-heading-m"
                 href="{{ url_for('paycheck_bp.add_paycheck') }}"
@@ -234,6 +241,11 @@
       </header>
       <nav slot="navigation" class="wa-mobile-only">
         <a class="wa-heading-l" href="/">NB Budgets</a>
+        <a
+          class="wa-heading-m"
+          href="{{ url_for('viewbudgets_bp.viewbudgets') }}"
+          >Budgets</a
+        >
         <a class="wa-heading-m" href="{{ url_for('paycheck_bp.add_paycheck') }}"
           >Add Paycheck</a
         >

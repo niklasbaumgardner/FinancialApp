@@ -13,7 +13,7 @@ from finapp.utils import helpers
 viewbudgets_bp = Blueprint("viewbudgets_bp", __name__)
 
 
-@viewbudgets_bp.route("/", methods=["GET"])
+@viewbudgets_bp.route("/budgets", methods=["GET"])
 @login_required
 def viewbudgets():
     active, inactive = budget_queries.get_budgets(separate=True)
@@ -30,10 +30,13 @@ def viewbudgets():
     )
 
 
-@viewbudgets_bp.get("/recent_transactions")
+@viewbudgets_bp.get("/")
 @login_required
 def recent_transactions():
     transactions = transaction_queries.get_recent_transactions()
     transactions = [t.to_dict() for t in transactions]
 
-    return render_template("index.html", transactions=transactions)
+    budgets = budget_queries.get_budgets()
+    budgets = [b.to_dict() for b in budgets]
+
+    return render_template("index.html", transactions=transactions, budgets=budgets)
