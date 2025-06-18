@@ -96,21 +96,21 @@ export class TransactionsGrid extends NikElement {
         },
       },
       {
-        field: "user",
-        filter: "agTextColumnFilter",
-        cellRenderer: (param) => {
-          let user = param.data.user;
-
-          return user.username;
-        },
-      },
-      {
         field: "budget",
         filter: "agTextColumnFilter",
         cellRenderer: (param) => {
           let budget = param.data.budget;
 
           return `<a href="${budget.url}">${budget.name}</a>`;
+        },
+      },
+      {
+        field: "user",
+        filter: "agTextColumnFilter",
+        cellRenderer: (param) => {
+          let user = param.data.user;
+
+          return user.username;
         },
       },
       {
@@ -170,11 +170,11 @@ export class TransactionsGrid extends NikElement {
             minWidth: 200,
             // maxWidth: 350,
           },
-          // {
-          //   colId: "amount",
-          //   minWidth: 125,
-          //   maxWidth: 125,
-          // },
+          {
+            colId: "amount",
+            minWidth: 125,
+            maxWidth: 125,
+          },
           {
             colId: "date",
             minWidth: 175,
