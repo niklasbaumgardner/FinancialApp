@@ -20,6 +20,34 @@ export class BaseSelect extends WaSelect {
     ></nb-category>`;
   }
 
+  handleTagRemove(event, directOption) {
+    event.stopPropagation();
+    if (this.disabled) return;
+    let option = directOption;
+    if (!option) {
+      const tagElement = event.target.closest("nb-category");
+      if (tagElement) {
+        const tagsContainer = this.shadowRoot?.querySelector('[part="tags"]');
+        if (tagsContainer) {
+          const allTags = Array.from(tagsContainer.children);
+          const index = allTags.indexOf(tagElement);
+          if (index >= 0 && index < this.selectedOptions.length) {
+            option = this.selectedOptions[index];
+          }
+        }
+      }
+    }
+    if (option) {
+      this.toggleOptionSelection(option, false);
+      this.updateComplete.then(() => {
+        this.dispatchEvent(new InputEvent("input"));
+        this.dispatchEvent(
+          new Event("change", { bubbles: true, composed: true })
+        );
+      });
+    }
+  }
+
   render() {
     let template = super.render();
     return html`<link
