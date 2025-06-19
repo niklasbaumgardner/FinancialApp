@@ -94,12 +94,7 @@ export class AddBudget extends NikElement {
   render() {
     return html`<wa-dialog label="Add New Budget">
       <form class="wa-stack">
-        <input
-          hidden
-          class="hidden"
-          name="date"
-          value=${new Date().toISOString().slice(0, 10)}
-        />
+        <input hidden class="hidden" name="date" value=${CURRENT_DATE} />
         <wa-input
           id="budget-name"
           name="name"

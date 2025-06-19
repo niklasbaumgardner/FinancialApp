@@ -82,6 +82,25 @@ export class TransactionsGrid extends NikElement {
     this.setupThemeWatcher();
   }
 
+  connectedCallback() {
+    super.connectedCallback();
+
+    document.addEventListener("UpdateTransactions", this);
+  }
+
+  handleEvent(event) {
+    switch (event.type) {
+      case "UpdateTransactions":
+        let transactions = event.detail.transactions;
+        this.updateTransactions(transactions);
+        break;
+    }
+  }
+
+  updateTransactions(transactions) {
+    this.dataGrid.setGridOption("rowData", transactions);
+  }
+
   createDataGrid() {
     if (!this.transactions.length) {
       return;

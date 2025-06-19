@@ -1,4 +1,5 @@
 from finapp.queries import (
+    category_queries,
     budget_queries,
     prefill_queries,
     shared_budget_queries,
@@ -39,4 +40,9 @@ def recent_transactions():
     budgets = budget_queries.get_budgets()
     budgets = [b.to_dict() for b in budgets]
 
-    return render_template("index.html", transactions=transactions, budgets=budgets)
+    categories = category_queries.get_categories_shared()
+    categories = [c.to_dict() for c in categories]
+
+    return render_template(
+        "index.html", transactions=transactions, budgets=budgets, categories=categories
+    )

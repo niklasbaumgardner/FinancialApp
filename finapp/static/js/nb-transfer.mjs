@@ -83,7 +83,7 @@ export class Transfer extends NikElement {
           name="date"
           hidden
           class="hidden"
-          value=${new Date().toISOString().substring(0, 10)}
+          value=${CURRENT_DATE}
         />
         <h2>Transfer money</h2>
         <div class="wa-grid" style="--min-column-size: 20rem;">

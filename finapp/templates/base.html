@@ -79,41 +79,55 @@
 
     <title>{% block title %}{% endblock title %}</title>
     <script>
-      // URLs for setting the theme options
-      const SET_THEME_URL = "{{ url_for('theme_bp.set_theme') }}";
-      const SET_THEME_MODE_URL = "{{ url_for('theme_bp.set_theme_mode') }}";
-      const SET_PRIMARY_COLOR_URL =
-        "{{ url_for('theme_bp.set_primary_color') }}";
-      const SET_BACKGROUND_COLOR_URL =
-        "{{ url_for('theme_bp.set_background_color') }}";
-      const SET_COLOR_CONTRAST_URL =
-        "{{ url_for('theme_bp.set_color_contrast') }}";
-      const SET_COLOR_PALETTE_URL =
-        "{{ url_for('theme_bp.set_color_palette') }}";
+        // URLs for setting the theme options
+        const SET_THEME_URL = "{{ url_for('theme_bp.set_theme') }}";
+        const SET_THEME_MODE_URL = "{{ url_for('theme_bp.set_theme_mode') }}";
+        const SET_PRIMARY_COLOR_URL =
+          "{{ url_for('theme_bp.set_primary_color') }}";
+        const SET_BACKGROUND_COLOR_URL =
+          "{{ url_for('theme_bp.set_background_color') }}";
+        const SET_COLOR_CONTRAST_URL =
+          "{{ url_for('theme_bp.set_color_contrast') }}";
+        const SET_COLOR_PALETTE_URL =
+          "{{ url_for('theme_bp.set_color_palette') }}";
 
-      // URLs for categories
-      const CREATE_CATEGORY_URL =
-        "{{ url_for('category_bp.create_category') }}";
-      const GET_CATEGORIES_URL = "{{ url_for('category_bp.get_categories') }}";
+        // URLs for categories
+        const CREATE_CATEGORY_URL =
+          "{{ url_for('category_bp.create_category') }}";
+        const GET_CATEGORIES_URL = "{{ url_for('category_bp.get_categories') }}";
 
-      // URLs for user auth and user edits
-      const LOGIN_URL = "{{ url_for('auth_bp.login') }}";
-      const SIGNUP_URL = "{{ url_for('auth_bp.signup') }}";
-      const PASSWORD_RESET_REQUEST_URL =
-        "{{ url_for('auth_bp.password_request') }}";
-      const USERNAME_UNIQUE_URL = "{{ url_for('auth_bp.username_unique') }}";
-      const EMAIL_UNIQUE_URL = "{{ url_for('auth_bp.email_unique') }}";
+        // URLs for user auth and user edits
+        const LOGIN_URL = "{{ url_for('auth_bp.login') }}";
+        const SIGNUP_URL = "{{ url_for('auth_bp.signup') }}";
+        const PASSWORD_RESET_REQUEST_URL =
+          "{{ url_for('auth_bp.password_request') }}";
+        const USERNAME_UNIQUE_URL = "{{ url_for('auth_bp.username_unique') }}";
+        const EMAIL_UNIQUE_URL = "{{ url_for('auth_bp.email_unique') }}";
 
-      // URL for adding paycheck
-      const ADD_PAYCHECK_URL = "{{ url_for('paycheck_bp.paycheck') }}";
+        // URL for adding paycheck
+        const ADD_PAYCHECK_URL = "{{ url_for('paycheck_bp.paycheck') }}";
 
-      // URL for transfering
-      const TRANSFER_URL = "{{ url_for('transfer_bp.transfer') }}";
+        // URL for transfering
+        const TRANSFER_URL = "{{ url_for('transfer_bp.transfer') }}";
 
-      // URL for adding new budget
-      const ADD_NEW_BUDGET_URL = "{{ url_for('editbudget_bp.add_budget') }}";
+        // URL for adding new budget
+        const ADD_NEW_BUDGET_URL = "{{ url_for('editbudget_bp.add_budget') }}";
 
-      const CURRENT_USER = {{ current_user.to_dict()|tojson }};
+        {% if current_user.is_authenticated %}
+          const CURRENT_USER = {{ current_user.to_dict()|tojson }};
+        {% else %}
+          const CURRENT_USER = {};
+        {% endif %}
+
+        const [month, day, year] = new Date()
+        .toLocaleDateString(undefined, {
+          year: "numeric",
+          day: "2-digit",
+          month: "2-digit",
+        })
+        .split("/");
+
+      const CURRENT_DATE = `${year}-${month}-${day}`;
     </script>
 
     <script type="module">
@@ -152,7 +166,7 @@
       if (window.Sentry) {
         Sentry.onLoad(function () {
           Sentry.init({
-            release: "nbfinancial@1.0.3",
+            release: "nbfinancial@1.0.4",
             environment: "production",
             replaysSessionSampleRate: 0,
             replaysOnErrorSampleRate: 1.0,
@@ -305,6 +319,8 @@
   </body>
   <script>
     let backButton = document.getElementById("back-button");
-    backButton.href = document.referrer;
+    if (backButton) {
+      backButton.href = document.referrer;
+    }
   </script>
 </html>

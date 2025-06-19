@@ -7,6 +7,7 @@ class ViewTransactions extends NikElement {
   static properties = {
     transactions: { type: Array },
     budgets: { type: Array },
+    categories: { type: Array },
     theme: { type: String },
   };
 
@@ -14,6 +15,7 @@ class ViewTransactions extends NikElement {
     if (!this.addTransactionModal) {
       this.addTransactionModal = document.createElement("nb-add-transaction");
       this.addTransactionModal.budgets = this.budgets;
+      this.addTransactionModal.categories = this.categories;
       document.body.append(this.addTransactionModal);
     }
 

@@ -25,6 +25,9 @@ export class BaseSelect extends WaSelect {
     return html`<link
         href="/static/css/nb-category.css"
         rel="stylesheet"
+      /><link
+        href="/static/css/category-colors.css"
+        rel="stylesheet"
       />${template}`;
   }
 }

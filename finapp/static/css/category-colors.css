@@ -1,3 +1,4 @@
+:host,
 .wa-light {
   .red {
     background-color: var(--color-red-90);
@@ -132,6 +133,7 @@
   }
 }
 
+:host,
 .wa-dark {
   .red {
     background-color: var(--color-red-10);

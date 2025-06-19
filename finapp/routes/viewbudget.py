@@ -177,6 +177,8 @@ def add_transaction(budget_id):
     amount = request.form.get("amount", type=float, default=0.0)
     str_date = request.form.get("date")
     date = helpers.get_date_from_string(str_date)
+    return_transactions = request.form.get("return-transactions")
+    return_transactions = return_transactions and return_transactions == "True"
 
     categories = request.form.getlist("categories")
 
@@ -197,6 +199,13 @@ def add_transaction(budget_id):
             date=date,
             budget_id=budget_id,
             categories=categories,
+        )
+
+    if return_transactions:
+        return dict(
+            transactions=[
+                t.to_dict() for t in transaction_queries.get_recent_transactions()
+            ]
         )
 
     return redirect(url_for("viewbudget_bp.view_budget", id=budget_id))

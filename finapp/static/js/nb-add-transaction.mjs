@@ -1,9 +1,12 @@
 import { NikElement } from "./customElement.mjs";
 import { html } from "./imports.mjs";
+import "./nb-categories-select.mjs";
 
 export class AddTransactionModal extends NikElement {
   static properties = {
     budgets: { type: Array },
+    categories: { type: Array },
+    sharedUsers: { type: Array },
   };
 
   static queries = {
@@ -45,23 +48,36 @@ export class AddTransactionModal extends NikElement {
   }
 
   reset() {
+    this.submitButton.loading = false;
+    this.submitButton.disabled = false;
+    this.sharedUsers = [];
     this.form.reset();
     this.hide();
   }
 
   async handleTransactionAdd() {
+    if (!this.form.reportValidity()) {
+      return;
+    }
+
     this.submitButton.loading = true;
     this.submitButton.disabled = true;
 
+    let formData = new FormData(this.form);
+    console.log(formData);
+
     let response = await fetch(this.selectedBudget.add_transaction_url, {
       method: "POST",
+      body: formData,
     });
 
-    this.dispatchEvent(
-      new CustomEvent("RequestNewPages", {
+    let { transactions } = await response.json();
+
+    document.dispatchEvent(
+      new CustomEvent("UpdateTransactions", {
         bubbles: true,
         composed: true,
-        detail: { greaterThanCurrentPage: true },
+        detail: { transactions },
       })
     );
 
@@ -69,11 +85,14 @@ export class AddTransactionModal extends NikElement {
   }
 
   async budgetChange() {
-    this.requestUpdate();
-    await this.updateComplete;
+    let users = [this.selectedBudget.user];
+    users.push(...this.selectedBudget.shared_users);
+    users.sort((a, b) => a.username.localeCompare(b.username));
+    this.sharedUsers = users;
+
     this.usersSelect.value = "";
+    await this.usersSelect.updateComplete;
     this.usersSelect.value = `${CURRENT_USER.id}`;
-    this.usersSelect.requestUpdate();
   }
 
   openCategoriesModal() {
@@ -82,14 +101,19 @@ export class AddTransactionModal extends NikElement {
 
   budgetOptionsTemplate() {
     return this.budgets.map(
-      (b) => html`<wa-option value=${b.id}>${b.name}</wa-option>`
+      (b) => html`<wa-option value=${b.id}
+        ><span class="wa-heading-s">${b.name}</span>:
+        ${new Intl.NumberFormat(undefined, {
+          style: "currency",
+          currency: "USD",
+        }).format(b.total)}</wa-option
+      >`
     );
   }
 
   budgetsTemplate() {
     return html`<wa-select
       label="Select Budget"
-      name="budget"
       id="budgets-select"
       required
       @input=${this.budgetChange}
@@ -98,14 +122,11 @@ export class AddTransactionModal extends NikElement {
   }
 
   sharedUsersOptionsTemplate() {
-    if (!this.selectedBudget) {
+    if (!this.selectedBudget || !this.sharedUsers) {
       return null;
     }
 
-    let users = [this.selectedBudget.user];
-    users.push(...this.selectedBudget.shared_users);
-
-    return users.map(
+    return this.sharedUsers.map(
       (u) => html`<wa-option value=${u.id}>${u.username}</wa-option>`
     );
   }
@@ -125,6 +146,13 @@ export class AddTransactionModal extends NikElement {
   render() {
     return html`<wa-dialog label="Add New Transaction">
       <form class="wa-stack">
+        <input
+          name="return-transactions"
+          type="text"
+          class="hidden!"
+          value="True"
+          hidden
+        />
         <div class="wa-stack">
           <wa-input
             label="Name"
@@ -156,7 +184,7 @@ export class AddTransactionModal extends NikElement {
               type="date"
               id="date"
               name="date"
-              value=${new Date().toISOString().substring(0, 10)}
+              value=${CURRENT_DATE}
               required
             ></wa-input>
           </div>
@@ -183,7 +211,7 @@ export class AddTransactionModal extends NikElement {
           data-dialog="close"
           >Cancel</wa-button
         ><wa-button
-          id="delete-button"
+          id="submit-button"
           class="grow"
           variant="brand"
           @click=${this.handleTransactionAdd}
