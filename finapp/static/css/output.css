@@ -88,6 +88,9 @@
   .min-w-\[0\] {
     min-width: 0;
   }
+  .min-w-min {
+    min-width: min-content;
+  }
   .grow {
     flex-grow: 1;
   }

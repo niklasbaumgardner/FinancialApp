@@ -165,10 +165,10 @@ export class AddTransactionModal extends NikElement {
             required
             @input=${this.checkTransactionInput}
           ></wa-input>
-          <div class="wa-cluster">
+          <div class="wa-cluster flex-nowrap!">
             <wa-input
               label="Amount"
-              class="grow"
+              class="grow min-w-[0]"
               type="number"
               step=".01"
               id="amount"
@@ -180,7 +180,7 @@ export class AddTransactionModal extends NikElement {
             ></wa-input>
             <wa-input
               label="Date"
-              class="grow"
+              class="grow min-w-min"
               type="date"
               id="date"
               name="date"
