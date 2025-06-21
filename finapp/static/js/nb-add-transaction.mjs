@@ -15,6 +15,7 @@ export class AddTransactionModal extends NikElement {
     budgetsSelect: "#budgets-select",
     usersSelect: "#user-select",
     submitButton: "#submit-button",
+    nameInput: "#name",
   };
 
   get selectedBudget() {
@@ -31,6 +32,10 @@ export class AddTransactionModal extends NikElement {
     super.connectedCallback();
 
     this.budgets.sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  handleDialogShow() {
+    this.nameInput.focus();
   }
 
   show() {
@@ -64,7 +69,6 @@ export class AddTransactionModal extends NikElement {
     this.submitButton.disabled = true;
 
     let formData = new FormData(this.form);
-    console.log(formData);
 
     let response = await fetch(this.selectedBudget.add_transaction_url, {
       method: "POST",
@@ -144,7 +148,10 @@ export class AddTransactionModal extends NikElement {
   }
 
   render() {
-    return html`<wa-dialog label="Add New Transaction">
+    return html`<wa-dialog
+      label="Add New Transaction"
+      @wa-after-show=${this.handleDialogShow}
+    >
       <form class="wa-stack">
         <input
           name="return-transactions"
@@ -163,7 +170,6 @@ export class AddTransactionModal extends NikElement {
             placeholder="Spent too much?"
             autocomplete="niklas"
             required
-            @input=${this.checkTransactionInput}
           ></wa-input>
           <div class="wa-cluster flex-nowrap!">
             <wa-input
@@ -176,7 +182,6 @@ export class AddTransactionModal extends NikElement {
               placeholder="0.00"
               autocomplete="niklas"
               required
-              @input=${this.checkTransactionInput}
             ></wa-input>
             <wa-input
               label="Date"
