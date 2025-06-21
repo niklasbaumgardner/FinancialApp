@@ -34,7 +34,11 @@ export class AddTransactionModal extends NikElement {
     this.budgets.sort((a, b) => a.name.localeCompare(b.name));
   }
 
-  handleDialogShow() {
+  handleDialogShow(event) {
+    if (event.target !== this.dialog) {
+      return;
+    }
+
     this.nameInput.focus();
   }
 
