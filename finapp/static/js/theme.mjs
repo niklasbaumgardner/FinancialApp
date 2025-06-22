@@ -142,7 +142,7 @@ export class Theme {
     if (THEME_LIST.includes(theme)) {
       this.#theme = theme;
     } else {
-      this.#theme = null;
+      this.#theme = "classic";
     }
 
     themeStorage.setItem("theme", this.theme);
@@ -153,14 +153,14 @@ export class Theme {
   }
 
   set mode(mode) {
-    if (mode === this.mode) {
+    if (mode && mode === this.mode) {
       return;
     }
 
     if (THEME_MODE_LIST.includes(mode)) {
       this.#mode = mode;
     } else {
-      this.#mode = null;
+      this.#mode = "light";
     }
 
     themeStorage.setItem("mode", this.mode);
