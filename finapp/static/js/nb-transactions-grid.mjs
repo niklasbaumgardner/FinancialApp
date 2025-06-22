@@ -136,8 +136,14 @@ export class TransactionsGrid extends NikElement {
         filter: "agTextColumnFilter",
         cellRenderer: (param) => {
           let budget = param.data.budget;
+          let transaction = param.data;
 
-          return `<a href="${budget.url}">${budget.name}</a>`;
+          return `<wa-tooltip for="transaction-${transaction.id}-budget-link">Budget total is <wa-format-number
+            type="currency"
+            currency="USD"
+            value="${budget.total}"
+            lang="en-US"
+          ></wa-format-number></wa-tooltip><a id="transaction-${transaction.id}-budget-link" href="${budget.url}">${budget.name}</a>`;
         },
         valueGetter: (p) => {
           return p.data.budget.name;
