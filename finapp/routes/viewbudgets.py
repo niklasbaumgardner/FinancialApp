@@ -37,7 +37,7 @@ def recent_transactions():
     transactions = transaction_queries.get_recent_transactions()
     transactions = [t.to_dict() for t in transactions]
 
-    budgets = budget_queries.get_budgets()
+    budgets = budget_queries.get_budgets(active_only=True)
     budgets = [b.to_dict() for b in budgets]
 
     categories = category_queries.get_categories_shared()
