@@ -219,6 +219,8 @@ def edit_transaction(b_id, t_id):
     new_date = request.form.get("date")
     page = request.form.get("page")
     page = page if page else 1
+    return_transactions = request.form.get("return-transactions")
+    return_transactions = return_transactions and return_transactions == "True"
 
     categories_added = request.form.getlist("categoriesAdded")
     categories_deleted = request.form.getlist("categoriesDeleted")
@@ -233,6 +235,13 @@ def edit_transaction(b_id, t_id):
         categories_added=categories_added,
         categories_deleted=categories_deleted,
     )
+
+    if return_transactions:
+        return dict(
+            transactions=[
+                t.to_dict() for t in transaction_queries.get_recent_transactions()
+            ]
+        )
 
     return {
         "success": True,

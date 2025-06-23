@@ -60,6 +60,27 @@ nb-search-item {
   --wa-color-text-quiet: var(--wa-color-on-quiet);
 }
 
+.brand-icon-button {
+  --wa-color-fill-loud: var(--wa-color-brand-fill-loud);
+  --wa-color-fill-normal: var(--wa-color-brand-fill-normal);
+  --wa-color-fill-quiet: var(--wa-color-brand-fill-quiet);
+  --wa-color-border-loud: var(--wa-color-brand-border-loud);
+  --wa-color-border-normal: var(--wa-color-brand-border-normal);
+  --wa-color-border-quiet: var(--wa-color-brand-border-quiet);
+  --wa-color-on-loud: var(--wa-color-brand-on-loud);
+  --wa-color-on-normal: var(--wa-color-brand-on-normal);
+  --wa-color-on-quiet: var(--wa-color-brand-on-quiet);
+
+  --background-color: transparent;
+  --background-color-hover: var(--wa-color-fill-quiet);
+  --background-color-active: color-mix(
+    in oklab,
+    var(--background-color-hover),
+    transparent 20%
+  );
+  --wa-color-text-quiet: var(--wa-color-on-quiet);
+}
+
 nb-transaction {
   .transaction-grid {
     grid-template: "name amount buttons";

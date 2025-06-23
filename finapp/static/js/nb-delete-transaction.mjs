@@ -46,19 +46,20 @@ export class DeleteTransactionModal extends NikElement {
   }
 
   render() {
-    return html`<wa-dialog
-      label="Are you sure you want to delete this transaction?"
-    >
+    return html`<wa-dialog label="Delete Transaction">
       <div class="wa-stack">
-        <p>Transaction name: ${this.transaction.name}</p>
+        <b>Are you sure you want to delete this transaction?</b>
+        <p>Name: <b>${this.transaction.name}</b></p>
         <p>
-          Transaction amount:
-          <wa-format-number
-            type="currency"
-            currency="USD"
-            value="${this.transaction.amount}"
-            lang="en-US"
-          ></wa-format-number>
+          Amount:
+          <b
+            ><wa-format-number
+              type="currency"
+              currency="USD"
+              value="${this.transaction.amount}"
+              lang="en-US"
+            ></wa-format-number>
+          </b>
         </p>
       </div>
       <div class="wa-cluster w-full" slot="footer">

@@ -25,6 +25,8 @@ class ViewTransactions extends NikElement {
   transactionsTemplate() {
     return html`<nb-transactions-grid
       .transactions=${this.transactions}
+      .budgets=${this.budgets}
+      .categories=${this.categories}
       theme=${this.theme}
     ></nb-transactions-grid>`;
   }

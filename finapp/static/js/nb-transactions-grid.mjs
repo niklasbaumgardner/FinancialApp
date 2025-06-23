@@ -1,51 +1,62 @@
 import { html } from "./imports.mjs";
 import { NikElement } from "./customElement.mjs";
 import "./nb-category.mjs";
+import "./nb-delete-transaction.mjs";
+import "./nb-edit-transaction.mjs";
 
-class RoundActions extends NikElement {
+class TransactionActions extends NikElement {
   static properties = {
-    round: { type: Object },
+    transaction: { type: Object },
+    budgets: { type: Array },
+    categories: { type: Array },
   };
 
   handleEditClick() {
-    if (!this.editRoundModal) {
-      this.editRoundModal = document.createElement("nb-edit-round");
-      this.editRoundModal.round = this.round;
-      document.body.appendChild(this.editRoundModal);
+    if (!this.editTransactionModal) {
+      this.editTransactionModal = document.createElement("nb-edit-transaction");
+      this.editTransactionModal.transaction = this.transaction;
+      this.editTransactionModal.budgets = this.budgets;
+      this.editTransactionModal.categories = this.categories;
+      document.body.appendChild(this.editTransactionModal);
     }
 
-    this.editRoundModal.show();
+    this.editTransactionModal.show();
   }
 
   handleDeleteClick() {
-    if (!this.deleteRoundModal) {
-      this.deleteRoundModal = document.createElement("nb-delete-round");
-      this.deleteRoundModal.round = this.round;
-      document.body.appendChild(this.deleteRoundModal);
+    if (!this.deleteTransactionModal) {
+      this.deleteTransactionModal = document.createElement(
+        "nb-delete-transaction"
+      );
+      this.deleteTransactionModal.transaction = this.transaction;
+      document.body.appendChild(this.deleteTransactionModal);
     }
 
-    this.deleteRoundModal.show();
+    this.deleteTransactionModal.show();
   }
 
   render() {
     return html`<div class="wa-cluster wa-align-items-center">
-      <wa-button
-        appearance="outlined"
-        size="small"
+      <wa-icon-button
+        class="text-(length:--wa-font-size-) brand-icon-button"
+        library="ion"
+        name="create-outline"
+        label="Edit"
+        appearance="plain"
         @click=${this.handleEditClick}
-        >Edit</wa-button
-      >
-      <wa-button
-        appearance="outlined"
-        variant="danger"
-        size="small"
+      ></wa-icon-button>
+      <wa-icon-button
+        class="text-(length:--wa-font-size-) danger-icon-button"
+        library="ion"
+        name="trash-outline"
+        label="Delete"
+        appearance="plain"
         @click=${this.handleDeleteClick}
-        >Delete</wa-button
-      >
+      ></wa-icon-button>
     </div>`;
   }
 }
-customElements.define("nb-round-actions", RoundActions);
+customElements.define("nb-transaction-actions", TransactionActions);
 
 export class TransactionsGrid extends NikElement {
   static properties = {
@@ -55,6 +66,7 @@ export class TransactionsGrid extends NikElement {
     theme: {
       type: String,
     },
+    budgets: { type: Array },
   };
 
   static queries = {
@@ -114,7 +126,27 @@ export class TransactionsGrid extends NikElement {
         cellRenderer: (param) => {
           let name = param.data.name;
 
-          return `<span class="text-wrap">${name}</span>`;
+          let div = document.createElement("div");
+          div.classList.add("wa-split");
+
+          let span = document.createElement("span");
+          span.classList.add("text-wrap");
+          span.textContent = name;
+
+          let actions = document.createElement("nb-transaction-actions");
+          actions.transaction = param.data;
+          actions.budgets = this.budgets;
+          actions.categories = this.categories;
+
+          div.append(span, actions);
+
+          return div;
+
+          return `<div class="wa-split"><span class="text-wrap">${name}</span><nb-transaction-actions transaction='${JSON.stringify(
+            param.data
+          )}' budgets=${
+            "'" + JSON.stringify(this.budgets) + "'"
+          }></nb-transaction-actions></div>`;
         },
         cellClass: ["leading-(--wa-line-height-normal)!", "p-(--wa-space-2xs)"],
       },
@@ -228,11 +260,6 @@ export class TransactionsGrid extends NikElement {
             maxWidth: 125,
           },
           {
-            colId: "date",
-            minWidth: 175,
-            maxWidth: 175,
-          },
-          {
             colId: "categories",
             minWidth: 200,
             // maxWidth: 200,
@@ -247,6 +274,11 @@ export class TransactionsGrid extends NikElement {
           //   minWidth: 175,
           //   maxWidth: 175,
           // },
+          {
+            colId: "date",
+            minWidth: 150,
+            maxWidth: 150,
+          },
         ],
       },
       defaultColDef: {

@@ -75,6 +75,13 @@
         },
         mutator: (svg) => svg.setAttribute("fill", "currentColor"),
       });
+
+      registerIconLibrary("hero", {
+        resolver: (name) => {
+          let [icon, style] = name.split(".");
+          return `https://cdn.jsdelivr.net/npm/heroicons@2.0.1/24/${style}/${icon}.svg`;
+        },
+      });
     </script>
 
     <title>{% block title %}{% endblock title %}</title>
