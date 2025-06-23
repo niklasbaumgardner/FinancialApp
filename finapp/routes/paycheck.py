@@ -50,7 +50,7 @@ def paycheck():
                     paycheck_id=paycheck.id,
                 )
 
-    return redirect(url_for("viewbudgets_bp.recent_transactions"))
+    return redirect(url_for("viewtransactions_bp.view_transactions"))
 
 
 @paycheck_bp.route("/delete_prefill/<float:amount>", methods=["GET"])

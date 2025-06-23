@@ -53,9 +53,13 @@ from finapp.routes.preferences import preferences_bp as preferences_blueprint
 from finapp.routes.profile import profile_bp as profile_blueprint
 from finapp.routes.sharebudget import sharebudget_bp as sharebudget_blueprint
 from finapp.routes.theme import theme_bp as theme_blueprint
+from finapp.routes.transaction import transaction_bp as transaction_blueprint
 from finapp.routes.transfer import transfer_bp as transfer_blueprint
 from finapp.routes.viewbudget import viewbudget_bp as viewbudget_blueprint
 from finapp.routes.viewbudgets import viewbudgets_bp as viewbudgets_blueprint
+from finapp.routes.viewtransactions import (
+    viewtransactions_bp as viewtransactions_blueprint,
+)
 from finapp.utils.context_processor import (
     context_processor_bp as context_processor_blueprint,
 )
@@ -69,9 +73,11 @@ app.register_blueprint(preferences_blueprint)
 app.register_blueprint(profile_blueprint)
 app.register_blueprint(sharebudget_blueprint)
 app.register_blueprint(theme_blueprint)
+app.register_blueprint(transaction_blueprint)
 app.register_blueprint(transfer_blueprint)
 app.register_blueprint(viewbudget_blueprint)
 app.register_blueprint(viewbudgets_blueprint)
+app.register_blueprint(viewtransactions_blueprint)
 app.register_blueprint(context_processor_blueprint)
 
 with app.app_context():

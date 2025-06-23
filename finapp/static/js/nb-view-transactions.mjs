@@ -11,6 +11,22 @@ class ViewTransactions extends NikElement {
     theme: { type: String },
   };
 
+  connectedCallback() {
+    super.connectedCallback();
+
+    this.requestData();
+  }
+
+  async requestData() {
+    let response = await fetch(VIEW_TRANSACTIONS_CONTENT_URL);
+    let data = await response.json();
+
+    let { transactions, budgets, categories } = data;
+    this.transactions = transactions;
+    this.budgets = budgets;
+    this.categories = categories;
+  }
+
   addTransactionClick() {
     if (!this.addTransactionModal) {
       this.addTransactionModal = document.createElement("nb-add-transaction");
@@ -23,6 +39,12 @@ class ViewTransactions extends NikElement {
   }
 
   transactionsTemplate() {
+    if (!this.transactions || !this.budgets || !this.categories) {
+      return html`<div class="flex items-center justify-center">
+        <wa-spinner class="text-9xl"></wa-spinner>
+      </div>`;
+    }
+
     return html`<nb-transactions-grid
       .transactions=${this.transactions}
       .budgets=${this.budgets}

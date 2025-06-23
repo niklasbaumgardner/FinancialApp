@@ -91,7 +91,7 @@ class Budget(db.Model, SerializerMixin):
         return url_for("editbudget_bp.toggle_budget")
 
     def add_transaction_url(self):
-        return url_for("viewbudget_bp.add_transaction", budget_id=self.id)
+        return url_for("transaction_bp.add_transaction", budget_id=self.id)
 
     def delete_url(self):
         return url_for("editbudget_bp.delete_budget", b_id=self.id)
@@ -152,17 +152,17 @@ class Transaction(db.Model, SerializerMixin):
 
     def edit_url(self):
         return url_for(
-            "viewbudget_bp.edit_transaction", b_id=self.budget_id, t_id=self.id
+            "transaction_bp.edit_transaction", b_id=self.budget_id, t_id=self.id
         )
 
     def move_transaction_url(self):
         return url_for(
-            "viewbudget_bp.move_transaction", sb_id=self.budget_id, t_id=self.id
+            "transaction_bp.move_transaction", sb_id=self.budget_id, t_id=self.id
         )
 
     def delete_url(self):
         return url_for(
-            "viewbudget_bp.delete_transaction", b_id=self.budget_id, t_id=self.id
+            "transaction_bp.delete_transaction", b_id=self.budget_id, t_id=self.id
         )
 
 

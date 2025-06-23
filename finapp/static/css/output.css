@@ -4,6 +4,8 @@
 @layer theme {
   :root, :host {
     --spacing: 0.25rem;
+    --text-9xl: 8rem;
+    --text-9xl--line-height: 1;
   }
 }
 @layer utilities {
@@ -156,6 +158,10 @@
   }
   .text-end {
     text-align: end;
+  }
+  .text-9xl {
+    font-size: var(--text-9xl);
+    line-height: var(--tw-leading, var(--text-9xl--line-height));
   }
   .text-\(length\:--wa-font-size-l\) {
     font-size: var(--wa-font-size-l);

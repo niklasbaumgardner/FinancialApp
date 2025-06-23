@@ -14,7 +14,7 @@ from finapp.utils import helpers
 viewbudgets_bp = Blueprint("viewbudgets_bp", __name__)
 
 
-@viewbudgets_bp.route("/budgets", methods=["GET"])
+@viewbudgets_bp.get("/budgets")
 @login_required
 def viewbudgets():
     active, inactive = budget_queries.get_budgets(separate=True)
@@ -28,21 +28,4 @@ def viewbudgets():
         "viewbudgets.html",
         budgets=[active, inactive],
         total=total,
-    )
-
-
-@viewbudgets_bp.get("/")
-@login_required
-def recent_transactions():
-    transactions = transaction_queries.get_recent_transactions()
-    transactions = [t.to_dict() for t in transactions]
-
-    budgets = budget_queries.get_budgets(active_only=True)
-    budgets = [b.to_dict() for b in budgets]
-
-    categories = category_queries.get_categories_shared()
-    categories = [c.to_dict() for c in categories]
-
-    return render_template(
-        "index.html", transactions=transactions, budgets=budgets, categories=categories
     )

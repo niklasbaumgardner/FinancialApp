@@ -41,7 +41,7 @@ def transfer():
                 is_transfer=True,
             )
 
-        return redirect(url_for("viewbudgets_bp.recent_transactions"))
+        return redirect(url_for("viewtransactions_bp.view_transactions"))
 
     budgets = budget_queries.get_budgets(active_only=True)
     budgets = [b.to_dict() for b in budgets]
