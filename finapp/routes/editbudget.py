@@ -75,8 +75,6 @@ def edit_budget(id):
 @login_required
 def delete_budget(b_id):
     budget = budget_queries.get_budget(budget_id=b_id)
-    if not budget:
-        abort(400)
 
     new_budget_id = request.form.get("new_budget")
 
@@ -97,17 +95,12 @@ def delete_budget(b_id):
     elif shared_budgets:
         shared_budget_queries.delete_shared_budgets(shared_budgets=shared_budgets)
 
-    # transactions = transaction_queries.get_transactions(b_id)
     if new_budget:
-        # transaction_queries.updates_transactions_budget(
-        #     transactions=transactions, new_budget_id=new_budget.id
-        # )
         transaction_queries.bulk_update_transactions_budget(
             old_budget_id=b_id, new_budget_id=new_budget_id
         )
 
     else:
-        # transaction_queries.delete_transactions(transactions=transactions)
         transaction_queries.bulk_delete_transactions_for_budget(budget_id=b_id)
 
     # delete prefills

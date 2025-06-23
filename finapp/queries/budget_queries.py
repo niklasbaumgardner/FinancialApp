@@ -30,7 +30,7 @@ def get_budget_for_id(id):
     return Budget.query.filter_by(id=id).first()
 
 
-def get_budget(budget_id, shared=True, query=False):
+def get_budget(budget_id, shared=True, query=False, first_or_404=True):
     budget_query = (
         Budget.query.join(
             SharedBudget, Budget.id == SharedBudget.budget_id, isouter=True
@@ -51,6 +51,8 @@ def get_budget(budget_id, shared=True, query=False):
 
     if query:
         return budget_query
+    elif first_or_404:
+        return budget_query.first_or_404()
 
     return budget_query.first()
 

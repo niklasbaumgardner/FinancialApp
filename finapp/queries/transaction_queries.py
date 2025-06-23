@@ -91,6 +91,7 @@ def create_transaction(
             paycheck_id=paycheck_id,
         )
         db.session.add(transaction)
+        db.session.flush()
 
         if categories:
             category_queries.bulk_add_transaction_categories(
@@ -99,14 +100,6 @@ def create_transaction(
                 category_ids=categories,
                 commit=False,
             )
-            # for c_id in categories:
-            #     # If not categories exists, c_id can be a empty string
-            #     if not c_id:
-            #         continue
-
-            #     category_queries.add_transaction_category(
-            #         user_id=user_id, transaction_id=trans.id, category_id=c_id
-            #     )
 
         budget_queries.update_budget_total(b_id=budget_id, commit=False)
         db.session.commit()
@@ -380,22 +373,13 @@ def _update_transaction(
                 category_ids=categories_added,
                 commit=False,
             )
-            # for c_id in categories_added:
-            #     category_queries.add_transaction_category(
-            #         user_id=transaction.user_id,
-            #         transaction_id=transaction.id,
-            #         category_id=c_id,
-            #     )
+
         if categories_deleted and len(categories_deleted) > 0:
             category_queries.bulk_delete_transaction_categories(
                 transaction_id=transaction.id,
                 category_ids=categories_deleted,
                 commit=False,
             )
-            # for c_id in categories_deleted:
-            #     category_queries.delete_transaction_category(
-            #         transaction_id=transaction.id, category_id=c_id
-            #     )
 
         for id in should_update_budget_total:
             budget_queries.update_budget_total(id, commit=False)
@@ -431,20 +415,9 @@ def bulk_update_transactions_budget(old_budget_id, new_budget_id):
 def delete_transaction(transaction_id, budget_id):
     if can_modify_transaction(transaction_id=transaction_id):
         Transaction.query.filter_by(id=transaction_id).delete()
+
+        budget_queries.update_budget_total(b_id=budget_id, commit=False)
         db.session.commit()
-
-        budget_queries.update_budget_total(b_id=budget_id)
-
-
-# def delete_transactions(transactions):
-#     for t in transactions:
-#         # delete transaction categories
-#         for c in t.categories:
-#             db.session.delete(c)
-
-#         db.session.delete(t)
-
-#     db.session.commit()
 
 
 def bulk_delete_transactions_for_budget(budget_id):
