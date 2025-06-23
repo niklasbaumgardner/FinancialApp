@@ -65,6 +65,20 @@ def add_transaction_category(user_id, transaction_id, category_id):
     return t_category
 
 
+def bulk_add_transaction_categories(user_id, transaction_id, category_ids, commit=True):
+    t_categories = [
+        TransactionCategory(
+            user_id=user_id, transaction_id=transaction_id, category_id=c_id
+        )
+        for c_id in category_ids
+    ]
+
+    db.session.add_all(t_categories)
+
+    if commit:
+        db.session.commit()
+
+
 def delete_transaction_category(transaction_id, category_id):
     t_category = get_transaction_category_by_transaction_and_category_id(
         transaction_id=transaction_id, category_id=category_id
@@ -74,3 +88,13 @@ def delete_transaction_category(transaction_id, category_id):
 
     db.session.delete(t_category)
     db.session.commit()
+
+
+def bulk_delete_transaction_categories(transaction_id, category_ids, commit=True):
+    TransactionCategory.query.where(
+        transaction_id == transaction_id,
+        TransactionCategory.category_id.in_(category_ids),
+    ).delete()
+
+    if commit:
+        db.session.commit()

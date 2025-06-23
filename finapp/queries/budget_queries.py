@@ -111,13 +111,14 @@ def update_budget(id, name=None, is_active=None):
         db.session.commit()
 
 
-def update_budget_total(b_id, budget=None):
+def update_budget_total(b_id, budget=None, commit=True):
     budget = get_budget(budget_id=b_id) if budget is None else budget
 
     if budget:
         total = transaction_queries.get_transactions_sum(budget_id=budget.id)
         budget.total = round(total, 2)
-        db.session.commit()
+        if commit:
+            db.session.commit()
 
 
 def set_budget_shared(budget_id):

@@ -71,7 +71,7 @@ def get_paycheck_prefills():
     return paychecks
 
 
-def update_paycheck(paycheck_id):
+def update_paycheck(paycheck_id, commit=True):
     paycheck = get_paycheck_by_id(id=paycheck_id)
     if not paycheck:
         return
@@ -82,4 +82,5 @@ def update_paycheck(paycheck_id):
     total = transactions.with_entities(func.sum(Transaction.amount)).first()[0]
 
     paycheck.total = total
-    db.session.commit()
+    if commit:
+        db.session.commit()
