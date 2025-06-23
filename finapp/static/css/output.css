@@ -121,11 +121,14 @@
   .items-start {
     align-items: flex-start;
   }
+  .items-start\! {
+    align-items: flex-start !important;
+  }
   .justify-center {
     justify-content: center;
   }
-  .justify-end {
-    justify-content: flex-end;
+  .justify-end\! {
+    justify-content: flex-end !important;
   }
   .gap-\(--wa-space-2xs\)\! {
     gap: var(--wa-space-2xs) !important;
@@ -147,6 +150,9 @@
   }
   .p-\(--wa-space-2xs\) {
     padding: var(--wa-space-2xs);
+  }
+  .py-\(--wa-space-2xs\) {
+    padding-block: var(--wa-space-2xs);
   }
   .text-end {
     text-align: end;

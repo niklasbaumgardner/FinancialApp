@@ -376,13 +376,14 @@ export class SearchBudget extends NikElement {
   viewTemplate() {
     return html`<div class="wa-split">
       ${this.sortTemplate()}
-      <wa-button appearance="plain" label="Search" @click=${this.toggleSearch}>
-        <wa-icon
-          class="text-(length:--wa-font-size-xl)"
-          library="ion"
-          name="search-outline"
-        ></wa-icon>
-      </wa-button>
+      <wa-icon-button
+        appearance="plain"
+        label="Search"
+        library="ion"
+        name="search-outline"
+        class="text-(length:--wa-font-size-xl)"
+        @click=${this.toggleSearch}
+      ></wa-icon-button>
     </div>`;
   }
 
@@ -398,18 +399,14 @@ export class SearchBudget extends NikElement {
           <span id="searchResultsCount">0 transactions</span> totalling
           <span class="wa-heading-m" id="searchResultsSum">$0</span>
         </span>
-        <wa-button
+        <wa-icon-button
           id="cancel-search"
+          library="remix"
+          name="system/close-large-line"
           label="Cancel"
-          appearance="plain"
+          class="text-(length:--wa-font-size-xl)"
           @click=${this.toggleSearch}
-          ><wa-icon
-            library="remix"
-            name="system/close-large-line"
-            label="Cancel"
-            class="text-(length:--wa-font-size-xl)"
-          ></wa-icon
-        ></wa-button>
+        ></wa-icon-button>
       </div>
 
       <div

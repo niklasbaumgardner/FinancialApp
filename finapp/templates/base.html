@@ -75,13 +75,6 @@
         },
         mutator: (svg) => svg.setAttribute("fill", "currentColor"),
       });
-
-      registerIconLibrary("hero", {
-        resolver: (name) => {
-          let [icon, style] = name.split(".");
-          return `https://cdn.jsdelivr.net/npm/heroicons@2.0.1/24/${style}/${icon}.svg`;
-        },
-      });
     </script>
 
     <title>{% block title %}{% endblock title %}</title>
@@ -173,7 +166,7 @@
       if (window.Sentry) {
         Sentry.onLoad(function () {
           Sentry.init({
-            release: "nbfinancial@1.0.8",
+            release: "nbfinancial@1.0.9",
             environment: "production",
             replaysSessionSampleRate: 0,
             replaysOnErrorSampleRate: 1.0,

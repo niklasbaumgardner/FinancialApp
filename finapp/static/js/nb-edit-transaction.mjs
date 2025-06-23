@@ -1,24 +1,23 @@
-import { NikElement } from "./customElement.mjs";
 import { html } from "./imports.mjs";
 import "./nb-categories-select.mjs";
 import { AddTransactionModal } from "./nb-add-transaction.mjs";
 
 export class EditTransactionModal extends AddTransactionModal {
   static properties = {
-    // budgets: { type: Array },
-    // categories: { type: Array },
-    // sharedUsers: { type: Array },
     transaction: { type: Object },
   };
 
-  // static queries = {
-  //   dialog: "wa-dialog",
-  //   form: "form",
-  //   budgetsSelect: "#budgets-select",
-  //   usersSelect: "#user-select",
-  //   submitButton: "#submit-button",
-  //   nameInput: "#name",
-  // };
+  static queries = {
+    dialog: "wa-dialog",
+    form: "form",
+    budgetsSelect: "#budgets-select",
+    usersSelect: "#user-select",
+    categoriesSelect: "nb-categories-select",
+    submitButton: "#submit-button",
+    nameInput: "#name",
+    dateInput: "#date",
+    amountInput: "#amount",
+  };
 
   get selectedBudget() {
     let currentBudgetId = this.budgetsSelect?.value;
@@ -33,42 +32,33 @@ export class EditTransactionModal extends AddTransactionModal {
   connectedCallback() {
     super.connectedCallback();
 
-    // this.budgets.sort((a, b) => a.name.localeCompare(b.name));
     let users = [this.selectedBudget.user];
     users.push(...this.selectedBudget.shared_users);
     users.sort((a, b) => a.username.localeCompare(b.username));
     this.sharedUsers = users;
   }
 
-  // handleDialogShow(event) {
-  //   if (event.target !== this.dialog) {
-  //     return;
-  //   }
+  reset() {
+    this.submitButton.loading = false;
+    this.submitButton.disabled = false;
 
-  //   this.nameInput.focus();
-  // }
+    this.form.reset();
+    this.hide();
+  }
 
-  // show() {
-  //   customElements.whenDefined("wa-dialog").then(() => {
-  //     this.updateComplete.then(() => {
-  //       this.dialog.updateComplete.then(() => {
-  //         this.dialog.open = true;
-  //       });
-  //     });
-  //   });
-  // }
+  categoriesChange(oldCategories, newCategories) {
+    let oldCategoriesSet = new Set(oldCategories);
+    let newCategoriesSet = new Set(newCategories);
 
-  // hide() {
-  //   this.dialog.open = false;
-  // }
+    let categoriesAdded = Array.from(
+      newCategoriesSet.difference(oldCategoriesSet)
+    );
+    let categoriesDeleted = Array.from(
+      oldCategoriesSet.difference(newCategoriesSet)
+    );
 
-  // reset() {
-  //   this.submitButton.loading = false;
-  //   this.submitButton.disabled = false;
-  //   this.sharedUsers = [];
-  //   this.form.reset();
-  //   this.hide();
-  // }
+    return { categoriesAdded, categoriesDeleted };
+  }
 
   async handleTransactionAdd() {
     if (!this.form.reportValidity()) {
@@ -78,7 +68,37 @@ export class EditTransactionModal extends AddTransactionModal {
     this.submitButton.loading = true;
     this.submitButton.disabled = true;
 
+    let currentCategories = this.transaction.categories.map(
+      (c) => c.category_id
+    );
+    let newCategories = this.categoriesSelect.value;
+
+    const { categoriesAdded, categoriesDeleted } = this.categoriesChange(
+      currentCategories,
+      newCategories
+    );
+
+    if (
+      this.nameInput.value === this.transaction.name &&
+      this.dateInput.value === this.transaction.date &&
+      this.amountInput.value == this.transaction.amount &&
+      this.budgetsSelect.value == this.transaction.budget_id &&
+      this.usersSelect.value == this.transaction.user_id &&
+      !categoriesAdded.length &&
+      !categoriesDeleted.length
+    ) {
+      this.reset();
+      return;
+    }
+
     let formData = new FormData(this.form);
+
+    for (let c_id of categoriesAdded) {
+      formData.append("categoriesAdded", c_id);
+    }
+    for (let c_id of categoriesDeleted) {
+      formData.append("categoriesDeleted", c_id);
+    }
 
     let response = await fetch(this.transaction.edit_url, {
       method: "POST",
@@ -98,33 +118,6 @@ export class EditTransactionModal extends AddTransactionModal {
     this.reset();
   }
 
-  // async budgetChange() {
-  //   let users = [this.selectedBudget.user];
-  //   users.push(...this.selectedBudget.shared_users);
-  //   users.sort((a, b) => a.username.localeCompare(b.username));
-  //   this.sharedUsers = users;
-
-  //   this.usersSelect.value = "";
-  //   await this.usersSelect.updateComplete;
-  //   this.usersSelect.value = `${CURRENT_USER.id}`;
-  // }
-
-  // openCategoriesModal() {
-  //   document.querySelector("nb-category-modal").show();
-  // }
-
-  // budgetOptionsTemplate() {
-  //   return this.budgets.map(
-  //     (b) => html`<wa-option value=${b.id}
-  //       ><span class="wa-heading-s">${b.name}</span>:
-  //       ${new Intl.NumberFormat(undefined, {
-  //         style: "currency",
-  //         currency: "USD",
-  //       }).format(b.total)}</wa-option
-  //     >`
-  //   );
-  // }
-
   budgetsTemplate() {
     return html`<wa-select
       label="Select Budget"
@@ -135,16 +128,6 @@ export class EditTransactionModal extends AddTransactionModal {
       >${this.budgetOptionsTemplate()}</wa-select
     >`;
   }
-
-  // sharedUsersOptionsTemplate() {
-  //   if (!this.selectedBudget || !this.sharedUsers) {
-  //     return null;
-  //   }
-
-  //   return this.sharedUsers.map(
-  //     (u) => html`<wa-option value=${u.id}>${u.username}</wa-option>`
-  //   );
-  // }
 
   sharedUsersSelectTemplate() {
     return html`<wa-select

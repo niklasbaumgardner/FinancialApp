@@ -36,7 +36,8 @@ export class SearchItem extends NikElement {
         clearable
       ></wa-input>
       <wa-icon-button
-        class="text-(length:--wa-font-size-l) danger-icon-button"
+        class="text-(length:--wa-font-size-l)"
+        variant="danger"
         library="ion"
         name="trash-outline"
         label="Remove"

@@ -49,18 +49,48 @@ export class DeleteTransactionModal extends NikElement {
     return html`<wa-dialog label="Delete Transaction">
       <div class="wa-stack">
         <b>Are you sure you want to delete this transaction?</b>
-        <p>Name: <b>${this.transaction.name}</b></p>
-        <p>
-          Amount:
+        <div class="wa-split">
+          <p>Name:</p>
+          <b>${this.transaction.name}</b>
+        </div>
+        <div class="wa-split">
+          <p>Amount:</p>
           <b
             ><wa-format-number
               type="currency"
               currency="USD"
-              value="${this.transaction.amount}"
+              value=${this.transaction.amount}
               lang="en-US"
-            ></wa-format-number>
+            ></wa-format-number
+          ></b>
+        </div>
+        <div class="wa-split">
+          <p>User:</p>
+          <b>${this.transaction.user.username}</b>
+        </div>
+        <div class="wa-split">
+          <p>Date:</p>
+          <b>
+            <wa-format-date
+              month="long"
+              day="numeric"
+              year="numeric"
+              date="${this.transaction.date}T00:00:00"
+            ></wa-format-date>
           </b>
-        </p>
+        </div>
+        <div class="wa-split">
+          <p>Categories:</p>
+          <div class="wa-cluster gap-(--wa-space-2xs)!">
+            ${this.transaction.categories.map(
+              (c) =>
+                html`<nb-category
+                  name="${c.category.name}"
+                  color="${c.category.color}"
+                ></nb-category>`
+            )}
+          </div>
+        </div>
       </div>
       <div class="wa-cluster w-full" slot="footer">
         <wa-button

@@ -38,7 +38,7 @@ class TransactionActions extends NikElement {
   render() {
     return html`<div class="wa-cluster wa-align-items-center">
       <wa-icon-button
-        class="text-(length:--wa-font-size-) brand-icon-button"
+        variant="brand"
         library="ion"
         name="create-outline"
         label="Edit"
@@ -46,7 +46,7 @@ class TransactionActions extends NikElement {
         @click=${this.handleEditClick}
       ></wa-icon-button>
       <wa-icon-button
-        class="text-(length:--wa-font-size-) danger-icon-button"
+        variant="danger"
         library="ion"
         name="trash-outline"
         label="Delete"
@@ -125,28 +125,7 @@ export class TransactionsGrid extends NikElement {
         autoHeight: true,
         cellRenderer: (param) => {
           let name = param.data.name;
-
-          let div = document.createElement("div");
-          div.classList.add("wa-split");
-
-          let span = document.createElement("span");
-          span.classList.add("text-wrap");
-          span.textContent = name;
-
-          let actions = document.createElement("nb-transaction-actions");
-          actions.transaction = param.data;
-          actions.budgets = this.budgets;
-          actions.categories = this.categories;
-
-          div.append(span, actions);
-
-          return div;
-
-          return `<div class="wa-split"><span class="text-wrap">${name}</span><nb-transaction-actions transaction='${JSON.stringify(
-            param.data
-          )}' budgets=${
-            "'" + JSON.stringify(this.budgets) + "'"
-          }></nb-transaction-actions></div>`;
+          return `<span class="text-wrap">${name}</span>`;
         },
         cellClass: ["leading-(--wa-line-height-normal)!", "p-(--wa-space-2xs)"],
       },
@@ -239,6 +218,29 @@ export class TransactionsGrid extends NikElement {
           }"></wa-format-date>`;
         },
       },
+      {
+        field: "actions",
+        headerName: "Actions",
+        cellRenderer: (param) => {
+          let div = document.createElement("div");
+          div.classList.add(
+            "wa-cluster",
+            "w-full",
+            "h-full",
+            "items-center",
+            "py-(--wa-space-2xs)"
+          );
+
+          let actions = document.createElement("nb-transaction-actions");
+          actions.transaction = param.data;
+          actions.budgets = this.budgets;
+          actions.categories = this.categories;
+
+          div.append(actions);
+
+          return div;
+        },
+      },
     ];
 
     const gridOptions = {
@@ -278,6 +280,11 @@ export class TransactionsGrid extends NikElement {
             colId: "date",
             minWidth: 150,
             maxWidth: 150,
+          },
+          {
+            colId: "actions",
+            minWidth: 108,
+            maxWidth: 108,
           },
         ],
       },
