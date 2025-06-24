@@ -96,14 +96,18 @@ export class Theme {
   #backgroundColor;
   #colorContrast;
   #colorPalette;
+  #initing;
 
   constructor(theme) {
+    this.#initing = true;
     this.theme = theme.theme;
     this.mode = theme.mode;
     this.primaryColor = theme.primary_color;
     this.backgroundColor = theme.background_color;
     this.colorContrast = theme.color_contrast;
     this.colorPalette = theme.color_palette;
+
+    this.#initing = false;
 
     if (!this.theme) {
       this.makeDefault();
@@ -149,7 +153,10 @@ export class Theme {
     document.getElementById("theme-stylesheet").href = this.theme
       ? `https://early.webawesome.com/webawesome@3.0.0-alpha.13/dist/styles/themes/${this.theme}.css`
       : "";
-    fetch(SET_THEME_URL + "?" + new URLSearchParams({ theme: this.theme }));
+
+    if (!this.#initing) {
+      fetch(SET_THEME_URL + "?" + new URLSearchParams({ theme: this.theme }));
+    }
   }
 
   set mode(mode) {
@@ -172,7 +179,11 @@ export class Theme {
       this.mode === "light"
     );
 
-    fetch(SET_THEME_MODE_URL + "?" + new URLSearchParams({ mode: this.mode }));
+    if (!this.#initing) {
+      fetch(
+        SET_THEME_MODE_URL + "?" + new URLSearchParams({ mode: this.mode })
+      );
+    }
   }
 
   /**
@@ -199,11 +210,13 @@ export class Theme {
       document.documentElement.classList.add(`${this.primaryColor}-brand`);
     }
 
-    fetch(
-      SET_PRIMARY_COLOR_URL +
-        "?" +
-        new URLSearchParams({ primary_color: this.primaryColor })
-    );
+    if (!this.#initing) {
+      fetch(
+        SET_PRIMARY_COLOR_URL +
+          "?" +
+          new URLSearchParams({ primary_color: this.primaryColor })
+      );
+    }
   }
 
   /**
@@ -237,11 +250,13 @@ export class Theme {
         .classList.add(`${this.backgroundColor}-background`);
     }
 
-    fetch(
-      SET_BACKGROUND_COLOR_URL +
-        "?" +
-        new URLSearchParams({ background_color: this.backgroundColor })
-    );
+    if (!this.#initing) {
+      fetch(
+        SET_BACKGROUND_COLOR_URL +
+          "?" +
+          new URLSearchParams({ background_color: this.backgroundColor })
+      );
+    }
   }
 
   /**
@@ -263,11 +278,14 @@ export class Theme {
       .colorContrast
       ? `https://early.webawesome.com/webawesome@3.0.0-alpha.13/dist/styles/themes/${this.colorContrast}/color.css`
       : "";
-    fetch(
-      SET_COLOR_CONTRAST_URL +
-        "?" +
-        new URLSearchParams({ color_contrast: this.colorContrast })
-    );
+
+    if (!this.#initing) {
+      fetch(
+        SET_COLOR_CONTRAST_URL +
+          "?" +
+          new URLSearchParams({ color_contrast: this.colorContrast })
+      );
+    }
   }
 
   /**
@@ -288,11 +306,14 @@ export class Theme {
     document.getElementById("color-pallete-stylesheet").href = this.colorPalette
       ? `https://early.webawesome.com/webawesome@3.0.0-alpha.13/dist/styles/color/${this.colorPalette}.css`
       : "";
-    fetch(
-      SET_COLOR_PALETTE_URL +
-        "?" +
-        new URLSearchParams({ color_palette: this.colorPalette })
-    );
+
+    if (!this.#initing) {
+      fetch(
+        SET_COLOR_PALETTE_URL +
+          "?" +
+          new URLSearchParams({ color_palette: this.colorPalette })
+      );
+    }
   }
 
   makeDefault() {
