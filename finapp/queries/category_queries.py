@@ -93,7 +93,7 @@ def delete_transaction_category(transaction_id, category_id):
 def bulk_delete_transaction_categories(transaction_id, category_ids, commit=True):
     TransactionCategory.query.where(
         and_(
-            transaction_id == transaction_id,
+            TransactionCategory.transaction_id == transaction_id,
             TransactionCategory.category_id.in_(category_ids),
         ),
     ).delete()
