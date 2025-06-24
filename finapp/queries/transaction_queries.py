@@ -158,15 +158,17 @@ def sort_transactions(sort_by, transactionsQuery):
     return transactionsQuery
 
 
-def get_recent_transactions():
+def get_recent_transactions(limit=None):
     transactions = (
         get_transactions_query()
         .order_by(Transaction.date.desc(), Transaction.id.desc())
         .options(joinedload(Transaction.budget))
-        .all()
     )
 
-    return transactions
+    if limit and limit > 0:
+        transactions = transactions.limit(limit)
+
+    return transactions.all()
 
 
 def get_transactions(

@@ -110,6 +110,7 @@ export class TransactionsGrid extends NikElement {
   }
 
   updateTransactions(transactions) {
+    this.transactions = transactions;
     this.dataGrid.setGridOption("rowData", transactions);
   }
 

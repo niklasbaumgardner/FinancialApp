@@ -14,7 +14,7 @@ viewtransactions_bp = Blueprint("viewtransactions_bp", __name__)
 @viewtransactions_bp.get("/view_transactions")
 @login_required
 def view_transactions():
-    transactions = transaction_queries.get_recent_transactions()
+    transactions = transaction_queries.get_recent_transactions(limit=20)
     transactions = [t.to_dict() for t in transactions]
 
     budgets = budget_queries.get_budgets(active_only=True)
@@ -29,3 +29,12 @@ def view_transactions():
         budgets=budgets,
         categories=categories,
     )
+
+
+@viewtransactions_bp.get("/api/get_transactions")
+@login_required
+def api_get_transactions():
+    transactions = transaction_queries.get_recent_transactions()
+    transactions = [t.to_dict() for t in transactions]
+
+    return dict(transactions=transactions)
