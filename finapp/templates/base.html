@@ -7,15 +7,7 @@
 
     <link rel="manifest" href="/static/manifest.webmanifest" />
 
-    <link href="/static/css/index.css" rel="stylesheet" />
-    <link href="/static/css/colors.css" rel="stylesheet" />
-    <link href="/static/css/themes.css" rel="stylesheet" />
-    <link href="/static/css/dashboard.css" rel="stylesheet" />
-    <link href="/static/css/category-colors.css" rel="stylesheet" />
-    <link href="/static/css/nb-category.css" rel="stylesheet" />
-    <link href="/static/css/nb-radio.css" rel="stylesheet" />
-    <link href="/static/css/category-modal.css" rel="stylesheet" />
-    <link href="/static/css/output.css" rel="stylesheet" />
+    <link href="/static/css/all-out.css" rel="stylesheet" />
 
     <link rel="icon" type="image/png" href="/static/images/logo.svg" />
 
@@ -27,6 +19,8 @@
       id="theme-stylesheet"
       rel="stylesheet"
       href="https://early.webawesome.com/webawesome@3.0.0-alpha.13/dist/styles/themes/{{ theme.theme }}.css"
+      render="blocking"
+      fetchpriority="high"
     />
     <link
       id="color-contrast-stylesheet"
@@ -48,6 +42,7 @@
       rel="stylesheet"
       href="https://early.webawesome.com/webawesome@3.0.0-alpha.13/dist/styles/webawesome.css"
     />
+
     <script
       type="module"
       src="https://early.webawesome.com/webawesome@3.0.0-alpha.13/dist/webawesome.loader.js"
@@ -169,7 +164,7 @@
       if (window.Sentry) {
         Sentry.onLoad(function () {
           Sentry.init({
-            release: "nbfinancial@1.0.10",
+            release: "nbfinancial@1.0.12",
             environment: "production",
             replaysSessionSampleRate: 0,
             replaysOnErrorSampleRate: 1.0,
