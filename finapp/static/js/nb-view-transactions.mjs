@@ -11,22 +11,6 @@ class ViewTransactions extends NikElement {
     theme: { type: String },
   };
 
-  connectedCallback() {
-    super.connectedCallback();
-
-    this.requestData();
-  }
-
-  async requestData() {
-    let response = await fetch(VIEW_TRANSACTIONS_CONTENT_URL);
-    let data = await response.json();
-
-    let { transactions, budgets, categories } = data;
-    this.transactions = transactions;
-    this.budgets = budgets;
-    this.categories = categories;
-  }
-
   addTransactionClick() {
     if (!this.addTransactionModal) {
       this.addTransactionModal = document.createElement("nb-add-transaction");

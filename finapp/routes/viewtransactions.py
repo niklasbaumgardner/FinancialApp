@@ -14,14 +14,6 @@ viewtransactions_bp = Blueprint("viewtransactions_bp", __name__)
 @viewtransactions_bp.get("/view_transactions")
 @login_required
 def view_transactions():
-    return render_template(
-        "viewtransactions.html",
-    )
-
-
-@viewtransactions_bp.get("/api/view_transactions")
-@login_required
-def api_view_transactions():
     transactions = transaction_queries.get_recent_transactions()
     transactions = [t.to_dict() for t in transactions]
 
@@ -31,4 +23,9 @@ def api_view_transactions():
     categories = category_queries.get_categories_shared()
     categories = [c.to_dict() for c in categories]
 
-    return dict(transactions=transactions, budgets=budgets, categories=categories)
+    return render_template(
+        "viewtransactions.html",
+        transactions=transactions,
+        budgets=budgets,
+        categories=categories,
+    )
