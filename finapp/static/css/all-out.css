@@ -951,7 +951,8 @@ input:focus-visible + circle {
 @layer properties;
 @layer theme, base, components, utilities;
 @layer theme {
-  :root, :host {
+  :root,
+  :host {
     --spacing: 0.25rem;
     --text-9xl: 8rem;
     --text-9xl--line-height: 1;
@@ -1139,7 +1140,9 @@ input:focus-visible + circle {
     outline-width: 1px;
   }
   .filter {
-    filter: var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,);
+    filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast)
+      var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert)
+      var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
   }
   .\@5xl\:flex-nowrap\! {
     @container (width >= 64rem) {
@@ -1210,8 +1213,12 @@ input:focus-visible + circle {
   inherits: false;
 }
 @layer properties {
-  @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
-    *, ::before, ::after, ::backdrop {
+  @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or
+    ((-moz-orient: inline) and (not (color: rgb(from red r g b)))) {
+    *,
+    ::before,
+    ::after,
+    ::backdrop {
       --tw-leading: initial;
       --tw-outline-style: solid;
       --tw-blur: initial;
@@ -1705,5 +1712,13 @@ input:focus-visible + circle {
   --wa-color-brand-95: var(--color-stone-95);
 }
 
-
-
+/* This should be generated but it's not for some reason? */
+#alerts {
+  position: absolute;
+  width: 100%;
+  top: var(--wa-space-4xl);
+  z-index: 999999999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

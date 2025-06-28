@@ -138,6 +138,7 @@
       }
       console.log(window.THEME);
     </script>
+    <script src="/static/js/nb-alert.mjs" type="module"></script>
     <script src="/static/js/nb-theme-selector.mjs" type="module"></script>
     <script src="/static/js/nb-preferences.mjs" type="module"></script>
     <script src="/static/js/nb-category-modal.mjs" type="module"></script>
@@ -307,9 +308,7 @@
       {% with messages = get_flashed_messages(with_categories=true) %}
       <div id="alerts" class="">
         {% if messages %} {% for category, message in messages %}
-        <wa-callout variant="{{ category }}" duration="5000" open closable>
-          {{ message }}
-        </wa-callout>
+        <nb-alert category="{{ category }}" message="{{ message }}"></nb-alert>
         {% endfor %} {% endif %}
       </div>
       {% endwith %}

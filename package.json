@@ -13,8 +13,8 @@
   "scripts": {
     "tw-watch": "npx @tailwindcss/cli -i ./finapp/static/css/tailwind.css -o ./finapp/static/css/output.css --watch",
     "tw-build": "npx @tailwindcss/cli -i ./finapp/static/css/tailwind.css -o ./finapp/static/css/output.css",
-    "css-build": "webpack --progress --config ./finapp/static/webpack.config.js",
-    "css-watch": "webpack --progress --config ./finapp/static/webpack.config.js --watch"
+    "css-build": "webpack --progress --config ./finapp/static/webpack.config.js --mode=production",
+    "css-watch": "webpack --progress --config ./finapp/static/webpack.config.js --watch --mode=development"
   },
   "author": "Niklas Baumgardner"
 }
