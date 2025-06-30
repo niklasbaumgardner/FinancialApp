@@ -1,25 +1,38 @@
 from flask import url_for
-import json
 from flask_login import UserMixin
 from itsdangerous import URLSafeTimedSerializer
 import os
 from finapp import db, login_manager
-from finapp.queries import user_queries
 from sqlalchemy_serializer import SerializerMixin
+from sqlalchemy.orm import DeclarativeBase, relationship, mapped_column, Mapped
+from sqlalchemy import ForeignKey, UniqueConstraint
+from typing import List, Optional
+from datetime import date as date_type
+from typing_extensions import Annotated
+
+
+class Base(DeclarativeBase):
+    pass
+
+
+int_pk = Annotated[int, mapped_column(primary_key=True)]
+user_fk = Annotated[int, mapped_column(ForeignKey("user.id"))]
 
 
 @login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
+def load_user(id):
+    return db.session.get(User, int(id))
 
 
-class User(db.Model, UserMixin, SerializerMixin):
+class User(Base, UserMixin, SerializerMixin):
+    __tablename__ = "user"
+
     serialize_only = ("id", "username", "email")
 
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(60), unique=True, nullable=False)
-    email = db.Column(db.String(60), unique=True, nullable=False)
-    password = db.Column(db.String(60), nullable=False)
+    id: Mapped[int_pk]
+    username: Mapped[str] = mapped_column(unique=True)
+    email: Mapped[str] = mapped_column(unique=True)
+    password: Mapped[str]
 
     def get_reset_token(self):
         s = URLSafeTimedSerializer(os.environ.get("SECRET_KEY"))
@@ -35,23 +48,27 @@ class User(db.Model, UserMixin, SerializerMixin):
         return User.query.get(user_id)
 
 
-class Theme(db.Model, SerializerMixin):
+class Theme(Base, SerializerMixin):
+    __tablename__ = "theme"
+
     serialize_rules = (
         "-id",
         "-user_id",
     )
 
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    theme = db.Column(db.String, nullable=True)  # default, classic, custom, etc...
-    mode = db.Column(db.String, nullable=True)  # light, dark
-    primary_color = db.Column(db.String, nullable=True)  # red, blue, green, etc...
-    background_color = db.Column(db.String, nullable=True)
-    color_contrast = db.Column(db.String, nullable=True)  # web-awesome values
-    color_palette = db.Column(db.String, nullable=True)  # web-awesome values
+    id: Mapped[int_pk]
+    user_id: Mapped[user_fk]
+    theme: Mapped[Optional[str]]  # default, classic, custom, etc...
+    mode: Mapped[Optional[str]]  # light, dark
+    primary_color: Mapped[Optional[str]]  # red, blue, green, etc...
+    background_color: Mapped[Optional[str]]
+    color_contrast: Mapped[Optional[str]]  # web-awesome values
+    color_palette: Mapped[Optional[str]]  # web-awesome values
 
 
-class Budget(db.Model, SerializerMixin):
+class Budget(Base, SerializerMixin):
+    __tablename__ = "budget"
+
     serialize_rules = (
         "url",
         "edit_url",
@@ -62,17 +79,16 @@ class Budget(db.Model, SerializerMixin):
         "share_budget_url",
     )
 
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    total = db.Column(db.Float, nullable=False)
-    name = db.Column(db.String(60), nullable=False)
-    is_active = db.Column(db.Boolean, nullable=False)
-    is_shared = db.Column(db.Boolean, nullable=False)
+    id: Mapped[int_pk]
+    user_id: Mapped[user_fk]
+    total: Mapped[float]
+    name: Mapped[str]
+    is_active: Mapped[bool]
+    is_shared: Mapped[bool]
 
-    user = db.relationship("User", lazy="joined")
+    user: Mapped["User"] = relationship(lazy="joined", viewonly=True)
 
-    shared_users = db.relationship(
-        "User",
+    shared_users: Mapped[List["User"]] = relationship(
         lazy="joined",
         secondary="shared_budget",
         primaryjoin="SharedBudget.budget_id == Budget.id",
@@ -100,7 +116,7 @@ class Budget(db.Model, SerializerMixin):
         return url_for("sharebudget_bp.share_budget", budget_id=self.id)
 
     # I don't think this will work because of the shared_budget model
-    # transactions = db.relationship("Transaction", uselist=False)
+    # transactions = relationship("Transaction", uselist=False)
 
     def __str__(self):
         return f"{self.name: <30s}|{self.total: >10.2f}"
@@ -118,37 +134,42 @@ class Budget(db.Model, SerializerMixin):
         return obj
 
 
-class SharedBudget(db.Model, SerializerMixin):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    budget_id = db.Column(db.Integer, db.ForeignKey("budget.id"), nullable=False)
+class SharedBudget(Base, SerializerMixin):
+    __tablename__ = "shared_budget"
 
-    budget = db.relationship("Budget", lazy="joined")
+    id: Mapped[int_pk]
+    user_id: Mapped[user_fk]
+    budget_id: Mapped[int] = mapped_column(ForeignKey("budget.id"))
+
+    budget: Mapped["Budget"] = relationship(lazy="joined", viewonly=True)
 
 
-class Transaction(db.Model, SerializerMixin):
+class Transaction(Base, SerializerMixin):
+    __tablename__ = "transaction"
+
     serialize_rules = (
         "categories",
         "user",
+        "budget",
         "edit_url",
         "move_transaction_url",
         "delete_url",
     )
 
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    budget_id = db.Column(db.Integer, db.ForeignKey("budget.id"), nullable=False)
-    name = db.Column(db.String(60), nullable=False)
-    amount = db.Column(db.Float, nullable=False)
-    date = db.Column(db.Date, nullable=False)
-    is_transfer = db.Column(db.Boolean, nullable=True)
-    paycheck_id = db.Column(db.Integer, db.ForeignKey("paycheck.id"), nullable=True)
+    id: Mapped[int_pk]
+    user_id: Mapped[user_fk]
+    budget_id: Mapped[int] = mapped_column(ForeignKey("budget.id"))
+    name: Mapped[str]
+    amount: Mapped[float]
+    date: Mapped[date_type]
+    is_transfer: Mapped[Optional[bool]]
+    paycheck_id: Mapped[Optional[int]] = mapped_column(ForeignKey("paycheck.id"))
 
-    categories = db.relationship(
-        "TransactionCategory", lazy="joined", passive_deletes=True
+    categories: Mapped[List["TransactionCategory"]] = relationship(
+        lazy="joined", passive_deletes=True
     )
-    user = db.relationship("User", lazy="joined")
-    budget = db.relationship("Budget", lazy="noload")
+    user: Mapped["User"] = relationship(lazy="joined", viewonly=True)
+    budget: Mapped["Budget"] = relationship(lazy="joined", viewonly=True)
 
     def edit_url(self):
         return url_for(
@@ -166,41 +187,48 @@ class Transaction(db.Model, SerializerMixin):
         )
 
 
-class PaycheckPrefill(db.Model, SerializerMixin):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    total_amount = db.Column(db.Float, nullable=False)
-    budget_id = db.Column(db.Integer, db.ForeignKey("budget.id"), nullable=False)
-    amount = db.Column(db.Float, nullable=False)
+class PaycheckPrefill(Base, SerializerMixin):
+    __tablename__ = "paycheck_prefill"
+
+    id: Mapped[int_pk]
+    user_id: Mapped[user_fk]
+    total_amount: Mapped[float]
+    budget_id: Mapped[int] = mapped_column(ForeignKey("budget.id"))
+    amount: Mapped[float]
 
 
-class Paycheck(db.Model, SerializerMixin):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    total = db.Column(db.Float, nullable=False)
-    date = db.Column(db.Date, nullable=False)
+class Paycheck(Base, SerializerMixin):
+    __tablename__ = "paycheck"
 
-    # I don't know if I want this
-    transactions = db.relationship("Transaction", lazy="joined")
+    id: Mapped[int_pk]
+    user_id: Mapped[user_fk]
+    total: Mapped[float]
+    date: Mapped[date_type]
 
-
-class Category(db.Model, SerializerMixin):
-    __table_args__ = (db.UniqueConstraint("user_id", "name"),)
-
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    name = db.Column(db.String, nullable=False)
-    color = db.Column(db.String, nullable=False)
-
-
-class TransactionCategory(db.Model, SerializerMixin):
-    __table_args__ = (db.UniqueConstraint("transaction_id", "category_id"),)
-
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    transaction_id = db.Column(
-        db.Integer, db.ForeignKey("transaction.id", ondelete="CASCADE"), nullable=False
+    transactions: Mapped[List["Transaction"]] = relationship(
+        lazy="joined", viewonly=True
     )
-    category_id = db.Column(db.Integer, db.ForeignKey("category.id"), nullable=False)
 
-    category = db.relationship("Category", lazy="joined")
+
+class Category(Base, SerializerMixin):
+    __tablename__ = "category"
+    __table_args__ = (UniqueConstraint("user_id", "name"),)
+
+    id: Mapped[int_pk]
+    user_id: Mapped[user_fk]
+    name: Mapped[str]
+    color: Mapped[str]
+
+
+class TransactionCategory(Base, SerializerMixin):
+    __tablename__ = "transaction_category"
+    __table_args__ = (UniqueConstraint("transaction_id", "category_id"),)
+
+    id: Mapped[int_pk]
+    user_id: Mapped[user_fk]
+    transaction_id: Mapped[int] = mapped_column(
+        ForeignKey("transaction.id", ondelete="CASCADE")
+    )
+    category_id: Mapped[int] = mapped_column(ForeignKey("category.id"))
+
+    category: Mapped["Category"] = relationship(lazy="joined", viewonly=True)

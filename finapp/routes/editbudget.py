@@ -21,7 +21,7 @@ def toggle_budget():
 
     if id_ != 0:
         active = False if active == "false" else True
-        budget_queries.update_budget(id_, is_active=active)
+        budget_queries.update_budget(budget_id=id_, is_active=active)
 
         return {"success": True}
 
@@ -40,7 +40,7 @@ def add_budget():
     if name:
         duplicate = budget_queries.get_duplicate_budget_by_name(name)
         if not duplicate:
-            budg = budget_queries.create_budget(name)
+            budget_id = budget_queries.create_budget(name)
 
             if amount is not None and amount != 0:
                 str_date = request.form.get("date")
@@ -50,10 +50,10 @@ def add_budget():
                     name=f"Initial Transaction for {name}",
                     amount=amount,
                     date=date,
-                    budget_id=budg.id,
+                    budget_id=budget_id,
                 )
 
-            return {"budget": budg.to_dict()}
+            return {"budget": budget_queries.get_budget(budget_id=budget_id).to_dict()}
 
         abort(409)
     abort(400)
@@ -65,7 +65,7 @@ def edit_budget(id):
     new_name = request.form.get("name")
     duplicate = budget_queries.get_duplicate_budget_by_name(new_name)
     if not duplicate:
-        budget_queries.update_budget(id, name=new_name)
+        budget_queries.update_budget(budget_id=id, name=new_name)
         return {"sucess": True}
 
     abort(409)

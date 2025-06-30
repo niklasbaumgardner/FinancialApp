@@ -20,7 +20,7 @@ def view_transactions():
     budgets = budget_queries.get_budgets(active_only=True)
     budgets = [b.to_dict() for b in budgets]
 
-    categories = category_queries.get_categories_shared()
+    categories = category_queries.get_categories()
     categories = [c.to_dict() for c in categories]
 
     return render_template(

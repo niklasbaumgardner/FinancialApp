@@ -1,7 +1,6 @@
 from finapp.queries import (
     category_queries,
     budget_queries,
-    prefill_queries,
     shared_budget_queries,
     transaction_queries,
     user_queries,

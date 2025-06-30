@@ -1,7 +1,9 @@
+import re
 from finapp.models import Budget, SharedBudget, User
 from sqlalchemy.sql import or_, and_
 from flask_login import current_user
 from finapp import bcrypt, db
+from sqlalchemy import func, select, update
 
 
 ##
@@ -17,25 +19,25 @@ def create_user(email, username, password):
 
 
 def get_user_by_id(id):
-    return User.query.filter_by(id=id).first()
+    stmt = select(User).where(User.id == id)
+    return db.session.scalars(stmt.limit(1)).first()
 
 
 def get_user_by_email(email):
-    return User.query.filter_by(email=email).first()
+    stmt = select(User).where(User.email == email)
+    return db.session.scalars(stmt.limit(1)).first()
 
 
-def update_user(id, username, email):
-    user = get_user_by_id(id=id)
+def update_user(username, email):
+    update_dict = dict()
+    if username is not None:
+        update_dict["username"] = username.strip()
+    if email is not None:
+        update_dict["email"] = email.strip()
 
-    username = username if is_username_unique(username=username) else None
-    email = email if is_email_unique(email=email) else None
+    stmt = update(User).where(User.id == current_user.id).values(update_dict)
 
-    if username:
-        user.username = username
-
-    if email:
-        user.email = email
-
+    db.session.execute(stmt)
     db.session.commit()
 
 
@@ -44,9 +46,13 @@ def update_user_password(id, password):
         return
 
     user = get_user_by_id(id=id)
+    if not user:
+        return
     hash_ = hash_password(password=password)
-    user.password = hash_
 
+    stmt = update(User).where(User.id == user.id).values(password=hash_)
+
+    db.session.execute(stmt)
     db.session.commit()
 
 
@@ -55,29 +61,19 @@ def hash_password(password):
 
 
 def is_email_unique(email):
-    return not User.query.filter_by(email=email).first()
+    stmt = select(func.count()).where(User.email == email)
+    count = db.session.execute(stmt).scalar_one()
+    return count == 0
 
 
 def is_username_unique(username):
-    return not User.query.filter_by(username=username).first()
-
-
-def get_shared_users_for_budget_id(budget_id):
-    shared_budget_query = SharedBudget.query.filter_by(
-        budget_id=budget_id, user_id=User.id
-    )
-    budget_owner_query = Budget.query.filter_by(id=budget_id, user_id=User.id)
-
-    return User.query.where(
-        and_(
-            current_user.id != User.id,
-            or_(shared_budget_query.exists(), budget_owner_query.exists()),
-        )
-    ).all()
+    stmt = select(func.count()).where(User.username == username)
+    count = db.session.execute(stmt).scalar_one()
+    return count == 0
 
 
 def get_shared_users_for_all_budgets(include_current_user=False):
-    budget_shared_query = db.session.query(Budget, SharedBudget).where(
+    budget_shared_query = select(Budget, SharedBudget).where(
         and_(
             or_(
                 Budget.user_id == current_user.id,
@@ -89,8 +85,12 @@ def get_shared_users_for_all_budgets(include_current_user=False):
     )
 
     if include_current_user:
-        return User.query.where(budget_shared_query.exists()).all()
+        return db.session.scalars(
+            select(User).where(budget_shared_query.exists())
+        ).all()
 
-    return User.query.where(
-        and_(User.id != current_user.id, budget_shared_query.exists())
+    return db.session.scalars(
+        select(User).where(
+            and_(User.id != current_user.id, budget_shared_query.exists())
+        )
     ).all()

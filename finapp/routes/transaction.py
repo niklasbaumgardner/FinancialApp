@@ -26,6 +26,7 @@ def add_transaction(budget_id):
 
     categories = request.form.getlist("categories")
 
+    # TODO: Think about this
     can_add_transaction = user_id == current_user.id
     if user_id != current_user.id:
         can_add_transaction = shared_budget_queries.can_add_transation_as_shared_user(

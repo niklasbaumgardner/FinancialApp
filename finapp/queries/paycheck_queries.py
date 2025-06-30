@@ -3,6 +3,7 @@ from flask_login import current_user
 from finapp import db
 from finapp.queries import budget_queries, transaction_queries
 from sqlalchemy.sql import func
+from sqlalchemy.orm import joinedload
 
 
 ##
@@ -32,8 +33,21 @@ def get_paychecks(sort=False):
     return query.all()
 
 
+def get_shared_paychecks():
+    transactions = transaction_queries.get_paycheck_transactions()
+    paycheck_ids = set([t.paycheck_id for t in transactions])
+
+    paychecks = (
+        Paycheck.query.where(Paycheck.id.in_(paycheck_ids))
+        .order_by(Paycheck.date.desc(), Paycheck.total)
+        .all()
+    )
+
+    return paychecks
+
+
 def get_paychecks_by_distinct_amount():
-    paychecks = get_paychecks(sort=True)
+    paychecks = get_shared_paychecks()
 
     lst = []
     unique_paychecks = set()
@@ -45,6 +59,7 @@ def get_paychecks_by_distinct_amount():
 
         unique_paychecks.add(p.total)
 
+    print(lst)
     return lst
 
 
@@ -53,19 +68,8 @@ def get_paycheck_prefills():
     paychecks = [p.to_dict() for p in paychecks]
 
     for p in paychecks:
-        transactions = [
-            t.to_dict()
-            for t in transaction_queries.get_transactions_for_paycheck_id(
-                paycheck_id=p["id"]
-            )
-        ]
-
-        for t in transactions:
-            budget = budget_queries.get_budget_for_id(id=t["budget_id"]).to_dict()
-            t["budget"] = budget
-
         p["transactions"] = sorted(
-            transactions, key=lambda t: t["budget"]["name"].casefold()
+            p["transactions"], key=lambda t: t["budget"]["name"].casefold()
         )
 
     return paychecks

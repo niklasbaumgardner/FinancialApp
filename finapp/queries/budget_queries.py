@@ -1,10 +1,10 @@
-from finapp.models import Budget, SharedBudget, User
-from finapp.queries import shared_budget_queries, transaction_queries
+from finapp.models import Budget, SharedBudget
+from finapp.queries import transaction_queries
 from finapp import db
 from flask_login import current_user
 from sqlalchemy.sql import or_, and_
-from sqlalchemy import select
 from sqlalchemy.orm import joinedload
+from sqlalchemy import delete, func, insert, select, update
 
 
 ##
@@ -13,28 +13,29 @@ from sqlalchemy.orm import joinedload
 
 
 def create_budget(name):
-    budg = Budget(
+    query = insert(Budget).values(
         name=name.strip(),
         total=0,
         user_id=current_user.id,
         is_active=True,
         is_shared=False,
     )
-    db.session.add(budg)
+    result = db.session.execute(query)
     db.session.commit()
-    return budg
+
+    budget_id = result.inserted_primary_key[0]
+    return budget_id
 
 
 def get_budget_for_id(id):
     # do not call this method unless absolutely needed
-    return Budget.query.filter_by(id=id).first()
+    return db.session.scalars(select(Budget).where(Budget.id == id).limit(1)).first()
 
 
-def get_budget(budget_id, shared=True, query=False, first_or_404=True):
+def get_budget_query(budget_id, join_shared_users=True):
     budget_query = (
-        Budget.query.join(
-            SharedBudget, Budget.id == SharedBudget.budget_id, isouter=True
-        )
+        select(Budget)
+        .join(SharedBudget, Budget.id == SharedBudget.budget_id, isouter=True)
         .where(
             and_(
                 Budget.id == budget_id,
@@ -44,97 +45,127 @@ def get_budget(budget_id, shared=True, query=False, first_or_404=True):
                 ),
             ),
         )
-        .options(joinedload(Budget.shared_users))
     )
 
-    # budget_query = Budget.query.filter_by(id=budget_id)
+    if join_shared_users:
+        budget_query = budget_query.options(joinedload(Budget.shared_users))
+
+    return budget_query
+
+
+def get_budgets_query():
+    return (
+        select(Budget)
+        .join(SharedBudget, Budget.id == SharedBudget.budget_id, isouter=True)
+        .where(
+            or_(
+                Budget.user_id == current_user.id,
+                SharedBudget.user_id == current_user.id,
+            ),
+        )
+    )
+
+
+def get_budget(budget_id, shared=True, query=False, first_or_404=True):
+    stmt = get_budget_query(budget_id=budget_id)
 
     if query:
-        return budget_query
-    elif first_or_404:
-        return budget_query.first_or_404()
+        return stmt
 
-    return budget_query.first()
+    return db.session.scalars(stmt.limit(1)).first()
 
 
 def can_modify_budget(budget_id):
-    budget_count = Budget.query.filter_by(id=budget_id, user_id=current_user.id).count()
-    shared_budget_count = SharedBudget.query.filter_by(
-        budget_id=budget_id, user_id=current_user.id
-    ).count()
+    return can_user_modify_budget(budget_id=budget_id, user_id=current_user.id)
 
-    return (budget_count + shared_budget_count) > 0
+
+def can_user_modify_budget(budget_id, user_id):
+    stmt = (
+        select(func.count())
+        .select_from(Budget)
+        .join(SharedBudget, Budget.id == SharedBudget.budget_id, isouter=True)
+        .where(
+            and_(
+                Budget.id == budget_id,
+                or_(
+                    Budget.user_id == user_id,
+                    SharedBudget.user_id == user_id,
+                ),
+            ),
+        )
+    )
+    budget_count = db.session.execute(stmt).scalar_one()
+
+    return budget_count > 0
 
 
 def get_budgets(separate=False, active_only=False, inactive_only=False):
-    budgets = Budget.query.join(
-        SharedBudget, Budget.id == SharedBudget.budget_id, isouter=True
-    ).where(
-        or_(
-            Budget.user_id == current_user.id,
-            SharedBudget.user_id == current_user.id,
-        ),
-    )
+    query = get_budgets_query()
 
     if active_only:
-        active = budgets.where(Budget.is_active == True).all()
+        active = db.session.scalars(query.where(Budget.is_active)).unique().all()
         active.sort(key=lambda x: x.name.lower())
         return active
 
     elif inactive_only:
-        inactive = budgets.where(Budget.is_active == False).all()
+        inactive = db.session.scalars(query.where(not Budget.is_active)).unique().all()
         inactive.sort(key=lambda x: x.name.lower())
         return inactive
 
     elif separate:
-        active = budgets.where(Budget.is_active == True).all()
-        inactive = budgets.where(Budget.is_active == False).all()
+        active = db.session.scalars(query.where(Budget.is_active)).unique().all()
+        inactive = db.session.scalars(query.where(not Budget.is_active)).unique().all()
         active.sort(key=lambda x: x.name.lower())
         inactive.sort(key=lambda x: x.name.lower())
         return active, inactive
 
     else:
-        budgets = budgets.all()
+        budgets = db.session.scalars(query).unique().all()
         budgets.sort(key=lambda x: x.name.lower())
         return budgets
 
 
 def get_duplicate_budget_by_name(name):
-    return Budget.query.filter_by(name=name.strip(), user_id=current_user.id).first()
+    return db.session.scalars(
+        get_budgets_query().where(Budget.name == name.strip()).limit(1)
+    ).first()
 
 
-def update_budget(id, name=None, is_active=None):
-    budget = get_budget(budget_id=id)
-    if budget:
+def update_budget(budget_id, name=None, is_active=None):
+    if can_modify_budget(budget_id=budget_id):
+        update_dict = dict()
         if name is not None:
-            budget.name = name.strip()
+            update_dict["name"] = name.strip()
         if is_active is not None:
-            budget.is_active = is_active
+            update_dict["is_active"] = is_active
+
+        stmt = update(Budget).where(Budget.id == budget_id).values(update_dict)
+
+        db.session.execute(stmt)
         db.session.commit()
 
 
-def update_budget_total(b_id, budget=None, commit=True):
-    budget = get_budget(budget_id=b_id) if budget is None else budget
+def update_budget_total(budget_id, budget=None, commit=True):
+    if can_modify_budget(budget_id=budget_id):
+        total = transaction_queries.get_transactions_sum(budget_id=budget_id)
+        stmt = (
+            update(Budget).where(Budget.id == budget_id).values(total=round(total, 2))
+        )
 
-    if budget:
-        total = transaction_queries.get_transactions_sum(budget_id=budget.id)
-        budget.total = round(total, 2)
+        db.session.execute(stmt)
         if commit:
             db.session.commit()
 
 
 def set_budget_shared(budget_id):
-    budget = get_budget_for_id(id=budget_id)
-    budget.is_shared = True
-    db.session.commit()
+    if can_modify_budget(budget_id=budget_id):
+        stmt = update(Budget).where(Budget.id == budget_id).values(is_shared=True)
 
-
-def delete_budget(id):
-    budget = get_budget(budget_id=id, shared=False)
-    _delete_budget(budget)
-
-
-def _delete_budget(budget):
-    if budget:
-        db.session.delete(budget)
+        db.session.execute(stmt)
         db.session.commit()
+
+
+def delete_budget(budget_id):
+    stmt = delete(Budget).where(Budget.id == budget_id)
+    db.session.execute(stmt)
+    db.session.commit()
