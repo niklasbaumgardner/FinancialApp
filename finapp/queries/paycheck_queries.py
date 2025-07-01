@@ -2,8 +2,9 @@ from finapp.models import Paycheck, Transaction
 from flask_login import current_user
 from finapp import db
 from finapp.queries import budget_queries, transaction_queries
-from sqlalchemy.sql import func
+from sqlalchemy.sql import or_, and_
 from sqlalchemy.orm import joinedload
+from sqlalchemy import func, select
 
 
 ##
@@ -21,29 +22,33 @@ def create_paycheck(date, total):
 
 
 def get_paycheck_by_id(id):
-    return Paycheck.query.filter_by(id=id, user_id=current_user.id).first()
+    stmt = select(Paycheck).where(
+        and_(Paycheck.id == id, Paycheck.user_id == current_user.id())
+    )
+
+    return db.session.scalars(stmt.limit(1)).first()
 
 
 def get_paychecks(sort=False):
-    query = Paycheck.query.filter_by(user_id=current_user.id)
+    stmt = select(Paycheck).where(Paycheck.user_id == current_user.id)
 
     if sort:
-        query = query.order_by(Paycheck.date.desc(), Paycheck.total)
+        stmt = stmt.order_by(Paycheck.date.desc(), Paycheck.total)
 
-    return query.all()
+    return db.session.scalars(stmt).unique().all()
 
 
 def get_shared_paychecks():
     transactions = transaction_queries.get_paycheck_transactions()
     paycheck_ids = set([t.paycheck_id for t in transactions])
 
-    paychecks = (
-        Paycheck.query.where(Paycheck.id.in_(paycheck_ids))
+    stmt = (
+        select(Paycheck)
+        .where(Paycheck.id.in_(paycheck_ids))
         .order_by(Paycheck.date.desc(), Paycheck.total)
-        .all()
     )
 
-    return paychecks
+    return db.session.scalars(stmt).unique().all()
 
 
 def get_paychecks_by_distinct_amount():
@@ -59,7 +64,6 @@ def get_paychecks_by_distinct_amount():
 
         unique_paychecks.add(p.total)
 
-    print(lst)
     return lst
 
 

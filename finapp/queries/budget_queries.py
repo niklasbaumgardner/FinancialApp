@@ -35,7 +35,7 @@ def get_budget_for_id(id):
 def get_budget_query(budget_id, join_shared_users=True):
     budget_query = (
         select(Budget)
-        .join(SharedBudget, Budget.id == SharedBudget.budget_id, isouter=True)
+        .outerjoin(SharedBudget, Budget.id == SharedBudget.budget_id)
         .where(
             and_(
                 Budget.id == budget_id,
@@ -56,7 +56,7 @@ def get_budget_query(budget_id, join_shared_users=True):
 def get_budgets_query():
     return (
         select(Budget)
-        .join(SharedBudget, Budget.id == SharedBudget.budget_id, isouter=True)
+        .outerjoin(SharedBudget, Budget.id == SharedBudget.budget_id)
         .where(
             or_(
                 Budget.user_id == current_user.id,
@@ -83,7 +83,7 @@ def can_user_modify_budget(budget_id, user_id):
     stmt = (
         select(func.count())
         .select_from(Budget)
-        .join(SharedBudget, Budget.id == SharedBudget.budget_id, isouter=True)
+        .outerjoin(SharedBudget, Budget.id == SharedBudget.budget_id)
         .where(
             and_(
                 Budget.id == budget_id,

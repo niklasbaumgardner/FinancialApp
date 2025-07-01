@@ -378,12 +378,12 @@ def spending_by_category(current_date_str, interval):
 
     data = {}  # category_id -> {month, sum}
 
-    for spent, category_id, index, date in data_query:
+    for spent, category_id, index, date_ in data_query:
         index = int(index)
         if category_id in data:
-            data[category_id][index] = [round(spent, 2), date]
+            data[category_id][index] = [round(spent, 2), date_]
         else:
             data[category_id] = {}
-            data[category_id][index] = [round(spent, 2), date]
+            data[category_id][index] = [round(spent, 2), date_]
 
     return data

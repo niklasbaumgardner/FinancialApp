@@ -41,9 +41,7 @@ def get_transaction_query(transaction_id, include_budget=False):
     transactions_query = (
         select(Transaction)
         .join(Budget, Budget.id == Transaction.budget_id)
-        .join(
-            SharedBudget, SharedBudget.budget_id == Transaction.budget_id, isouter=True
-        )
+        .outerjoin(SharedBudget, SharedBudget.budget_id == Transaction.budget_id)
         .where(
             and_(
                 Transaction.id == transaction_id,
@@ -62,13 +60,14 @@ def get_transaction_query(transaction_id, include_budget=False):
     return transactions_query
 
 
-def get_transactions_query(include_budget=False):
+def get_transactions_query(include_budget=False, selection=None, skip_no_load=False):
+    if selection is None:
+        selection = [Transaction]
+
     transactions_query = (
-        select(Transaction)
+        select(*selection)
         .join(Budget, Budget.id == Transaction.budget_id)
-        .join(
-            SharedBudget, SharedBudget.budget_id == Transaction.budget_id, isouter=True
-        )
+        .outerjoin(SharedBudget, SharedBudget.budget_id == Transaction.budget_id)
         .where(
             or_(
                 Transaction.user_id == current_user.id,
@@ -77,6 +76,9 @@ def get_transactions_query(include_budget=False):
             ),
         )
     )
+
+    if skip_no_load:
+        return transactions_query
 
     if not include_budget:
         transactions_query = transactions_query.options(noload(Transaction.budget))
@@ -135,13 +137,13 @@ def create_transaction(
 
 
 def get_transaction(transaction_id):
-    return db.session.scalats(
+    return db.session.scalars(
         get_transaction_query(transaction_id=transaction_id).limit(1)
     ).first()
 
 
 def get_first_transaction_date():
-    transaction = db.session.scalats(
+    transaction = db.session.scalars(
         get_transactions_query().order_by(Transaction.date.asc()).limit(1)
     ).first()
 
@@ -153,9 +155,7 @@ def can_modify_transaction(transaction_id):
         select(func.count())
         .select_from(Transaction)
         .join(Budget, Budget.id == Transaction.budget_id)
-        .join(
-            SharedBudget, SharedBudget.budget_id == Transaction.budget_id, isouter=True
-        )
+        .outerjoin(SharedBudget, SharedBudget.budget_id == Transaction.budget_id)
         .where(
             and_(
                 Transaction.id == transaction_id,
@@ -247,7 +247,7 @@ def get_transactions(
     elif query:
         return stmt
     else:
-        return db.session.scalars(stmt).all()
+        return db.session.scalars(stmt).unique().all()
 
 
 def get_transactions_for_month(
@@ -280,7 +280,7 @@ def get_transactions_for_month(
     elif query:
         return stmt
     else:
-        return db.session.scalars(stmt).all()
+        return db.session.scalars(stmt).unique().all()
 
 
 def get_transactions_for_year(
@@ -310,7 +310,7 @@ def get_transactions_for_year(
     elif query:
         return stmt
     else:
-        return db.session.scalars(stmt).all()
+        return db.session.scalars(stmt).unique().all()
 
 
 def update_transaction(
@@ -516,11 +516,9 @@ def search(
             budget_id=budget_id, transactions_query=stmt
         )
 
-        search_sum = (
-            stmt.order_by(None)  # Remove order by for sum
-            .with_entities(func.sum(Transaction.amount))
-            .first()[0]
-        )
+        search_sum = db.session.execute(
+            select(func.sum(Transaction.amount)).select_from(stmt.subquery())
+        ).scalar_one()
 
         stmt = sort_transactions(sort_by=sort_by, transactions_query=stmt)
 
@@ -540,21 +538,24 @@ def search(
 
 
 def get_transactions_sum(budget_id):
-    stmt = select(
-        func.sum(Transaction.amount)
-        .join(Budget, Budget.id == Transaction.budget_id)
-        .join(
-            SharedBudget, SharedBudget.budget_id == Transaction.budget_id, isouter=True
-        )
-        .where(Transaction.budget_id == budget_id)
-        .where(
-            or_(
-                Transaction.user_id == current_user.id,
-                Budget.user_id == current_user.id,
-                SharedBudget.user_id == current_user.id,
-            ),
-        )
+    # stmt = (
+    #     select(func.sum(Transaction.amount))
+    #     .join(Budget, Budget.id == Transaction.budget_id)
+    #     .outerjoin(SharedBudget, SharedBudget.budget_id == Transaction.budget_id)
+    #     .where(Transaction.budget_id == budget_id)
+    #     .where(
+    #         or_(
+    #             Transaction.user_id == current_user.id,
+    #             Budget.user_id == current_user.id,
+    #             SharedBudget.user_id == current_user.id,
+    #         ),
+    #     )
+    # )
+
+    stmt = get_transactions_query(
+        selection=[func.sum(Transaction.amount)], skip_no_load=True
     )
+
     total = db.session.execute(stmt).scalar_one()
 
     if total is None:
@@ -568,7 +569,7 @@ def get_transactions_for_paycheck_id(paycheck_id, query=False):
     if query:
         return stmt
 
-    return db.session.scalars(stmt).all()
+    return db.session.scalars(stmt).unique().all()
 
 
 def get_transactions_by_category(start_date, interval=None):
@@ -579,35 +580,90 @@ def get_transactions_by_category(start_date, interval=None):
         interval_extract = func.extract("month", Transaction.date)
         interval_trunc = func.date_trunc("month", Transaction.date)
 
-    stmt = (
-        get_transactions_query()
-        .join(TransactionCategory, Transaction.id == TransactionCategory.transaction_id)
-        .where(Transaction.date >= start_date)
-        .with_entities(
+    # stmt = (
+    #     select(
+    #         func.sum(Transaction.amount),
+    #         TransactionCategory.category_id,
+    #         interval_extract,
+    #         interval_trunc,
+    #     )
+    #     .join(Budget, Budget.id == Transaction.budget_id)
+    #     .outerjoin(SharedBudget, SharedBudget.budget_id == Transaction.budget_id)
+    #     .where(
+    #         or_(
+    #             Transaction.user_id == current_user.id,
+    #             Budget.user_id == current_user.id,
+    #             SharedBudget.user_id == current_user.id,
+    #         ),
+    #     )
+    #     .join(TransactionCategory, Transaction.id == TransactionCategory.transaction_id)
+    #     .where(Transaction.date >= start_date)
+    #     .group_by(TransactionCategory.category_id, interval_extract, interval_trunc)
+    #     .order_by(interval_trunc)
+    # )
+
+    stmt = get_transactions_query(
+        selection=[
             func.sum(Transaction.amount),
             TransactionCategory.category_id,
             interval_extract,
             interval_trunc,
+        ],
+        skip_no_load=True,
+    )
+
+    stmt = (
+        stmt.join(
+            TransactionCategory, Transaction.id == TransactionCategory.transaction_id
         )
+        .where(Transaction.date >= start_date)
         .group_by(TransactionCategory.category_id, interval_extract, interval_trunc)
         .order_by(interval_trunc)
     )
 
-    transactions = db.session.scalars(stmt).all()
+    transactions = db.session.execute(stmt).all()
 
     return transactions
 
 
 def __get_net_spending__(condition, year=None, month=None):
-    stmt = (
-        get_transactions_query()
-        .where(or_((not Transaction.is_transfer), (Transaction.is_transfer.is_(None))))
-        .with_entities(
+    # stmt = (
+    #     select(
+    #         func.sum(Transaction.amount),
+    #         Transaction.budget_id,
+    #     )
+    #     .join(Budget, Budget.id == Transaction.budget_id)
+    #     .outerjoin(SharedBudget, SharedBudget.budget_id == Transaction.budget_id)
+    #     .where(
+    #         or_(
+    #             Transaction.user_id == current_user.id,
+    #             Budget.user_id == current_user.id,
+    #             SharedBudget.user_id == current_user.id,
+    #         ),
+    #     )
+    #     .where(
+    #         or_(
+    #             Transaction.is_transfer.is_(False),
+    #             Transaction.is_transfer.is_(None),
+    #         )
+    #     )
+    #     .group_by(Transaction.budget_id)
+    # )
+
+    stmt = get_transactions_query(
+        selection=[
             func.sum(Transaction.amount),
             Transaction.budget_id,
-        )
-        .group_by(Transaction.budget_id)
+        ],
+        skip_no_load=True,
     )
+
+    stmt = stmt.where(
+        or_(
+            Transaction.is_transfer.is_(False),
+            Transaction.is_transfer.is_(None),
+        )
+    ).group_by(Transaction.budget_id)
 
     if year:
         stmt = stmt.where(extract("year", Transaction.date) == year)
@@ -616,7 +672,7 @@ def __get_net_spending__(condition, year=None, month=None):
 
     stmt = stmt.where(condition)
 
-    transactions = db.session.scalars(stmt).all()
+    transactions = db.session.execute(stmt).all()
 
     return transactions
 
@@ -632,5 +688,7 @@ def get_total_income(year, month):
 
 
 def get_paycheck_transactions():
-    stmt = get_transactions_query().where(Transaction.paycheck_id.isnot(None))
-    return db.session.scalars(stmt).all()
+    stmt = get_transactions_query(include_budget=True).where(
+        Transaction.paycheck_id.isnot(None)
+    )
+    return db.session.scalars(stmt).unique().all()
