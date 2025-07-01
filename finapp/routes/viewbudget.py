@@ -45,12 +45,8 @@ def view_budget(id):
     budget = budget.to_dict()
     transactions = [t.to_dict() for t in transactions]
 
-    categories = [
-        c.to_dict()
-        for c in category_queries.get_shared_categories(
-            user_ids=[current_user.id] + [u["id"] for u in budget["shared_users"]]
-        )
-    ]
+    categories = category_queries.get_categories()
+    categories = [c.to_dict() for c in categories]
 
     return render_template(
         "viewbudget.html",
