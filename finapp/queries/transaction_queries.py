@@ -99,17 +99,9 @@ def create_transaction(
     is_transfer=False,
     categories=None,
     paycheck_id=None,
+    commit=True,
 ):
     if budget_queries.can_modify_budget(budget_id=budget_id):
-        # transaction = Transaction(
-        #     name=name.strip(),
-        #     budget_id=budget_id,
-        #     user_id=user_id,
-        #     amount=amount,
-        #     date=date,
-        #     is_transfer=is_transfer,
-        #     paycheck_id=paycheck_id,
-        # )
         stmt = insert(Transaction).values(
             name=name.strip(),
             budget_id=budget_id,
@@ -133,7 +125,8 @@ def create_transaction(
             )
 
         budget_queries.update_budget_total(budget_id=budget_id, commit=False)
-        db.session.commit()
+        if commit:
+            db.session.commit()
 
 
 def get_transaction(transaction_id):
@@ -538,29 +531,23 @@ def search(
 
 
 def get_transactions_sum(budget_id):
-    # stmt = (
-    #     select(func.sum(Transaction.amount))
-    #     .join(Budget, Budget.id == Transaction.budget_id)
-    #     .outerjoin(SharedBudget, SharedBudget.budget_id == Transaction.budget_id)
-    #     .where(Transaction.budget_id == budget_id)
-    #     .where(
-    #         or_(
-    #             Transaction.user_id == current_user.id,
-    #             Budget.user_id == current_user.id,
-    #             SharedBudget.user_id == current_user.id,
-    #         ),
-    #     )
-    # )
-
     stmt = get_transactions_query(
         selection=[func.sum(Transaction.amount)], skip_no_load=True
-    )
+    ).where(Transaction.budget_id == budget_id)
 
     total = db.session.execute(stmt).scalar_one()
 
     if total is None:
         total = 0
     return total
+
+
+def get_transactions_sum_query():
+    stmt = get_transactions_query(
+        selection=[func.sum(Transaction.amount)], skip_no_load=True
+    )
+
+    return stmt
 
 
 def get_transactions_for_paycheck_id(paycheck_id, query=False):
@@ -602,20 +589,17 @@ def get_transactions_by_category(start_date, interval=None):
     #     .order_by(interval_trunc)
     # )
 
-    stmt = get_transactions_query(
-        selection=[
-            func.sum(Transaction.amount),
-            TransactionCategory.category_id,
-            interval_extract,
-            interval_trunc,
-        ],
-        skip_no_load=True,
-    )
-
     stmt = (
-        stmt.join(
-            TransactionCategory, Transaction.id == TransactionCategory.transaction_id
+        get_transactions_query(
+            selection=[
+                func.sum(Transaction.amount),
+                TransactionCategory.category_id,
+                interval_extract,
+                interval_trunc,
+            ],
+            skip_no_load=True,
         )
+        .join(TransactionCategory, Transaction.id == TransactionCategory.transaction_id)
         .where(Transaction.date >= start_date)
         .group_by(TransactionCategory.category_id, interval_extract, interval_trunc)
         .order_by(interval_trunc)
@@ -650,20 +634,22 @@ def __get_net_spending__(condition, year=None, month=None):
     #     .group_by(Transaction.budget_id)
     # )
 
-    stmt = get_transactions_query(
-        selection=[
-            func.sum(Transaction.amount),
-            Transaction.budget_id,
-        ],
-        skip_no_load=True,
-    )
-
-    stmt = stmt.where(
-        or_(
-            Transaction.is_transfer.is_(False),
-            Transaction.is_transfer.is_(None),
+    stmt = (
+        get_transactions_query(
+            selection=[
+                func.sum(Transaction.amount),
+                Transaction.budget_id,
+            ],
+            skip_no_load=True,
         )
-    ).group_by(Transaction.budget_id)
+        .where(
+            or_(
+                Transaction.is_transfer.is_(False),
+                Transaction.is_transfer.is_(None),
+            )
+        )
+        .group_by(Transaction.budget_id)
+    )
 
     if year:
         stmt = stmt.where(extract("year", Transaction.date) == year)

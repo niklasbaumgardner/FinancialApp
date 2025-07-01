@@ -12,6 +12,7 @@
     "{{ url_for('viewbudget_bp.get_page', budget_id=budget.id) }}";
   const SEARCH_PAGE_URL =
     "{{ url_for('viewbudget_bp.search', b_id=budget.id) }}";
+  const BUDGETS = {{ budgets|tojson }};
 </script>
 <script src="/static/js/nb-view-budget.mjs" type="module"></script>
 {% endblock head %} {% block content %}

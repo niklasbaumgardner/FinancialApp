@@ -4,7 +4,7 @@ from finapp import db
 from finapp.queries import budget_queries, transaction_queries
 from sqlalchemy.sql import or_, and_
 from sqlalchemy.orm import joinedload
-from sqlalchemy import func, select
+from sqlalchemy import func, insert, select
 
 
 ##
@@ -12,19 +12,25 @@ from sqlalchemy import func, select
 ##
 
 
-def create_paycheck(date, total):
-    paycheck = Paycheck(date=date, total=total, user_id=current_user.id)
+def create_paycheck(date, total, transactions):
+    stmt = insert(Paycheck).values(date=date, total=total, user_id=current_user.id)
+    result = db.session.execute(stmt)
+    db.session.flush()
 
-    db.session.add(paycheck)
+    paycheck_id = result.inserted_primary_key[0]
+
+    for t in transactions:
+        t["paycheck_id"] = paycheck_id
+
+        transaction_queries.create_transaction(**t, commit=False)
+
     db.session.commit()
 
-    return paycheck
+    return paycheck_id
 
 
 def get_paycheck_by_id(id):
-    stmt = select(Paycheck).where(
-        and_(Paycheck.id == id, Paycheck.user_id == current_user.id())
-    )
+    stmt = select(Paycheck).where(and_(Paycheck.id == id))
 
     return db.session.scalars(stmt.limit(1)).first()
 
@@ -84,10 +90,13 @@ def update_paycheck(paycheck_id, commit=True):
     if not paycheck:
         return
 
-    transactions = transaction_queries.get_transactions_for_paycheck_id(
-        paycheck_id=paycheck.id, query=True
+    stmt = transaction_queries.get_transactions_sum_query().where(
+        Transaction.paycheck_id == paycheck.id
     )
-    total = transactions.with_entities(func.sum(Transaction.amount)).first()[0]
+    total = db.session.execute(stmt).scalar_one()
+
+    if total is None:
+        total = 0
 
     paycheck.total = total
     if commit:
