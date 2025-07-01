@@ -68,10 +68,10 @@ export class SignupCard extends NikElement {
       console.log("email is unique", result.isUnique);
 
       if (result.isUnique) {
-        this.emailInput.setAttribute("help-text", "");
+        this.emailInput.hint = "";
         this.emailValid = true;
       } else {
-        this.emailInput.setAttribute("help-text", EMAUL_UNIQUE_HELP_TEXT);
+        this.emailInput.hint = EMAUL_UNIQUE_HELP_TEXT;
         this.emailValid = false;
       }
     }, 300)();
@@ -84,10 +84,10 @@ export class SignupCard extends NikElement {
       console.log("username is unique", result.isUnique);
 
       if (result.isUnique) {
-        this.usernameInput.setAttribute("help-text", "");
+        this.usernameInput.hint = "";
         this.usernameValid = true;
       } else {
-        this.usernameInput.setAttribute("help-text", USERNAME_UNIQUE_HELP_TEXT);
+        this.usernameInput.hint = USERNAME_UNIQUE_HELP_TEXT;
         this.usernameValid = false;
       }
     }, 300)();
