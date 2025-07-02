@@ -8,6 +8,7 @@ module.exports = {
       {
         test: /\.css$/i,
         use: [MiniCssExtractPlugin.loader, "css-loader"],
+        sideEffects: true,
       },
     ],
   },
@@ -16,4 +17,7 @@ module.exports = {
       filename: "./css/all-out.css",
     }),
   ],
+  output: {
+    path: path.resolve(__dirname),
+  },
 };

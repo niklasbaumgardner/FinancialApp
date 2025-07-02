@@ -185,9 +185,9 @@ a.disabled {
 }
 
 .text-greater-than-zero {
-  color: var(--sl-color-success-600);
+  color: var(--color-green-50);
 }
 
 .text-less-than-zero {
-  color: var(--sl-color-danger-600);
+  color: var(--color-red-60);
 }
