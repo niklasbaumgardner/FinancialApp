@@ -486,7 +486,6 @@ class NetSpendingManager {
   async getData() {
     let response = await getNetSpending(this.currentSelection);
     let data = await response.json();
-    console.log(data);
 
     this.dataCache[this.key] = data;
   }

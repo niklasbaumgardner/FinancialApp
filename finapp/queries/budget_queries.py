@@ -13,14 +13,14 @@ from sqlalchemy import delete, func, insert, select, update
 
 
 def create_budget(name):
-    query = insert(Budget).values(
+    stmt = insert(Budget).values(
         name=name.strip(),
         total=0,
         user_id=current_user.id,
         is_active=True,
         is_shared=False,
     )
-    result = db.session.execute(query)
+    result = db.session.execute(stmt)
     db.session.commit()
 
     budget_id = result.inserted_primary_key[0]

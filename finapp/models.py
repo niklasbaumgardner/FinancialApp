@@ -45,7 +45,7 @@ class User(Base, UserMixin, SerializerMixin):
             user_id = s.loads(token, max_age=expire_sec).get("user_id")
         except:
             return None
-        return User.query.get(user_id)
+        return db.session.get(User, user_id)
 
 
 class Theme(Base, SerializerMixin):

@@ -1,9 +1,8 @@
-import re
 from finapp.models import Budget, SharedBudget, User
-from sqlalchemy.sql import or_, and_
+from sqlalchemy.sql import or_
 from flask_login import current_user
 from finapp import bcrypt, db
-from sqlalchemy import func, select, update
+from sqlalchemy import func, insert, select, update
 
 
 ##
@@ -13,8 +12,8 @@ from sqlalchemy import func, select, update
 
 def create_user(email, username, password):
     hash_ = hash_password(password=password)
-    new_user = User(email=email, username=username, password=hash_)
-    db.session.add(new_user)
+    stmt = insert(User).values(email=email, username=username, password=hash_)
+    db.session.execute(stmt)
     db.session.commit()
 
 
@@ -72,25 +71,19 @@ def is_username_unique(username):
     return count == 0
 
 
-def get_shared_users_for_all_budgets(include_current_user=False):
-    budget_shared_query = select(Budget, SharedBudget).where(
-        and_(
+def get_shared_users_for_all_budgets():
+    stmt = (
+        select(User)
+        .outerjoin(Budget, User.id == Budget.user_id)
+        .outerjoin(SharedBudget, Budget.id == SharedBudget.budget_id)
+        .where(
             or_(
                 Budget.user_id == current_user.id,
                 SharedBudget.user_id == current_user.id,
-            ),
-            SharedBudget.budget_id == Budget.id,
-            or_(User.id == SharedBudget.user_id, Budget.user_id == User.id),
+            )
         )
     )
 
-    if include_current_user:
-        return db.session.scalars(
-            select(User).where(budget_shared_query.exists())
-        ).all()
+    shared_users = db.session.scalars(stmt).unique().all()
 
-    return db.session.scalars(
-        select(User).where(
-            and_(User.id != current_user.id, budget_shared_query.exists())
-        )
-    ).all()
+    return shared_users

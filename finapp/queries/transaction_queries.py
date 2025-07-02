@@ -3,12 +3,11 @@ from finapp.queries import (
     budget_queries,
     category_queries,
     paycheck_queries,
-    shared_budget_queries,
 )
 from finapp import db
 from flask_login import current_user
 from sqlalchemy.sql import func, or_, and_
-from sqlalchemy.orm import joinedload, noload
+from sqlalchemy.orm import noload
 from sqlalchemy import delete, extract, insert, update, select
 
 
@@ -37,9 +36,14 @@ def paginate_query(stmt, page):
 ##
 
 
-def get_transaction_query(transaction_id, include_budget=False):
+def get_transaction_query(
+    transaction_id, selection=None, skip_no_load=False, include_budget=False
+):
+    if selection is None:
+        selection = [Transaction]
+
     transactions_query = (
-        select(Transaction)
+        select(*selection)
         .join(Budget, Budget.id == Transaction.budget_id)
         .outerjoin(SharedBudget, SharedBudget.budget_id == Transaction.budget_id)
         .where(
@@ -54,19 +58,26 @@ def get_transaction_query(transaction_id, include_budget=False):
         )
     )
 
+    if skip_no_load:
+        return transactions_query
+
     if not include_budget:
         transactions_query = transactions_query.options(noload(Transaction.budget))
 
     return transactions_query
 
 
-def get_transactions_query(include_budget=False, selection=None, skip_no_load=False):
+def get_transactions_query(
+    include_budget=False, selection=None, skip_no_load=False, stmt=None
+):
     if selection is None:
         selection = [Transaction]
 
+    if stmt is None:
+        stmt = select(*selection)
+
     transactions_query = (
-        select(*selection)
-        .join(Budget, Budget.id == Transaction.budget_id)
+        stmt.join(Budget, Budget.id == Transaction.budget_id)
         .outerjoin(SharedBudget, SharedBudget.budget_id == Transaction.budget_id)
         .where(
             or_(
@@ -112,8 +123,6 @@ def create_transaction(
             paycheck_id=paycheck_id,
         )
         result = db.session.execute(stmt)
-        db.session.flush()
-
         transaction_id = result.inserted_primary_key[0]
 
         if categories:
@@ -144,22 +153,7 @@ def get_first_transaction_date():
 
 
 def can_modify_transaction(transaction_id):
-    stmt = (
-        select(func.count())
-        .select_from(Transaction)
-        .join(Budget, Budget.id == Transaction.budget_id)
-        .outerjoin(SharedBudget, SharedBudget.budget_id == Transaction.budget_id)
-        .where(
-            and_(
-                Transaction.id == transaction_id,
-                or_(
-                    Transaction.user_id == current_user.id,
-                    Budget.user_id == current_user.id,
-                    SharedBudget.user_id == current_user.id,
-                ),
-            )
-        )
-    )
+    stmt = get_transaction_query()
 
     transaction = db.session.execute(stmt).scalar_one()
 
@@ -200,14 +194,14 @@ def sort_transactions(sort_by, transactions_query):
 
 
 def get_recent_transactions(limit=None):
-    query = get_transactions_query(include_budget=True).order_by(
+    stmt = get_transactions_query(include_budget=True).order_by(
         Transaction.date.desc(), Transaction.id.desc()
     )
 
     if limit and limit > 0:
-        query = query.limit(limit)
+        stmt = stmt.limit(limit)
 
-    return db.session.scalars(query).unique().all()
+    return db.session.scalars(stmt).unique().all()
 
 
 def get_transactions(
@@ -407,7 +401,6 @@ def delete_transaction(transaction_id, budget_id):
     if can_modify_transaction(transaction_id=transaction_id):
         stmt = delete(Transaction).where(Transaction.id == transaction_id)
         db.session.execute(stmt)
-        db.session.flush()
 
         budget_queries.update_budget_total(budget_id=budget_id, commit=False)
         db.session.commit()
@@ -505,9 +498,7 @@ def search(
                 extract("year", Transaction.date) == year,
             )
 
-        stmt = shared_budget_queries.get_shared_transactions_query(
-            budget_id=budget_id, transactions_query=stmt
-        )
+        stmt = get_transactions_query(stmt=stmt)
 
         search_sum = db.session.execute(
             select(func.sum(Transaction.amount)).select_from(stmt.subquery())
@@ -567,28 +558,6 @@ def get_transactions_by_category(start_date, interval=None):
         interval_extract = func.extract("month", Transaction.date)
         interval_trunc = func.date_trunc("month", Transaction.date)
 
-    # stmt = (
-    #     select(
-    #         func.sum(Transaction.amount),
-    #         TransactionCategory.category_id,
-    #         interval_extract,
-    #         interval_trunc,
-    #     )
-    #     .join(Budget, Budget.id == Transaction.budget_id)
-    #     .outerjoin(SharedBudget, SharedBudget.budget_id == Transaction.budget_id)
-    #     .where(
-    #         or_(
-    #             Transaction.user_id == current_user.id,
-    #             Budget.user_id == current_user.id,
-    #             SharedBudget.user_id == current_user.id,
-    #         ),
-    #     )
-    #     .join(TransactionCategory, Transaction.id == TransactionCategory.transaction_id)
-    #     .where(Transaction.date >= start_date)
-    #     .group_by(TransactionCategory.category_id, interval_extract, interval_trunc)
-    #     .order_by(interval_trunc)
-    # )
-
     stmt = (
         get_transactions_query(
             selection=[
@@ -611,29 +580,6 @@ def get_transactions_by_category(start_date, interval=None):
 
 
 def __get_net_spending__(condition, year=None, month=None):
-    # stmt = (
-    #     select(
-    #         func.sum(Transaction.amount),
-    #         Transaction.budget_id,
-    #     )
-    #     .join(Budget, Budget.id == Transaction.budget_id)
-    #     .outerjoin(SharedBudget, SharedBudget.budget_id == Transaction.budget_id)
-    #     .where(
-    #         or_(
-    #             Transaction.user_id == current_user.id,
-    #             Budget.user_id == current_user.id,
-    #             SharedBudget.user_id == current_user.id,
-    #         ),
-    #     )
-    #     .where(
-    #         or_(
-    #             Transaction.is_transfer.is_(False),
-    #             Transaction.is_transfer.is_(None),
-    #         )
-    #     )
-    #     .group_by(Transaction.budget_id)
-    # )
-
     stmt = (
         get_transactions_query(
             selection=[

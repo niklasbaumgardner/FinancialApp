@@ -1,10 +1,9 @@
 from finapp.models import Paycheck, Transaction
 from flask_login import current_user
 from finapp import db
-from finapp.queries import budget_queries, transaction_queries
-from sqlalchemy.sql import or_, and_
-from sqlalchemy.orm import joinedload
-from sqlalchemy import func, insert, select
+from finapp.queries import transaction_queries
+from sqlalchemy.sql import and_
+from sqlalchemy import insert, select
 
 
 ##
@@ -15,7 +14,6 @@ from sqlalchemy import func, insert, select
 def create_paycheck(date, total, transactions):
     stmt = insert(Paycheck).values(date=date, total=total, user_id=current_user.id)
     result = db.session.execute(stmt)
-    db.session.flush()
 
     paycheck_id = result.inserted_primary_key[0]
 

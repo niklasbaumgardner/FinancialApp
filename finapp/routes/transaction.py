@@ -1,14 +1,11 @@
 from finapp.queries import (
     budget_queries,
-    category_queries,
-    shared_budget_queries,
     transaction_queries,
-    user_queries,
 )
-from flask import Blueprint, render_template, redirect, url_for, request
+from flask import Blueprint, redirect, url_for, request
 from flask_login import login_required, current_user
 from finapp.utils import helpers
-import json
+
 
 transaction_bp = Blueprint("transaction_bp", __name__)
 
@@ -29,7 +26,7 @@ def add_transaction(budget_id):
     # TODO: Think about this
     can_add_transaction = user_id == current_user.id
     if user_id != current_user.id:
-        can_add_transaction = shared_budget_queries.can_add_transation_as_shared_user(
+        can_add_transaction = budget_queries.can_user_modify_budget(
             budget_id=budget_id, user_id=user_id
         )
 
