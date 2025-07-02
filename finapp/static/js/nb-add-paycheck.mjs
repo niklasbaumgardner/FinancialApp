@@ -30,8 +30,6 @@ export class AddPaycheck extends NikElement {
   }
 
   handleEvent(event) {
-    console.log(event);
-
     switch (event.type) {
       case "CopyFromPaycheck": {
         let paycheck = event.detail.paycheck;

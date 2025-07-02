@@ -20,7 +20,9 @@ def create_paycheck(date, total, transactions):
     for t in transactions:
         t["paycheck_id"] = paycheck_id
 
-        transaction_queries.create_transaction(**t, commit=False)
+    transaction_queries.bulk_create_transactions(
+        transactions=transactions, commit=False
+    )
 
     db.session.commit()
 
@@ -71,7 +73,7 @@ def get_paychecks_by_distinct_amount():
     return lst
 
 
-def get_paycheck_prefills():
+def get_distinct_paychecks():
     paychecks = get_paychecks_by_distinct_amount()
     paychecks = [p.to_dict() for p in paychecks]
 

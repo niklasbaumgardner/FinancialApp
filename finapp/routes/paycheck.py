@@ -13,7 +13,7 @@ paycheck_bp = Blueprint("paycheck_bp", __name__)
 @login_required
 def add_paycheck():
     budgets = budget_queries.get_budgets(active_only=True)
-    paychecks = paycheck_queries.get_paycheck_prefills()
+    paychecks = paycheck_queries.get_distinct_paychecks()
 
     budgets = [b.to_dict() for b in budgets]
 
@@ -27,24 +27,27 @@ def add_paycheck():
 @paycheck_bp.post("/paycheck")
 @login_required
 def paycheck():
-    budgets = budget_queries.get_budgets(active_only=True)
-
     name = request.form.get("name")
     amount = request.form.get("amount", type=float)
     date = helpers.get_date_from_string(request.form.get("date"))
 
     if name and amount:
+        keys = [*request.form]
         transactions = []
-        for budget in budgets:
-            b_amt = request.form.get(f"{budget.id}", type=float)
-            if b_amt:
+
+        for key in keys:
+            if key == "name" or key == "amount" or key == "date":
+                continue
+            else:
+                t_amount = request.form.get(key, type=float)
+
                 transactions.append(
                     dict(
                         user_id=current_user.id,
                         name=name,
-                        amount=b_amt,
+                        amount=t_amount,
                         date=date,
-                        budget_id=budget.id,
+                        budget_id=key,
                     )
                 )
 

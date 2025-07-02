@@ -18,7 +18,7 @@ from sqlalchemy import delete, extract, insert, update, select
 def paginate_query(stmt, page):
     # transactions = transactions.paginate(page=page, per_page=10)
     total = db.session.execute(
-        select(func.count()).select_from(stmt.subquery())
+        select(func.count(Transaction.id)).select_from(stmt.subquery())
     ).scalar_one()
     num_pages = max(1, ((total - 1) // 10) + 1)
     stmt = stmt.limit(10).offset((page - 1) * 10)
@@ -138,6 +138,19 @@ def create_transaction(
             db.session.commit()
 
 
+def bulk_create_transactions(transactions, commit=True):
+    budget_ids = [t["budget_id"] for t in transactions]
+    if budget_queries.can_modify_budgets(budget_ids=budget_ids):
+        stmt = insert(Transaction).values(transactions)
+        db.session.execute(stmt)
+
+        for budget_id in budget_ids:
+            budget_queries.update_budget_total(budget_id=budget_id, commit=False)
+
+        if commit:
+            db.session.commit()
+
+
 def get_transaction(transaction_id):
     return db.session.scalars(
         get_transaction_query(transaction_id=transaction_id).limit(1)
@@ -153,7 +166,11 @@ def get_first_transaction_date():
 
 
 def can_modify_transaction(transaction_id):
-    stmt = get_transaction_query()
+    stmt = get_transaction_query(
+        transaction_id=transaction_id,
+        selection=[func.count(Transaction.id)],
+        skip_no_load=True,
+    )
 
     transaction = db.session.execute(stmt).scalar_one()
 

@@ -79,10 +79,27 @@ def can_modify_budget(budget_id):
     return can_user_modify_budget(budget_id=budget_id, user_id=current_user.id)
 
 
+def can_modify_budgets(budget_ids):
+    stmt = (
+        select(func.count(Budget.id))
+        .outerjoin(SharedBudget, Budget.id == SharedBudget.budget_id)
+        .where(
+            and_(
+                Budget.id.in_(budget_ids),
+                or_(
+                    Budget.user_id == current_user.id,
+                    SharedBudget.user_id == current_user.id,
+                ),
+            ),
+        )
+    )
+    budget_count = db.session.execute(stmt).scalar_one()
+    return budget_count == len(budget_ids)
+
+
 def can_user_modify_budget(budget_id, user_id):
     stmt = (
-        select(func.count())
-        .select_from(Budget)
+        select(func.count(Budget.id))
         .outerjoin(SharedBudget, Budget.id == SharedBudget.budget_id)
         .where(
             and_(

@@ -38,13 +38,12 @@ def get_categories():
 
 def bulk_add_transaction_categories(user_id, transaction_id, category_ids, commit=True):
     t_categories = [
-        TransactionCategory(
-            user_id=user_id, transaction_id=transaction_id, category_id=c_id
-        )
+        dict(user_id=user_id, transaction_id=transaction_id, category_id=c_id)
         for c_id in category_ids
     ]
 
-    db.session.bulk_save_objects(t_categories)
+    stmt = insert(TransactionCategory).values(t_categories)
+    db.session.execute(stmt)
 
     if commit:
         db.session.commit()
