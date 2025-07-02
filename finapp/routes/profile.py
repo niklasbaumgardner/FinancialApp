@@ -12,7 +12,7 @@ def profile():
         username = request.form.get("username")
         email = request.form.get("email")
 
-        user_queries.update_user(id=current_user.id, email=email, username=username)
+        user_queries.update_user(email=email, username=username)
 
         return redirect(url_for("profile_bp.profile"))
     return render_template(

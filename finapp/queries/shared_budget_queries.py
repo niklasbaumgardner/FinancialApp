@@ -1,7 +1,8 @@
-from finapp.models import Budget, SharedBudget, Transaction
+from finapp.models import SharedBudget
 from finapp import db
 from flask_login import current_user
-from sqlalchemy.sql import or_, and_
+from sqlalchemy.sql import and_
+from sqlalchemy import insert, select
 
 
 ##
@@ -14,50 +15,42 @@ def create_shared_budget(budget):
     if maybe:
         return maybe
 
-    shared_budget = SharedBudget(user_id=current_user.id, budget_id=budget.id)
-    db.session.add(shared_budget)
+    stmt = insert(SharedBudget).values(user_id=current_user, budget_id=budget.id)
+    db.session.execute(stmt)
+
     budget.is_shared = True
     db.session.commit()
-    return shared_budget
 
 
 def get_shared_budget(budget_id):
-    return SharedBudget.query.filter_by(
-        user_id=current_user.id, budget_id=budget_id
-    ).first()
+    stmt = select(SharedBudget).where(
+        and_(
+            SharedBudget.user_id == current_user.id, SharedBudget.budget_id == budget_id
+        )
+    )
+
+    db.session.scalars(stmt.limit(1)).first()
 
 
 def get_shared_budgets_by_budget_id(budget_id):
-    return SharedBudget.query.filter_by(budget_id=budget_id).all()
+    stmt = select(SharedBudget).where(SharedBudget.budget_id == budget_id)
+
+    return db.session.scalars(stmt).all()
 
 
 def get_shared_budget_for_user_id(budget_id, user_id):
-    return SharedBudget.query.filter_by(user_id=user_id, budget_id=budget_id).first()
-
-
-def get_shared_budgets_query_by_budget():
-    return SharedBudget.query.filter_by(user_id=current_user.id, budget_id=Budget.id)
-
-
-def get_shared_budgets_query_by_transaction(budget_id):
-    return SharedBudget.query.where(
-        budget_id == SharedBudget.budget_id,
-        SharedBudget.budget_id == Transaction.budget_id,
+    stmt = (
+        select(SharedBudget)
+        .where(
+            and_(SharedBudget.budget_id == budget_id, SharedBudget.user_id == user_id)
+        )
+        .limit(1)
     )
 
-
-def get_shared_transactions_query(budget_id, transactionsQuery=None):
-    if not transactionsQuery:
-        transactionsQuery = Transaction.query
-
-    return transactionsQuery.where(
-        or_(
-            Transaction.budget_id == budget_id,
-            get_shared_budgets_query_by_transaction(budget_id).exists(),
-        ),
-    )
+    return db.session.scalars(stmt).first()
 
 
+# TODO: Refactor to bulk update
 def update_shared_budgets(shared_budgets, new_budget_id):
     for sb in shared_budgets:
         sb.budget_id = new_budget_id
@@ -65,33 +58,9 @@ def update_shared_budgets(shared_budgets, new_budget_id):
     db.session.commit()
 
 
+# TODO: Refactor to bulk delete
 def delete_shared_budgets(shared_budgets):
     for sb in shared_budgets:
         db.session.delete(sb)
 
     db.session.commit()
-
-
-def can_add_transation_as_shared_user(budget_id, user_id):
-    count_of_shared_budgets = (
-        Budget.query.join(SharedBudget, SharedBudget.budget_id == Budget.id)
-        .where(
-            and_(
-                Budget.id == budget_id,
-                SharedBudget.budget_id == budget_id,
-                or_(
-                    and_(
-                        SharedBudget.user_id == user_id,
-                        Budget.user_id == current_user.id,
-                    ),
-                    and_(
-                        SharedBudget.user_id == current_user.id,
-                        Budget.user_id == user_id,
-                    ),
-                ),
-            ),
-        )
-        .count()
-    )
-
-    return count_of_shared_budgets > 0

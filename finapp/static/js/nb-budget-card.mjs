@@ -133,7 +133,7 @@ export class BudgetCard extends NikElement {
   }
 
   sharedUserTemplate() {
-    if (this.budget.is_shared) {
+    if (this.budget.shared_users?.length) {
       return html`<wa-tooltip for="shared-user-budget-${this.budget.id}"
           >This budget is shared with ${this.getSharedUsers()}</wa-tooltip
         ><wa-icon

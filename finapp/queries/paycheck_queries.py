@@ -1,8 +1,9 @@
 from finapp.models import Paycheck, Transaction
 from flask_login import current_user
 from finapp import db
-from finapp.queries import budget_queries, transaction_queries
-from sqlalchemy.sql import func
+from finapp.queries import transaction_queries
+from sqlalchemy.sql import and_
+from sqlalchemy import insert, select
 
 
 ##
@@ -10,30 +11,52 @@ from sqlalchemy.sql import func
 ##
 
 
-def create_paycheck(date, total):
-    paycheck = Paycheck(date=date, total=total, user_id=current_user.id)
+def create_paycheck(date, total, transactions):
+    stmt = insert(Paycheck).values(date=date, total=total, user_id=current_user.id)
+    result = db.session.execute(stmt)
 
-    db.session.add(paycheck)
+    paycheck_id = result.inserted_primary_key[0]
+
+    for t in transactions:
+        t["paycheck_id"] = paycheck_id
+
+        transaction_queries.create_transaction(**t, commit=False)
+
     db.session.commit()
 
-    return paycheck
+    return paycheck_id
 
 
 def get_paycheck_by_id(id):
-    return Paycheck.query.filter_by(id=id, user_id=current_user.id).first()
+    stmt = select(Paycheck).where(and_(Paycheck.id == id))
+
+    return db.session.scalars(stmt.limit(1)).first()
 
 
 def get_paychecks(sort=False):
-    query = Paycheck.query.filter_by(user_id=current_user.id)
+    stmt = select(Paycheck).where(Paycheck.user_id == current_user.id)
 
     if sort:
-        query = query.order_by(Paycheck.date.desc(), Paycheck.total)
+        stmt = stmt.order_by(Paycheck.date.desc(), Paycheck.total)
 
-    return query.all()
+    return db.session.scalars(stmt).unique().all()
+
+
+def get_shared_paychecks():
+    transactions = transaction_queries.get_paycheck_transactions()
+    paycheck_ids = set([t.paycheck_id for t in transactions])
+
+    stmt = (
+        select(Paycheck)
+        .where(Paycheck.id.in_(paycheck_ids))
+        .order_by(Paycheck.date.desc(), Paycheck.total)
+    )
+
+    return db.session.scalars(stmt).unique().all()
 
 
 def get_paychecks_by_distinct_amount():
-    paychecks = get_paychecks(sort=True)
+    paychecks = get_shared_paychecks()
 
     lst = []
     unique_paychecks = set()
@@ -53,19 +76,8 @@ def get_paycheck_prefills():
     paychecks = [p.to_dict() for p in paychecks]
 
     for p in paychecks:
-        transactions = [
-            t.to_dict()
-            for t in transaction_queries.get_transactions_for_paycheck_id(
-                paycheck_id=p["id"]
-            )
-        ]
-
-        for t in transactions:
-            budget = budget_queries.get_budget_for_id(id=t["budget_id"]).to_dict()
-            t["budget"] = budget
-
         p["transactions"] = sorted(
-            transactions, key=lambda t: t["budget"]["name"].casefold()
+            p["transactions"], key=lambda t: t["budget"]["name"].casefold()
         )
 
     return paychecks
@@ -76,10 +88,13 @@ def update_paycheck(paycheck_id, commit=True):
     if not paycheck:
         return
 
-    transactions = transaction_queries.get_transactions_for_paycheck_id(
-        paycheck_id=paycheck.id, query=True
+    stmt = transaction_queries.get_transactions_sum_query().where(
+        Transaction.paycheck_id == paycheck.id
     )
-    total = transactions.with_entities(func.sum(Transaction.amount)).first()[0]
+    total = db.session.execute(stmt).scalar_one()
+
+    if total is None:
+        total = 0
 
     paycheck.total = total
     if commit:

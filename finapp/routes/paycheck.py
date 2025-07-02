@@ -36,19 +36,23 @@ def paycheck():
     date = helpers.get_date_from_string(request.form.get("date"))
 
     if name and amount:
-        paycheck = paycheck_queries.create_paycheck(date=date, total=amount)
-
+        transactions = []
         for budget in budgets:
-            b_amt = request.form.get(f"{budget.name}{budget.id}", type=float)
+            b_amt = request.form.get(f"{budget.id}", type=float)
             if b_amt:
-                transaction_queries.create_transaction(
-                    user_id=current_user.id,
-                    name=name,
-                    amount=b_amt,
-                    date=date,
-                    budget_id=budget.id,
-                    paycheck_id=paycheck.id,
+                transactions.append(
+                    dict(
+                        user_id=current_user.id,
+                        name=name,
+                        amount=b_amt,
+                        date=date,
+                        budget_id=budget.id,
+                    )
                 )
+
+        paycheck_queries.create_paycheck(
+            date=date, total=amount, transactions=transactions
+        )
 
     return redirect(url_for("viewtransactions_bp.view_transactions"))
 

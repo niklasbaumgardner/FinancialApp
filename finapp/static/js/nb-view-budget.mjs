@@ -133,7 +133,7 @@ export class ViewBudget extends NikElement {
   }
 
   sharedUsersTemplate() {
-    if (!this.budget.is_shared) {
+    if (!this.budget.shared_users?.length) {
       return null;
     }
 
@@ -158,7 +158,7 @@ export class ViewBudget extends NikElement {
   }
 
   sharedUsersSelectTemplate() {
-    if (!this.budget.is_shared || !this.budget.shared_users.length) {
+    if (!this.budget.shared_users?.length) {
       return null;
     }
 

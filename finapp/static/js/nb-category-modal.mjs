@@ -48,6 +48,7 @@ export class CreateCategoryModal extends NikElement {
       return;
     }
     this.existingCategories = newCategories;
+    this.existingCategories.sort((a, b) => a.name.localeCompare(b.name));
 
     document.dispatchEvent(
       new CustomEvent("CategoriesChanged", {

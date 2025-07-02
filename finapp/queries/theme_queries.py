@@ -1,6 +1,7 @@
 from finapp.models import Theme
 from flask_login import current_user
 from finapp import db
+from sqlalchemy import select
 
 
 ##
@@ -31,7 +32,9 @@ def create_theme(
 
 
 def get_theme():
-    return Theme.query.filter_by(user_id=current_user.id).first()
+    return db.session.scalars(
+        select(Theme).where(Theme.user_id == current_user.id).limit(1)
+    ).first()
 
 
 def set_theme(theme):

@@ -115,7 +115,7 @@ export class AddPaycheck extends NikElement {
           min="0"
           class="all-budgets"
           id="${b.name}${b.id}"
-          name="${b.name}${b.id}"
+          name=${b.id}
           placeholder="$0.00"
           autocomplete="niklas"
         ></wa-input>`,

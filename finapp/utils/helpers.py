@@ -1,5 +1,4 @@
 from datetime import date, timedelta
-from unicodedata import category
 from dateutil.relativedelta import relativedelta
 from finapp.queries import budget_queries, transaction_queries
 import json
@@ -195,11 +194,11 @@ def spending_for_month(month, year, ytd):
     for budg in all_budgets:
         if ytd:
             temp_trans = transaction_queries.get_transactions_for_year(
-                budget_id=budg.id, year=year, include_all_transfers=False
+                budget_id=budg.id, year=year, include_transfers=False
             )
         else:
             temp_trans = transaction_queries.get_transactions_for_month(
-                budget_id=budg.id, month=month, year=year, include_all_transfers=False
+                budget_id=budg.id, month=month, year=year, include_transfers=False
             )
         expenses = sum([t.amount for t in temp_trans if t.amount < 0]) * -1
         income = sum([t.amount for t in temp_trans if t.amount > 0])
@@ -379,12 +378,12 @@ def spending_by_category(current_date_str, interval):
 
     data = {}  # category_id -> {month, sum}
 
-    for spent, category_id, index, date in data_query:
+    for spent, category_id, index, date_ in data_query:
         index = int(index)
         if category_id in data:
-            data[category_id][index] = [round(spent, 2), date]
+            data[category_id][index] = [round(spent, 2), date_]
         else:
             data[category_id] = {}
-            data[category_id][index] = [round(spent, 2), date]
+            data[category_id][index] = [round(spent, 2), date_]
 
     return data

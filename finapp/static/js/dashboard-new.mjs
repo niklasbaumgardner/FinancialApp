@@ -379,11 +379,14 @@ class NetSpendingManager {
   }
 
   get currentSelection() {
-    return JSON.parse(this.netSpendingSelect.getAttribute("value"));
+    if (!this.key) {
+      return null;
+    }
+    return JSON.parse(this.key);
   }
 
   get key() {
-    return this.netSpendingSelect.getAttribute("value");
+    return this.netSpendingSelect.value;
   }
 
   get cellColorRules() {
@@ -411,6 +414,8 @@ class NetSpendingManager {
     this.createDataGrid();
 
     this.addOptions();
+
+    await this.netSpendingSelect.updateComplete;
 
     await this.getData();
     this.updateSpendingGrid();
@@ -485,7 +490,7 @@ class NetSpendingManager {
     this.dataCache[this.key] = data;
   }
 
-  async handleEvent(event) {
+  async handleEvent() {
     if (!this.cardsCache[this.key]) {
       await this.getData();
     }
@@ -545,7 +550,9 @@ class NetSpendingManager {
       this.netSpendingSelect.appendChild(option);
     }
 
-    this.netSpendingSelect.setAttribute("value", options[2].value);
+    this.netSpendingSelect.value = [options[2].value];
+
+    // this.netSpendingSelect.setAttribute("value", options[2].value);
   }
 
   setupThemeWatcher() {
