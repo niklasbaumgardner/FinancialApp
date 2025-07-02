@@ -4,8 +4,6 @@ from finapp.utils import helpers
 from finapp.queries import (
     budget_queries,
     paycheck_queries,
-    prefill_queries,
-    transaction_queries,
 )
 
 paycheck_bp = Blueprint("paycheck_bp", __name__)
@@ -55,14 +53,3 @@ def paycheck():
         )
 
     return redirect(url_for("viewtransactions_bp.view_transactions"))
-
-
-@paycheck_bp.route("/delete_prefill/<float:amount>", methods=["GET"])
-@login_required
-def delete_prefill(amount):
-    prefills = prefill_queries.get_prefills_by_total_amount(amount)
-
-    for prefill in prefills:
-        prefill_queries._delete_prefill(prefill)
-
-    return {"success": True}

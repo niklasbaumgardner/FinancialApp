@@ -1,11 +1,9 @@
 from finapp.queries import (
     budget_queries,
-    prefill_queries,
     shared_budget_queries,
     transaction_queries,
-    user_queries,
 )
-from flask import Blueprint, render_template, request, abort, redirect, url_for
+from flask import Blueprint, request, abort, redirect, url_for
 from flask_login import login_required, current_user
 from finapp.utils import helpers
 
@@ -102,9 +100,6 @@ def delete_budget(b_id):
 
     else:
         transaction_queries.bulk_delete_transactions_for_budget(budget_id=b_id)
-
-    # delete prefills
-    prefill_queries.delete_prefills_for_budget(budget_id=budget.id)
 
     # finally delete the budget
     budget_queries.delete_budget(b_id)

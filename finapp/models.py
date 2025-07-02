@@ -187,16 +187,6 @@ class Transaction(Base, SerializerMixin):
         )
 
 
-class PaycheckPrefill(Base, SerializerMixin):
-    __tablename__ = "paycheck_prefill"
-
-    id: Mapped[int_pk]
-    user_id: Mapped[user_fk]
-    total_amount: Mapped[float]
-    budget_id: Mapped[int] = mapped_column(ForeignKey("budget.id"))
-    amount: Mapped[float]
-
-
 class Paycheck(Base, SerializerMixin):
     __tablename__ = "paycheck"
 
