@@ -5,7 +5,11 @@ block preferences %}active{% endblock preferences %} {% block backButton %}
   <wa-icon library="ion" name="chevron-back-outline"></wa-icon> Back</wa-button
 >
 
-{% endblock backButton %} {% block content %}
+{% endblock backButton %} {% block head %}
+
+<script src="/static/js/nb-preferences.mjs" type="module"></script>
+
+{% endblock head %} {% block content %}
 
 <nb-preferences class="main-card"></nb-preferences>
 

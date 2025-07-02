@@ -6,7 +6,11 @@ transfer %}active{% endblock transfer %} {% block backButton %}<wa-button
   appearance="outlined"
 >
   <wa-icon library="ion" name="chevron-back-outline"></wa-icon> Back</wa-button
->{% endblock backButton %} {% block content %}
+>{% endblock backButton %} {% block head %}
+
+<script src="/static/js/nb-transfer.mjs" type="module"></script>
+
+{% endblock head %} {% block content %}
 
 <nb-transfer class="main-card" budgets='{{ budgets|tojson }}'></nb-transfer>
 

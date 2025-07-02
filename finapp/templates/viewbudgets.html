@@ -1,5 +1,9 @@
 {% extends "base.html" %} {% block title %}Home{% endblock title %} {% block
-content %}
+head %}
+
+<script src="/static/js/nb-view-budgets.mjs" type="module"></script>
+
+{% endblock head %} {% block content %}
 
 <nb-view-budgets
   total="{{ total }}"
