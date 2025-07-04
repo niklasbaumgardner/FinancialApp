@@ -8,10 +8,10 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.pool import NullPool
 import sentry_sdk
 import os
-from sqlalchemy import event
-from sqlalchemy.engine import Engine
-import time
-import logging
+# from sqlalchemy import event
+# from sqlalchemy.engine import Engine
+# import time
+# import logging
 
 
 bcrypt = Bcrypt()
@@ -48,22 +48,22 @@ login_manager.login_message_category = "alert-primary"
 
 mail.init_app(app)
 
-logging.basicConfig()
-logger = logging.getLogger("postgres.budgets")
-logger.setLevel(logging.DEBUG)
+# logging.basicConfig()
+# logger = logging.getLogger("postgres.budgets")
+# logger.setLevel(logging.DEBUG)
 
 
-@event.listens_for(Engine, "before_cursor_execute")
-def before_cursor_execute(conn, cursor, statement, parameters, context, executemany):
-    conn.info.setdefault("query_start_time", []).append(time.time())
-    logger.debug("Start Query: %s", statement)
+# @event.listens_for(Engine, "before_cursor_execute")
+# def before_cursor_execute(conn, cursor, statement, parameters, context, executemany):
+#     conn.info.setdefault("query_start_time", []).append(time.time())
+#     logger.debug("Start Query: %s", statement)
 
 
-@event.listens_for(Engine, "after_cursor_execute")
-def after_cursor_execute(conn, cursor, statement, parameters, context, executemany):
-    total = time.time() - conn.info["query_start_time"].pop(-1)
-    logger.debug("Query Complete!")
-    logger.debug("Total Time: %f", total)
+# @event.listens_for(Engine, "after_cursor_execute")
+# def after_cursor_execute(conn, cursor, statement, parameters, context, executemany):
+#     total = time.time() - conn.info["query_start_time"].pop(-1)
+#     logger.debug("Query Complete!")
+#     logger.debug("Total Time: %f", total)
 
 
 from finapp.routes.auth import auth_bp as auth_blueprint
