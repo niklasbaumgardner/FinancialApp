@@ -44,11 +44,8 @@ def add_transaction(budget_id):
         )
 
     if return_transactions:
-        return dict(
-            transactions=[
-                t.to_dict() for t in transaction_queries.get_recent_transactions()
-            ]
-        )
+        transactions, _ = transaction_queries.get_recent_transactions()
+        return dict(transactions=[t.to_dict() for t in transactions])
 
     return redirect(url_for("viewbudget_bp.view_budget", id=budget_id))
 
@@ -79,11 +76,8 @@ def edit_transaction(b_id, t_id):
     )
 
     if return_transactions:
-        return dict(
-            transactions=[
-                t.to_dict() for t in transaction_queries.get_recent_transactions()
-            ]
-        )
+        transactions, _ = transaction_queries.get_recent_transactions()
+        return dict(transactions=[t.to_dict() for t in transactions])
 
     return {
         "success": True,

@@ -210,7 +210,7 @@ def sort_transactions(sort_by, transactions_query):
     return transactions_query
 
 
-def get_recent_transactions(limit=None):
+def get_recent_transactions(limit=None, include_total=False):
     stmt = get_transactions_query(include_budget=True).order_by(
         Transaction.date.desc(), Transaction.id.desc()
     )
@@ -218,7 +218,14 @@ def get_recent_transactions(limit=None):
     if limit and limit > 0:
         stmt = stmt.limit(limit)
 
-    return db.session.scalars(stmt).unique().all()
+    total = None
+    if include_total:
+        total_stmt = get_transactions_query(
+            selection=[func.count(Transaction.id)], skip_no_load=True
+        )
+        total = db.session.execute(total_stmt).scalar_one()
+
+    return db.session.scalars(stmt).unique().all(), total
 
 
 def get_transactions(

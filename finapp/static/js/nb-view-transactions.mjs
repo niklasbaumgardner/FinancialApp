@@ -9,9 +9,13 @@ class ViewTransactions extends NikElement {
     budgets: { type: Array },
     categories: { type: Array },
     theme: { type: String },
+    total: { type: Number },
   };
 
   connectedCallback() {
+    let dummyArray = new Array(this.total - this.transactions.length).fill({});
+    this.transactions = this.transactions.concat(dummyArray);
+
     super.connectedCallback();
 
     this.requestData();
