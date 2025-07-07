@@ -132,6 +132,19 @@ export class AddPaycheck extends NikElement {
     this.previousPaychecks.show();
   }
 
+  previousPaychecksTemplate() {
+    if (!this.paychecks.length) {
+      return;
+    }
+
+    return html`<wa-button
+      variant="brand"
+      appearance="outlined"
+      @click=${this.handlePreviousPaychecksButtonClick}
+      >Copy amounts from previous paycheck</wa-button
+    >`;
+  }
+
   render() {
     return html`<wa-card>
       <form
@@ -172,12 +185,7 @@ export class AddPaycheck extends NikElement {
               required
             ></wa-input>
 
-            <wa-button
-              variant="brand"
-              appearance="outlined"
-              @click=${this.handlePreviousPaychecksButtonClick}
-              >Copy amounts from previous paycheck</wa-button
-            >
+            ${this.previousPaychecksTemplate()}
           </div>
           <div class="grow">
             <label class="" for="budget-amounts">Budget Allocation</label>
