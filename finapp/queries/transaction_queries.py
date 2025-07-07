@@ -244,7 +244,7 @@ def get_transactions(
 
     if not include_transfers:
         stmt = stmt.where(
-            or_((not Transaction.is_transfer), (Transaction.is_transfer.is_(None)))
+            or_(Transaction.is_transfer.is_(False), Transaction.is_transfer.is_(None))
         )
 
     if start_date:
