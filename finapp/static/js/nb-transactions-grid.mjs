@@ -129,6 +129,7 @@ export class TransactionsGrid extends NikElement {
           return `<span class="text-wrap">${name}</span>`;
         },
         cellClass: ["leading-(--wa-line-height-normal)!", "p-(--wa-space-2xs)"],
+        spanRows: ({ valueA, valueB }) => valueA === valueB,
       },
       {
         field: "amount",
@@ -295,6 +296,7 @@ export class TransactionsGrid extends NikElement {
       domLayout: "autoHeight",
       suppressCellFocus: true,
       suppressMovableColumns: true,
+      enableCellSpan: true,
       pagination: true,
       paginationPageSize: 20,
       paginationPageSizeSelector: false,
