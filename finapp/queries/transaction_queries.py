@@ -112,7 +112,21 @@ def create_transaction(
     paycheck_id=None,
     commit=True,
 ):
-    if budget_queries.can_modify_budget(budget_id=budget_id):
+    user_ids = set([user_id, current_user.id])
+
+    can_add_transaction = True
+    for user_id in user_ids:
+        can_modify = budget_queries.can_user_modify_budget(
+            budget_id=budget_id, user_id=user_id
+        )
+        can_add_transaction = can_add_transaction and can_modify
+
+    if (
+        can_add_transaction
+        and name is not None
+        and amount is not None
+        and date is not None
+    ):
         stmt = insert(Transaction).values(
             name=name.strip(),
             budget_id=budget_id,
@@ -325,85 +339,78 @@ def get_transactions_for_year(
 
 
 def update_transaction(
-    b_id,
-    t_id,
-    new_b_id=None,
+    budget_id,
+    transaction_id,
+    new_budget_id=None,
+    user_id=None,
     name=None,
     amount=None,
-    new_date=None,
+    date=None,
     is_transfer=None,
     categories_added=None,
     categories_deleted=None,
 ):
-    transaction = get_transaction(transaction_id=t_id)
-    if transaction:
-        _update_transaction(
-            transaction,
-            b_id,
-            new_b_id,
-            name,
-            amount,
-            new_date,
-            is_transfer,
-            categories_added,
-            categories_deleted,
+    user_ids = set([user_id, current_user.id])
+    budget_ids = [id for id in set([budget_id, new_budget_id]) if id is not None]
+
+    can_add_transaction = True
+    for user_id in user_ids:
+        can_modify = budget_queries.can_user_modify_budgets(
+            budget_ids=budget_ids, user_id=user_id
         )
+        can_add_transaction = can_add_transaction and can_modify
 
+    if can_add_transaction:
+        should_update_budget_total = set()
+        # update_paycheck = False
 
-def _update_transaction(
-    transaction,
-    b_id,
-    new_b_id=None,
-    name=None,
-    amount=None,
-    new_date=None,
-    is_transfer=None,
-    categories_added=None,
-    categories_deleted=None,
-):
-    should_update_budget_total = set()
-    update_paycheck = False
+        update_dict = dict()
 
-    if transaction:
-        if new_b_id is not None:
-            new_budget = budget_queries.get_budget(budget_id=new_b_id)
-            if new_budget:
-                transaction.budget_id = new_b_id
-                should_update_budget_total.add(new_b_id)
-                should_update_budget_total.add(b_id)
+        if new_budget_id is not None and new_budget_id != budget_id:
+            update_dict["budget_id"] = new_budget_id
+            should_update_budget_total.add(new_budget_id)
+            should_update_budget_total.add(budget_id)
+        if user_id is not None:
+            update_dict["user_id"] = user_id
         if name is not None:
-            transaction.name = name.strip()
+            update_dict["name"] = name.strip()
         if amount is not None:
-            if amount != transaction.amount:
-                transaction.amount = amount
-                should_update_budget_total.add(b_id)
-                if transaction.paycheck_id:
-                    update_paycheck = True
-
-        if new_date is not None:
-            transaction.date = new_date
+            update_dict["amount"] = amount
+            should_update_budget_total.add(budget_id)
+        # if Transaction.paycheck_id:
+        #     update_paycheck = True
+        if date is not None:
+            update_dict["date"] = date
         if is_transfer is not None:
-            transaction.is_transfer = is_transfer
+            update_dict["is_transfer"] = is_transfer
         if categories_added and len(categories_added) > 0:
             category_queries.bulk_add_transaction_categories(
-                user_id=transaction.user_id,
-                transaction_id=transaction.id,
+                user_id=user_id,
+                transaction_id=transaction_id,
                 category_ids=categories_added,
                 commit=False,
             )
 
         if categories_deleted and len(categories_deleted) > 0:
             category_queries.bulk_delete_transaction_categories(
-                transaction_id=transaction.id,
+                transaction_id=transaction_id,
                 category_ids=categories_deleted,
                 commit=False,
             )
 
+        stmt = (
+            update(Transaction)
+            .where(Transaction.id == transaction_id)
+            .values(update_dict)
+        )
+
+        db.session.execute(stmt)
+
         for id in should_update_budget_total:
             budget_queries.update_budget_total(budget_id=id, commit=False)
 
-        if update_paycheck:
-            paycheck_queries.update_paycheck(transaction.paycheck_id, commit=False)
+        # if update_paycheck:
+        #     paycheck_queries.update_paycheck(transaction.paycheck_id, commit=False)
 
         db.session.commit()
 

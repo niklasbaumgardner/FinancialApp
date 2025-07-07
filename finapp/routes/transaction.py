@@ -23,29 +23,34 @@ def add_transaction(budget_id):
 
     categories = request.form.getlist("categories")
 
-    # TODO: Think about this
-    can_add_transaction = user_id == current_user.id
-    if user_id != current_user.id:
-        can_add_transaction = budget_queries.can_user_modify_budget(
-            budget_id=budget_id, user_id=user_id
-        )
+    transaction_queries.create_transaction(
+        user_id=user_id,
+        name=name,
+        amount=amount,
+        date=date,
+        budget_id=budget_id,
+        categories=categories,
+    )
 
-    if not can_add_transaction:
-        return redirect(url_for("viewbudgets_bp.viewbudgets"))
+    # # TODO: Think about this
+    # can_add_transaction = user_id == current_user.id
+    # if user_id != current_user.id:
+    #     can_add_transaction = budget_queries.can_user_modify_budget(
+    #         budget_id=budget_id, user_id=user_id
+    #     )
 
-    if name is not None and amount is not None and budget_id is not None:
-        transaction_queries.create_transaction(
-            user_id=user_id,
-            name=name,
-            amount=amount,
-            date=date,
-            budget_id=budget_id,
-            categories=categories,
-        )
+    # if not can_add_transaction:
+    #     return redirect(url_for("viewbudgets_bp.viewbudgets"))
+
+    # if name is not None and amount is not None and budget_id is not None:
 
     if return_transactions:
         transactions, _ = transaction_queries.get_recent_transactions()
-        return dict(transactions=[t.to_dict() for t in transactions])
+        budgets = [budget_queries.get_budget(budget_id=budget_id).to_dict()]
+        return dict(
+            transactions=[t.to_dict() for t in transactions],
+            budgets=budgets,
+        )
 
     return redirect(url_for("viewbudget_bp.view_budget", id=budget_id))
 
@@ -53,9 +58,11 @@ def add_transaction(budget_id):
 @transaction_bp.post("/edit_transaction/<int:b_id>/<int:t_id>")
 @login_required
 def edit_transaction(b_id, t_id):
-    new_name = request.form.get("name")
-    new_amount = request.form.get("amount", type=float)
-    new_date = request.form.get("date")
+    name = request.form.get("name")
+    amount = request.form.get("amount", type=float)
+    # new_budget_id = request.form.get("budget", type=int)
+    user_id = request.form.get("user", type=int, default=current_user.id)
+    date = request.form.get("date")
     page = request.form.get("page")
     page = page if page else 1
     return_transactions = request.form.get("return-transactions")
@@ -64,20 +71,29 @@ def edit_transaction(b_id, t_id):
     categories_added = request.form.getlist("categoriesAdded")
     categories_deleted = request.form.getlist("categoriesDeleted")
 
-    new_date = helpers.get_date_from_string(new_date)
+    date = helpers.get_date_from_string(date)
+
     transaction_queries.update_transaction(
-        b_id=b_id,
-        t_id=t_id,
-        name=new_name,
-        amount=new_amount,
-        new_date=new_date,
+        budget_id=b_id,
+        transaction_id=t_id,
+        # new_budget_id=new_budget_id,
+        user_id=user_id,
+        name=name,
+        amount=amount,
+        date=date,
         categories_added=categories_added,
         categories_deleted=categories_deleted,
     )
 
     if return_transactions:
         transactions, _ = transaction_queries.get_recent_transactions()
-        return dict(transactions=[t.to_dict() for t in transactions])
+        # budgets = [
+        #     budget_queries.get_budget(budget_id=b).to_dict()
+        #     for b in set([b_id, new_budget_id])
+        # ]
+        budgets = [budget_queries.get_budget(budget_id=b_id).to_dict()]
+
+        return dict(transactions=[t.to_dict() for t in transactions], budgets=budgets)
 
     return {
         "success": True,
@@ -93,7 +109,7 @@ def move_transaction(sb_id, t_id):
     new_budget_id = request.form.get("new_budget")
 
     transaction_queries.update_transaction(
-        b_id=sb_id, t_id=t_id, new_b_id=new_budget_id
+        budget_id=sb_id, transaction_id=t_id, new_budget_id=new_budget_id
     )
 
     return {"success": True}

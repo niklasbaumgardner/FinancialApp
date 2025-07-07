@@ -82,7 +82,7 @@ export class EditTransactionModal extends AddTransactionModal {
       this.nameInput.value === this.transaction.name &&
       this.dateInput.value === this.transaction.date &&
       this.amountInput.value == this.transaction.amount &&
-      this.budgetsSelect.value == this.transaction.budget_id &&
+      // this.budgetsSelect.value == this.transaction.budget_id &&
       this.usersSelect.value == this.transaction.user_id &&
       !categoriesAdded.length &&
       !categoriesDeleted.length
@@ -119,9 +119,12 @@ export class EditTransactionModal extends AddTransactionModal {
   }
 
   budgetsTemplate() {
+    // Disable this until updating to WebAwesome beta
+    return null;
     return html`<wa-select
       label="Select Budget"
       id="budgets-select"
+      name="budget"
       value=${this.transaction.budget_id}
       required
       @input=${this.budgetChange}

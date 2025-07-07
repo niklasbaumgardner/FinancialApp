@@ -79,13 +79,21 @@ export class AddTransactionModal extends NikElement {
       body: formData,
     });
 
-    let { transactions } = await response.json();
+    let { transactions, budgets } = await response.json();
 
     document.dispatchEvent(
       new CustomEvent("UpdateTransactions", {
         bubbles: true,
         composed: true,
         detail: { transactions },
+      })
+    );
+
+    document.dispatchEvent(
+      new CustomEvent("UpdateBudgets", {
+        bubbles: true,
+        composed: true,
+        detail: { budgets },
       })
     );
 

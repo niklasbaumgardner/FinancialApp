@@ -19,6 +19,27 @@ class ViewTransactions extends NikElement {
     super.connectedCallback();
 
     this.requestData();
+
+    document.addEventListener("UpdateBudgets", this);
+  }
+
+  handleEvent(event) {
+    switch (event.type) {
+      case "UpdateBudgets":
+        let budgets = event.detail.budgets;
+        for (let budget of budgets) {
+          let budgetIndex = this.budgets.findIndex((b) => b.id === budget.id);
+          if (budgetIndex === -1) {
+            continue;
+          }
+          this.budgets[budgetIndex] = budget;
+        }
+
+        if (this.addTransactionModal) {
+          this.addTransactionModal.budgets = this.budgets;
+        }
+        break;
+    }
   }
 
   async requestData() {
