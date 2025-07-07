@@ -77,6 +77,14 @@ export class CreateCategoryModal extends NikElement {
     this.dialog.open = false;
   }
 
+  handleDialogShow(event) {
+    if (event.target !== this.dialog) {
+      return;
+    }
+
+    this.input.focus();
+  }
+
   async handleSubmitClick() {
     if (!this.form.reportValidity()) {
       return true;
@@ -99,10 +107,14 @@ export class CreateCategoryModal extends NikElement {
   }
 
   render() {
-    return html`<wa-dialog label="Create a new category">
+    return html`<wa-dialog
+      label="Create a new category"
+      @wa-after-show=${this.handleDialogShow}
+    >
       <form>
         <div class="wa-stack">
           <wa-input
+            id="name"
             label="Category name:"
             placeholder="Food"
             name="name"

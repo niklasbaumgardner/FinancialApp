@@ -75,7 +75,7 @@ export class MoveTransactionModal extends NikElement {
       return html`<wa-select
         id="new_budget"
         name="new_budget"
-        label="Select a budget"
+        label="Move to"
         required
       >
         ${moveableBudgets.map(

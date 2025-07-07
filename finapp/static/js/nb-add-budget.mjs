@@ -35,6 +35,14 @@ export class AddBudget extends NikElement {
     this.hide();
   }
 
+  handleDialogShow(event) {
+    if (event.target !== this.dialog) {
+      return;
+    }
+
+    this.nameInput.focus();
+  }
+
   handleInput() {
     if (this.nameInput.value === "") {
       this.saveButton.disabled = false;
@@ -92,7 +100,10 @@ export class AddBudget extends NikElement {
   }
 
   render() {
-    return html`<wa-dialog label="Add New Budget">
+    return html`<wa-dialog
+      label="Add New Budget"
+      @wa-after-show=${this.handleDialogShow}
+    >
       <form class="wa-stack">
         <input hidden class="hidden" name="date" value=${CURRENT_DATE} />
         <wa-input
