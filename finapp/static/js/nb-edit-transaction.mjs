@@ -118,18 +118,44 @@ export class EditTransactionModal extends AddTransactionModal {
     this.reset();
   }
 
+  budgetOptionsTemplate() {
+    return this.budgets.map(
+      (b) => html`<wa-option
+        value=${b.id}
+        ?selected=${b.id === this.transaction.budget_id}
+        ><span class="wa-heading-s">${b.name}</span>:
+        ${new Intl.NumberFormat(undefined, {
+          style: "currency",
+          currency: "USD",
+        }).format(b.total)}</wa-option
+      >`
+    );
+  }
+
   budgetsTemplate() {
-    // Disable this until updating to WebAwesome beta
-    return null;
     return html`<wa-select
       label="Select Budget"
       id="budgets-select"
       name="budget"
-      value=${this.transaction.budget_id}
       required
       @input=${this.budgetChange}
       >${this.budgetOptionsTemplate()}</wa-select
     >`;
+  }
+
+  sharedUsersOptionsTemplate() {
+    if (!this.selectedBudget || !this.sharedUsers) {
+      return null;
+    }
+
+    return this.sharedUsers.map(
+      (u) =>
+        html`<wa-option
+          ?selected=${u.id === this.transaction.user_id}
+          value=${u.id}
+          >${u.username}</wa-option
+        >`
+    );
   }
 
   sharedUsersSelectTemplate() {
@@ -137,7 +163,6 @@ export class EditTransactionModal extends AddTransactionModal {
       id="user-select"
       label="Select user for this transaction"
       name="user"
-      value=${this.transaction.user_id}
       ?disabled=${!this.selectedBudget}
       required
       >${this.sharedUsersOptionsTemplate()}</wa-select
@@ -196,10 +221,7 @@ export class EditTransactionModal extends AddTransactionModal {
         ${this.budgetsTemplate()} ${this.sharedUsersSelectTemplate()}
         <div>
           <nb-categories-select
-            selected=${this.transaction.categories.reduce(
-              (acc, cur) => acc + " " + cur.category_id,
-              ""
-            )}
+            .selected=${this.transaction.categories.map((c) => c.category_id)}
             .categories=${this.categories}
           ></nb-categories-select>
           <wa-button

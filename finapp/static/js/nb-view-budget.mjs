@@ -153,7 +153,10 @@ export class ViewBudget extends NikElement {
     users.push(...this.budget.shared_users);
 
     return users.map(
-      (u) => html`<wa-option value=${u.id}>${u.username}</wa-option>`
+      (u) =>
+        html`<wa-option ?selected=${CURRENT_USER.id === u.id} value=${u.id}
+          >${u.username}</wa-option
+        >`
     );
   }
 
@@ -162,10 +165,7 @@ export class ViewBudget extends NikElement {
       return null;
     }
 
-    return html`<wa-select
-      label="Select user for this transaction"
-      name="user"
-      value=${CURRENT_USER.id}
+    return html`<wa-select label="Select user for this transaction" name="user"
       >${this.sharedUsersOptionsTemplate()}</wa-select
     >`;
   }

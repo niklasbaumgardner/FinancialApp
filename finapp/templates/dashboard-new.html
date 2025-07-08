@@ -31,14 +31,13 @@ block dashboard %}active{% endblock dashboard %} {% block backButton
       <div class="wa-split">
         <wa-select
           id="budgets"
-          value="allBudgets"
           label="Select the budgets to show"
           class="w-fit"
           multiple
           hoist
           disabled
         >
-          <wa-option value="allBudgets">All budgets</wa-option>
+          <wa-option selected value="allBudgets">All budgets</wa-option>
         </wa-select>
         <wa-input
           class="w-fit"
@@ -55,8 +54,12 @@ block dashboard %}active{% endblock dashboard %} {% block backButton
 
   <wa-details summary="Spending by budget" appearance="filled outlined" open>
     <div class="wa-stack">
-      <wa-select id="netSpendingSelect" label="Spending in" class="w-fit" hoist>
-      </wa-select>
+      <wa-select
+        id="netSpendingSelect"
+        label="Spending in"
+        class="w-fit"
+        hoist
+      ></wa-select>
 
       <div
         id="spending-by-budget-grid"
@@ -70,11 +73,10 @@ block dashboard %}active{% endblock dashboard %} {% block backButton
       <wa-select
         id="categorySpendingSelect"
         label="Spending interval"
-        value="monthly"
         class="w-fit"
         hoist
       >
-        <wa-option value="monthly">Monthly</wa-option>
+        <wa-option selected value="monthly">Monthly</wa-option>
         <wa-option value="weekly">Weekly</wa-option>
       </wa-select>
 

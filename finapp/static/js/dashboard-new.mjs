@@ -201,9 +201,6 @@ class ChartManager {
       this.selectEl.appendChild(item);
     }
 
-    this.selectEl.value = "";
-    this.selectEl.value = ["allBudgets"];
-
     this.selectEl.disabled = false;
   }
 
@@ -413,9 +410,7 @@ class NetSpendingManager {
     this.spendingGridEl = document.getElementById("spending-by-budget-grid");
     this.createDataGrid();
 
-    this.addOptions();
-
-    await this.netSpendingSelect.updateComplete;
+    await this.addOptions();
 
     await this.getData();
     this.updateSpendingGrid();
@@ -542,17 +537,17 @@ class NetSpendingManager {
     return options;
   }
 
-  addOptions() {
+  async addOptions() {
     let minDate = new Date(START_DATE + "T00:00:00");
     let options = this.getOpiontsFromDate(minDate);
 
-    for (let option of options) {
-      this.netSpendingSelect.appendChild(option);
-    }
+    this.netSpendingSelect.append(...options);
 
-    this.netSpendingSelect.value = [options[2].value];
+    // await this.netSpendingSelect.updateComplete;
 
-    // this.netSpendingSelect.setAttribute("value", options[2].value);
+    this.netSpendingSelect.valueHasChanged = true;
+    this.netSpendingSelect.hasInteracted = true;
+    options[2].selected = true;
   }
 
   setupThemeWatcher() {
@@ -624,8 +619,6 @@ class CategorySpendingManager {
     this.categorySpendingGridEl = document.getElementById(
       "spending-by-category-grid"
     );
-    this.categorySpendingSelect.value = "";
-    this.categorySpendingSelect.value = "monthly";
 
     await this.getData();
 

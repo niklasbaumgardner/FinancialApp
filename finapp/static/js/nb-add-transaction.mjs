@@ -143,7 +143,10 @@ export class AddTransactionModal extends NikElement {
     }
 
     return this.sharedUsers.map(
-      (u) => html`<wa-option value=${u.id}>${u.username}</wa-option>`
+      (u) =>
+        html`<wa-option ?selected=${CURRENT_USER.id === u.id} value=${u.id}
+          >${u.username}</wa-option
+        >`
     );
   }
 
@@ -152,7 +155,6 @@ export class AddTransactionModal extends NikElement {
       id="user-select"
       label="Select user for this transaction"
       name="user"
-      value=${CURRENT_USER.id}
       ?disabled=${!this.selectedBudget}
       required
       >${this.sharedUsersOptionsTemplate()}</wa-select

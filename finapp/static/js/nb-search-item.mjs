@@ -33,7 +33,7 @@ export class SearchItem extends NikElement {
         class="grow"
         type="text"
         placeholder="Search"
-        clearable
+        with-clear
       ></wa-input>
       <wa-button
         class="icon-button"
