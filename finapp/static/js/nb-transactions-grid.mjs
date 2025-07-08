@@ -37,22 +37,20 @@ class TransactionActions extends NikElement {
 
   render() {
     return html`<div class="wa-cluster wa-align-items-center">
-      <wa-icon-button
+      <wa-button
         variant="brand"
-        library="ion"
-        name="create-outline"
-        label="Edit"
         appearance="plain"
+        class="icon-button"
         @click=${this.handleEditClick}
-      ></wa-icon-button>
-      <wa-icon-button
+        ><wa-icon library="ion" name="create-outline" label="Edit"></wa-icon
+      ></wa-button>
+      <wa-button
         variant="danger"
-        library="ion"
-        name="trash-outline"
-        label="Delete"
         appearance="plain"
+        class="icon-button"
         @click=${this.handleDeleteClick}
-      ></wa-icon-button>
+        ><wa-icon library="ion" name="trash-outline" label="Delete"></wa-icon
+      ></wa-button>
     </div>`;
   }
 }

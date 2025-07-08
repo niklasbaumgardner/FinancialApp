@@ -1,4 +1,4 @@
-import WaSelect from "https://early.webawesome.com/webawesome@3.0.0-alpha.13/dist/components/select/select.js";
+import WaSelect from "https://early.webawesome.com/webawesome@3.0.0-beta.2/dist/components/select/select.js";
 import { html } from "./imports.mjs";
 import { NikElement } from "./customElement.mjs";
 import "./nb-category.mjs";

@@ -89,7 +89,7 @@
       src="https://early.webawesome.com/webawesome@3.0.0-beta.2/dist/webawesome.loader.js"
     ></script>
     <script type="module">
-      import { registerIconLibrary } from "https://early.webawesome.com/webawesome@3.0.0-alpha.13/dist/webawesome.loader.js";
+      import { registerIconLibrary } from "https://early.webawesome.com/webawesome@3.0.0-beta.2/dist/webawesome.loader.js";
 
       registerIconLibrary("ion", {
         resolver: (name) =>
@@ -237,34 +237,33 @@
               <div class="wa-cluster wa-desktop-only">
                 <nb-theme-selector></nb-theme-selector>
                 {% if current_user.is_authenticated %}
-                <wa-dropdown
+                <wa-dropdown placement="bottom-end"
                   ><wa-button
                     id="user-button"
                     appearance="plain"
                     slot="trigger"
-                    caret
+                    with-caret
                     ><wa-icon
                       slot="prefix"
                       name="person-circle-outline"
                       library="ion"
                     ></wa-icon
                     >{{ current_user.username }}</wa-button
-                  ><wa-menu id="user-dropdown-selector">
-                    <wa-menu-item
-                      ><a href="{{ url_for('preferences_bp.preferences') }}"
-                        >Preferences</a
-                      ></wa-menu-item
-                    ><wa-menu-item
-                      ><a href="{{ url_for('profile_bp.profile') }}"
-                        >Profile</a
-                      ></wa-menu-item
-                    ><wa-menu-item
-                      ><a href="{{ url_for('auth_bp.logout') }}"
-                        >Logout</a
-                      ></wa-menu-item
-                    >
-                  </wa-menu></wa-dropdown
-                >
+                  >
+                  <wa-dropdown-item
+                    ><a href="{{ url_for('preferences_bp.preferences') }}"
+                      >Preferences</a
+                    ></wa-dropdown-item
+                  ><wa-dropdown-item
+                    ><a href="{{ url_for('profile_bp.profile') }}"
+                      >Profile</a
+                    ></wa-dropdown-item
+                  ><wa-dropdown-item
+                    ><a href="{{ url_for('auth_bp.logout') }}"
+                      >Logout</a
+                    ></wa-dropdown-item
+                  >
+                </wa-dropdown>
                 {% else %}
                 <a href="{{ url_for('auth_bp.login') }}">Login</a>
                 {% endif %}
@@ -302,21 +301,21 @@
         <wa-dropdown
           ><wa-button id="user-button" appearance="plain" slot="trigger" caret
             >{{ current_user.username }}</wa-button
-          ><wa-menu id="user-dropdown-selector">
-            <wa-menu-item
+          ><wa-dropdown id="user-dropdown-selector">
+            <wa-dropdown-item
               ><a href="{{ url_for('preferences_bp.preferences') }}"
                 >Preferences</a
-              ></wa-menu-item
-            ><wa-menu-item
+              ></wa-dropdown-item
+            ><wa-dropdown-item
               ><a href="{{ url_for('profile_bp.profile') }}"
                 >Profile</a
-              ></wa-menu-item
-            ><wa-menu-item
+              ></wa-dropdown-item
+            ><wa-dropdown-item
               ><a href="{{ url_for('auth_bp.logout') }}"
                 >Logout</a
-              ></wa-menu-item
+              ></wa-dropdown-item
             >
-          </wa-menu></wa-dropdown
+          </wa-dropdown></wa-dropdown
         >
         {% else %}
         <a href="{{ url_for('auth_bp.login') }}">Login</a>

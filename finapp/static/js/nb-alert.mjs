@@ -21,12 +21,13 @@ export class Alert extends NikElement {
   render() {
     return html`<wa-callout variant=${this.category} closable>
       ${this.message}
-      <wa-icon-button
-        name="system/close-large-line"
-        library="remix"
-        label="Remove"
-        @click=${this.removeSelf}
-      ></wa-icon-button>
+      <wa-button @click=${this.removeSelf}
+        ><wa-icon
+          label="Remove"
+          name="system/close-large-line"
+          library="remix"
+        ></wa-icon
+      ></wa-button>
     </wa-callout>`;
   }
 }

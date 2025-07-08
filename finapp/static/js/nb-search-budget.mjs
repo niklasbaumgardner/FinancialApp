@@ -38,7 +38,7 @@ export class SearchBudget extends NikElement {
 
   static get queries() {
     return {
-      dropdownItems: { all: "wa-menu-item" },
+      dropdownItems: { all: "wa-dropdown-item" },
       inputs: { all: "wa-input" },
       amountInput: "#searchAmount",
       maxAmountInput: "#maxAmount",
@@ -220,46 +220,46 @@ export class SearchBudget extends NikElement {
   sortTemplate() {
     return html`<wa-dropdown>
       <wa-button slot="trigger" caret appearance="outlined">Sort by</wa-button>
-      <wa-menu @wa-select=${this.handleSortingSelcted}>
-        <wa-menu-item
+      <wa-dropdown @wa-select=${this.handleSortingSelcted}>
+        <wa-dropdown-item
           type="checkbox"
           value="0"
           ?checked=${0 === this.currentSortValue}
-          >Date: Newest to oldest</wa-menu-item
+          >Date: Newest to oldest</wa-dropdown-item
         >
-        <wa-menu-item
+        <wa-dropdown-item
           type="checkbox"
           value="1"
           ?checked=${1 === this.currentSortValue}
-          >Date: Oldest to newest</wa-menu-item
+          >Date: Oldest to newest</wa-dropdown-item
         >
         <wa-divider></wa-divider>
-        <wa-menu-item
+        <wa-dropdown-item
           type="checkbox"
           value="2"
           ?checked=${2 === this.currentSortValue}
-          >Name: Alphabetical</wa-menu-item
+          >Name: Alphabetical</wa-dropdown-item
         >
-        <wa-menu-item
+        <wa-dropdown-item
           type="checkbox"
           value="3"
           ?checked=${3 === this.currentSortValue}
-          >Name: Reverse alphabetical</wa-menu-item
+          >Name: Reverse alphabetical</wa-dropdown-item
         >
         <wa-divider></wa-divider>
-        <wa-menu-item
+        <wa-dropdown-item
           type="checkbox"
           value="4"
           ?checked=${4 === this.currentSortValue}
-          >Amount: Most income</wa-menu-item
+          >Amount: Most income</wa-dropdown-item
         >
-        <wa-menu-item
+        <wa-dropdown-item
           type="checkbox"
           value="5"
           ?checked=${5 === this.currentSortValue}
-          >Amount: Most expensive</wa-menu-item
+          >Amount: Most expensive</wa-dropdown-item
         >
-      </wa-menu>
+      </wa-dropdown>
     </wa-dropdown>`;
   }
 

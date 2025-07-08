@@ -832,6 +832,17 @@ wa-icon-button {
   }
 }
 
+wa-button.icon-button {
+  line-height: normal;
+
+  &::part(base) {
+    padding: var(--wa-space-xs);
+    width: auto;
+    height: auto;
+    border-width: 0;
+  }
+}
+
 nb-transaction {
   .transaction-grid {
     grid-template: "name amount buttons";
