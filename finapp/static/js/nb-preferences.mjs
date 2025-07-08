@@ -112,7 +112,7 @@ export class PreferencesCard extends NikElement {
         <p>Custom Theming Options</p>
 
         <wa-select
-          clearable
+          with-clear
           id="primary-color"
           label="Primary Color"
           value=${this.theme.primaryColor}
@@ -124,7 +124,7 @@ export class PreferencesCard extends NikElement {
         >
 
         <wa-select
-          clearable
+          with-clear
           id="background-color"
           label="Background Color"
           value=${this.theme.backgroundColor}
@@ -136,7 +136,7 @@ export class PreferencesCard extends NikElement {
         >
 
         <wa-select
-          clearable
+          with-clear
           id="color-palette"
           label="Color Palette"
           value=${this.theme.colorPalette}
@@ -148,7 +148,7 @@ export class PreferencesCard extends NikElement {
         >
 
         <wa-select
-          clearable
+          with-clear
           id="color-contrast"
           label="Color Contrast"
           value=${this.theme.colorContrast}

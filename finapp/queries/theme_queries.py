@@ -43,13 +43,13 @@ def set_theme(theme):
 
     if theme in [
         "default",
-        "classic",
         "awesome",
-        "mellow",
+        "shoelace",
         "active",
         "brutalist",
         "glossy",
         "matter",
+        "mellow",
         "playful",
         "premium",
         "tailspin",
