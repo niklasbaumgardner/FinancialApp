@@ -244,7 +244,7 @@
                     slot="trigger"
                     with-caret
                     ><wa-icon
-                      slot="prefix"
+                      slot="start"
                       name="person-circle-outline"
                       library="ion"
                     ></wa-icon
@@ -269,12 +269,13 @@
                 {% endif %}
               </div>
 
-              <wa-icon-button
-                library="ion"
-                name="menu-outline"
-                label="Menu"
-                data-toggle-nav
-              ></wa-icon-button>
+              <wa-button data-toggle-nav appearance="plain"
+                ><wa-icon
+                  library="ion"
+                  name="menu-outline"
+                  label="Menu"
+                ></wa-icon
+              ></wa-button>
             </div>
           </div>
         </div>
@@ -298,10 +299,15 @@
 
         <nb-theme-selector></nb-theme-selector>
         {% if current_user.is_authenticated %}
-        <wa-dropdown
-          ><wa-button id="user-button" appearance="plain" slot="trigger" caret
-            >{{ current_user.username }}</wa-button
-          ><wa-dropdown id="user-dropdown-selector">
+        <div>
+          <wa-dropdown placement="bottom-end"
+            ><wa-button
+              id="user-button"
+              appearance="plain"
+              slot="trigger"
+              with-caret
+              >{{ current_user.username }}</wa-button
+            >
             <wa-dropdown-item
               ><a href="{{ url_for('preferences_bp.preferences') }}"
                 >Preferences</a
@@ -315,8 +321,8 @@
                 >Logout</a
               ></wa-dropdown-item
             >
-          </wa-dropdown></wa-dropdown
-        >
+          </wa-dropdown>
+        </div>
         {% else %}
         <a href="{{ url_for('auth_bp.login') }}">Login</a>
         {% endif %}
@@ -344,7 +350,7 @@
   <script>
     let backButton = document.getElementById("back-button");
     if (backButton) {
-      backButton.href = document.referrer;
+      backButton.href = document.referrer.length ? document.referrer : "/";
     }
   </script>
 </html>

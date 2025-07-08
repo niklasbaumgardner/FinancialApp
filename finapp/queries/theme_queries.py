@@ -201,13 +201,13 @@ def set_color_palette(color_palette):
 
     if color_palette not in [
         "default",
-        "anodized",
         "bright",
-        "classic",
+        "shoelace",
+        "rudimentary",
         "elegant",
         "mild",
         "natural",
-        "rudimentary",
+        "anodized",
         "vogue",
     ]:
         color_palette = None

@@ -218,48 +218,49 @@ export class SearchBudget extends NikElement {
   }
 
   sortTemplate() {
-    return html`<wa-dropdown>
-      <wa-button slot="trigger" caret appearance="outlined">Sort by</wa-button>
-      <wa-dropdown @wa-select=${this.handleSortingSelcted}>
-        <wa-dropdown-item
-          type="checkbox"
-          value="0"
-          ?checked=${0 === this.currentSortValue}
-          >Date: Newest to oldest</wa-dropdown-item
-        >
-        <wa-dropdown-item
-          type="checkbox"
-          value="1"
-          ?checked=${1 === this.currentSortValue}
-          >Date: Oldest to newest</wa-dropdown-item
-        >
-        <wa-divider></wa-divider>
-        <wa-dropdown-item
-          type="checkbox"
-          value="2"
-          ?checked=${2 === this.currentSortValue}
-          >Name: Alphabetical</wa-dropdown-item
-        >
-        <wa-dropdown-item
-          type="checkbox"
-          value="3"
-          ?checked=${3 === this.currentSortValue}
-          >Name: Reverse alphabetical</wa-dropdown-item
-        >
-        <wa-divider></wa-divider>
-        <wa-dropdown-item
-          type="checkbox"
-          value="4"
-          ?checked=${4 === this.currentSortValue}
-          >Amount: Most income</wa-dropdown-item
-        >
-        <wa-dropdown-item
-          type="checkbox"
-          value="5"
-          ?checked=${5 === this.currentSortValue}
-          >Amount: Most expensive</wa-dropdown-item
-        >
-      </wa-dropdown>
+    return html`<wa-dropdown @wa-select=${this.handleSortingSelcted}>
+      <wa-button slot="trigger" with-caret appearance="outlined"
+        >Sort by</wa-button
+      >
+
+      <wa-dropdown-item
+        type="checkbox"
+        value="0"
+        ?checked=${0 === this.currentSortValue}
+        >Date: Newest to oldest</wa-dropdown-item
+      >
+      <wa-dropdown-item
+        type="checkbox"
+        value="1"
+        ?checked=${1 === this.currentSortValue}
+        >Date: Oldest to newest</wa-dropdown-item
+      >
+      <wa-divider></wa-divider>
+      <wa-dropdown-item
+        type="checkbox"
+        value="2"
+        ?checked=${2 === this.currentSortValue}
+        >Name: Alphabetical</wa-dropdown-item
+      >
+      <wa-dropdown-item
+        type="checkbox"
+        value="3"
+        ?checked=${3 === this.currentSortValue}
+        >Name: Reverse alphabetical</wa-dropdown-item
+      >
+      <wa-divider></wa-divider>
+      <wa-dropdown-item
+        type="checkbox"
+        value="4"
+        ?checked=${4 === this.currentSortValue}
+        >Amount: Most income</wa-dropdown-item
+      >
+      <wa-dropdown-item
+        type="checkbox"
+        value="5"
+        ?checked=${5 === this.currentSortValue}
+        >Amount: Most expensive</wa-dropdown-item
+      >
     </wa-dropdown>`;
   }
 
@@ -376,14 +377,17 @@ export class SearchBudget extends NikElement {
   viewTemplate() {
     return html`<div class="wa-split">
       ${this.sortTemplate()}
-      <wa-icon-button
+      <wa-button
+        class="icon-button"
         appearance="plain"
-        label="Search"
-        library="ion"
-        name="search-outline"
-        class="text-(length:--wa-font-size-xl)"
         @click=${this.toggleSearch}
-      ></wa-icon-button>
+        ><wa-icon
+          label="Search"
+          library="ion"
+          name="search-outline"
+          class="text-(length:--wa-font-size-xl)"
+        ></wa-icon
+      ></wa-button>
     </div>`;
   }
 
@@ -399,14 +403,18 @@ export class SearchBudget extends NikElement {
           <span id="searchResultsCount">0 transactions</span> totalling
           <span class="wa-heading-m" id="searchResultsSum">$0</span>
         </span>
-        <wa-icon-button
+        <wa-button
+          class="icon-button"
           id="cancel-search"
-          library="remix"
-          name="system/close-large-line"
-          label="Cancel"
-          class="text-(length:--wa-font-size-xl)"
+          appearance="plain"
           @click=${this.toggleSearch}
-        ></wa-icon-button>
+          ><wa-icon
+            library="remix"
+            name="system/close-large-line"
+            label="Cancel"
+            class="text-(length:--wa-font-size-xl)"
+          ></wa-icon
+        ></wa-button>
       </div>
 
       <div

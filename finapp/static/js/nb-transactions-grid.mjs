@@ -38,16 +38,16 @@ class TransactionActions extends NikElement {
   render() {
     return html`<div class="wa-cluster wa-align-items-center">
       <wa-button
+        class="icon-button no-border"
         variant="brand"
         appearance="plain"
-        class="icon-button"
         @click=${this.handleEditClick}
         ><wa-icon library="ion" name="create-outline" label="Edit"></wa-icon
       ></wa-button>
       <wa-button
+        class="icon-button no-border"
         variant="danger"
         appearance="plain"
-        class="icon-button"
         @click=${this.handleDeleteClick}
         ><wa-icon library="ion" name="trash-outline" label="Delete"></wa-icon
       ></wa-button>

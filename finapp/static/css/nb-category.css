@@ -5,7 +5,6 @@ nb-category {
 .tag {
   display: flex;
   gap: var(--wa-space-2xs);
-  align-items: center;
   border: solid 1px;
   white-space: nowrap;
   user-select: none;
@@ -20,8 +19,14 @@ nb-category {
   border-radius: var(--wa-border-radius-s);
   padding: 0 var(--wa-space-xs);
 
-  .tag__remove::part(base) {
-    color: inherit;
-    padding: 0px;
+  .tag__remove {
+    line-height: normal;
+
+    &::part(base) {
+      padding: 0px;
+      width: auto;
+      height: auto;
+      border-width: 0;
+    }
   }
 }

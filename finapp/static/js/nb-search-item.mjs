@@ -4,7 +4,7 @@ import { html } from "./imports.mjs";
 export class SearchItem extends NikElement {
   static queries = {
     input: "#search-name",
-    removeButton: "wa-icon-button",
+    removeButton: "wa-button",
   };
 
   connectedCallback() {
@@ -35,15 +35,18 @@ export class SearchItem extends NikElement {
         placeholder="Search"
         clearable
       ></wa-input>
-      <wa-icon-button
-        class="text-(length:--wa-font-size-l)"
-        variant="danger"
-        library="ion"
-        name="trash-outline"
-        label="Remove"
+      <wa-button
+        class="icon-button"
         appearance="plain"
+        variant="danger"
         @click=${this.handleClick}
-      ></wa-icon-button>
+        ><wa-icon
+          class="text-(length:--wa-font-size-l)"
+          library="ion"
+          name="trash-outline"
+          label="Remove"
+        ></wa-icon
+      ></wa-button>
     </div>`;
   }
 }

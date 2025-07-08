@@ -3,6 +3,28 @@
 @layer theme, base, components, utilities;
 @layer theme {
   :root, :host {
+    --color-red-50: oklch(97.1% 0.013 17.38);
+    --color-orange-50: oklch(98% 0.016 73.684);
+    --color-amber-50: oklch(98.7% 0.022 95.277);
+    --color-yellow-50: oklch(98.7% 0.026 102.212);
+    --color-lime-50: oklch(98.6% 0.031 120.757);
+    --color-green-50: oklch(98.2% 0.018 155.826);
+    --color-emerald-50: oklch(97.9% 0.021 166.113);
+    --color-teal-50: oklch(98.4% 0.014 180.72);
+    --color-cyan-50: oklch(98.4% 0.019 200.873);
+    --color-sky-50: oklch(97.7% 0.013 236.62);
+    --color-blue-50: oklch(97% 0.014 254.604);
+    --color-indigo-50: oklch(96.2% 0.018 272.314);
+    --color-violet-50: oklch(96.9% 0.016 293.756);
+    --color-purple-50: oklch(97.7% 0.014 308.299);
+    --color-fuchsia-50: oklch(97.7% 0.017 320.058);
+    --color-pink-50: oklch(97.1% 0.014 343.198);
+    --color-rose-50: oklch(96.9% 0.015 12.422);
+    --color-slate-50: oklch(98.4% 0.003 247.858);
+    --color-gray-50: oklch(98.5% 0.002 247.839);
+    --color-zinc-50: oklch(98.5% 0 0);
+    --color-neutral-50: oklch(98.5% 0 0);
+    --color-stone-50: oklch(98.5% 0.001 106.423);
     --spacing: 0.25rem;
     --text-9xl: 8rem;
     --text-9xl--line-height: 1;

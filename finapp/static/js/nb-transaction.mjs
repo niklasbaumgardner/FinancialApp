@@ -167,45 +167,57 @@ export class Transaction extends NikElement {
   editButtonsTempate() {
     return html`<wa-tooltip for="delete-transaction-${this.transaction.id}"
         >Delete</wa-tooltip
-      ><wa-icon-button
+      ><wa-button
+        class="icon-button"
         id="delete-transaction-${this.transaction.id}"
-        label="Delete"
-        library="ion"
-        name="trash-outline"
         variant="danger"
-        class="text-(length:--wa-font-size-l)"
+        appearance="plain"
         @click=${this.handleDeleteClick}
-      ></wa-icon-button
+        ><wa-icon
+          label="Delete"
+          library="ion"
+          name="trash-outline"
+          class="text-(length:--wa-font-size-l)"
+        ></wa-icon></wa-button
       ><wa-tooltip for="move-transaction-${this.transaction.id}"
         >Move Transaction</wa-tooltip
-      ><wa-icon-button
+      ><wa-button
+        class="icon-button"
         id="move-transaction-${this.transaction.id}"
         appearance="plain"
-        label="Move Transaction"
-        library="ion"
-        name="move-outline"
-        class="text-(length:--wa-font-size-l)"
         @click=${this.handleMoveTransactionClick}
-      ></wa-icon-button
+        ><wa-icon
+          label="Move Transaction"
+          library="ion"
+          name="move-outline"
+          class="text-(length:--wa-font-size-l)"
+        ></wa-icon></wa-button
       ><wa-tooltip for="save-button">Save</wa-tooltip
-      ><wa-icon-button
+      ><wa-button
+        class="icon-button"
         id="save-button"
-        label="Save"
-        library="ion"
-        name="save"
         variant="brand"
-        class="text-(length:--wa-font-size-l)"
+        appearance="plain"
         @click=${this.handleSaveClick}
-      ></wa-icon-button
+        ><wa-icon
+          label="Save"
+          library="ion"
+          name="save"
+          class="text-(length:--wa-font-size-l)"
+        ></wa-icon></wa-button
       ><wa-tooltip for="cancel-${this.transaction.id}">Cancel</wa-tooltip
-      ><wa-icon-button
+      ><wa-button
+        class="icon-button"
+        appearance="plain"
         id="cancel-${this.transaction.id}"
-        label="Cancel"
-        library="remix"
-        name="system/close-large-line"
-        class="text-(length:--wa-font-size-l)"
         @click=${this.setViewingState}
-      ></wa-icon-button>`;
+        ><wa-icon
+          label="Cancel"
+          library="remix"
+          name="system/close-large-line"
+          class="text-(length:--wa-font-size-l)"
+        ></wa-icon
+      ></wa-button>`;
   }
 
   viewButtonsTemplate() {
@@ -217,15 +229,19 @@ export class Transaction extends NikElement {
       <wa-tooltip for="edit-transaction-${this.transaction.id}"
         >Edit</wa-tooltip
       >
-      <wa-icon-button
+      <wa-button
+        class="icon-button"
         appearance="plain"
         variant="brand"
         id="edit-transaction-${this.transaction.id}"
-        library="ion"
-        name="create-outline"
-        class="text-(length:--wa-font-size-l)"
         @click=${this.setEditingState}
-      ></wa-icon-button>`;
+        ><wa-icon
+          library="ion"
+          name="create-outline"
+          label="Edit"
+          class="text-(length:--wa-font-size-l)"
+        ></wa-icon
+      ></wa-button>`;
   }
 
   viewTemplate() {
@@ -313,10 +329,7 @@ export class Transaction extends NikElement {
 
       <nb-categories-select
         .categories=${this.categories}
-        selected="${this.transaction.categories.reduce(
-          (acc, cur) => acc + " " + cur.category_id,
-          ""
-        )}"
+        .selected=${this.transaction.categories.map((c) => c.category_id)}
       ></nb-categories-select>
     </form>`;
   }

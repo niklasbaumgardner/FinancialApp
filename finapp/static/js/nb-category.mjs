@@ -29,15 +29,17 @@ export class Category extends NikElement {
     return html`<span class="tag ${this.color}" part="base"
       ><span>${this.name}</span>${this.removable
         ? html`
-            <wa-icon-button
+            <wa-button
               class="tag__remove"
-              name="system/close-large-line"
-              library="remix"
-              label="Remove"
-              class="tag__remove"
+              appearance="plain"
               @click=${this.handleRemoveClick}
               tabindex="-1"
-            ></wa-icon-button>
+              ><wa-icon
+                name="system/close-large-line"
+                library="remix"
+                label="Remove"
+              ></wa-icon
+            ></wa-button>
           `
         : ""}</span
     >`;

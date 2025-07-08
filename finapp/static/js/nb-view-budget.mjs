@@ -257,11 +257,11 @@ export class ViewBudget extends NikElement {
         <wa-button
           id="prev"
           appearance="filled outlined"
-          label="Previous page"
           value=${this.currentPage - 1}
           ?disabled=${this.currentPage === 1}
         >
           <wa-icon
+            label="Previous page"
             class="pointer-events-none"
             library="ion"
             name="chevron-back-outline"
@@ -271,11 +271,11 @@ export class ViewBudget extends NikElement {
         <wa-button
           id="next"
           appearance="filled outlined"
-          label="Next page"
           value=${this.currentPage + 1}
           ?disabled=${this.currentPage === this.numPages}
         >
           <wa-icon
+            label="Next page"
             class="pointer-events-none"
             library="ion"
             name="chevron-forward-outline"
@@ -312,17 +312,23 @@ export class ViewBudget extends NikElement {
                 ></wa-format-number>
               </h4>
             </div>
-            <div>
+            <div class="wa-cluster">
               ${this.sharedUsersTemplate()}<wa-tooltip for="share-budget-button"
                 >Share this budget</wa-tooltip
               >
-              <wa-icon-button
+              <wa-button
                 id="share-budget-button"
-                name="share-social-outline"
-                library="ion"
-                label="Share this budget"
+                class="icon-button"
+                appearance="plain"
+                size="small"
                 @click=${this.handleShareButtonClick}
-              ></wa-icon-button>
+                ><wa-icon
+                  name="share-social-outline"
+                  library="ion"
+                  label="Share this budget"
+                  class="text-(length:--wa-font-size-l)"
+                ></wa-icon
+              ></wa-button>
             </div>
           </div>
 

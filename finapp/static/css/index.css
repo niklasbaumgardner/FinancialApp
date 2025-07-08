@@ -39,52 +39,6 @@ nb-search-item {
   flex-grow: 1;
 }
 
-wa-icon-button {
-  &.danger,
-  &[variant="danger"] {
-    --wa-color-fill-loud: var(--wa-color-danger-fill-loud);
-    --wa-color-fill-normal: var(--wa-color-danger-fill-normal);
-    --wa-color-fill-quiet: var(--wa-color-danger-fill-quiet);
-    --wa-color-border-loud: var(--wa-color-danger-border-loud);
-    --wa-color-border-normal: var(--wa-color-danger-border-normal);
-    --wa-color-border-quiet: var(--wa-color-danger-border-quiet);
-    --wa-color-on-loud: var(--wa-color-danger-on-loud);
-    --wa-color-on-normal: var(--wa-color-danger-on-normal);
-    --wa-color-on-quiet: var(--wa-color-danger-on-quiet);
-
-    --background-color: transparent;
-    --background-color-hover: var(--wa-color-fill-quiet);
-    --background-color-active: color-mix(
-      in oklab,
-      var(--background-color-hover),
-      transparent 20%
-    );
-    --wa-color-text-quiet: var(--wa-color-on-quiet);
-  }
-
-  &.brand,
-  &[variant="brand"] {
-    --wa-color-fill-loud: var(--wa-color-brand-fill-loud);
-    --wa-color-fill-normal: var(--wa-color-brand-fill-normal);
-    --wa-color-fill-quiet: var(--wa-color-brand-fill-quiet);
-    --wa-color-border-loud: var(--wa-color-brand-border-loud);
-    --wa-color-border-normal: var(--wa-color-brand-border-normal);
-    --wa-color-border-quiet: var(--wa-color-brand-border-quiet);
-    --wa-color-on-loud: var(--wa-color-brand-on-loud);
-    --wa-color-on-normal: var(--wa-color-brand-on-normal);
-    --wa-color-on-quiet: var(--wa-color-brand-on-quiet);
-
-    --background-color: transparent;
-    --background-color-hover: var(--wa-color-fill-quiet);
-    --background-color-active: color-mix(
-      in oklab,
-      var(--background-color-hover),
-      transparent 20%
-    );
-    --wa-color-text-quiet: var(--wa-color-on-quiet);
-  }
-}
-
 wa-button.icon-button {
   line-height: normal;
 
@@ -92,6 +46,9 @@ wa-button.icon-button {
     padding: var(--wa-space-xs);
     width: auto;
     height: auto;
+  }
+
+  &.no-border::part(base) {
     border-width: 0;
   }
 }
@@ -157,3 +114,23 @@ nb-view-budgets {
   justify-content: center;
   align-items: center;
 }
+
+/* :root {
+  --wa-border-radius-scale: 0.7;
+  --wa-border-width-scale: 1;
+  --wa-space-scale: 0.75;
+} */
+
+/* :root,
+:host,
+html {
+  --wa-font-size-scale: 0.95;
+  --wa-form-control-height: round(
+    calc(
+      2 *
+        calc(1 * calc(1 * 0.5rem) + 0 * calc(1 * 0.75rem) + 0 * calc(1 * 1rem)) +
+        1em * 1.2
+    ),
+    1px
+  );
+} */

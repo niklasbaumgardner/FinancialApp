@@ -18,7 +18,7 @@ from sqlalchemy import delete, extract, insert, update, select
 def paginate_query(stmt, page):
     # transactions = transactions.paginate(page=page, per_page=10)
     total = db.session.execute(
-        select(func.count(Transaction.id)).select_from(stmt.subquery())
+        select(func.count()).select_from(stmt.subquery())
     ).scalar_one()
     num_pages = max(1, ((total - 1) // 10) + 1)
     stmt = stmt.limit(10).offset((page - 1) * 10)

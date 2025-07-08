@@ -104,19 +104,6 @@ input.amount-input-86 {
   background-clip: content-box;
 }
 
-button {
-  box-shadow: none !important;
-}
-
-.accordion-button:not(.collapsed)::after {
-  background-image: url("../images/accordian.svg") !important;
-  transform: rotate(-180deg);
-}
-
-.accordion-button::after {
-  background-image: url("../images/accordian.svg") !important;
-}
-
 a.disabled {
   pointer-events: none;
   cursor: default;

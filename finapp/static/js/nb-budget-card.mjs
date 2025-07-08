@@ -161,13 +161,17 @@ export class BudgetCard extends NikElement {
             <wa-tooltip for="cancel-budget-${this.budget.id}"
               >Cancel</wa-tooltip
             >
-            <wa-icon-button
+            <wa-button
+              class="icon-button"
+              appearance="plain"
               id="cancel-budget-${this.budget.id}"
-              name="system/close-large-line"
-              library="remix"
-              label="Cancel"
               @click=${this.handleCancelClick}
-            ></wa-icon-button>
+              ><wa-icon
+                name="system/close-large-line"
+                library="remix"
+                label="Cancel"
+              ></wa-icon
+            ></wa-button>
           </div>
         </div>
         <div class="wa-split">
@@ -222,6 +226,7 @@ export class BudgetCard extends NikElement {
           <div>
             <wa-tooltip for="edit-budget-${this.budget.id}">Edit</wa-tooltip>
             <wa-button
+              class="icon-button"
               appearance="plain"
               variant="brand"
               id="edit-budget-${this.budget.id}"
@@ -229,6 +234,7 @@ export class BudgetCard extends NikElement {
               ><wa-icon
                 library="ion"
                 name="create-outline"
+                label="Edit"
                 class="text-(length:--wa-font-size-m)"
               ></wa-icon
             ></wa-button>

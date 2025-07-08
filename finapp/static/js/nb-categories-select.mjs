@@ -6,7 +6,6 @@ import "./nb-category.mjs";
 export class BaseSelect extends WaSelect {
   constructor() {
     super();
-
     this.getTag = this.getTagFunction;
   }
 
@@ -22,7 +21,12 @@ export class BaseSelect extends WaSelect {
 
   handleTagRemove(event, directOption) {
     event.stopPropagation();
+
     if (this.disabled) return;
+
+    this.valueHasChanged = true;
+    this.hasInteracted = true;
+
     let option = directOption;
     if (!option) {
       const tagElement = event.target.closest("nb-category");
@@ -37,10 +41,15 @@ export class BaseSelect extends WaSelect {
         }
       }
     }
+
     if (option) {
       this.toggleOptionSelection(option, false);
+
+      // Emit after updating
       this.updateComplete.then(() => {
-        this.dispatchEvent(new InputEvent("input"));
+        this.dispatchEvent(
+          new InputEvent("input", { bubbles: true, composed: true })
+        );
         this.dispatchEvent(
           new Event("change", { bubbles: true, composed: true })
         );
@@ -66,7 +75,7 @@ export class CategoriesSelect extends NikElement {
   static properties = {
     categories: { type: Array },
     value: { type: Array },
-    selected: { type: String },
+    selected: { type: Array },
   };
 
   static get queries() {
@@ -92,12 +101,13 @@ export class CategoriesSelect extends NikElement {
       label="Select Categories"
       name="categories"
       max-options-visible="0"
-      value=${this.selected}
       multiple
-      clearable
+      with-clear
       >${this.categories.map(
         (c) =>
-          html`<wa-option value="${c.id}"
+          html`<wa-option
+            value="${c.id}"
+            ?selected=${this.selected?.includes(c.id)}
             ><nb-category name="${c.name}" color="${c.color}"></nb-category
           ></wa-option>`
       )}</nb-base-select
