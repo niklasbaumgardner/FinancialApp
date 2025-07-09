@@ -101,14 +101,14 @@ export class AddTransactionModal extends NikElement {
   }
 
   async budgetChange() {
+    if (!this.selectedBudget) {
+      return;
+    }
+
     let users = [this.selectedBudget.user];
     users.push(...this.selectedBudget.shared_users);
     users.sort((a, b) => a.username.localeCompare(b.username));
     this.sharedUsers = users;
-
-    this.usersSelect.value = "";
-    await this.usersSelect.updateComplete;
-    this.usersSelect.value = `${CURRENT_USER.id}`;
   }
 
   openCategoriesModal() {
