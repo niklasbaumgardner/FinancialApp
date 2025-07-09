@@ -4,6 +4,8 @@ import { html } from "./imports.mjs";
 export class Transfer extends NikElement {
   static properties = {
     budgets: { type: Array },
+    sourceOptions: { type: Array },
+    destOptions: { type: Array },
   };
 
   static queries = {
@@ -12,12 +14,27 @@ export class Transfer extends NikElement {
     destBudgetSelect: "#dest-budget",
   };
 
-  sourceOptionsTemplate() {
-    const availBudgets = Array.from(
+  get sourceBudgetOptions() {
+    return Array.from(
       this.budgets.filter((b) => b.id != this.destBudgetSelect?.value)
     );
+  }
 
-    return availBudgets.map(
+  get destBudgetOptions() {
+    return Array.from(
+      this.budgets.filter((b) => b.id != this.sourceBudgetSelect?.value)
+    );
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+
+    this.sourceOptions = this.sourceBudgetOptions;
+    this.destOptions = this.destBudgetOptions;
+  }
+
+  sourceOptionsTemplate() {
+    return this.sourceOptions.map(
       (b) => html`<wa-option value=${b.id}
         ><span class="wa-heading-s">${b.name}</span>:
         ${new Intl.NumberFormat(undefined, {
@@ -42,11 +59,7 @@ export class Transfer extends NikElement {
   }
 
   destOptionsTemplate() {
-    const availBudgets = Array.from(
-      this.budgets.filter((b) => b.id != this.sourceBudgetSelect?.value)
-    );
-
-    return availBudgets.map(
+    return this.destOptions.map(
       (b) => html`<wa-option value=${b.id}
         ><span class="wa-heading-s">${b.name}</span>:
         ${new Intl.NumberFormat(undefined, {
@@ -71,7 +84,8 @@ export class Transfer extends NikElement {
   }
 
   handleInput() {
-    this.requestUpdate();
+    this.sourceOptions = this.sourceBudgetOptions;
+    this.destOptions = this.destBudgetOptions;
   }
 
   render() {
@@ -85,7 +99,7 @@ export class Transfer extends NikElement {
           class="hidden"
           value=${CURRENT_DATE}
         />
-        <h2>Transfer money</h2>
+        <h2>Transfer</h2>
         <div class="wa-grid" style="--min-column-size: 20rem;">
           <wa-input
             label="Transaction name"
