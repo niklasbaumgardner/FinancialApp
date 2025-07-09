@@ -31,4 +31,8 @@ input:focus-visible + circle {
   border-radius: var(--wa-border-radius-circle);
   border: 1px solid;
   box-sizing: border-box;
+
+  background-color: var(--nb-category-background-color);
+  border-color: var(--nb-category-border-color);
+  color: var(--nb-category-color);
 }

@@ -10,9 +10,13 @@ nb-category {
   user-select: none;
   -webkit-user-select: none;
 
-  background-color: var(--color-gray-90);
-  border-color: var(--color-gray-60);
-  color: var(--color-gray-60);
+  --nb-category-background-color: var(--color-gray-90);
+  --nb-category-border-color: var(--color-gray-60);
+  --nb-category-color: var(--color-gray-60);
+
+  background-color: var(--nb-category-background-color);
+  border-color: var(--nb-category-border-color);
+  color: var(--nb-category-color);
 
   font-size: var(--wa-font-size-xs);
   line-height: var(--wa-line-height-expanded);
@@ -29,4 +33,136 @@ nb-category {
       border-width: 0;
     }
   }
+}
+
+.red {
+  --nb-category-background-color: var(--nb-category-red-background-color);
+  --nb-category-border-color: var(--nb-category-red-border-color);
+  --nb-category-color: var(--nb-category-red-color);
+}
+
+.orange {
+  --nb-category-background-color: var(--nb-category-orange-background-color);
+  --nb-category-border-color: var(--nb-category-orange-border-color);
+  --nb-category-color: var(--nb-category-orange-color);
+}
+
+.amber {
+  --nb-category-background-color: var(--nb-category-amber-background-color);
+  --nb-category-border-color: var(--nb-category-amber-border-color);
+  --nb-category-color: var(--nb-category-amber-color);
+}
+
+.yellow {
+  --nb-category-background-color: var(--nb-category-yellow-background-color);
+  --nb-category-border-color: var(--nb-category-yellow-border-color);
+  --nb-category-color: var(--nb-category-yellow-color);
+}
+
+.lime {
+  --nb-category-background-color: var(--nb-category-lime-background-color);
+  --nb-category-border-color: var(--nb-category-lime-border-color);
+  --nb-category-color: var(--nb-category-lime-color);
+}
+
+.green {
+  --nb-category-background-color: var(--nb-category-green-background-color);
+  --nb-category-border-color: var(--nb-category-green-border-color);
+  --nb-category-color: var(--nb-category-green-color);
+}
+
+.emerald {
+  --nb-category-background-color: var(--nb-category-emerald-background-color);
+  --nb-category-border-color: var(--nb-category-emerald-border-color);
+  --nb-category-color: var(--nb-category-emerald-color);
+}
+
+.teal {
+  --nb-category-background-color: var(--nb-category-teal-background-color);
+  --nb-category-border-color: var(--nb-category-teal-border-color);
+  --nb-category-color: var(--nb-category-teal-color);
+}
+
+.cyan {
+  --nb-category-background-color: var(--nb-category-cyan-background-color);
+  --nb-category-border-color: var(--nb-category-cyan-border-color);
+  --nb-category-color: var(--nb-category-cyan-color);
+}
+
+.sky {
+  --nb-category-background-color: var(--nb-category-sky-background-color);
+  --nb-category-border-color: var(--nb-category-sky-border-color);
+  --nb-category-color: var(--nb-category-sky-color);
+}
+
+.blue {
+  --nb-category-background-color: var(--nb-category-blue-background-color);
+  --nb-category-border-color: var(--nb-category-blue-border-color);
+  --nb-category-color: var(--nb-category-blue-color);
+}
+
+.indigo {
+  --nb-category-background-color: var(--nb-category-indigo-background-color);
+  --nb-category-border-color: var(--nb-category-indigo-border-color);
+  --nb-category-color: var(--nb-category-indigo-color);
+}
+
+.violet {
+  --nb-category-background-color: var(--nb-category-violet-background-color);
+  --nb-category-border-color: var(--nb-category-violet-border-color);
+  --nb-category-color: var(--nb-category-violet-color);
+}
+
+.purple {
+  --nb-category-background-color: var(--nb-category-purple-background-color);
+  --nb-category-border-color: var(--nb-category-purple-border-color);
+  --nb-category-color: var(--nb-category-purple-color);
+}
+
+.fuchsia {
+  --nb-category-background-color: var(--nb-category-fuchsia-background-color);
+  --nb-category-border-color: var(--nb-category-fuchsia-border-color);
+  --nb-category-color: var(--nb-category-fuchsia-color);
+}
+
+.pink {
+  --nb-category-background-color: var(--nb-category-pink-background-color);
+  --nb-category-border-color: var(--nb-category-pink-border-color);
+  --nb-category-color: var(--nb-category-pink-color);
+}
+
+.rose {
+  --nb-category-background-color: var(--nb-category-rose-background-color);
+  --nb-category-border-color: var(--nb-category-rose-border-color);
+  --nb-category-color: var(--nb-category-rose-color);
+}
+
+.slate {
+  --nb-category-background-color: var(--nb-category-slate-background-color);
+  --nb-category-border-color: var(--nb-category-slate-border-color);
+  --nb-category-color: var(--nb-category-slate-color);
+}
+
+.gray {
+  --nb-category-background-color: var(--nb-category-gray-background-color);
+  --nb-category-border-color: var(--nb-category-gray-border-color);
+  --nb-category-color: var(--nb-category-gray-color);
+}
+
+.zinc {
+  --nb-category-background-color: var(--nb-category-zinc-background-color);
+  --nb-category-border-color: var(--nb-category-zinc-border-color);
+  --nb-category-color: var(--nb-category-zinc-color);
+}
+
+.neutral {
+  --nb-category-background-color: var(--nb-category-neutral-background-color);
+  --nb-category-border-color: var(--nb-category-neutral-border-color);
+  --nb-category-color: var(--nb-category-neutral-color);
+}
+
+.stone {
+  --nb-category-background-color: var(--nb-category-stone-background-color);
+  --nb-category-border-color: var(--nb-category-stone-border-color);
+  --nb-category-color: var(--nb-category-stone-color);
 }

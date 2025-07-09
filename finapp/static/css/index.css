@@ -115,22 +115,8 @@ nb-view-budgets {
   align-items: center;
 }
 
-/* :root {
-  --wa-border-radius-scale: 0.7;
-  --wa-border-width-scale: 1;
-  --wa-space-scale: 0.75;
-} */
-
-/* :root,
+:root,
 :host,
 html {
-  --wa-font-size-scale: 0.95;
-  --wa-form-control-height: round(
-    calc(
-      2 *
-        calc(1 * calc(1 * 0.5rem) + 0 * calc(1 * 0.75rem) + 0 * calc(1 * 1rem)) +
-        1em * 1.2
-    ),
-    1px
-  );
-} */
+  --wa-form-control-padding-block: 0.65em;
+}
