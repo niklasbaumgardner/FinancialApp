@@ -46,16 +46,6 @@ def set_background_color():
     return {"success": True}
 
 
-@theme_bp.get("/set_color_contrast")
-def set_color_contrast():
-    if not current_user.is_authenticated:
-        return {}
-
-    color_contrast = request.args.get("color_contrast")
-    theme_queries.set_color_contrast(color_contrast=color_contrast)
-    return {"success": True}
-
-
 @theme_bp.get("/set_color_palette")
 def set_color_palette():
     if not current_user.is_authenticated:

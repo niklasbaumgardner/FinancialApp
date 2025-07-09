@@ -63,20 +63,6 @@ export const BACKGROUND_COLOR_LIST = [
   "rose",
 ];
 
-export const COLOR_CONTRAST_LIST = [
-  "default",
-  "classic",
-  "awesome",
-  "mellow",
-  "active",
-  "brutalist",
-  "glossy",
-  "matter",
-  "playful",
-  "premium",
-  "tailspin",
-];
-
 export const COLOR_PALETTE_LIST = [
   "default",
   "bright",
@@ -94,7 +80,6 @@ export class Theme {
   #mode;
   #primaryColor;
   #backgroundColor;
-  #colorContrast;
   #colorPalette;
   #initing;
 
@@ -104,7 +89,6 @@ export class Theme {
     this.mode = theme.mode;
     this.primaryColor = theme.primary_color;
     this.backgroundColor = theme.background_color;
-    this.colorContrast = theme.color_contrast;
     this.colorPalette = theme.color_palette;
 
     this.#initing = false;
@@ -130,10 +114,6 @@ export class Theme {
     return this.#backgroundColor;
   }
 
-  get colorContrast() {
-    return this.#colorContrast;
-  }
-
   get colorPalette() {
     return this.#colorPalette;
   }
@@ -148,7 +128,7 @@ export class Theme {
     if (THEME_LIST.includes(theme)) {
       this.#theme = theme;
     } else {
-      this.#theme = "classic";
+      this.#theme = THEME_LIST[0];
     }
 
     themeStorage.setItem("theme", this.theme);
@@ -263,40 +243,6 @@ export class Theme {
   }
 
   /**
-   * Sets the color contrast
-   */
-  set colorContrast(colorContrast) {
-    return;
-    if (colorContrast === this.colorContrast) {
-      return;
-    }
-
-    if (COLOR_CONTRAST_LIST.includes(colorContrast)) {
-      this.#colorContrast = colorContrast;
-    } else {
-      this.#colorContrast = null;
-    }
-
-    themeStorage.setItem("colorContrast", this.colorContrast);
-    document.getElementById("color-contrast-stylesheet").href = this
-      .colorContrast
-      ? `https://early.webawesome.com/webawesome@3.0.0-alpha.13/dist/styles/themes/${this.colorContrast}/color.css`
-      : "";
-
-    if (this.colorContrast) {
-      document.documentElement.classList.add(`wa-${this.colorContrast}`);
-    }
-
-    if (!this.#initing) {
-      fetch(
-        SET_COLOR_CONTRAST_URL +
-          "?" +
-          new URLSearchParams({ color_contrast: this.colorContrast })
-      );
-    }
-  }
-
-  /**
    * Sets the color palette
    */
   set colorPalette(colorPalette) {
@@ -315,9 +261,6 @@ export class Theme {
     }
 
     themeStorage.setItem("colorPalette", this.colorPalette);
-    // document.getElementById("color-pallete-stylesheet").href = this.colorPalette
-    //   ? `https://early.webawesome.com/webawesome@3.0.0-alpha.13/dist/styles/color/${this.colorPalette}.css`
-    //   : "";
 
     if (this.colorPalette) {
       document.documentElement.classList.add(`wa-palette-${this.colorPalette}`);
@@ -333,12 +276,12 @@ export class Theme {
   }
 
   makeDefault() {
-    this.theme = "classic";
+    this.theme = THEME_LIST[0];
     this.mode = "light";
   }
 
   migrateTheme(themeMode) {
-    this.theme = "classic";
+    this.theme = THEME_LIST[0];
     this.mode = themeMode;
   }
 }

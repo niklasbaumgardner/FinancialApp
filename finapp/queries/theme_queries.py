@@ -165,36 +165,6 @@ def set_background_color(background_color):
     return theme
 
 
-def set_color_contrast(color_contrast):
-    if not current_user.is_authenticated:
-        return
-
-    if color_contrast not in [
-        "default",
-        "classic",
-        "awesome",
-        "mellow",
-        "active",
-        "brutalist",
-        "glossy",
-        "matter",
-        "playful",
-        "premium",
-        "tailspin",
-    ]:
-        color_contrast = None
-
-    theme = get_theme()
-
-    if theme:
-        theme.color_contrast = color_contrast
-        db.session.commit()
-    else:
-        create_theme(theme="classic", mode="light", color_contrast=color_contrast)
-
-    return theme
-
-
 def set_color_palette(color_palette):
     if not current_user.is_authenticated:
         return
