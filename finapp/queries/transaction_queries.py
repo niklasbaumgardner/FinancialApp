@@ -115,9 +115,9 @@ def create_transaction(
     user_ids = set([user_id, current_user.id])
 
     can_add_transaction = True
-    for user_id in user_ids:
+    for u_id in user_ids:
         can_modify = budget_queries.can_user_modify_budget(
-            budget_id=budget_id, user_id=user_id
+            budget_id=budget_id, user_id=u_id
         )
         can_add_transaction = can_add_transaction and can_modify
 
@@ -354,9 +354,9 @@ def update_transaction(
     budget_ids = [id for id in set([budget_id, new_budget_id]) if id is not None]
 
     can_add_transaction = True
-    for user_id in user_ids:
+    for u_id in user_ids:
         can_modify = budget_queries.can_user_modify_budgets(
-            budget_ids=budget_ids, user_id=user_id
+            budget_ids=budget_ids, user_id=u_id
         )
         can_add_transaction = can_add_transaction and can_modify
 
