@@ -52,6 +52,7 @@ def get_shared_paychecks():
         select(Paycheck)
         .where(Paycheck.id.in_(paycheck_ids))
         .order_by(Paycheck.date.desc(), Paycheck.total)
+        .limit(10)
     )
 
     return db.session.scalars(stmt).unique().all()

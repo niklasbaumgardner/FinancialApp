@@ -248,7 +248,7 @@ export class ViewBudget extends NikElement {
     }
 
     return html`<div class="wa-split">
-      <span class="wa-caption-l">${paginationResultsText}</span>
+      <span class="wa-body-m">${paginationResultsText}</span>
 
       <wa-button-group
         orientation="horizontal"
