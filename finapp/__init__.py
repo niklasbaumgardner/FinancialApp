@@ -8,17 +8,12 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.pool import NullPool
 import sentry_sdk
 import os
+from flask_compress import Compress
 # from sqlalchemy import event
 # from sqlalchemy.engine import Engine
 # import time
 # import logging
 
-
-bcrypt = Bcrypt()
-migrate = Migrate()
-mail = Mail()
-login_manager = LoginManager()
-db = SQLAlchemy(engine_options=dict(poolclass=NullPool))
 
 if not os.environ.get("FLASK_DEBUG"):
     sentry_sdk.init(
@@ -32,7 +27,7 @@ if not os.environ.get("FLASK_DEBUG"):
             # possible.
             "continuous_profiling_auto_start": True,
         },
-        release="nbfinancial@1.1.8",
+        release="nbfinancial@1.1.9",
     )
 
 
@@ -40,13 +35,23 @@ app = Flask(__name__)
 
 app.config.from_object(Config)
 
+db = SQLAlchemy(engine_options=dict(poolclass=NullPool))
 db.init_app(app)
+
+bcrypt = Bcrypt()
 bcrypt.init_app(app)
+
+login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "auth_bp.login"
 login_manager.login_message_category = "alert-primary"
 
+mail = Mail()
 mail.init_app(app)
+
+compress = Compress()
+compress.init_app(app)
+
 
 # logging.basicConfig()
 # logger = logging.getLogger("postgres.budgets")
@@ -105,4 +110,5 @@ app.register_blueprint(context_processor_blueprint)
 with app.app_context():
     db.create_all()
 
+migrate = Migrate()
 migrate.init_app(app, db)
