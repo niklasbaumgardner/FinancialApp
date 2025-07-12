@@ -9,7 +9,8 @@ class Config:
     MAIL_USE_TLS = True
     MAIL_USERNAME = os.environ.get("EMAIL_USER")
     MAIL_PASSWORD = os.environ.get("EMAIL_PASS")
-    MAIL_DEFAULT_SENDER = MAIL_USERNAME
+    MAIL_DEFAULT_SENDER = ("NB Budgets", "budgets@niklasb.com")
+    ERROR_LOGGING_EMAIL = os.environ.get("ERROR_LOGGING_EMAIL")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     REMEMBER_COOKIE_NAME = os.environ.get("REMEMBER_COOKIE_NAME")
     REMEMBER_COOKIE_DOMAIN = os.environ.get("COOKIE_DOMAIN")
