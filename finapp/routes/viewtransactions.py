@@ -3,7 +3,7 @@ from finapp.queries import (
     budget_queries,
     transaction_queries,
 )
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request
 from flask_login import login_required
 
 
@@ -37,7 +37,15 @@ def view_transactions():
 @viewtransactions_bp.get("/api/get_transactions")
 @login_required
 def api_get_transactions():
+    include_budgets = request.args.get("includeBudgets")
+    include_budgets = include_budgets and include_budgets == "True"
+
     transactions, _ = transaction_queries.get_recent_transactions()
     transactions = [t.to_dict() for t in transactions]
+
+    if include_budgets:
+        budgets = [b.to_dict() for b in budget_queries.get_budgets()]
+
+        return dict(transactions=transactions, budgets=budgets)
 
     return dict(transactions=transactions)

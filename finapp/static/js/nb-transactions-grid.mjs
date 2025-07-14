@@ -96,20 +96,64 @@ export class TransactionsGrid extends NikElement {
     super.connectedCallback();
 
     document.addEventListener("UpdateTransactions", this);
+    document.addEventListener("UpdateTransaction", this);
+    document.addEventListener("AddTransaction", this);
   }
 
   handleEvent(event) {
     switch (event.type) {
-      case "UpdateTransactions":
+      case "UpdateTransactions": {
         let transactions = event.detail.transactions;
         this.updateTransactions(transactions);
         break;
+      }
+      case "UpdateTransaction": {
+        let transaction = event.detail.transaction;
+        this.updateTransaction(transaction);
+        break;
+      }
+      case "AddTransaction": {
+        let transaction = event.detail.transaction;
+        this.addTransaction(transaction);
+        break;
+      }
     }
   }
 
   updateTransactions(transactions) {
     this.transactions = transactions;
     this.dataGrid.setGridOption("rowData", transactions);
+  }
+
+  updateTransaction(transaction) {
+    let transactionNode = this.dataGrid.getRowNode(transaction.id);
+    transactionNode.updateData(transaction);
+
+    this.requestNewData();
+  }
+
+  addTransaction(transaction) {
+    let index = this.transactions.findIndex((t) => {
+      if (transaction.date >= t.date) {
+        return true;
+      }
+
+      return false;
+    });
+
+    if (index < 0) {
+      this.requestNewData();
+      return;
+    }
+
+    this.transactions.splice(index, 0, transaction);
+    this.dataGrid.setGridOption("rowData", this.transactions);
+
+    this.requestNewData();
+  }
+
+  requestNewData() {
+    document.dispatchEvent(new CustomEvent("RequestNewData"));
   }
 
   createDataGrid() {
@@ -299,6 +343,7 @@ export class TransactionsGrid extends NikElement {
       paginationPageSize: 20,
       paginationPageSizeSelector: false,
       theme: agGrid.themeAlpine.withPart(this.currentColorScheme),
+      getRowId: (params) => params.data.id,
     };
     this.dataGrid = agGrid.createGrid(this.transactionsGridEl, gridOptions);
   }

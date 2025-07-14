@@ -151,9 +151,11 @@ def create_transaction(
         if commit:
             db.session.commit()
 
+    return transaction_id
+
 
 def bulk_create_transactions(transactions, commit=True):
-    budget_ids = [t["budget_id"] for t in transactions]
+    budget_ids = set([t["budget_id"] for t in transactions])
     if budget_queries.can_modify_budgets(budget_ids=budget_ids):
         stmt = insert(Transaction).values(transactions)
         db.session.execute(stmt)
@@ -165,9 +167,11 @@ def bulk_create_transactions(transactions, commit=True):
             db.session.commit()
 
 
-def get_transaction(transaction_id):
+def get_transaction(transaction_id, include_budget=False):
     return db.session.scalars(
-        get_transaction_query(transaction_id=transaction_id).limit(1)
+        get_transaction_query(
+            transaction_id=transaction_id, include_budget=include_budget
+        ).limit(1)
     ).first()
 
 

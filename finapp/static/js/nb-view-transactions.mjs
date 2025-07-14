@@ -21,29 +21,43 @@ class ViewTransactions extends NikElement {
     this.requestData();
 
     document.addEventListener("UpdateBudgets", this);
+    document.addEventListener("RequestNewData", this);
   }
 
   handleEvent(event) {
     switch (event.type) {
-      case "UpdateBudgets":
+      case "UpdateBudgets": {
         let budgets = event.detail.budgets;
-        for (let budget of budgets) {
-          let budgetIndex = this.budgets.findIndex((b) => b.id === budget.id);
-          if (budgetIndex === -1) {
-            continue;
-          }
-          this.budgets[budgetIndex] = budget;
-        }
-
-        if (this.addTransactionModal) {
-          this.addTransactionModal.budgets = this.budgets;
-        }
+        this.updateBudgets(budgets);
         break;
+      }
+      case "RequestNewData": {
+        this.requestData();
+        break;
+      }
     }
   }
 
-  async requestData() {
-    let response = await fetch(VIEW_TRANSACTIONS_CONTENT_URL);
+  updateBudgets(budgets) {
+    for (let budget of budgets) {
+      let budgetIndex = this.budgets.findIndex((b) => b.id === budget.id);
+      if (budgetIndex === -1) {
+        continue;
+      }
+      this.budgets[budgetIndex] = budget;
+    }
+
+    if (this.addTransactionModal) {
+      this.addTransactionModal.budgets = this.budgets;
+    }
+  }
+
+  async requestData(includeBudgets = false) {
+    let url = VIEW_TRANSACTIONS_CONTENT_URL;
+    if (includeBudgets) {
+      url += "?includeBudgets=True";
+    }
+    let response = await fetch(url);
     let data = await response.json();
 
     let { transactions } = data;
@@ -55,6 +69,11 @@ class ViewTransactions extends NikElement {
         detail: { transactions },
       })
     );
+
+    if (includeBudgets) {
+      let { budgets } = data;
+      this.updateBudgets(budgets);
+    }
   }
 
   addTransactionClick() {

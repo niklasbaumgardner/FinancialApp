@@ -76,6 +76,9 @@ def get_budget(budget_id, shared=True, query=False, first_or_404=True):
 
 
 def can_user_modify_budgets(budget_ids, user_id):
+    if type(budget_ids) is not set:
+        budget_ids = set(budget_ids)
+
     stmt = (
         select(func.count(Budget.id))
         .outerjoin(SharedBudget, Budget.id == SharedBudget.budget_id)

@@ -105,13 +105,13 @@ export class EditTransactionModal extends AddTransactionModal {
       body: formData,
     });
 
-    let { transactions } = await response.json();
+    let { transaction } = await response.json();
 
     document.dispatchEvent(
-      new CustomEvent("UpdateTransactions", {
+      new CustomEvent("UpdateTransaction", {
         bubbles: true,
         composed: true,
-        detail: { transactions },
+        detail: { transaction },
       })
     );
 
@@ -176,7 +176,7 @@ export class EditTransactionModal extends AddTransactionModal {
     >
       <form class="wa-stack">
         <input
-          name="return-transactions"
+          name="return-transaction"
           type="text"
           class="hidden!"
           value="True"

@@ -79,21 +79,13 @@ export class AddTransactionModal extends NikElement {
       body: formData,
     });
 
-    let { transactions, budgets } = await response.json();
+    let { transaction } = await response.json();
 
     document.dispatchEvent(
-      new CustomEvent("UpdateTransactions", {
+      new CustomEvent("AddTransaction", {
         bubbles: true,
         composed: true,
-        detail: { transactions },
-      })
-    );
-
-    document.dispatchEvent(
-      new CustomEvent("UpdateBudgets", {
-        bubbles: true,
-        composed: true,
-        detail: { budgets },
+        detail: { transaction },
       })
     );
 
@@ -168,7 +160,7 @@ export class AddTransactionModal extends NikElement {
     >
       <form class="wa-stack">
         <input
-          name="return-transactions"
+          name="return-transaction"
           type="text"
           class="hidden!"
           value="True"

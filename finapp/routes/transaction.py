@@ -21,9 +21,12 @@ def add_transaction(budget_id):
     return_transactions = request.form.get("return-transactions")
     return_transactions = return_transactions and return_transactions == "True"
 
+    return_transaction = request.form.get("return-transaction")
+    return_transaction = return_transaction and return_transaction == "True"
+
     categories = request.form.getlist("categories")
 
-    transaction_queries.create_transaction(
+    transaction_id = transaction_queries.create_transaction(
         user_id=user_id,
         name=name,
         amount=amount,
@@ -32,17 +35,11 @@ def add_transaction(budget_id):
         categories=categories,
     )
 
-    # # TODO: Think about this
-    # can_add_transaction = user_id == current_user.id
-    # if user_id != current_user.id:
-    #     can_add_transaction = budget_queries.can_user_modify_budget(
-    #         budget_id=budget_id, user_id=user_id
-    #     )
-
-    # if not can_add_transaction:
-    #     return redirect(url_for("viewbudgets_bp.viewbudgets"))
-
-    # if name is not None and amount is not None and budget_id is not None:
+    if return_transaction:
+        transaction = transaction_queries.get_transaction(
+            transaction_id=transaction_id, include_budget=True
+        )
+        return dict(transaction=transaction.to_dict())
 
     if return_transactions:
         transactions, _ = transaction_queries.get_recent_transactions()
@@ -60,13 +57,16 @@ def add_transaction(budget_id):
 def edit_transaction(b_id, t_id):
     name = request.form.get("name")
     amount = request.form.get("amount", type=float)
-    # new_budget_id = request.form.get("budget", type=int)
+    new_budget_id = request.form.get("budget", type=int)
     user_id = request.form.get("user", type=int, default=current_user.id)
     date = request.form.get("date")
     page = request.form.get("page")
     page = page if page else 1
     return_transactions = request.form.get("return-transactions")
     return_transactions = return_transactions and return_transactions == "True"
+
+    return_transaction = request.form.get("return-transaction")
+    return_transaction = return_transaction and return_transaction == "True"
 
     categories_added = request.form.getlist("categoriesAdded")
     categories_deleted = request.form.getlist("categoriesDeleted")
@@ -76,7 +76,7 @@ def edit_transaction(b_id, t_id):
     transaction_queries.update_transaction(
         budget_id=b_id,
         transaction_id=t_id,
-        # new_budget_id=new_budget_id,
+        new_budget_id=new_budget_id,
         user_id=user_id,
         name=name,
         amount=amount,
@@ -85,12 +85,14 @@ def edit_transaction(b_id, t_id):
         categories_deleted=categories_deleted,
     )
 
+    if return_transaction:
+        transaction = transaction_queries.get_transaction(
+            transaction_id=t_id, include_budget=True
+        )
+        return dict(transaction=transaction.to_dict())
+
     if return_transactions:
         transactions, _ = transaction_queries.get_recent_transactions()
-        # budgets = [
-        #     budget_queries.get_budget(budget_id=b).to_dict()
-        #     for b in set([b_id, new_budget_id])
-        # ]
         budgets = [budget_queries.get_budget(budget_id=b_id).to_dict()]
 
         return dict(transactions=[t.to_dict() for t in transactions], budgets=budgets)
@@ -115,7 +117,6 @@ def move_transaction(sb_id, t_id):
     return {"success": True}
 
 
-# @transaction_bp.route("/delete_transaction/<int:b_id>/<int:t_id>", methods=["DELETE"])
 @transaction_bp.delete("/delete_transaction/<int:b_id>/<int:t_id>")
 @login_required
 def delete_transaction(b_id, t_id):
