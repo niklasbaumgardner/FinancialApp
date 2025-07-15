@@ -32,7 +32,8 @@ class ViewTransactions extends NikElement {
         break;
       }
       case "RequestNewData": {
-        this.requestData();
+        let includeBudgets = event.detail.includeBudgets;
+        this.requestData(includeBudgets);
         break;
       }
     }

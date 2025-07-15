@@ -153,7 +153,9 @@ export class TransactionsGrid extends NikElement {
   }
 
   requestNewData() {
-    document.dispatchEvent(new CustomEvent("RequestNewData"));
+    document.dispatchEvent(
+      new CustomEvent("RequestNewData", { detail: { includeBudgets: true } })
+    );
   }
 
   createDataGrid() {
