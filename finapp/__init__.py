@@ -11,9 +11,6 @@ from sqlalchemy.pool import NullPool
 import sentry_sdk
 import os
 from flask_compress import Compress
-import logging
-from logging.handlers import SMTPHandler
-import traceback
 # from sqlalchemy import event
 # from sqlalchemy.engine import Engine
 # import time
@@ -23,40 +20,20 @@ import traceback
 app = Flask(__name__)
 
 
-if True or not os.environ.get("FLASK_DEBUG"):
-    # sentry_sdk.init(
-    #     dsn=os.environ.get("SENTRY_DSN"),
-    #     # Set traces_sample_rate to 1.0 to capture 100%
-    #     # of transactions for tracing.
-    #     traces_sample_rate=1.0,
-    #     _experiments={
-    #         # Set continuous_profiling_auto_start to True
-    #         # to automatically start the profiler on whenpip
-    #         # possible.
-    #         "continuous_profiling_auto_start": True,
-    #     },
-    #     release="nbfinancial@1.1.9",
-    # )
-
-    mail_handler = SMTPHandler(
-        mailhost=(Config.MAIL_SERVER, Config.MAIL_PORT),
-        fromaddr=Config.MAIL_DEFAULT_SENDER[1],
-        toaddrs=[Config.ERROR_LOGGING_EMAIL],
-        subject="NB Budgets Application Error",
-        credentials=(Config.MAIL_USERNAME, Config.MAIL_PASSWORD),
-        secure=(),
+if not os.environ.get("FLASK_DEBUG"):
+    sentry_sdk.init(
+        dsn=os.environ.get("SENTRY_DSN"),
+        # Set traces_sample_rate to 1.0 to capture 100%
+        # of transactions for tracing.
+        traces_sample_rate=1.0,
+        # To collect profiles for all profile sessions,
+        # set `profile_session_sample_rate` to 1.0.
+        profile_session_sample_rate=1.0,
+        # Profiles will be automatically collected while
+        # there is an active span.
+        profile_lifecycle="trace",
+        release="nbfinancial@1.1.10",
     )
-    mail_handler.setLevel(logging.ERROR)
-    mail_handler.setFormatter(
-        logging.Formatter("[%(asctime)s] %(levelname)s in %(module)s: %(message)s")
-    )
-
-    app.logger.addHandler(mail_handler)
-
-    @app.errorhandler(Exception)
-    def handle_exception(e):
-        app.logger.error("\n" + traceback.format_exc() + "\n")
-        return "<h1>Internal Server Error</h1>", 500
 
 
 app.config.from_object(Config)
