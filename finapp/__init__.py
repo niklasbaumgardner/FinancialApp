@@ -23,19 +23,13 @@ class Base(DeclarativeBase):
 app = Flask(__name__)
 
 
-if True or not os.environ.get("FLASK_DEBUG"):
+if not os.environ.get("FLASK_DEBUG"):
     sentry_sdk.init(
         dsn=os.environ.get("SENTRY_DSN"),
-        # Set traces_sample_rate to 1.0 to capture 100%
-        # of transactions for tracing.
-        traces_sample_rate=1.0,
-        # To collect profiles for all profile sessions,
-        # set `profile_session_sample_rate` to 1.0.
-        profile_session_sample_rate=1.0,
-        # Profiles will be automatically collected while
-        # there is an active span.
-        profile_lifecycle="trace",
-        release="nbfinancial@1.1.11",
+        send_default_pii=True,
+        max_request_body_size="always",
+        traces_sample_rate=0,
+        release="nb-budgets@1.1.11",
     )
 
 
