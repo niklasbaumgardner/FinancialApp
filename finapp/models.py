@@ -4,15 +4,11 @@ from itsdangerous import URLSafeTimedSerializer
 import os
 from finapp import db, login_manager
 from sqlalchemy_serializer import SerializerMixin
-from sqlalchemy.orm import DeclarativeBase, relationship, mapped_column, Mapped
+from sqlalchemy.orm import relationship, mapped_column, Mapped
 from sqlalchemy import ForeignKey, UniqueConstraint
 from typing import List, Optional
 from datetime import date as date_type
 from typing_extensions import Annotated
-
-
-class Base(DeclarativeBase):
-    pass
 
 
 int_pk = Annotated[int, mapped_column(primary_key=True)]
@@ -24,7 +20,7 @@ def load_user(id):
     return db.session.get(User, int(id))
 
 
-class User(Base, UserMixin, SerializerMixin):
+class User(db.Model, UserMixin, SerializerMixin):
     __tablename__ = "user"
 
     serialize_only = ("id", "username", "email")
@@ -48,7 +44,7 @@ class User(Base, UserMixin, SerializerMixin):
         return db.session.get(User, user_id)
 
 
-class Theme(Base, SerializerMixin):
+class Theme(db.Model, SerializerMixin):
     __tablename__ = "theme"
 
     serialize_rules = (
@@ -66,7 +62,7 @@ class Theme(Base, SerializerMixin):
     color_palette: Mapped[Optional[str]]  # web-awesome values
 
 
-class Budget(Base, SerializerMixin):
+class Budget(db.Model, SerializerMixin):
     __tablename__ = "budget"
 
     serialize_rules = (
@@ -134,7 +130,7 @@ class Budget(Base, SerializerMixin):
         return obj
 
 
-class SharedBudget(Base, SerializerMixin):
+class SharedBudget(db.Model, SerializerMixin):
     __tablename__ = "shared_budget"
 
     id: Mapped[int_pk]
@@ -144,7 +140,7 @@ class SharedBudget(Base, SerializerMixin):
     budget: Mapped["Budget"] = relationship(lazy="joined", viewonly=True)
 
 
-class Transaction(Base, SerializerMixin):
+class Transaction(db.Model, SerializerMixin):
     __tablename__ = "transaction"
 
     serialize_rules = (
@@ -187,7 +183,7 @@ class Transaction(Base, SerializerMixin):
         )
 
 
-class Paycheck(Base, SerializerMixin):
+class Paycheck(db.Model, SerializerMixin):
     __tablename__ = "paycheck"
 
     id: Mapped[int_pk]
@@ -200,7 +196,7 @@ class Paycheck(Base, SerializerMixin):
     )
 
 
-class Category(Base, SerializerMixin):
+class Category(db.Model, SerializerMixin):
     __tablename__ = "category"
     __table_args__ = (UniqueConstraint("user_id", "name"),)
 
@@ -210,7 +206,7 @@ class Category(Base, SerializerMixin):
     color: Mapped[str]
 
 
-class TransactionCategory(Base, SerializerMixin):
+class TransactionCategory(db.Model, SerializerMixin):
     __tablename__ = "transaction_category"
     __table_args__ = (UniqueConstraint("transaction_id", "category_id"),)
 

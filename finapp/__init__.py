@@ -1,12 +1,11 @@
-from ast import Tuple
-from csv import Error
-from flask import Flask, abort
+from flask import Flask
 from flask_bcrypt import Bcrypt
 from finapp.config import Config
 from flask_migrate import Migrate
 from flask_mail import Mail
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.pool import NullPool
 import sentry_sdk
 import os
@@ -17,10 +16,14 @@ from flask_compress import Compress
 # import logging
 
 
+class Base(DeclarativeBase):
+    pass
+
+
 app = Flask(__name__)
 
 
-if not os.environ.get("FLASK_DEBUG"):
+if True or not os.environ.get("FLASK_DEBUG"):
     sentry_sdk.init(
         dsn=os.environ.get("SENTRY_DSN"),
         # Set traces_sample_rate to 1.0 to capture 100%
@@ -32,13 +35,13 @@ if not os.environ.get("FLASK_DEBUG"):
         # Profiles will be automatically collected while
         # there is an active span.
         profile_lifecycle="trace",
-        release="nbfinancial@1.1.10",
+        release="nbfinancial@1.1.11",
     )
 
 
 app.config.from_object(Config)
 
-db = SQLAlchemy(engine_options=dict(poolclass=NullPool))
+db = SQLAlchemy(engine_options=dict(poolclass=NullPool, future=True), model_class=Base)
 db.init_app(app)
 
 bcrypt = Bcrypt()
