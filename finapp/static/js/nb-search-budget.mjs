@@ -22,6 +22,7 @@ export class SearchBudget extends NikElement {
     this.searchItems = [document.createElement("nb-search-item")];
     this.exactAmount = true;
     this.exactDate = true;
+    this.searchTotal = 0;
 
     document.addEventListener("SearchTotalChanged", (event) =>
       this.handleSearchTotalChanged(event)
@@ -34,6 +35,7 @@ export class SearchBudget extends NikElement {
     exactAmount: { type: Boolean, reflect: true },
     exactDate: { type: Boolean, reflect: true },
     categories: { type: Array },
+    searchTotal: { type: Number },
   };
 
   static get queries() {
@@ -47,7 +49,6 @@ export class SearchBudget extends NikElement {
       startDateInput: "#startDate",
       endDateInput: "#endDate",
       searchCountEl: "#searchResultsCount",
-      searchSumEl: "#searchResultsSum",
       nbSelect: "nb-categories-select",
     };
   }
@@ -214,7 +215,7 @@ export class SearchBudget extends NikElement {
     let { searchCount, searchSum } = event.detail;
     this.searchCountEl.textContent =
       searchCount === 1 ? "1 transaction" : `${searchCount} transactions`;
-    this.searchSumEl.textContent = searchSum;
+    this.searchTotal = Math.round((searchSum + Number.EPSILON) * 100) / 100;
   }
 
   sortTemplate() {
@@ -401,7 +402,14 @@ export class SearchBudget extends NikElement {
         ${this.sortTemplate()}
         <span class="wa-body-l">
           <span id="searchResultsCount">0 transactions</span> totalling
-          <span class="wa-heading-m" id="searchResultsSum">$0</span>
+          <span class="wa-heading-m"
+            ><wa-format-number
+              type="currency"
+              currency="USD"
+              value=${this.searchTotal}
+              lang="en-US"
+            ></wa-format-number
+          ></span>
         </span>
         <wa-button
           class="icon-button"

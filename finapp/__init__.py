@@ -29,7 +29,7 @@ if not os.environ.get("FLASK_DEBUG"):
         send_default_pii=True,
         max_request_body_size="always",
         traces_sample_rate=0,
-        release="nb-budgets@1.1.11",
+        release="nb-budgets@1.1.12",
     )
 
 

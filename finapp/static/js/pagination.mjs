@@ -169,13 +169,13 @@ export class Pagination {
 
     this.numPages = data.num_pages;
 
-    // if (data.search_sum) {
-    //   document.dispatchEvent(
-    //     new CustomEvent("SearchTotalChanged", {
-    //       detail: { searchSum: data.search_sum, searchCount: data.total },
-    //     })
-    //   );
-    // }
+    if (data.search_sum) {
+      document.dispatchEvent(
+        new CustomEvent("SearchTotalChanged", {
+          detail: { searchSum: data.search_sum, searchCount: data.total },
+        })
+      );
+    }
 
     this.pageMap[this.currentPage] = data.transactions;
 

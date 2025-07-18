@@ -8,7 +8,7 @@ from finapp import db
 from flask_login import current_user
 from sqlalchemy.sql import func, or_, and_
 from sqlalchemy.orm import noload
-from sqlalchemy import delete, extract, insert, update, select
+from sqlalchemy import delete, exists, extract, insert, update, select
 
 
 ## Helper functions
@@ -505,10 +505,29 @@ def search(
             )
     if categories:
         stmt = (
-            stmt.where(Transaction.category_id.in_(categories))
+            stmt.join(
+                TransactionCategory,
+                Transaction.id == TransactionCategory.transaction_id,
+            ).where(
+                and_(
+                    Transaction.id == TransactionCategory.transaction_id,
+                    TransactionCategory.category_id.in_(categories),
+                )
+            )
             if stmt
-            else select(Transaction).where(Transaction.category_id.in_(categories))
+            else select(Transaction)
+            .join(
+                TransactionCategory,
+                Transaction.id == TransactionCategory.transaction_id,
+            )
+            .where(
+                and_(
+                    Transaction.id == TransactionCategory.transaction_id,
+                    TransactionCategory.category_id.in_(categories),
+                )
+            )
         )
+
     if start_date:
         stmt = (
             stmt.where(Transaction.date >= start_date)
@@ -536,7 +555,7 @@ def search(
         stmt = get_transactions_query(stmt=stmt)
 
         search_sum = db.session.execute(
-            select(func.sum(Transaction.amount)).select_from(stmt.subquery())
+            select(func.sum(stmt.subquery().c.amount))
         ).scalar_one()
 
         stmt = sort_transactions(sort_by=sort_by, transactions_query=stmt)

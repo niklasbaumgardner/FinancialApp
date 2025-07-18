@@ -161,5 +161,5 @@ def search(b_id):
         "transactions": transactions,
         "total": total,
         "num_pages": num_pages,
-        "search_sum": helpers.format_to_money_string(search_sum),
+        "search_sum": search_sum,
     }
