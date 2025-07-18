@@ -86,8 +86,12 @@ export class CategoriesSelect extends NikElement {
 
   get value() {
     let arrOfStrings = this.select.value;
-    // Convert to array of ints
-    return arrOfStrings.map((x) => parseInt(x, 10)).filter(Number);
+    if (arrOfStrings) {
+      // Convert to array of ints
+      return arrOfStrings.map((x) => parseInt(x, 10)).filter(Number);
+    } else {
+      return [];
+    }
   }
 
   connectedCallback() {
