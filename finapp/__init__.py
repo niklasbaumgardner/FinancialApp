@@ -26,10 +26,9 @@ app = Flask(__name__)
 if not os.environ.get("FLASK_DEBUG"):
     sentry_sdk.init(
         dsn=os.environ.get("SENTRY_DSN"),
-        send_default_pii=True,
-        max_request_body_size="always",
-        traces_sample_rate=0,
-        release="nb-budgets@1.1.12",
+        traces_sample_rate=1.0,
+        _experiments={"enable_logs": True},
+        release="nb-budgets@1.1.13",
     )
 
 
