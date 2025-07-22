@@ -1,7 +1,7 @@
 import { html, WaSelect } from "./bundle.mjs";
 import { NikElement } from "./nik-element.mjs";
 import "./nb-category.mjs";
-console.log(WaSelect);
+
 export class BaseSelect extends WaSelect {
   constructor() {
     super();
@@ -84,7 +84,7 @@ export class CategoriesSelect extends NikElement {
   }
 
   get value() {
-    let arrOfStrings = this.select.value;
+    let arrOfStrings = this.select?.value;
     if (arrOfStrings) {
       // Convert to array of ints
       return arrOfStrings.map((x) => parseInt(x, 10)).filter(Number);
