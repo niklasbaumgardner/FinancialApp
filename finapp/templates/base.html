@@ -13,108 +13,9 @@
     <link rel="manifest" href="/static/manifest.webmanifest" />
 
     <link href="/static/css/all-out.css" rel="stylesheet" />
+    <link href="/static/css/tw-out.css" rel="stylesheet" />
 
     <link rel="icon" type="image/png" href="/static/images/logo.svg" />
-
-    <link rel="preconnect" href="https://cdn.jsdelivr.net/" />
-    <link rel="preconnect" href="https://early.webawesome.com/" />
-
-    <!-- Webawesome components -->
-    <link
-      id="theme-stylesheet"
-      rel="stylesheet"
-      href="https://early.webawesome.com/webawesome@3.0.0-beta.2/dist/styles/themes/{{ theme.theme }}.css"
-      render="blocking"
-      fetchpriority="high"
-    />
-    <!-- <link
-      id="color-contrast-stylesheet"
-      rel="stylesheet"
-      href="https://early.webawesome.com/webawesome@3.0.0-alpha.13/dist/styles/themes/{{ theme.color_contrast }}/color.css"
-    />
-    <link
-      id="color-pallete-stylesheet"
-      rel="stylesheet"
-      href="https://early.webawesome.com/webawesome@3.0.0-alpha.13/dist/styles/color/{{ theme.color_palette }}.css"
-    />
-    <link
-      id="primary-color-stylesheet"
-      rel="stylesheet"
-      href="https://early.webawesome.com/webawesome@3.0.0-alpha.13/dist/styles/brand/{{ theme.primary_color }}.css"
-    /> -->
-    <link
-      rel="stylesheet"
-      href="https://early.webawesome.com/webawesome@3.0.0-beta.2/dist/styles/color/palettes/default.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://early.webawesome.com/webawesome@3.0.0-beta.2/dist/styles/color/palettes/bright.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://early.webawesome.com/webawesome@3.0.0-beta.2/dist/styles/color/palettes/shoelace.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://early.webawesome.com/webawesome@3.0.0-beta.2/dist/styles/color/palettes/rudimentary.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://early.webawesome.com/webawesome@3.0.0-beta.2/dist/styles/color/palettes/elegant.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://early.webawesome.com/webawesome@3.0.0-beta.2/dist/styles/color/palettes/mild.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://early.webawesome.com/webawesome@3.0.0-beta.2/dist/styles/color/palettes/natural.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://early.webawesome.com/webawesome@3.0.0-beta.2/dist/styles/color/palettes/anodized.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://early.webawesome.com/webawesome@3.0.0-beta.2/dist/styles/color/palettes/vogue.css"
-    />
-
-    <link
-      rel="stylesheet"
-      href="https://early.webawesome.com/webawesome@3.0.0-beta.2/dist/styles/webawesome.css"
-    />
-
-    <script
-      type="module"
-      src="https://early.webawesome.com/webawesome@3.0.0-beta.2/dist/webawesome.loader.js"
-    ></script>
-    <script type="module">
-      import { registerIconLibrary } from "https://early.webawesome.com/webawesome@3.0.0-beta.2/dist/webawesome.loader.js";
-
-      registerIconLibrary("ion", {
-        resolver: (name) =>
-          `https://cdn.jsdelivr.net/npm/ionicons@5.1.2/dist/ionicons/svg/${name}.svg`,
-        mutator: (svg) => {
-          svg.setAttribute("fill", "currentColor");
-          svg.setAttribute("stroke", "currentColor");
-          [...svg.querySelectorAll(".ionicon-fill-none")].map((el) =>
-            el.setAttribute("fill", "none")
-          );
-          [...svg.querySelectorAll(".ionicon-stroke-width")].map((el) =>
-            el.setAttribute("stroke-width", "32px")
-          );
-        },
-      });
-
-      registerIconLibrary("remix", {
-        resolver: (name) => {
-          const match = name.match(/^(.*?)\/(.*?)?$/);
-          match[1] = match[1].charAt(0).toUpperCase() + match[1].slice(1);
-          return `https://cdn.jsdelivr.net/npm/remixicon@4.6.0/icons/${match[1]}/${match[2]}.svg`;
-        },
-        mutator: (svg) => svg.setAttribute("fill", "currentColor"),
-      });
-    </script>
 
     <title>{% block title %}{% endblock title %}</title>
     <script>
@@ -168,7 +69,7 @@
     </script>
 
     <script type="module">
-      import { Theme } from "/static/js/theme.mjs";
+      import { Theme, THEME_LIST, COLOR_PALETTE_LIST } from "/static/js/theme.mjs";
 
       window.THEME = new Theme({{ theme|tojson }});
       let storedTheme = window.localStorage.getItem("theme");
@@ -176,10 +77,25 @@
         window.THEME.migrateTheme(storedTheme);
       }
       console.log(window.THEME);
+
+      let head = document.querySelector("head");
+      for (let theme of THEME_LIST) {
+        let themeLink = document.createElement("link");
+        themeLink.rel = "stylesheet";
+        themeLink.href = `https://early.webawesome.com/webawesome@3.0.0-beta.3/dist/styles/themes/${theme}.css`;
+        head.append(themeLink);
+      }
+      for (let palette of COLOR_PALETTE_LIST) {
+        let paletteLink = document.createElement("link");
+        paletteLink.rel = "stylesheet";
+        paletteLink.href = `https://early.webawesome.com/webawesome@3.0.0-beta.3/dist/styles/color/palettes/${palette}.css`;
+        head.append(paletteLink);
+      }
     </script>
     <script src="/static/js/nb-alert.mjs" type="module"></script>
     <script src="/static/js/nb-theme-selector.mjs" type="module"></script>
     <script src="/static/js/nb-category-modal.mjs" type="module"></script>
+    <script src="/static/js/bundle.mjs" type="module"></script>
 
     {% block head %}{% endblock head %}
 

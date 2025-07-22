@@ -1,23 +1,32 @@
 const path = require("path");
+const CopyPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
-module.exports = {
-  entry: "./finapp/static/js/css.js",
+const config = {
+  entry: __dirname + "/js/main.mjs",
+  output: {
+    path: __dirname + "/js",
+    filename: "bundle.mjs",
+    library: {
+      type: "module",
+    },
+  },
   module: {
+    // Bundle styles into main.css
     rules: [
       {
         test: /\.css$/i,
         use: [MiniCssExtractPlugin.loader, "css-loader"],
-        sideEffects: true,
       },
     ],
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: "./css/all-out.css",
+      filename: "../css/all-out.css",
     }),
   ],
-  output: {
-    path: path.resolve(__dirname),
+  experiments: {
+    outputModule: true,
   },
 };
+module.exports = config;

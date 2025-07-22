@@ -1,20 +1,24 @@
 {
   "dependencies": {
+    "@awesome.me/webawesome": "^3.0.0-beta.3",
     "@tailwindcss/cli": "^4.1.8",
+    "lit": "^3.3.1",
     "tailwindcss": "^4.1.8"
   },
   "name": "budgetapp",
   "version": "1.0.0",
   "devDependencies": {
+    "copy-webpack-plugin": "^13.0.0",
     "css-loader": "^7.1.2",
     "mini-css-extract-plugin": "^2.9.2",
     "webpack-cli": "^6.0.1"
   },
   "scripts": {
-    "tw-watch": "npx @tailwindcss/cli -i ./finapp/static/css/tailwind.css -o ./finapp/static/css/output.css --watch",
-    "tw-build": "npx @tailwindcss/cli -i ./finapp/static/css/tailwind.css -o ./finapp/static/css/output.css",
-    "css-build": "webpack --progress --config ./finapp/static/webpack.config.js --mode=production",
-    "css-watch": "webpack --progress --config ./finapp/static/webpack.config.js --watch --mode=development"
+    "tw-watch": "npx @tailwindcss/cli -i ./finapp/static/css/tailwind.css -o ./finapp/static/css/tw-out.css --watch",
+    "tw-build": "npx @tailwindcss/cli -i ./finapp/static/css/tailwind.css -o ./finapp/static/css/tw-out.css",
+    "wp-build": "webpack --progress --config ./finapp/static/webpack.config.js --mode=production",
+    "wp-watch": "webpack --progress --config ./finapp/static/webpack.config.js --watch --mode=development",
+    "build-all": "npm run tw-build && npm run wp-build"
   },
   "author": "Niklas Baumgardner"
 }

@@ -1,8 +1,7 @@
-import WaSelect from "https://early.webawesome.com/webawesome@3.0.0-beta.2/dist/components/select/select.js";
-import { html } from "./imports.mjs";
-import { NikElement } from "./customElement.mjs";
+import { html, WaSelect } from "./bundle.mjs";
+import { NikElement } from "./nik-element.mjs";
 import "./nb-category.mjs";
-
+console.log(WaSelect);
 export class BaseSelect extends WaSelect {
   constructor() {
     super();
