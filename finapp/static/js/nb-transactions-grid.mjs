@@ -98,6 +98,7 @@ export class TransactionsGrid extends NikElement {
     document.addEventListener("UpdateTransactions", this);
     document.addEventListener("UpdateTransaction", this);
     document.addEventListener("AddTransaction", this);
+    document.addEventListener("DeleteTransaction", this);
   }
 
   handleEvent(event) {
@@ -117,6 +118,11 @@ export class TransactionsGrid extends NikElement {
         this.addTransaction(transaction);
         break;
       }
+      case "DeleteTransaction": {
+        let transaction = event.detail.transaction;
+        this.deleteTransaction(transaction);
+        break;
+      }
     }
   }
 
@@ -126,8 +132,7 @@ export class TransactionsGrid extends NikElement {
   }
 
   updateTransaction(transaction) {
-    let transactionNode = this.dataGrid.getRowNode(transaction.id);
-    transactionNode.updateData(transaction);
+    this.dataGrid.applyTransaction({ update: [transaction] });
 
     this.requestNewData();
   }
@@ -146,8 +151,13 @@ export class TransactionsGrid extends NikElement {
       return;
     }
 
-    this.transactions.splice(index, 0, transaction);
-    this.dataGrid.setGridOption("rowData", this.transactions);
+    this.dataGrid.applyTransaction({ addIndex: index, add: [transaction] });
+
+    this.requestNewData();
+  }
+
+  deleteTransaction(transaction) {
+    this.dataGrid.applyTransaction({ remove: [transaction] });
 
     this.requestNewData();
   }
@@ -345,7 +355,7 @@ export class TransactionsGrid extends NikElement {
       paginationPageSize: 20,
       paginationPageSizeSelector: false,
       theme: agGrid.themeAlpine.withPart(this.currentColorScheme),
-      getRowId: (params) => params.data.id,
+      getRowId: (params) => `${params.data.id}`,
     };
     this.dataGrid = agGrid.createGrid(this.transactionsGridEl, gridOptions);
   }

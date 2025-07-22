@@ -42,6 +42,14 @@ export class DeleteTransactionModal extends NikElement {
       })
     );
 
+    document.dispatchEvent(
+      new CustomEvent("DeleteTransaction", {
+        bubbles: true,
+        composed: true,
+        detail: { transaction: this.transaction },
+      })
+    );
+
     this.remove();
   }
 
