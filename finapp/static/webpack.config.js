@@ -6,7 +6,7 @@ const config = {
   entry: __dirname + "/js/main.mjs",
   output: {
     path: __dirname + "/js",
-    filename: "bundle.mjs",
+    filename: "budgets-bundle.mjs",
     library: {
       type: "module",
     },

@@ -1,5 +1,5 @@
 import { NikElement } from "./nik-element.mjs";
-import { html } from "./bundle.mjs";
+import { html } from "./budgets-bundle.mjs";
 
 export class Category extends NikElement {
   static properties = {

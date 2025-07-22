@@ -1,5 +1,5 @@
 import { NikElement } from "./nik-element.mjs";
-import { html } from "./bundle.mjs";
+import { html } from "./budgets-bundle.mjs";
 import "./nb-categories-select.mjs";
 import "./nb-move-transaction.mjs";
 import "./nb-delete-transaction.mjs";

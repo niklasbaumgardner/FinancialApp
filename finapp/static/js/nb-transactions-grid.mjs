@@ -1,4 +1,4 @@
-import { html } from "./bundle.mjs";
+import { html } from "./budgets-bundle.mjs";
 import { NikElement } from "./nik-element.mjs";
 import "./nb-category.mjs";
 import "./nb-delete-transaction.mjs";
