@@ -40,6 +40,7 @@ import "@awesome.me/webawesome/dist/components/dropdown/dropdown.js";
 import "@awesome.me/webawesome/dist/components/dropdown-item/dropdown-item.js";
 
 import "@awesome.me/webawesome/dist/components/format-date/format-date.js";
+import "@awesome.me/webawesome/dist/components/format-number/format-number.js";
 
 import "@awesome.me/webawesome/dist/components/icon/icon.js";
 

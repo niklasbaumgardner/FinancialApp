@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="wa-{{ theme.mode }}">
+<html lang="en" class="wa-{{ theme.mode }} wa-cloak">
   <head>
     <!-- Required meta tags -->
     <meta charset="utf-8" />
@@ -106,7 +106,7 @@
       if (window.Sentry) {
         Sentry.onLoad(function () {
           Sentry.init({
-            release: "nbfinancial@1.2.2",
+            release: "nbfinancial@1.2.3",
             environment: "production",
             replaysSessionSampleRate: 0,
             replaysOnErrorSampleRate: 1.0,
@@ -114,11 +114,6 @@
         });
       }
     </script>
-    <script
-      defer
-      src="https://cloud.umami.is/script.js"
-      data-website-id="7d4088d2-6ac0-4f81-a670-b0b7f5369274"
-    ></script>
   </head>
 
   <body class="@container">
