@@ -1,4 +1,4 @@
-import { LitElement } from "./budgets-bundle.mjs";
+import { LitElement } from "./bundle.mjs";
 
 function query(el, selector) {
   return () => el.querySelector(selector);

@@ -1,4 +1,4 @@
-import { html } from "./budgets-bundle.mjs";
+import { html } from "./bundle.mjs";
 import { NikElement } from "./nik-element.mjs";
 
 export class ThemeSelector extends NikElement {
