@@ -9,7 +9,8 @@ from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.pool import NullPool
 import sentry_sdk
 import os
-from flask_compress import Compress
+# from flask_compress import Compress
+# from flask_caching import Cache
 # from sqlalchemy import event
 # from sqlalchemy.engine import Engine
 # import time
@@ -48,8 +49,28 @@ login_manager.login_message_category = "alert-primary"
 mail = Mail()
 mail.init_app(app)
 
-compress = Compress()
-compress.init_app(app)
+# cache = Cache(
+#     config={
+#         "CACHE_TYPE": "SimpleCache",
+#         "CACHE_DEFAULT_TIMEOUT": 60 * 60,  # 1 hour cache timeout
+#     }
+# )
+# cache.init_app(app)
+
+
+# # Define a function to return cache key for incoming requests
+# def get_cache_key(request):
+#     print(request.url)
+#     return request.url
+
+
+# # Initialize Flask-Compress
+# compress = Compress()
+# compress.init_app(app)
+
+# # Set up cache for compressed responses
+# compress.cache = cache
+# compress.cache_key = get_cache_key
 
 
 # logging.basicConfig()
