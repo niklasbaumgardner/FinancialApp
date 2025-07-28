@@ -26,7 +26,16 @@ class ViewTransactions extends NikElement {
   }
 
   connectedCallback() {
-    let dummyArray = new Array(this.total - this.transactions.length).fill({});
+    let dummyArray = new Array(this.total - this.transactions.length).fill({
+      name: "",
+      date: "",
+      amount: 0,
+      budget: { name: "" },
+      user: { username: "" },
+      is_tranfer: false,
+      categories: [],
+    });
+
     this.transactions = this.transactions.concat(dummyArray);
 
     super.connectedCallback();
