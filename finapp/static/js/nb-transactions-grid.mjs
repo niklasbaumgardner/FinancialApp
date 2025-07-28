@@ -69,6 +69,7 @@ export class TransactionsGrid extends NikElement {
 
   static queries = {
     transactionsGridEl: "#grid",
+    paginationButtons: { all: ".ag-paging-page-summary-panel > .ag-button" },
   };
 
   get currentColorScheme() {
@@ -81,6 +82,13 @@ export class TransactionsGrid extends NikElement {
     return colorScheme;
   }
 
+  constructor() {
+    super();
+
+    this.queue = [];
+    this.disablePagination = true;
+  }
+
   firstUpdated() {
     this.init();
   }
@@ -90,6 +98,7 @@ export class TransactionsGrid extends NikElement {
 
     this.createDataGrid();
     this.setupThemeWatcher();
+    this.disablePaginationPanel();
   }
 
   connectedCallback() {
@@ -123,12 +132,19 @@ export class TransactionsGrid extends NikElement {
         this.deleteTransaction(transaction);
         break;
       }
+      case "click": {
+        this.handleDisabledPaginationButtonClick(event);
+        break;
+      }
     }
   }
 
   updateTransactions(transactions) {
     this.transactions = transactions;
     this.dataGrid.setGridOption("rowData", transactions);
+
+    this.enablePaginationPanel();
+    this.doQueue();
   }
 
   updateTransaction(transaction) {
@@ -377,6 +393,52 @@ export class TransactionsGrid extends NikElement {
       "theme",
       agGrid.themeAlpine.withPart(this.currentColorScheme)
     );
+  }
+
+  handleDisabledPaginationButtonClick(event) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    this.queue.push(event.target.closest(".ag-button").dataset.ref);
+  }
+
+  disablePaginationPanel() {
+    for (let button of this.paginationButtons) {
+      button.addEventListener("click", this, { capture: true }, true);
+    }
+  }
+
+  enablePaginationPanel() {
+    for (let button of this.paginationButtons) {
+      button.removeEventListener("click", this, { capture: true }, true);
+    }
+
+    this.disablePagination = false;
+  }
+
+  doQueue() {
+    for (let ref of this.queue) {
+      switch (ref) {
+        case "btFirst": {
+          this.dataGrid.paginationGoToFirstPage();
+          break;
+        }
+        case "btPrevious": {
+          this.dataGrid.paginationGoToPreviousPage();
+          break;
+        }
+        case "btNext": {
+          this.dataGrid.paginationGoToNextPage();
+          break;
+        }
+        case "btLast": {
+          this.dataGrid.paginationGoToLastPage();
+          break;
+        }
+      }
+    }
+
+    this.queue = [];
   }
 
   render() {
