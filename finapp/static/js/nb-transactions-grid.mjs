@@ -85,8 +85,8 @@ export class TransactionsGrid extends NikElement {
   constructor() {
     super();
 
-    this.queue = [];
-    this.disablePagination = true;
+    // this.queue = [];
+    // this.disablePagination = true;
   }
 
   firstUpdated() {
@@ -98,7 +98,7 @@ export class TransactionsGrid extends NikElement {
 
     this.createDataGrid();
     this.setupThemeWatcher();
-    this.disablePaginationPanel();
+    // this.disablePaginationPanel();
   }
 
   connectedCallback() {
@@ -143,8 +143,8 @@ export class TransactionsGrid extends NikElement {
     this.transactions = transactions;
     this.dataGrid.setGridOption("rowData", transactions);
 
-    this.enablePaginationPanel();
-    this.doQueue();
+    // this.enablePaginationPanel();
+    // this.doQueue();
   }
 
   updateTransaction(transaction) {
@@ -195,16 +195,25 @@ export class TransactionsGrid extends NikElement {
         filter: "agTextColumnFilter",
         autoHeight: true,
         cellRenderer: (param) => {
+          if (!param.data.name) {
+            return `<wa-spinner></wa-spinner>`;
+          }
+
           let name = param.data.name;
           return `<span class="text-wrap">${name}</span>`;
         },
         cellClass: ["leading-(--wa-line-height-normal)!", "p-(--wa-space-2xs)"],
-        spanRows: ({ valueA, valueB }) => valueA === valueB,
+        spanRows: ({ valueA, valueB }) =>
+          valueA != undefined && valueA === valueB,
       },
       {
         field: "amount",
         filter: "agNumberColumnFilter",
         cellRenderer: (param) => {
+          if (!param.data.name) {
+            return null;
+          }
+
           let amount = param.data.amount;
           return `<wa-format-number
             type="currency"
@@ -218,6 +227,10 @@ export class TransactionsGrid extends NikElement {
         field: "budget",
         filter: "agTextColumnFilter",
         cellRenderer: (param) => {
+          if (!param.data.name) {
+            return null;
+          }
+
           let budget = param.data.budget;
           let transaction = param.data;
 
@@ -283,6 +296,10 @@ export class TransactionsGrid extends NikElement {
         field: "date",
         filter: "agDateColumnFilter",
         cellRenderer: (param) => {
+          if (!param.data.name) {
+            return null;
+          }
+
           let date = param.data.date;
 
           return `<wa-format-date month="long" day="numeric" year="numeric" date="${
@@ -294,6 +311,10 @@ export class TransactionsGrid extends NikElement {
         field: "actions",
         headerName: "Actions",
         cellRenderer: (param) => {
+          if (!param.data.name) {
+            return null;
+          }
+
           let div = document.createElement("div");
           div.classList.add(
             "wa-cluster",
