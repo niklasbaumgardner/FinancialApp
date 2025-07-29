@@ -15,7 +15,7 @@ viewtransactions_bp = Blueprint("viewtransactions_bp", __name__)
 @login_required
 def view_transactions():
     transactions, total = transaction_queries.get_recent_transactions(
-        limit=20, include_total=True
+        limit=100, include_total=True
     )
     transactions = [t.to_dict() for t in transactions]
 
