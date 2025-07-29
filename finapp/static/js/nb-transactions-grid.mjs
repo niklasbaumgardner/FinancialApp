@@ -233,13 +233,21 @@ export class TransactionsGrid extends NikElement {
 
           let budget = param.data.budget;
           let transaction = param.data;
-
-          return `<wa-tooltip for="transaction-${transaction.id}-budget-link">Budget total is <wa-format-number
+          let id = `transaction-${transaction.id}-budget-info`;
+          return `<wa-tooltip for="${id}" trigger="click">Budget total is <wa-format-number
             type="currency"
             currency="USD"
             value="${budget.total}"
             lang="en-US"
-          ></wa-format-number></wa-tooltip><a id="transaction-${transaction.id}-budget-link" href="${budget.url}">${budget.name}</a>`;
+          ></wa-format-number>
+          </wa-tooltip>
+          <a href="${budget.url}">${budget.name}</a>
+          <wa-button
+            id="${id}"
+            class="icon-button no-border"
+            appearance="plain"
+            ><wa-icon library="ion" name="information-circle-outline" label="Info"></wa-icon
+          ></wa-button>`;
         },
         valueGetter: (p) => {
           return p.data.budget.name;
