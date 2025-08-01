@@ -256,10 +256,8 @@ export class TransactionsGrid extends NikElement {
       {
         field: "user",
         filter: "agTextColumnFilter",
-        cellRenderer: (param) => {
-          let user = param.data.user;
-
-          return user.username;
+        valueGetter: (p) => {
+          return p.data.user.username;
         },
       },
       {
