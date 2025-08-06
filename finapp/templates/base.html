@@ -80,13 +80,13 @@
       let head = document.querySelector("head");
       let themeLink = document.createElement("link");
       themeLink.rel = "stylesheet";
-      themeLink.href = `https://early.webawesome.com/webawesome@3.0.0-beta.3/dist/styles/themes/${THEME.theme}.css`;
+      themeLink.href = `https://early.webawesome.com/webawesome@3.0.0-beta.4/dist/styles/themes/${THEME.theme}.css`;
       head.append(themeLink);
 
       if (THEME.colorPalette) {
         let paletteLink = document.createElement("link");
         paletteLink.rel = "stylesheet";
-        paletteLink.href = `https://early.webawesome.com/webawesome@3.0.0-beta.3/dist/styles/color/palettes/${THEME.colorPalette}.css`;
+        paletteLink.href = `https://early.webawesome.com/webawesome@3.0.0-beta.4/dist/styles/color/palettes/${THEME.colorPalette}.css`;
         head.append(paletteLink);
       }
     </script>
@@ -104,7 +104,7 @@
         }
         let themeLink = document.createElement("link");
         themeLink.rel = "stylesheet";
-        themeLink.href = `https://early.webawesome.com/webawesome@3.0.0-beta.3/dist/styles/themes/${theme}.css`;
+        themeLink.href = `https://early.webawesome.com/webawesome@3.0.0-beta.4/dist/styles/themes/${theme}.css`;
         head.append(themeLink);
       }
       for (let palette of COLOR_PALETTE_LIST) {
@@ -113,7 +113,7 @@
         }
         let paletteLink = document.createElement("link");
         paletteLink.rel = "stylesheet";
-        paletteLink.href = `https://early.webawesome.com/webawesome@3.0.0-beta.3/dist/styles/color/palettes/${palette}.css`;
+        paletteLink.href = `https://early.webawesome.com/webawesome@3.0.0-beta.4/dist/styles/color/palettes/${palette}.css`;
         head.append(paletteLink);
       }
     </script>
@@ -128,7 +128,7 @@
       if (window.Sentry) {
         Sentry.onLoad(function () {
           Sentry.init({
-            release: "nbfinancial@1.2.12",
+            release: "nbfinancial@1.2.13",
             environment: "production",
             replaysSessionSampleRate: 0,
             replaysOnErrorSampleRate: 1.0,
