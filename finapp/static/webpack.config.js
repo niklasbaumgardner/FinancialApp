@@ -2,10 +2,13 @@ const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const config = {
-  entry: __dirname + "/js/main.mjs",
+  entry: {
+    main: __dirname + "/js/main.mjs",
+    css: __dirname + "/js/css.mjs",
+  },
   output: {
     path: __dirname + "/js",
-    filename: "bundle.mjs",
+    filename: "[name].bundle.mjs",
     library: {
       type: "module",
     },

@@ -1,5 +1,5 @@
 import { NikElement } from "./nik-element.mjs";
-import { html } from "./bundle.mjs";
+import { html } from "./main.bundle.mjs";
 
 export class MoveTransactionModal extends NikElement {
   static properties = {

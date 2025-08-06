@@ -1,4 +1,4 @@
-import { html } from "./bundle.mjs";
+import { html } from "./main.bundle.mjs";
 import "./nb-categories-select.mjs";
 import { AddTransactionModal } from "./nb-add-transaction.mjs";
 

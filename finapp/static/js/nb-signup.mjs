@@ -1,5 +1,5 @@
 import { NikElement } from "./nik-element.mjs";
-import { html } from "./bundle.mjs";
+import { html } from "./main.bundle.mjs";
 
 const EMAUL_UNIQUE_HELP_TEXT =
   "Email taken. Please choose a different email or login.";

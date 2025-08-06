@@ -93,7 +93,7 @@
     <script src="/static/js/nb-alert.mjs" type="module"></script>
     <script src="/static/js/nb-theme-selector.mjs" type="module"></script>
     <script src="/static/js/nb-category-modal.mjs" type="module"></script>
-    <script src="/static/js/bundle.mjs" type="module"></script>
+    <script src="/static/js/main.bundle.mjs" type="module"></script>
 
     <script type="module" defer>
       import { THEME_LIST, COLOR_PALETTE_LIST } from "/static/js/theme.mjs";
@@ -128,7 +128,7 @@
       if (window.Sentry) {
         Sentry.onLoad(function () {
           Sentry.init({
-            release: "nbfinancial@1.2.11",
+            release: "nbfinancial@1.2.12",
             environment: "production",
             replaysSessionSampleRate: 0,
             replaysOnErrorSampleRate: 1.0,
