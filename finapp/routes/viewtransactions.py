@@ -3,8 +3,9 @@ from finapp.queries import (
     budget_queries,
     transaction_queries,
 )
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, stream_with_context, Response
 from flask_login import login_required
+import json
 
 
 viewtransactions_bp = Blueprint("viewtransactions_bp", __name__)
@@ -40,12 +41,35 @@ def api_get_transactions():
     include_budgets = request.args.get("includeBudgets")
     include_budgets = include_budgets and include_budgets == "True"
 
-    transactions, _ = transaction_queries.get_recent_transactions()
-    transactions = [t.to_dict() for t in transactions]
+    def generate():
+        yield '{"transactions": ['
 
-    if include_budgets:
-        budgets = [b.to_dict() for b in budget_queries.get_budgets()]
+        prev_transaction = None
+        transactions, _ = transaction_queries.get_recent_transactions()
+        for t in transactions:
+            if prev_transaction is not None:
+                yield json.dumps(prev_transaction.to_dict()) + ", "
 
-        return dict(transactions=transactions, budgets=budgets)
+            prev_transaction = t
 
-    return dict(transactions=transactions)
+        yield json.dumps(prev_transaction.to_dict()) + "]"
+
+        if include_budgets:
+            yield ', "budgets": ['
+
+            prev_budget = None
+            budgets = budget_queries.get_budgets()
+            for b in budgets:
+                if prev_budget is not None:
+                    yield json.dumps(prev_budget.to_dict()) + ", "
+
+                prev_budget = b
+
+            yield json.dumps(prev_budget.to_dict()) + "]"
+
+        yield "}"
+
+    return Response(
+        response=stream_with_context(generate()),
+        mimetype="application/json",
+    )
