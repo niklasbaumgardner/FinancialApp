@@ -58,9 +58,9 @@ import "@awesome.me/webawesome/dist/components/option/option.js";
 
 import "@awesome.me/webawesome/dist/components/tooltip/tooltip.js";
 
-// Option 2: the setBasePath()
-import { setBasePath } from "@awesome.me/webawesome/dist/webawesome.js";
-setBasePath("");
+// // Option 2: the setBasePath()
+// import { setBasePath } from "@awesome.me/webawesome/dist/webawesome.js";
+// setBasePath("");
 
 import { registerIconLibrary } from "@awesome.me/webawesome/dist/webawesome.js";
 

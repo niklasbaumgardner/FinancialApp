@@ -1,5 +1,4 @@
-const path = require("path");
-const CopyPlugin = require("copy-webpack-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const config = {
@@ -19,6 +18,10 @@ const config = {
         use: [MiniCssExtractPlugin.loader, "css-loader"],
       },
     ],
+  },
+  optimization: {
+    minimize: true,
+    minimizer: [new CssMinimizerPlugin(), "..."],
   },
   plugins: [
     new MiniCssExtractPlugin({
