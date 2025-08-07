@@ -106,6 +106,7 @@ export class EditTransactionModal extends AddTransactionModal {
     });
 
     let { transaction } = await response.json();
+    this.transaction = transaction;
 
     document.dispatchEvent(
       new CustomEvent("UpdateTransaction", {
