@@ -478,7 +478,7 @@ def search(
             stmt.where(
                 or_(Transaction.name.ilike(f"%{search_name}%") for search_name in name)
             )
-            if stmt
+            if stmt is not None
             else select(Transaction).where(
                 or_(Transaction.name.ilike(f"%{search_name}%") for search_name in name)
             )
@@ -487,20 +487,20 @@ def search(
     if amount is not None:
         stmt = (
             stmt.where(Transaction.amount == amount)
-            if stmt
+            if stmt is not None
             else select(Transaction).where(Transaction.amount == amount)
         )
     else:
         if min_amount is not None:
             stmt = (
                 stmt.where(Transaction.amount >= min_amount)
-                if stmt
+                if stmt is not None
                 else select(Transaction).where(Transaction.amount >= min_amount)
             )
         if max_amount is not None:
             stmt = (
                 stmt.where(Transaction.amount <= max_amount)
-                if stmt
+                if stmt is not None
                 else select(Transaction).where(Transaction.amount <= max_amount)
             )
     if categories:
@@ -514,7 +514,7 @@ def search(
                     TransactionCategory.category_id.in_(categories),
                 )
             )
-            if stmt
+            if stmt is not None
             else select(Transaction)
             .join(
                 TransactionCategory,
@@ -528,16 +528,16 @@ def search(
             )
         )
 
-    if start_date:
+    if start_date is not None:
         stmt = (
             stmt.where(Transaction.date >= start_date)
-            if stmt
+            if stmt is not None
             else select(Transaction).where(Transaction.date >= start_date)
         )
-    if end_date:
+    if end_date is not None:
         stmt = (
             stmt.where(Transaction.date <= end_date)
-            if stmt
+            if stmt is not None
             else select(Transaction).where(Transaction.date <= end_date)
         )
 
@@ -553,6 +553,8 @@ def search(
             )
 
         stmt = get_transactions_query(stmt=stmt)
+
+        stmt = stmt.where(Transaction.budget_id == budget_id)
 
         search_sum = db.session.execute(
             select(func.sum(stmt.subquery().c.amount))
