@@ -15,8 +15,8 @@
     "webpack-cli": "^6.0.1"
   },
   "scripts": {
-    "tw-watch": "npx @tailwindcss/cli -i ./finapp/static/css/tailwind.css -o ./finapp/static/css/tw-out.css --watch",
-    "tw-build": "npx @tailwindcss/cli -i ./finapp/static/css/tailwind.css -o ./finapp/static/css/tw-out.css",
+    "tw-watch": "npx @tailwindcss/cli -i ./finapp/static/css/src/tailwind.css -o ./finapp/static/css/src/tw-out.css --watch",
+    "tw-build": "npx @tailwindcss/cli -i ./finapp/static/css/src/tailwind.css -o ./finapp/static/css/src/tw-out.css",
     "wp-build": "webpack --progress --config ./finapp/static/webpack.config.js --mode=production",
     "wp-watch": "webpack --progress --config ./finapp/static/webpack.config.js --watch --mode=development",
     "build-all": "npm run tw-build && npm run wp-build"

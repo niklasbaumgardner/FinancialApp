@@ -59,10 +59,7 @@ export class BaseSelect extends WaSelect {
   render() {
     let template = super.render();
     return html`<link
-        href="/static/css/nb-category.css"
-        rel="stylesheet"
-      /><link
-        href="/static/css/category-colors.css"
+        href="/static/css/nb-category.min.css"
         rel="stylesheet"
       />${template}`;
   }

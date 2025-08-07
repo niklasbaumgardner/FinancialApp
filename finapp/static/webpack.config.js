@@ -1,5 +1,6 @@
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CopyPlugin = require("copy-webpack-plugin");
 
 const config = {
   entry: {
@@ -24,11 +25,40 @@ const config = {
   },
   optimization: {
     minimize: true,
-    minimizer: [new CssMinimizerPlugin(), "..."],
+    minimizer: [
+      new CssMinimizerPlugin({ minify: CssMinimizerPlugin.lightningCssMinify }),
+      "...",
+    ],
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: "../css/all-out.css",
+      filename: "../css/bundle.min.css",
+    }),
+    new CopyPlugin({
+      patterns: [
+        {
+          from: __dirname + "/css/src/themes/",
+          to: __dirname + "/css/[name].min.css",
+          globOptions: {
+            ignore: ["**/default.css"],
+          },
+        },
+        {
+          from: __dirname + "/css/src/color/",
+          to: __dirname + "/css/[name].palette.min.css",
+          globOptions: {
+            ignore: ["**/default.css"],
+          },
+        },
+        {
+          from: __dirname + "/css/src/nb-category.css",
+          to: __dirname + "/css/nb-category.min.css",
+        },
+        {
+          from: __dirname + "/css/src/color/base.css",
+          to: __dirname + "/css/base.css",
+        },
+      ],
     }),
   ],
   experiments: {

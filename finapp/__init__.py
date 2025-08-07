@@ -29,7 +29,7 @@ if not os.environ.get("FLASK_DEBUG"):
         dsn=os.environ.get("SENTRY_DSN"),
         traces_sample_rate=1.0,
         _experiments={"enable_logs": True},
-        release="nb-budgets@1.1.15",
+        release="nb-budgets@1.1.16",
     )
 
 
