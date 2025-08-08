@@ -12,6 +12,6 @@ RUN pip install -r requirements.txt
 COPY . /app
 
 # define the port number the container should expose
-EXPOSE 5000
+EXPOSE 3000
 
 ENTRYPOINT ["./boot.sh"]
