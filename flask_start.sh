@@ -1,8 +1,7 @@
 #!/bin/bash
 
-set -euo pipefail
 
-export PORT=${PORT}
+# export PORT=${PORT}
 
 echo using port: ${PORT}
 
