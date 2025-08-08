@@ -1,4 +1,4 @@
-FROM python:3.12-slim as flask
+FROM python:3.12-slim as flask_build
 
 # upgrade pip
 RUN pip install --upgrade pip
@@ -21,9 +21,11 @@ COPY . ./
 # CMD ["flask_start.sh"]
 
 
-FROM caddy:latest as caddy
+FROM caddy:latest as caddy_build
 
-RUN caddy fmt --overwrite Caddyfile
+COPY --from=flask_build /app /app
+
+# RUN caddy fmt --overwrite Caddyfile
 
 EXPOSE 3000
 
