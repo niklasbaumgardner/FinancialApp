@@ -1,14 +1,18 @@
 FROM python:3.12-slim
+FROM caddy:latest
 
 # upgrade pip
 RUN pip install --upgrade pip
 
 WORKDIR /app
 
-COPY requirements.txt flask_start.sh ./
+COPY Caddyfile requirements.txt flask_start.sh ./
 
 RUN chmod a+x flask_start.sh
+RUN chmod a+x Caddyfile
 RUN pip install -r requirements.txt
+
+RUN caddy fmt --overwrite Caddyfile
 
 COPY . ./
 
