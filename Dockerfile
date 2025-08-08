@@ -23,6 +23,8 @@ COPY . .
 
 FROM caddy:latest as caddy_build
 
+WORKDIR /app
+
 COPY Caddyfile requirements.txt start.sh .
 
 RUN chmod a+x start.sh
