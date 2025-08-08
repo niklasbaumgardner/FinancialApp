@@ -26,7 +26,7 @@ FROM caddy:latest as caddy_build
 # WORKDIR /app
 
 # COPY Caddyfile requirements.txt start.sh .
-COPY --from=flask_build . .
+COPY --from=flask_build /app /app
 
 WORKDIR /app
 
