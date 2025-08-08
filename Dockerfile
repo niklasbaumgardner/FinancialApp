@@ -25,12 +25,13 @@ FROM caddy:latest as caddy_build
 
 WORKDIR /app
 
-COPY Caddyfile requirements.txt start.sh .
+# COPY Caddyfile requirements.txt start.sh .
+COPY --from=flask_build . .
 
 RUN chmod a+x start.sh
 RUN chmod a+x Caddyfile
 
-COPY --from=flask_build /app /app
+# COPY --from=flask_build /app /app
 
 # RUN caddy fmt --overwrite Caddyfile
 
