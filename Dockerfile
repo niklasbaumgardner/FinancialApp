@@ -5,13 +5,13 @@ RUN pip install --upgrade pip
 
 WORKDIR /app
 
-COPY Caddyfile requirements.txt start.sh ./
+COPY Caddyfile requirements.txt start.sh .
 
 RUN chmod a+x start.sh
 RUN chmod a+x Caddyfile
 RUN pip install -r requirements.txt
 
-COPY . ./
+COPY . .
 
 # define the port number the container should expose
 # EXPOSE 3000
