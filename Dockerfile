@@ -11,7 +11,8 @@ RUN pip install -r requirements.txt
 
 COPY . /app
 
+
 # define the port number the container should expose
 EXPOSE 3000
 
-ENTRYPOINT ["./boot.sh"]
+ENTRYPOINT ["./flask_start.sh"]
