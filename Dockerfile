@@ -5,10 +5,10 @@ RUN pip install --upgrade pip
 
 WORKDIR /app
 
-COPY Caddyfile requirements.txt start.sh .
+# COPY Caddyfile requirements.txt start.sh .
 
-RUN chmod a+x start.sh
-RUN chmod a+x Caddyfile
+# RUN chmod a+x start.sh
+# RUN chmod a+x Caddyfile
 RUN pip install -r requirements.txt
 
 COPY . .
@@ -22,6 +22,11 @@ COPY . .
 
 
 FROM caddy:latest as caddy_build
+
+COPY Caddyfile requirements.txt start.sh .
+
+RUN chmod a+x start.sh
+RUN chmod a+x Caddyfile
 
 COPY --from=flask_build /app /app
 
