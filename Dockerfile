@@ -1,5 +1,4 @@
 FROM python:3.12-slim
-FROM caddy:latest
 
 # upgrade pip
 RUN pip install --upgrade pip
@@ -22,3 +21,12 @@ EXPOSE 3000
 ENTRYPOINT ["/bin/sh"]
 
 CMD ["flask_start.sh"]
+
+
+FROM caddy:latest
+
+RUN caddy fmt --overwrite Caddyfile
+
+ENTRYPOINT ["/bin/sh"]
+
+CMD ["caddy_start.sh"]

@@ -4,13 +4,3 @@ echo using port: ${PORT}
 
 exec gunicorn run:app -k gevent --workers 17 -b [::]:${PORT:-3000} --log-level debug
 
-# for backwards compatibility, seperates host and port from url
-export APP_DOMAIN=${APP_DOMAIN:-${FRONTEND_HOST%:*}}
-export APP_PORT=${APP_PORT:-${FRONTEND_HOST##*:}}
-
-# strip https:// or https:// from domain if necessary
-APP_DOMAIN=${APP_DOMAIN##*://}
-
-echo using app: ${APP_DOMAIN} with port: ${APP_PORT}
-
-exec caddy run --config Caddyfile --adapter caddyfile 2>&1
