@@ -23,10 +23,12 @@ COPY . .
 
 FROM caddy:latest as caddy_build
 
-WORKDIR /app
+# WORKDIR /app
 
 # COPY Caddyfile requirements.txt start.sh .
 COPY --from=flask_build . .
+
+WORKDIR /app
 
 RUN chmod a+x start.sh
 RUN chmod a+x Caddyfile
