@@ -9,6 +9,7 @@ from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.pool import NullPool
 import sentry_sdk
 import os
+from werkzeug.middleware.proxy_fix import ProxyFix
 # from flask_compress import Compress
 # from flask_caching import Cache
 # from sqlalchemy import event
@@ -23,13 +24,15 @@ class Base(DeclarativeBase):
 
 app = Flask(__name__)
 
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
+
 
 if not os.environ.get("FLASK_DEBUG"):
     sentry_sdk.init(
         dsn=os.environ.get("SENTRY_DSN"),
         traces_sample_rate=1.0,
         _experiments={"enable_logs": True},
-        release="nb-budgets@1.1.17",
+        release="nb-budgets@1.1.18",
     )
 
 
