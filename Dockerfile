@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+FROM python:3.12-slim as flask
 
 # upgrade pip
 RUN pip install --upgrade pip
@@ -14,16 +14,18 @@ RUN pip install -r requirements.txt
 COPY . ./
 
 # define the port number the container should expose
-EXPOSE 3000
+# EXPOSE 3000
 
-ENTRYPOINT ["/bin/sh"]
+# ENTRYPOINT ["/bin/sh"]
 
-CMD ["flask_start.sh"]
+# CMD ["flask_start.sh"]
 
 
-FROM caddy:latest
+FROM caddy:latest as caddy
 
 RUN caddy fmt --overwrite Caddyfile
+
+EXPOSE 3000
 
 ENTRYPOINT ["/bin/sh"]
 
