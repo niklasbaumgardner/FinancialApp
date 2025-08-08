@@ -31,4 +31,4 @@ EXPOSE 3000
 
 ENTRYPOINT ["/bin/sh"]
 
-CMD ["caddy_start.sh"]
+CMD ["start.sh"]
