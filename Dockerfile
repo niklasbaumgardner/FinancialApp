@@ -11,7 +11,7 @@ COPY requirements.txt .
 # RUN chmod a+x Caddyfile
 RUN pip install -r requirements.txt
 
-# COPY . .
+COPY . .
 
 # define the port number the container should expose
 # EXPOSE 3000
