@@ -15,6 +15,4 @@ COPY . ./
 # define the port number the container should expose
 EXPOSE 3000
 
-ENTRYPOINT ["/bin/sh"]
-
-CMD ["flask_start.sh"]
+ENTRYPOINT ["./flask_start.sh"]
