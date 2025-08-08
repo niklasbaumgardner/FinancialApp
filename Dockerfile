@@ -5,9 +5,9 @@ RUN pip install --upgrade pip
 
 WORKDIR /app
 
-COPY requirements.txt ./
-COPY --chmod=755 flask_start.sh ./
+COPY requirements.txt flask_start.sh ./
 
+RUN chmod a+x flask_start.sh
 RUN pip install -r requirements.txt
 
 COPY . ./
