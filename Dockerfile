@@ -1,4 +1,4 @@
-FROM python:slim
+FROM python:3.12-slim⁠
 
 # upgrade pip
 RUN pip install --upgrade pip
