@@ -5,9 +5,9 @@ RUN pip install --upgrade pip
 
 WORKDIR /app
 
-COPY Caddyfile requirements.txt flask_start.sh ./
+COPY Caddyfile requirements.txt start.sh ./
 
-RUN chmod a+x flask_start.sh
+RUN chmod a+x start.sh
 RUN chmod a+x Caddyfile
 RUN pip install -r requirements.txt
 
