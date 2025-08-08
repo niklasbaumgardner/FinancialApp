@@ -5,7 +5,7 @@ RUN pip install --upgrade pip
 
 WORKDIR /app
 
-# COPY Caddyfile requirements.txt start.sh .
+COPY requirements.txt .
 
 # RUN chmod a+x start.sh
 # RUN chmod a+x Caddyfile
