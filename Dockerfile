@@ -11,8 +11,6 @@ RUN chmod a+x flask_start.sh
 RUN chmod a+x Caddyfile
 RUN pip install -r requirements.txt
 
-RUN caddy fmt --overwrite Caddyfile
-
 COPY . ./
 
 # define the port number the container should expose
