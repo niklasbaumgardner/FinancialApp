@@ -9,7 +9,7 @@ export APP_PORT=${APP_PORT:-${FRONTEND_HOST##*:}}
 # strip https:// or https:// from domain if necessary
 APP_DOMAIN=${APP_DOMAIN##*://}
 
-echo using app: ${APP_DOMAIN} with port: ${APP_PORT}
+echo using app: ${APP_DOMAIN} with port: ${APP_PORT} frontend host: ${FRONTEND_HOST}
 
 exec ls -a
 
