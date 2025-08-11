@@ -33,9 +33,9 @@
 :{$PORT} {
 	# encode zstd
 
-  # handle /static* {
-  #   file_server
-  # }
+  handle /static* {
+    file_server
+  }
 
 
 	# proxy all requests for /* to the app, configure these variables in the service settings

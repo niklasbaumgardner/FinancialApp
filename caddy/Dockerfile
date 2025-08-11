@@ -3,6 +3,7 @@ FROM caddy:latest
 WORKDIR /app
 
 COPY /caddy/caddy_start.sh /caddy/Caddyfile .
+COPY /finapp/static .
 
 RUN chmod a+x caddy_start.sh
 
