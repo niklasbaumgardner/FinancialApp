@@ -34,6 +34,7 @@
 	# encode zstd
 
   handle /static* {
+    root /static
     file_server
   }
 
