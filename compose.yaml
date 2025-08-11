@@ -1,0 +1,10 @@
+services:
+  web:
+    build: .
+
+  caddy:
+    build: /caddy
+    volumes:
+      - static:/finapp/static
+    depends_on:
+      - web
