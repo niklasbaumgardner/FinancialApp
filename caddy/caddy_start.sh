@@ -11,6 +11,4 @@ APP_DOMAIN=${APP_DOMAIN##*://}
 
 echo using app: ${APP_DOMAIN} with port: ${APP_PORT} frontend host: ${FRONTEND_HOST}
 
-exec ls -a
-
 exec caddy run --config Caddyfile --adapter caddyfile 2>&1
