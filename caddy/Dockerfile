@@ -2,9 +2,9 @@ FROM caddy:latest
 
 WORKDIR /app
 
-COPY Caddyfile .
+COPY caddy_start.sh Caddyfile .
 
-COPY --chmod=755 caddy_start.sh .
+RUN chmod a+x caddy_start.sh
 
 RUN caddy fmt --overwrite Caddyfile
 
