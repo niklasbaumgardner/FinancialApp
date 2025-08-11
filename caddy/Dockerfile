@@ -1,6 +1,6 @@
 FROM caddy:latest
 
-WORKDIR /app
+WORKDIR /caddy
 
 COPY ./caddy_start.sh ./Caddyfile .
 
