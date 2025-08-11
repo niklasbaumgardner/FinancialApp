@@ -1,8 +1,8 @@
 FROM caddy:latest
 
-WORKDIR /caddy
+WORKDIR /app
 
-COPY ./caddy_start.sh ./Caddyfile .
+COPY /caddy/caddy_start.sh /caddy/Caddyfile .
 
 RUN chmod a+x caddy_start.sh
 
