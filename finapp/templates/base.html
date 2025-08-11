@@ -18,6 +18,9 @@
 
     <link rel="icon" type="image/png" href="/static/images/logo.svg" />
 
+    <link rel="preconnect" href="https://ka-f.fontawesome.com" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+
     <title>{% block title %}{% endblock title %}</title>
     <script>
         // URLs for setting the theme options
@@ -94,7 +97,7 @@
       if (window.Sentry) {
         Sentry.onLoad(function () {
           Sentry.init({
-            release: "nbfinancial@1.2.16",
+            release: "nbfinancial@1.2.17",
             environment: "production",
             replaysSessionSampleRate: 0,
             replaysOnErrorSampleRate: 1.0,
