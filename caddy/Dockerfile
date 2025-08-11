@@ -2,7 +2,7 @@ FROM caddy:latest
 
 WORKDIR /app
 
-COPY caddy_start.sh Caddyfile .
+COPY ./caddy_start.sh ./Caddyfile .
 
 RUN chmod a+x caddy_start.sh
 
