@@ -1,5 +1,6 @@
 import { html } from "./main.bundle.mjs";
 import { NikElement } from "./nik-element.mjs";
+import * as agGrid from "./agGrid.bundle.mjs";
 import "./nb-category.mjs";
 import "./nb-delete-transaction.mjs";
 import "./nb-edit-transaction.mjs";

@@ -1,4 +1,4 @@
-const dashboardStorage = window["localStorage"];
+import * as agGrid from "./agGrid.bundle.mjs";
 
 const COLORS_OBJECT = {
   light: {
