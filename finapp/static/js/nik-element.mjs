@@ -1,4 +1,4 @@
-import { LitElement } from "./main.bundle.mjs";
+import { LitElement } from "./lit.bundle.mjs";
 
 function query(el, selector) {
   return () => el.querySelector(selector);

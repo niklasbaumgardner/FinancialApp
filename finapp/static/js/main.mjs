@@ -67,7 +67,4 @@ registerIconLibrary("remix", {
   mutator: (svg) => svg.setAttribute("fill", "currentColor"),
 });
 
-import { LitElement, html, nothing } from "lit";
-import { ifDefined } from "lit/directives/if-defined.js";
-
-export { LitElement, html, nothing, ifDefined, WaSelect };
+export { WaSelect };

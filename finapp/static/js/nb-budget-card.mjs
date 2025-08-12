@@ -1,5 +1,5 @@
 import { NikElement } from "./nik-element.mjs";
-import { html } from "./main.bundle.mjs";
+import { html } from "./lit.bundle.mjs";
 import "./nb-delete-budget-modal.mjs";
 
 export class BudgetCard extends NikElement {

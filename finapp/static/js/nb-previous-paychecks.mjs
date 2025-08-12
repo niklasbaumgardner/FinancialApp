@@ -1,5 +1,5 @@
 import { NikElement } from "./nik-element.mjs";
-import { html } from "./main.bundle.mjs";
+import { html } from "./lit.bundle.mjs";
 
 class Paycheck extends NikElement {
   static properties = {

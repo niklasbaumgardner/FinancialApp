@@ -1,4 +1,5 @@
-import { html, WaSelect } from "./main.bundle.mjs";
+import { html } from "./lit.bundle.mjs";
+import { WaSelect } from "./main.bundle.mjs";
 import { NikElement } from "./nik-element.mjs";
 import "./nb-category.mjs";
 

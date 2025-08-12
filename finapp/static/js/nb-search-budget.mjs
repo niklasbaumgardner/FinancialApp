@@ -1,4 +1,4 @@
-import { html } from "./main.bundle.mjs";
+import { html } from "./lit.bundle.mjs";
 import { NikElement } from "./nik-element.mjs";
 import "./nb-search-item.mjs";
 import "./nb-categories-select.mjs";

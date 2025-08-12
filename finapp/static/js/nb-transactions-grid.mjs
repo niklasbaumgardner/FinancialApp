@@ -1,4 +1,4 @@
-import { html } from "./main.bundle.mjs";
+import { html } from "./lit.bundle.mjs";
 import { NikElement } from "./nik-element.mjs";
 import * as agGrid from "./agGrid.bundle.mjs";
 import "./nb-category.mjs";

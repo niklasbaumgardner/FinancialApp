@@ -1,5 +1,5 @@
 import { NikElement } from "./nik-element.mjs";
-import { html } from "./main.bundle.mjs";
+import { html } from "./lit.bundle.mjs";
 import "./nb-category.mjs";
 import "./nb-radio.mjs";
 import { PRIMARY_COLOR_LIST } from "./theme.mjs";
