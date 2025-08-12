@@ -34,6 +34,6 @@ railway-deploy:
   stage: deploy
   image: ghcr.io/railwayapp/cli:latest
   variables:
-    SVC_ID: 5f5cc546-dd78-4723-bbfb-0b8cde97d233
+    SVC_ID: 0c17b7d5-5d73-4f11-a7be-edc64c0cf5d4
   script:
-    - railway up --service=5f5cc546-dd78-4723-bbfb-0b8cde97d233
+    - railway up --service=$SVC_ID
