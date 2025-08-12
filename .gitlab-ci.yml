@@ -36,4 +36,4 @@ railway-deploy:
   variables:
     SVC_ID: 5f5cc546-dd78-4723-bbfb-0b8cde97d233
   script:
-    - railway up --service=$SVC_ID
+    - railway up --service=5f5cc546-dd78-4723-bbfb-0b8cde97d233
