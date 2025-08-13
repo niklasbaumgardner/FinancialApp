@@ -17,3 +17,6 @@ railway-deploy-caddy:
     SVC_ID: 52e50462-9ba0-4d6e-803e-32b877bf5451
   script:
     - railway up --service=$SVC_ID
+  rules:
+    - changes:
+        - caddy/*
