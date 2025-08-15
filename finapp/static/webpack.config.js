@@ -17,7 +17,6 @@ const config = {
     },
   },
   module: {
-    // Bundle styles into main.css
     rules: [
       {
         test: /\.css$/i,

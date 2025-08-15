@@ -1,5 +1,6 @@
 import {
   ModuleRegistry,
+  ClientSideRowModelApiModule,
   ColumnAutoSizeModule,
   RowAutoHeightModule,
   PaginationModule,
@@ -17,6 +18,7 @@ import {
 
 ModuleRegistry.registerModules([
   ColumnAutoSizeModule,
+  ClientSideRowModelApiModule,
   RowAutoHeightModule,
   PaginationModule,
   CellSpanModule,
