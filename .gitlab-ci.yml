@@ -20,3 +20,4 @@ railway-deploy-caddy:
   rules:
     - changes:
         - caddy/*
+        - finapp/static/*
