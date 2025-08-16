@@ -6,8 +6,7 @@ class Paycheck extends NikElement {
     paycheck: { type: Object },
   };
 
-  handlePaycheckClick(event) {
-    console.log(event, this);
+  handlePaycheckClick() {
     this.closest("nb-previous-paychecks").hide();
 
     document.dispatchEvent(
