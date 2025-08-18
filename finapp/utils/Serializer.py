@@ -48,8 +48,6 @@ class SerializerMixin:
 
             data[key] = serialize(getattr(self, key))
 
-        # print(data)
-
         return data
 
 
