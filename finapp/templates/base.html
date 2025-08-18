@@ -97,10 +97,9 @@
       if (window.Sentry) {
         Sentry.onLoad(function () {
           Sentry.init({
-            release: "nbfinancial@1.2.21",
+            release: "nbfinancial@1.2.23",
             environment: "production",
-            replaysSessionSampleRate: 0,
-            replaysOnErrorSampleRate: 1.0,
+            tracesSampleRate: 1.0,
           });
         });
       }
