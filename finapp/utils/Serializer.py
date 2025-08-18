@@ -1,0 +1,68 @@
+from sqlalchemy.inspection import inspect as sa_inspect
+from typing import Any, Optional
+
+
+class SerializerMixin:
+    serialize_only: Optional[tuple[str, ...]] = None
+    serialize_rules: Optional[tuple[str, ...]] = None
+
+    def to_dict(self, rules=None, only=None) -> dict:
+        inspector = sa_inspect(self)
+        sa_keys = {a.key for a in inspector.mapper.attrs}
+
+        include = set()
+        exclude = set()
+        _visited = set()
+
+        # print(sa_keys)
+
+        # Apply model-level config
+        only = only or tuple()
+        rules = rules or tuple()
+
+        # t_rules = getattr(self, "serialize_only", tuple())
+        # print(t_rules, type(t_rules))
+        only = getattr(self, "serialize_only") or tuple() + only
+        rules = getattr(self, "serialize_rules") or tuple() + rules
+
+        keys = None
+        if only is not None and len(only) > 0:
+            keys = only
+
+        else:
+            keys = tuple(sa_keys)
+            for rule in rules:
+                if rule.startswith("-"):
+                    exclude.add(rule[1:])
+                else:
+                    include.add(rule)
+
+            keys += tuple(include)
+
+        keys = tuple(sorted(list(keys)))
+
+        data: dict[Any, Any] = {}
+
+        # Serialize relationships explicitly requested
+        keep_default_types = [int, float, str, bool]
+        for key in keys:
+            if key in exclude:
+                continue
+
+            value = getattr(self, key)
+            if value is None:
+                data[key] = None
+            elif type(value) in keep_default_types:
+                data[key] = value
+            elif callable(value):
+                data[key] = value()
+            elif isinstance(value, list):
+                data[key] = [
+                    v.to_dict() if hasattr(v, "to_dict") else str(v) for v in value
+                ]
+            else:
+                data[key] = value.to_dict() if hasattr(value, "to_dict") else str(value)
+
+        # print(data)
+
+        return data

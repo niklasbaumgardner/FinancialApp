@@ -3,12 +3,12 @@ from flask_login import UserMixin
 from itsdangerous import URLSafeTimedSerializer
 import os
 from finapp import db, login_manager
-from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 from sqlalchemy import ForeignKey, UniqueConstraint
 from typing import List, Optional
 from datetime import date as date_type
 from typing_extensions import Annotated
+from finapp.utils.Serializer import SerializerMixin
 
 
 int_pk = Annotated[int, mapped_column(primary_key=True)]
