@@ -6,7 +6,6 @@ from finapp.queries import (
 from flask import Blueprint, render_template, request, stream_with_context, Response
 from flask_login import login_required
 import json
-import timeit
 
 
 viewtransactions_bp = Blueprint("viewtransactions_bp", __name__)
@@ -34,30 +33,6 @@ def view_transactions():
         categories=categories,
         total=total,
     )
-
-
-@viewtransactions_bp.get("/api/get_transactions_whole")
-@login_required
-def api_get_transactions_whole():
-    include_budgets = request.args.get("includeBudgets")
-    include_budgets = include_budgets and include_budgets == "True"
-
-    transactions, _ = transaction_queries.get_recent_transactions()
-    print(
-        timeit.timeit(
-            "[t.to_dict() for t in transactions]",
-            number=1,
-            globals={"transactions": transactions},
-        )
-    )
-    transactions = [t.to_dict() for t in transactions]
-
-    if include_budgets:
-        budgets = [b.to_dict() for b in budget_queries.get_budgets()]
-
-        return dict(transactions=transactions, budgets=budgets)
-
-    return dict(transactions=transactions)
 
 
 @viewtransactions_bp.get("/api/get_transactions")
