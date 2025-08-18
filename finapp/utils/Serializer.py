@@ -12,7 +12,6 @@ class SerializerMixin:
 
         include = set()
         exclude = set()
-        _visited = set()
 
         # print(sa_keys)
 
@@ -43,26 +42,29 @@ class SerializerMixin:
 
         data: dict[Any, Any] = {}
 
-        # Serialize relationships explicitly requested
-        keep_default_types = [int, float, str, bool]
         for key in keys:
             if key in exclude:
                 continue
 
-            value = getattr(self, key)
-            if value is None:
-                data[key] = None
-            elif type(value) in keep_default_types:
-                data[key] = value
-            elif callable(value):
-                data[key] = value()
-            elif isinstance(value, list):
-                data[key] = [
-                    v.to_dict() if hasattr(v, "to_dict") else str(v) for v in value
-                ]
-            else:
-                data[key] = value.to_dict() if hasattr(value, "to_dict") else str(value)
+            data[key] = serialize(getattr(self, key))
 
         # print(data)
 
         return data
+
+
+def serialize(value):
+    KEEP_DEFAULT_TYPES = [int, float, str, bool]
+    value_type = type(value)
+    if value is None:
+        return None
+    elif value_type in KEEP_DEFAULT_TYPES:
+        return value
+    elif isinstance(value, list):
+        return [serialize(v) for v in value]
+    elif callable(value):
+        return serialize(value())
+    elif hasattr(value, "to_dict"):
+        return value.to_dict()
+    else:
+        return str(value)
