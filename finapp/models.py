@@ -1,3 +1,5 @@
+from dataclasses import asdict, dataclass
+import re
 from flask import url_for
 from flask_login import UserMixin
 from itsdangerous import URLSafeTimedSerializer
@@ -20,10 +22,90 @@ def load_user(id):
     return db.session.get(User, int(id))
 
 
-class User(db.Model, UserMixin, SerializerMixin):
+@dataclass(kw_only=True)
+class BaseDataclass:
+    serialize_only: Optional[tuple[str, ...]] = None
+    serialize_rules: Optional[tuple[str, ...]] = None
+
+    def dict_factory(self, x):
+        # print(x)
+        # print()
+        if self.serialize_only is not None and len(self.serialize_only) > 0:
+            d = dict()
+            for k, v in x:
+                if k not in self.serialize_only:
+                    continue
+
+                print(k, v, isinstance(v, BaseDataclass))
+                if isinstance(v, BaseDataclass):
+                    print(v, type(v))
+                    d[k] = v.to_dict()
+                elif callable(v):
+                    d[k] = v()
+                else:
+                    d[k] = str(v)
+            return d
+
+        rules = (
+            "-serialize_rules",
+            "-serialize_only",
+        )
+
+        if self.serialize_rules is not None and len(self.serialize_rules) > 0:
+            rules += self.serialize_rules
+
+        exclude_fields = [ex[1:] for ex in rules if ex.startswith("-")]
+        include_fields = [inc for inc in rules if not inc.startswith("-")]
+
+        # d = {k: v for (k, v) in x if (k not in exclude_fields)}
+        d = dict()
+        for k, v in x:
+            if k in exclude_fields:
+                continue
+
+            # print(k, v)
+            print(k, type(v), isinstance(v, BaseDataclass))
+            if isinstance(v, BaseDataclass):
+                print(v, type(v))
+                d[k] = v.to_dict()
+            elif callable(v):
+                d[k] = v()
+            else:
+                d[k] = str(v)
+
+        # print(d)
+
+        for field in include_fields:
+            if field not in d:
+                attr = getattr(self, field)
+                # print(attr)
+                print(field, type(attr), isinstance(attr, BaseDataclass))
+                if isinstance(attr, BaseDataclass):
+                    print(attr, type(attr))
+                    d[field] = attr.to_dict()
+                elif callable(attr):
+                    d[field] = attr()
+                else:
+                    d[field] = str(attr)
+        return d
+
+    def to_dict(self):
+        # print(self)
+        print(type(self), "When are we here?")
+        d = asdict(self, dict_factory=self.dict_factory)
+        # print(d)
+        return d
+
+
+@dataclass
+class User(db.Model, UserMixin, BaseDataclass):
     __tablename__ = "user"
 
-    serialize_only = ("id", "username", "email")
+    serialize_only = (
+        "id",
+        "username",
+        "email",
+    )
 
     id: Mapped[int_pk]
     username: Mapped[str] = mapped_column(unique=True)
@@ -44,7 +126,8 @@ class User(db.Model, UserMixin, SerializerMixin):
         return db.session.get(User, user_id)
 
 
-class Theme(db.Model, SerializerMixin):
+@dataclass
+class Theme(db.Model, BaseDataclass):
     __tablename__ = "theme"
 
     serialize_rules = (
@@ -62,7 +145,8 @@ class Theme(db.Model, SerializerMixin):
     color_palette: Mapped[Optional[str]]  # web-awesome values
 
 
-class Budget(db.Model, SerializerMixin):
+@dataclass
+class Budget(db.Model, BaseDataclass):
     __tablename__ = "budget"
 
     serialize_rules = (
@@ -114,8 +198,8 @@ class Budget(db.Model, SerializerMixin):
     # I don't think this will work because of the shared_budget model
     # transactions = relationship("Transaction", uselist=False)
 
-    def __str__(self):
-        return f"{self.name: <30s}|{self.total: >10.2f}"
+    # def __str__(self):
+    #     return f"{self.name: <30s}|{self.total: >10.2f}"
 
     def get_share_token(self, recipient_id):
         s = URLSafeTimedSerializer(os.environ.get("SECRET_KEY"))
@@ -130,7 +214,8 @@ class Budget(db.Model, SerializerMixin):
         return obj
 
 
-class SharedBudget(db.Model, SerializerMixin):
+@dataclass
+class SharedBudget(db.Model, BaseDataclass):
     __tablename__ = "shared_budget"
 
     id: Mapped[int_pk]
@@ -140,11 +225,12 @@ class SharedBudget(db.Model, SerializerMixin):
     budget: Mapped["Budget"] = relationship(lazy="joined", viewonly=True)
 
 
-class Transaction(db.Model, SerializerMixin):
+@dataclass
+class Transaction(db.Model, BaseDataclass):
     __tablename__ = "transaction"
 
     serialize_rules = (
-        "categories",
+        # "categories",
         "user",
         "budget",
         "edit_url",
@@ -183,7 +269,8 @@ class Transaction(db.Model, SerializerMixin):
         )
 
 
-class Paycheck(db.Model, SerializerMixin):
+@dataclass
+class Paycheck(db.Model, BaseDataclass):
     __tablename__ = "paycheck"
 
     id: Mapped[int_pk]
@@ -196,7 +283,8 @@ class Paycheck(db.Model, SerializerMixin):
     )
 
 
-class Category(db.Model, SerializerMixin):
+@dataclass
+class Category(db.Model, BaseDataclass):
     __tablename__ = "category"
     __table_args__ = (UniqueConstraint("user_id", "name"),)
 
@@ -206,7 +294,8 @@ class Category(db.Model, SerializerMixin):
     color: Mapped[str]
 
 
-class TransactionCategory(db.Model, SerializerMixin):
+@dataclass
+class TransactionCategory(db.Model, BaseDataclass):
     __tablename__ = "transaction_category"
     __table_args__ = (UniqueConstraint("transaction_id", "category_id"),)
 
