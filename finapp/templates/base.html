@@ -97,9 +97,13 @@
       if (window.Sentry) {
         Sentry.onLoad(function () {
           Sentry.init({
-            release: "nbfinancial@1.2.23",
+            release: "nbfinancial@1.2.24",
             environment: "production",
+            integrations: [
+              Sentry.browserTracingIntegration(),
+            ],
             tracesSampleRate: 1.0,
+            sendDefaultPii: true,
           });
         });
       }

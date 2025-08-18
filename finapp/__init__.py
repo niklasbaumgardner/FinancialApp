@@ -31,7 +31,8 @@ if not os.environ.get("FLASK_DEBUG"):
     sentry_sdk.init(
         dsn=os.environ.get("SENTRY_DSN"),
         traces_sample_rate=1.0,
-        release="nb-budgets@1.1.21",
+        send_default_pii=True,
+        release="nb-budgets@1.1.22",
     )
 
 
