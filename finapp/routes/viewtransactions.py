@@ -41,6 +41,23 @@ def api_get_transactions():
     include_budgets = request.args.get("includeBudgets")
     include_budgets = include_budgets and include_budgets == "True"
 
+    transactions, _ = transaction_queries.get_recent_transactions()
+    transactions = [t.to_dict() for t in transactions]
+
+    if include_budgets:
+        budgets = [b.to_dict() for b in budget_queries.get_budgets()]
+
+        return dict(transactions=transactions, budgets=budgets)
+
+    return dict(transactions=transactions)
+
+
+@viewtransactions_bp.get("/api/get_transactions_stream")
+@login_required
+def api_get_transactions_stream():
+    include_budgets = request.args.get("includeBudgets")
+    include_budgets = include_budgets and include_budgets == "True"
+
     def generate():
         yield '{"transactions": ['
 
