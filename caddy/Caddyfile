@@ -37,6 +37,7 @@
     file_server
   }
 
+  header /static* Cache-Control max-age=86400
 
   # proxy all requests for /* to the app, configure these variables in the service settings
   reverse_proxy {

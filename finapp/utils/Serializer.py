@@ -13,14 +13,9 @@ class SerializerMixin:
         include = set()
         exclude = set()
 
-        # print(sa_keys)
-
-        # Apply model-level config
         only = only or tuple()
         rules = rules or tuple()
 
-        # t_rules = getattr(self, "serialize_only", tuple())
-        # print(t_rules, type(t_rules))
         only = getattr(self, "serialize_only") or tuple() + only
         rules = getattr(self, "serialize_rules") or tuple() + rules
 
