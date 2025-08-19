@@ -9,6 +9,10 @@ railway-deploy-web:
     SVC_ID: 0c17b7d5-5d73-4f11-a7be-edc64c0cf5d4
   script:
     - railway up --service=$SVC_ID
+  rules:
+    - changes:
+        - caddy/*
+      when: never
 
 railway-deploy-caddy:
   stage: deploy
