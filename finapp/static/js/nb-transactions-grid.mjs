@@ -383,8 +383,8 @@ export class TransactionsGrid extends NikElement {
           },
           {
             colId: "actions",
-            minWidth: 116,
-            maxWidth: 116,
+            minWidth: 118,
+            maxWidth: 118,
           },
         ],
       },
