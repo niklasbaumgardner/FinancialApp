@@ -1,8 +1,6 @@
 {% extends "base.html" %} {% block title %}Add Paycheck{% endblock title %} {%
 block addtransaction %}active{% endblock addtransaction %} {% block backButton
-%}<wa-button href="/" id="back-button" variant="brand" appearance="outlined">
-  <wa-icon library="ion" name="chevron-back-outline"></wa-icon> Back</wa-button
->{% endblock backButton %} {% block head %}
+%}<nb-back-button></nb-back-button>{% endblock backButton %} {% block head %}
 
 <script src="/static/js/nb-add-paycheck.mjs" type="module"></script>
 

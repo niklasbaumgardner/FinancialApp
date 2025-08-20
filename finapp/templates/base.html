@@ -82,6 +82,7 @@
       }
       console.log(window.THEME);
     </script>
+    <script src="/static/js/nb-back-button.mjs" type="module"></script>
     <script src="/static/js/nb-alert.mjs" type="module"></script>
     <script src="/static/js/nb-theme-selector.mjs" type="module"></script>
     <script src="/static/js/nb-category-modal.mjs" type="module"></script>
@@ -97,7 +98,7 @@
       if (window.Sentry) {
         Sentry.onLoad(function () {
           Sentry.init({
-            release: "nbfinancial@1.2.24",
+            release: "nbfinancial@1.2.25",
             environment: "production",
             integrations: [
               Sentry.browserTracingIntegration(),
@@ -254,10 +255,4 @@
       {% endwith %}
     </div>
   </body>
-  <script>
-    let backButton = document.getElementById("back-button");
-    if (backButton) {
-      backButton.href = document.referrer.length ? document.referrer : "/";
-    }
-  </script>
 </html>

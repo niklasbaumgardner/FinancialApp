@@ -1,12 +1,6 @@
 {% extends "base.html" %} {% block title %}Transfer{% endblock title %} {% block
-transfer %}active{% endblock transfer %} {% block backButton %}<wa-button
-  href="/"
-  id="back-button"
-  variant="brand"
-  appearance="outlined"
->
-  <wa-icon library="ion" name="chevron-back-outline"></wa-icon> Back</wa-button
->{% endblock backButton %} {% block head %}
+transfer %}active{% endblock transfer %} {% block backButton %}<nb-back-button
+></nb-back-button>{% endblock backButton %} {% block head %}
 
 <script src="/static/js/nb-transfer.mjs" type="module"></script>
 

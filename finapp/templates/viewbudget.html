@@ -1,12 +1,6 @@
 {% extends "base.html" %} {% block title %}{{ budget.name }}{% endblock title %}
-{% block backButton %}<wa-button
-  href="/"
-  id="back-button"
-  variant="brand"
-  appearance="outlined"
->
-  <wa-icon library="ion" name="chevron-back-outline"></wa-icon> Back</wa-button
->{% endblock backButton %} {% block head %}
+{% block backButton %}<nb-back-button></nb-back-button>{% endblock backButton %}
+{% block head %}
 <script>
   const GET_PAGE_URL =
     "{{ url_for('viewbudget_bp.get_page', budget_id=budget.id) }}";
