@@ -269,7 +269,11 @@ export class Theme {
       document.documentElement.classList.add(`wa-palette-${this.colorPalette}`);
     }
 
-    this.paletteLinkEl.href = `/static/css/${this.colorPalette}.palette.min.css`;
+    if (this.colorPalette) {
+      this.paletteLinkEl.href = `/static/css/${this.colorPalette}.palette.min.css`;
+    } else {
+      this.paletteLinkEl.href = "";
+    }
 
     if (!this.#initing) {
       fetch(
