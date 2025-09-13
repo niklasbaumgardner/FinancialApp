@@ -40,6 +40,7 @@ class ViewTransactions extends NikElement {
 
     document.addEventListener("UpdateBudgets", this);
     document.addEventListener("RequestNewData", this);
+    document.addEventListener("keydown", this);
   }
 
   handleEvent(event) {
@@ -52,6 +53,10 @@ class ViewTransactions extends NikElement {
       case "RequestNewData": {
         let includeBudgets = event.detail.includeBudgets;
         this.requestData(includeBudgets);
+        break;
+      }
+      case "keydown": {
+        this.handleKeyDown(event);
         break;
       }
     }
@@ -107,6 +112,16 @@ class ViewTransactions extends NikElement {
     }
 
     this.addTransactionModal.show();
+  }
+
+  handleKeyDown(event) {
+    if (event.explicitOriginalTarget instanceof HTMLInputElement) {
+      return;
+    }
+
+    if (event.shiftKey && event.key.toLowerCase() === "n") {
+      this.addTransactionClick();
+    }
   }
 
   toggleSetDownloadLink() {

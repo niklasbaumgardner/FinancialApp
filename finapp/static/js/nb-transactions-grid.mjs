@@ -109,6 +109,7 @@ export class TransactionsGrid extends NikElement {
     document.addEventListener("UpdateTransaction", this);
     document.addEventListener("AddTransaction", this);
     document.addEventListener("DeleteTransaction", this);
+    document.addEventListener("keydown", this);
   }
 
   handleEvent(event) {
@@ -137,7 +138,54 @@ export class TransactionsGrid extends NikElement {
         this.handleDisabledPaginationButtonClick(event);
         break;
       }
+      case "keydown": {
+        this.handleKeyDown(event);
+        break;
+      }
     }
+  }
+
+  handleKeyDown(event) {
+    if (event.explicitOriginalTarget instanceof HTMLInputElement) {
+      return;
+    }
+
+    // add option key or something here
+    let index = 0;
+    switch (event.key) {
+      case "n": {
+        index = 0;
+        break;
+      }
+      case "a": {
+        index = 1;
+        break;
+      }
+      case "b": {
+        index = 2;
+        break;
+      }
+      case "u": {
+        index = 3;
+        break;
+      }
+      case "c": {
+        index = 4;
+        break;
+      }
+      case "d": {
+        index = 5;
+        break;
+      }
+      default: {
+        return;
+      }
+    }
+
+    event.stopImmediatePropagation();
+    event.preventDefault();
+    let filters = document.querySelectorAll(".ag-icon-filter");
+    filters[index].click();
   }
 
   updateTransactions(transactions) {
