@@ -37,6 +37,8 @@ import "@awesome.me/webawesome/dist/components/option/option.js";
 
 import "@awesome.me/webawesome/dist/components/tooltip/tooltip.js";
 
+import "@awesome.me/webawesome/dist/components/switch/switch.js";
+
 // // Option 2: the setBasePath()
 // import { setBasePath } from "@awesome.me/webawesome/dist/webawesome.js";
 // setBasePath("");
