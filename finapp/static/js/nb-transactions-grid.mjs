@@ -146,7 +146,12 @@ export class TransactionsGrid extends NikElement {
   }
 
   handleKeyDown(event) {
-    if (event.explicitOriginalTarget instanceof HTMLInputElement) {
+    let tagName = event.explicitOriginalTarget.localName;
+    if (
+      tagName === "input" ||
+      tagName === "wa-input" ||
+      tagName === "wa-option"
+    ) {
       return;
     }
 
