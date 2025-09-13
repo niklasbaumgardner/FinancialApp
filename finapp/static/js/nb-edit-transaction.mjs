@@ -42,7 +42,6 @@ export class EditTransactionModal extends AddTransactionModal {
     this.submitButton.loading = false;
     this.submitButton.disabled = false;
 
-    this.form.reset();
     this.hide();
   }
 
