@@ -4,25 +4,11 @@ from finapp.queries import budget_queries, transaction_queries
 import json
 
 
-def format_to_money_string(number, include_minus=True):
-    number = round(number, 2)
-    if include_minus and number < 0:
-        return f"-${abs(number):,.2f}"
-    return f"${abs(number):,.2f}"
-
-
-def is_same_day(d1, d2):
-    return d1.year == d2.year and d1.month == d2.month and d1.day == d2.day
-
-
 def get_date_from_string(str_date):
     if not str_date:
         return None
 
     return date.fromisoformat(str_date)
-    year, month, day = str_date.strip().split("-")
-
-    return date(int(year), int(month), int(day))
 
 
 def transSum(lst):
@@ -62,28 +48,6 @@ def get_data_dict(all_trans):
         # str_date = trans.date.strftime("%m/%d/%Y")
         data[trans.date] = round(transSum(all_trans[:i]) + all_trans[i].amount, 2)
     return data
-
-
-def jsify_transactions(transactions):
-    t_list = []
-
-    for t in transactions:
-        t_list.append(t.to_json())
-
-    return t_list
-
-
-def in_out_net(trans):
-    in_ = 0
-    out = 0
-    net = 0
-    for tran in trans:
-        if tran.amount > 0:
-            in_ += tran.amount
-        elif tran.amount < 0:
-            out += tran.amount
-    net = round(in_ + out, 2)
-    return in_, out, net
 
 
 def net_spending(month, year, ytd):

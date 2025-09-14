@@ -6,12 +6,16 @@ from finapp import db, login_manager
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 from sqlalchemy import ForeignKey, UniqueConstraint
 from typing import List, Optional
-from datetime import date as date_type
+from datetime import date as date_type, datetime as datetime_type
 from typing_extensions import Annotated
 from finapp.utils.Serializer import SerializerMixin
+from cryptography.fernet import Fernet
+
+FERNET_KEY: bytes = os.environ.get("FERNET_KEY").encode()
 
 
 int_pk = Annotated[int, mapped_column(primary_key=True)]
+str_pk = Annotated[str, mapped_column(primary_key=True)]
 user_fk = Annotated[int, mapped_column(ForeignKey("user.id"))]
 
 
@@ -160,6 +164,7 @@ class Transaction(db.Model, SerializerMixin):
     date: Mapped[date_type]
     is_transfer: Mapped[Optional[bool]]
     paycheck_id: Mapped[Optional[int]] = mapped_column(ForeignKey("paycheck.id"))
+    simplefin_id: Mapped[Optional[str]]  # from PendingTransaction.simplefin_id
 
     categories: Mapped[List["TransactionCategory"]] = relationship(
         lazy="joined", passive_deletes=True
@@ -218,3 +223,77 @@ class TransactionCategory(db.Model, SerializerMixin):
     category_id: Mapped[int] = mapped_column(ForeignKey("category.id"))
 
     category: Mapped["Category"] = relationship(lazy="joined", viewonly=True)
+
+
+class SimpleFINCredential(db.Model, SerializerMixin):
+    __tablename__ = "simplefin_credential"
+
+    id: Mapped[int_pk]
+    user_id: Mapped[user_fk]
+    username: Mapped[str]  # encrypted
+    password: Mapped[str]  # encrypted
+    last_synced: Mapped[Optional[datetime_type]]
+
+    @staticmethod
+    def encrypt_credentials(username, password) -> tuple[str, str]:
+        f = Fernet(FERNET_KEY)
+
+        username_bytes = username.encode()
+        password_bytes = password.encode()
+
+        encrypted_username = f.encrypt(username_bytes)
+        encrypted_password = f.encrypt(password_bytes)
+
+        return encrypted_username.decode(), encrypted_password.decode()
+
+    def decrypt_credentials(self) -> tuple[str, str]:
+        f = Fernet(FERNET_KEY)
+
+        username_decrypted = f.decrypt(self.username)
+        password_decrypted = f.decrypt(self.password)
+
+        return username_decrypted.decode(), password_decrypted.decode()
+
+
+class SimpleFINOrganization(db.Model, SerializerMixin):
+    __tablename__ = "simplefin_organization"
+
+    id: Mapped[int_pk]
+    simplefin_id: Mapped[str] = mapped_column(unique=True)
+    name: Mapped[str]
+    domain: Mapped[str]
+    sfin_url: Mapped[str]
+    url: Mapped[str]
+
+
+class SimpleFINAccount(db.Model, SerializerMixin):
+    __tablename__ = "simplefin_account"
+
+    id: Mapped[str_pk]
+    user_id: Mapped[user_fk]
+    organization_id: Mapped[str] = mapped_column(
+        ForeignKey("simplefin_organization.id")
+    )
+    name: Mapped[str]
+    currency: Mapped[str]
+    balance: Mapped[float]
+    available_balance: Mapped[Optional[float]]
+    cbalance_date: Mapped[date_type]
+
+    organization: Mapped["SimpleFINOrganization"] = relationship(
+        lazy="joined", viewonly=True
+    )
+
+
+class PendingTransaction(db.Model, SerializerMixin):
+    __tablename__ = "pending_transaction"
+
+    id: Mapped[int_pk]
+    simplefin_id: Mapped[str]
+    account_id: Mapped[str] = mapped_column(ForeignKey("simplefin_account.id"))
+    user_id: Mapped[user_fk]
+    name: Mapped[str]
+    amount: Mapped[float]
+    date: Mapped[date_type]
+
+    account: Mapped["SimpleFINAccount"] = relationship(lazy="joined", viewonly=True)
