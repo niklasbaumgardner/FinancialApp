@@ -1,23 +1,24 @@
 from finapp.models import (
+    CompletedTransaction,
     PendingTransaction,
     SimpleFINAccount,
-    SimpleFINCredential,
+    SimpleFINCredentials,
     SimpleFINOrganization,
 )
 from flask_login import current_user
 from finapp import db
 from sqlalchemy.sql import or_, and_
-from sqlalchemy.orm import joinedload
-from sqlalchemy import delete, func, insert, select, update
+from sqlalchemy import delete, insert, select, update
 from datetime import datetime, date
+from finapp.queries import transaction_queries, user_queries
 
 
 # TODO: make upsert
-def create_simplefin_credential(username, password):
-    encrypted_username, encrypted_password = SimpleFINCredential.encrypt_credentials(
+def create_simplefin_credentials(username, password):
+    encrypted_username, encrypted_password = SimpleFINCredentials.encrypt_credentials(
         username=username, password=password
     )
-    stmt = insert(SimpleFINCredential).values(
+    stmt = insert(SimpleFINCredentials).values(
         user_id=current_user.id,
         username=encrypted_username,
         password=encrypted_password,
@@ -25,21 +26,21 @@ def create_simplefin_credential(username, password):
     result = db.session.execute(stmt)
     db.session.commit()
 
-    credential_id = result.inserted_primary_key[0]
-    return credential_id
+    credentials_id = result.inserted_primary_key[0]
+    return credentials_id
 
 
-def get_simplefin_credential():
-    stmt = select(SimpleFINCredential).where(
-        SimpleFINCredential.user_id == current_user.id
+def get_simplefin_credentials():
+    stmt = select(SimpleFINCredentials).where(
+        SimpleFINCredentials.user_id == current_user.id
     )
     return db.session.scalars(stmt.limit(1)).first()
 
 
-def update_simplefin_credential_last_synced():
+def update_simplefin_credentials_last_synced():
     stmt = (
-        update(SimpleFINCredential)
-        .where(SimpleFINCredential.user_id == current_user.id)
+        update(SimpleFINCredentials)
+        .where(SimpleFINCredentials.user_id == current_user.id)
         .values(last_synced=datetime.now())
     )
     db.session.execute(stmt)
@@ -100,10 +101,21 @@ def upsert_simplefin_account(account, organization_id):
 
 
 def get_simplefin_account(id):
+    shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
+
     stmt = select(SimpleFINAccount).where(
-        and_(SimpleFINAccount.id == id, SimpleFINAccount.user_id == current_user.id)
+        and_(SimpleFINAccount.id == id, SimpleFINAccount.user_id.in_(shared_user_ids))
     )
     return db.session.scalars(stmt.limit(1)).first()
+
+
+def get_simplefin_accounts():
+    shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
+
+    stmt = select(SimpleFINAccount).where(
+        and_(SimpleFINAccount.id == id, SimpleFINAccount.user_id.in_(shared_user_ids))
+    )
+    return db.session.scalars(stmt).all()
 
 
 def create_pending_transactions(account, transactions):
@@ -121,3 +133,102 @@ def create_pending_transactions(account, transactions):
 
     stmt = insert(PendingTransaction).values(transactions)
     db.session.execute(stmt)
+    db.session.commit()
+
+
+def get_pending_transactions():
+    shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
+
+    stmt = select(PendingTransaction).where(
+        PendingTransaction.user_id.in_(shared_user_ids)
+    )
+
+    return db.session.scalars(stmt).unique().all()
+
+
+def get_pending_transaction_by_id(id):
+    shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
+
+    stmt = select(PendingTransaction).where(
+        and_(
+            PendingTransaction.id == id, PendingTransaction.user_id.in_(shared_user_ids)
+        )
+    )
+
+    return db.session.scalars(stmt.limit(1)).first()
+
+
+def delete_pending_transaction(id):
+    shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
+
+    stmt = delete(PendingTransaction).where(
+        and_(
+            PendingTransaction.id == id, PendingTransaction.user_id.in_(shared_user_ids)
+        )
+    )
+
+    db.session.execute(stmt)
+    db.session.commit()
+
+
+def create_completed_transaction(
+    simplefin_id, user_id, account_id, name, amount, t_date, transaction_id=None
+):
+    t_dict = dict(
+        simplefin_id=simplefin_id,
+        user_id=user_id,
+        account_id=account_id,
+        name=name,
+        amount=amount,
+        date=t_date,
+    )
+
+    if transaction_id is not None:
+        t_dict["transaction_id"] = transaction_id
+
+    stmt = insert(CompletedTransaction).values(t_dict)
+
+    db.session.execute(stmt)
+    db.session.commit()
+
+
+def convert_pending_transaction(
+    user_id, name, amount, t_date, budget_id, categories, pending_transaction_id
+):
+    p_transaction = get_pending_transaction_by_id(id=id)
+
+    transaction_id = transaction_queries.create_transaction(
+        user_id=user_id,
+        name=name,
+        amount=amount,
+        date=t_date,
+        budget_id=budget_id,
+        categories=categories,
+    )
+
+    create_completed_transaction(
+        simplefin_id=p_transaction.simplefin_id,
+        user_id=p_transaction.user_id,
+        account_id=p_transaction.account_id,
+        name=p_transaction.name,
+        amount=p_transaction.amount,
+        t_date=p_transaction.date,
+        transaction_id=transaction_id,
+    )
+
+    delete_pending_transaction(id=p_transaction.id)
+
+
+def discared_pending_transaction(id):
+    p_transaction = get_pending_transaction_by_id(id=id)
+
+    create_completed_transaction(
+        simplefin_id=p_transaction.simplefin_id,
+        user_id=p_transaction.user_id,
+        account_id=p_transaction.account_id,
+        name=p_transaction.name,
+        amount=p_transaction.amount,
+        t_date=p_transaction.date,
+    )
+
+    delete_pending_transaction(id=p_transaction.id)

@@ -164,7 +164,6 @@ class Transaction(db.Model, SerializerMixin):
     date: Mapped[date_type]
     is_transfer: Mapped[Optional[bool]]
     paycheck_id: Mapped[Optional[int]] = mapped_column(ForeignKey("paycheck.id"))
-    simplefin_id: Mapped[Optional[str]]  # from PendingTransaction.simplefin_id
 
     categories: Mapped[List["TransactionCategory"]] = relationship(
         lazy="joined", passive_deletes=True
@@ -225,8 +224,8 @@ class TransactionCategory(db.Model, SerializerMixin):
     category: Mapped["Category"] = relationship(lazy="joined", viewonly=True)
 
 
-class SimpleFINCredential(db.Model, SerializerMixin):
-    __tablename__ = "simplefin_credential"
+class SimpleFINCredentials(db.Model, SerializerMixin):
+    __tablename__ = "simplefin_credentials"
 
     id: Mapped[int_pk]
     user_id: Mapped[user_fk]
@@ -259,7 +258,7 @@ class SimpleFINOrganization(db.Model, SerializerMixin):
     __tablename__ = "simplefin_organization"
 
     id: Mapped[int_pk]
-    simplefin_id: Mapped[str] = mapped_column(unique=True)
+    simplefin_id: Mapped[str] = mapped_column(unique=True, index=True)
     name: Mapped[str]
     domain: Mapped[str]
     sfin_url: Mapped[str]
@@ -278,7 +277,9 @@ class SimpleFINAccount(db.Model, SerializerMixin):
     currency: Mapped[str]
     balance: Mapped[float]
     available_balance: Mapped[Optional[float]]
-    cbalance_date: Mapped[date_type]
+    balance_date: Mapped[date_type]
+
+    type: Mapped[Optional[int]]  # this is for me to maybe include transactions
 
     organization: Mapped["SimpleFINOrganization"] = relationship(
         lazy="joined", viewonly=True
@@ -289,7 +290,7 @@ class PendingTransaction(db.Model, SerializerMixin):
     __tablename__ = "pending_transaction"
 
     id: Mapped[int_pk]
-    simplefin_id: Mapped[str]
+    simplefin_id: Mapped[str] = mapped_column(unique=True, index=True)
     account_id: Mapped[str] = mapped_column(ForeignKey("simplefin_account.id"))
     user_id: Mapped[user_fk]
     name: Mapped[str]
@@ -297,3 +298,20 @@ class PendingTransaction(db.Model, SerializerMixin):
     date: Mapped[date_type]
 
     account: Mapped["SimpleFINAccount"] = relationship(lazy="joined", viewonly=True)
+
+
+class CompletedTransaction(db.Model, SerializerMixin):
+    __tablename__ = "completed_transaction"
+
+    id: Mapped[int_pk]
+
+    simplefin_id: Mapped[str] = mapped_column(unique=True, index=True)
+    transaction_id: Mapped[Optional[int]] = mapped_column(
+        ForeignKey("transaction.id")
+    )  # do i need this?
+
+    account_id: Mapped[str] = mapped_column(ForeignKey("simplefin_account.id"))
+    user_id: Mapped[user_fk]
+    name: Mapped[str]
+    amount: Mapped[float]
+    date: Mapped[date_type]
