@@ -1,0 +1,18 @@
+{% extends "base.html" %} {% block title %}Profile{% endblock title %} {% block
+profile %}active{% endblock profile %} {% block backButton %}
+
+<nb-back-button></nb-back-button>
+
+{% endblock backButton %} {% block head %}
+<script>
+  const CLAIM_SIMPLEFIN_TOKEN_URL =
+    "{{ url_for('simplefin_bp.claim_simplefin_token') }}";
+</script>
+
+<script src="/static/js/nb-simplefin.mjs" type="module"></script>
+
+{% endblock head %} {% block content %}
+
+<nb-simplefin class="main-card" accounts='{{ accounts|tojson }}'></nb-simplefin>
+
+{% endblock content %}

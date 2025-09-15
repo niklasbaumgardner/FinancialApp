@@ -11,6 +11,7 @@ from sqlalchemy.sql import or_, and_
 from sqlalchemy import delete, insert, select, update
 from datetime import datetime, date
 from finapp.queries import transaction_queries, user_queries
+from sqlalchemy.dialects.postgresql import insert as pg_insert
 
 
 # TODO: make upsert
@@ -47,9 +48,9 @@ def update_simplefin_credentials_last_synced():
     db.session.commit()
 
 
-def create_simplefin_organization(sfin_id, name, domain, sfin_url, url):
+def create_simplefin_organization(simplefin_id, name, domain, sfin_url, url):
     stmt = insert(SimpleFINOrganization).values(
-        simplefin_id=sfin_id,
+        simplefin_id=simplefin_id,
         name=name,
         domain=domain,
         sfin_url=sfin_url,
@@ -62,10 +63,10 @@ def create_simplefin_organization(sfin_id, name, domain, sfin_url, url):
     return organization_id
 
 
-def get_simplefin_organization(id, domain, name):
+def get_simplefin_organization(simplefin_id, domain, name):
     stmt = select(SimpleFINOrganization).where(
         or_(
-            SimpleFINOrganization.id == id,
+            SimpleFINOrganization.simplefin_id == simplefin_id,
             SimpleFINOrganization.domain == domain,
             SimpleFINOrganization.name == name,
         )
@@ -73,27 +74,48 @@ def get_simplefin_organization(id, domain, name):
     return db.session.scalars(stmt.limit(1)).first()
 
 
-def upsert_simplefin_account(account, organization_id):
-    stmt = (
-        insert(SimpleFINAccount)
-        .values(
-            id=account["id"],
-            user_id=current_user.id,
-            organization_id=organization_id,
-            name=account["name"],
-            currency=account["currency"],
-            balance=float(account["balance"]),
-            available_balance=float(account["available-balance"]),
-            balance_date=date.fromtimestamp(account["balance-date"]),
-        )
-        .on_conflict_do_update(
-            index_elements=[SimpleFINAccount.id],
-            set_=dict(
-                organization_id=organization_id,
-            ),
-        )
+def get_or_create_simplefin_organization(org):
+    sf_org = get_simplefin_organization(
+        simplefin_id=org.get("id"), domain=org.get("domain"), name=org.get("name")
     )
-    result = db.session.execute(stmt)
+
+    if sf_org:
+        return sf_org
+
+    create_simplefin_organization(
+        simplefin_id=org.get("id"),
+        name=org.get("name"),
+        domain=org.get("domain"),
+        sfin_url=org.get("sfin-url"),
+        url=org.get("url"),
+    )
+
+    return get_simplefin_organization(
+        simplefin_id=org.get("id"), domain=org.get("domain"), name=org.get("name")
+    )
+
+
+def upsert_simplefin_account(account, organization_id):
+    stmt = pg_insert(SimpleFINAccount).values(
+        id=account["id"],
+        user_id=current_user.id,
+        organization_id=organization_id,
+        name=account["name"],
+        currency=account["currency"],
+        balance=float(account["balance"]),
+        available_balance=float(account["available-balance"]),
+        balance_date=date.fromtimestamp(account["balance-date"]),
+    )
+    upsert_stmt = stmt.on_conflict_do_update(
+        index_elements=["id"],
+        set_={
+            "name": stmt.excluded.name,
+            "balance": stmt.excluded.balance,
+            "available_balance": stmt.excluded.available_balance,
+            "balance_date": stmt.excluded.balance_date,
+        },
+    )
+    result = db.session.execute(upsert_stmt)
     db.session.commit()
 
     account_id = result.inserted_primary_key[0]
@@ -112,13 +134,14 @@ def get_simplefin_account(id):
 def get_simplefin_accounts():
     shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
 
-    stmt = select(SimpleFINAccount).where(
-        and_(SimpleFINAccount.id == id, SimpleFINAccount.user_id.in_(shared_user_ids))
-    )
-    return db.session.scalars(stmt).all()
+    stmt = select(SimpleFINAccount).where(SimpleFINAccount.user_id.in_(shared_user_ids))
+    return db.session.scalars(stmt).unique().all()
 
 
 def create_pending_transactions(account, transactions):
+    if len(transactions) < 1:
+        return
+
     pending_transactions = []
     for t in transactions:
         pt = dict(
@@ -131,7 +154,7 @@ def create_pending_transactions(account, transactions):
         )
         pending_transactions.append(pt)
 
-    stmt = insert(PendingTransaction).values(transactions)
+    stmt = insert(PendingTransaction).values(pending_transactions)
     db.session.execute(stmt)
     db.session.commit()
 

@@ -16,6 +16,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 # from sqlalchemy.engine import Engine
 # import time
 # import logging
+# ruff: noqa: E402
 
 
 class Base(DeclarativeBase):
@@ -94,41 +95,39 @@ mail.init_app(app)
 #     logger.debug("Total Time: %f", total)
 
 
-from finapp.routes.auth import auth_bp as auth_blueprint
-from finapp.routes.category import category_bp as category_blueprint
-from finapp.routes.dashboard import dashboard_bp as dashboard_blueprint
-from finapp.routes.editbudget import editbudget_bp as editbudget_blueprint
-from finapp.routes.paycheck import paycheck_bp as paycheck_blueprint
-from finapp.routes.preferences import preferences_bp as preferences_blueprint
-from finapp.routes.profile import profile_bp as profile_blueprint
-from finapp.routes.sharebudget import sharebudget_bp as sharebudget_blueprint
-from finapp.routes.theme import theme_bp as theme_blueprint
-from finapp.routes.transaction import transaction_bp as transaction_blueprint
-from finapp.routes.transfer import transfer_bp as transfer_blueprint
-from finapp.routes.viewbudget import viewbudget_bp as viewbudget_blueprint
-from finapp.routes.viewbudgets import viewbudgets_bp as viewbudgets_blueprint
-from finapp.routes.viewtransactions import (
-    viewtransactions_bp as viewtransactions_blueprint,
-)
-from finapp.utils.context_processor import (
-    context_processor_bp as context_processor_blueprint,
-)
+from finapp.routes.auth import auth_bp
+from finapp.routes.category import category_bp
+from finapp.routes.dashboard import dashboard_bp
+from finapp.routes.editbudget import editbudget_bp
+from finapp.routes.paycheck import paycheck_bp
+from finapp.routes.preferences import preferences_bp
+from finapp.routes.profile import profile_bp
+from finapp.routes.sharebudget import sharebudget_bp
+from finapp.routes.simplefin import simplefin_bp
+from finapp.routes.theme import theme_bp
+from finapp.routes.transaction import transaction_bp
+from finapp.routes.transfer import transfer_bp
+from finapp.routes.viewbudget import viewbudget_bp
+from finapp.routes.viewbudgets import viewbudgets_bp
+from finapp.routes.viewtransactions import viewtransactions_bp
+from finapp.utils.context_processor import context_processor_bp
 
-app.register_blueprint(auth_blueprint)
-app.register_blueprint(category_blueprint)
-app.register_blueprint(dashboard_blueprint)
-app.register_blueprint(editbudget_blueprint)
-app.register_blueprint(paycheck_blueprint)
-app.register_blueprint(preferences_blueprint)
-app.register_blueprint(profile_blueprint)
-app.register_blueprint(sharebudget_blueprint)
-app.register_blueprint(theme_blueprint)
-app.register_blueprint(transaction_blueprint)
-app.register_blueprint(transfer_blueprint)
-app.register_blueprint(viewbudget_blueprint)
-app.register_blueprint(viewbudgets_blueprint)
-app.register_blueprint(viewtransactions_blueprint)
-app.register_blueprint(context_processor_blueprint)
+app.register_blueprint(auth_bp)
+app.register_blueprint(category_bp)
+app.register_blueprint(dashboard_bp)
+app.register_blueprint(editbudget_bp)
+app.register_blueprint(paycheck_bp)
+app.register_blueprint(preferences_bp)
+app.register_blueprint(profile_bp)
+app.register_blueprint(sharebudget_bp)
+app.register_blueprint(simplefin_bp)
+app.register_blueprint(theme_bp)
+app.register_blueprint(transaction_bp)
+app.register_blueprint(transfer_bp)
+app.register_blueprint(viewbudget_bp)
+app.register_blueprint(viewbudgets_bp)
+app.register_blueprint(viewtransactions_bp)
+app.register_blueprint(context_processor_bp)
 
 with app.app_context():
     db.create_all()

@@ -2,13 +2,14 @@ from finapp.models import Budget, SharedBudget, Transaction, TransactionCategory
 from finapp.queries import (
     budget_queries,
     category_queries,
-    paycheck_queries,
+    user_queries,
 )
 from finapp import db
 from flask_login import current_user
 from sqlalchemy.sql import func, or_, and_
 from sqlalchemy.orm import noload
 from sqlalchemy import delete, exists, extract, insert, update, select
+from datetime import date
 
 
 ## Helper functions
@@ -575,6 +576,27 @@ def search(
 
     # I want to return the number of pages as 1
     return ([], 0, 1, 1, 0)
+
+
+def find_transaction(transaction: dict):
+    transaction_timestamp = transaction.get("transacted_at") or transaction.get(
+        "posted"
+    )
+    transaction_date = date.fromtimestamp(transaction_timestamp)
+
+    amount = round(float(transaction.get("amount")), 2)
+
+    shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
+
+    stmt = select(Transaction).where(
+        and_(
+            or_(Transaction.date == transaction_date, Transaction.amount == amount),
+            Transaction.user_id.in_(shared_user_ids),
+        )
+    )
+    transactions = db.session.scalars(stmt).unique().all()
+
+    return transactions
 
 
 def get_transactions_sum(budget_id):

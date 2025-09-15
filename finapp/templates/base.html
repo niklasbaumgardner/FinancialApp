@@ -159,6 +159,10 @@
                     >{{ current_user.username }}</wa-button
                   >
                   <wa-dropdown-item
+                    ><a href="{{ url_for('simplefin_bp.simplefin') }}"
+                      >External Accounts</a
+                    ></wa-dropdown-item
+                  ><wa-dropdown-item
                     ><a href="{{ url_for('preferences_bp.preferences') }}"
                       >Preferences</a
                     ></wa-dropdown-item
@@ -217,6 +221,10 @@
               >{{ current_user.username }}</wa-button
             >
             <wa-dropdown-item
+              ><a href="{{ url_for('simplefin_bp.simplefin') }}"
+                >External Accounts</a
+              ></wa-dropdown-item
+            ><wa-dropdown-item
               ><a href="{{ url_for('preferences_bp.preferences') }}"
                 >Preferences</a
               ></wa-dropdown-item

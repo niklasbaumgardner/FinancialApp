@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_template, redirect, url_for
+from flask import Blueprint, request, render_template, redirect, url_for, flash
 from flask_login import current_user, login_required
 from finapp.queries import simplefin_queries
 from finapp.utils import simplefin as simplefin_helpers, helpers
@@ -14,17 +14,21 @@ simplefin_bp = Blueprint("simplefin_bp", __name__)
 def simplefin():
     credentials = simplefin_queries.get_simplefin_credentials()
     accounts = simplefin_queries.get_simplefin_accounts()
-    if credentials and not accounts:
+    if credentials and len(accounts) == 0:
         simplefin_helpers.sync_simplefin(credentials)
 
         # hopefully accounts exist now
         accounts = simplefin_queries.get_simplefin_accounts()
 
-        return render_template("simplefin.html", accounts=accounts)
-    elif accounts:
-        return render_template("simplefin.html", accounts=accounts)
+        return render_template(
+            "simplefin.html", accounts=[a.to_dict() for a in accounts]
+        )
+    elif len(accounts) > 0:
+        return render_template(
+            "simplefin.html", accounts=[a.to_dict() for a in accounts]
+        )
 
-    return render_template("simplefin.html")
+    return render_template("simplefin.html", accounts=[])
 
 
 @simplefin_bp.get("/pending_transaction")
@@ -85,8 +89,9 @@ def claim_simplefin_token():
     username, password = simplefin_helpers.claim_simplefin_token(setup_token)
 
     simplefin_queries.create_simplefin_credentials(username=username, password=password)
+    credentials = simplefin_queries.get_simplefin_credentials()
 
-    simplefin_helpers.sync_simplefin()
+    simplefin_helpers.sync_simplefin(credentials=credentials)
 
     return redirect(url_for("simplefin_bp.simplefin"))
 
@@ -96,14 +101,13 @@ def claim_simplefin_token():
 def sync_simplefin():
     credentials = simplefin_queries.get_simplefin_credentials()
     if not credentials:
-        return
+        flash("No SimpleFIN Credentials", "danger")
+    # elif (
+    #     credentials.last_synced
+    #     and (datetime.now() - credentials.last_synced).total_seconds() < 3600
+    # ):
+    #     pass
+    else:
+        simplefin_helpers.sync_simplefin(credentials)
 
-    if (
-        credentials.last_synced
-        and (datetime.now() - credentials.last_synced).total_seconds() < 3600
-    ):
-        return
-
-    simplefin_helpers.sync_simplefin(credentials)
-
-    return "Synced"
+    return redirect(url_for("simplefin_bp.simplefin"))
