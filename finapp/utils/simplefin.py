@@ -22,6 +22,7 @@ def claim_simplefin_token(setup_token):
 
 def find_transactions(transactions):
     not_found_transactions = []
+    seen_transaction_ids = []
     for transaction in transactions:
         found = transaction_queries.find_transaction(
             transaction=transaction, seen_transactions=seen_transaction_ids
