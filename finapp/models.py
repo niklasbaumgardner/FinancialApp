@@ -230,7 +230,8 @@ class SimpleFINCredentials(db.Model, SerializerMixin):
     serialize_only = (
         "id",
         "user_id",
-        "last_synced",
+        "last_synced_accounts",
+        "last_synced_transactions",
     )
 
     id: Mapped[int_pk]

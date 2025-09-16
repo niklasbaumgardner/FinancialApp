@@ -57,7 +57,7 @@ export class SimpleFINAccounts extends NikElement {
         @change=${(event) =>
           this.handleAccountSyncChange(
             event,
-            a.toggle_sync_account_transactions
+            a.toggle_sync_account_transactions_url
           )}
         >Sync transactions from this account</wa-switch
       >
@@ -120,7 +120,7 @@ export class SimpleFINAccounts extends NikElement {
               ? ""
               : SYNC_SIMPLEFIN_ACCOUNTS_URL}
             ?disabled=${this.accounts.length === 0}
-            >Sync All Accounts</wa-button
+            >Sync Accounts</wa-button
           >
         </div>
         ${this.accountsTemplate()}

@@ -38,11 +38,22 @@ def get_simplefin_credentials():
     return db.session.scalars(stmt.limit(1)).first()
 
 
-def update_simplefin_credentials_last_synced():
+def update_simplefin_credentials_last_synced(accounts=False, transactions=False):
+    if not accounts and not transactions:
+        return
+
+    values_dict = dict()
+
+    now = datetime.now()
+    if accounts:
+        values_dict["last_synced_accounts"] = now
+    if transactions:
+        values_dict["last_synced_transactions"] = now
+
     stmt = (
         update(SimpleFINCredentials)
         .where(SimpleFINCredentials.user_id == current_user.id)
-        .values(last_synced=datetime.now())
+        .values(values_dict)
     )
     db.session.execute(stmt)
     db.session.commit()

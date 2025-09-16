@@ -71,11 +71,12 @@ def write_sf_data(data):
     fp.close()
 
 
-def get_simplefin_data(credentials):
+def get_simplefin_transaction_data(credentials):
     if True:
         if (
-            credentials.last_synced
-            and (datetime.now() - credentials.last_synced).total_seconds() < 3600
+            credentials.last_synced_transactions
+            and (datetime.now() - credentials.last_synced_transactions).total_seconds()
+            < 3600
         ):  # 1 hour
             print("Last synced less than 1 hour ago")
             return None
@@ -84,8 +85,8 @@ def get_simplefin_data(credentials):
 
         url = f"https://{username}:{password}@beta-bridge.simplefin.org/simplefin/accounts"
 
-        DAYS_BACK = 30
-        start_date = int(datetime.now().timestamp() - (86400 * DAYS_BACK))
+        # DAYS_BACK = 30
+        # start_date = int(datetime.now().timestamp() - (86400 * DAYS_BACK))
 
         accounts = simplefin_queries.get_simplefin_accounts()
         sync_accounts = [a for a in accounts if a.type and a.type > 0]
@@ -95,9 +96,7 @@ def get_simplefin_data(credentials):
 
         accounts_string = "&".join([f"account={a.id}" for a in sync_accounts])
 
-        response = requests.get(
-            url + f"?start-date={start_date}&pending=1&{accounts_string}"
-        )
+        response = requests.get(url + f"?pending=1&{accounts_string}")
         data = response.json()
 
         write_sf_data(data)
@@ -109,7 +108,7 @@ def get_simplefin_data(credentials):
 
 
 def sync_simplefin_transactions(credentials):
-    data = get_simplefin_data(credentials=credentials)
+    data = get_simplefin_transaction_data(credentials=credentials)
 
     if data:
         errors = data.get("errors")
@@ -141,15 +140,15 @@ def sync_simplefin_transactions(credentials):
             transactions=not_found_transactions
         )
 
-        simplefin_queries.update_simplefin_credentials_last_synced()
+        simplefin_queries.update_simplefin_credentials_last_synced(transactions=True)
 
     # double_check_pending_transactions()
 
 
 def sync_simplefin_accounts(credentials):
     if (
-        credentials.last_synced
-        and (datetime.now() - credentials.last_synced).total_seconds() < 3600
+        credentials.last_synced_accounts
+        and (datetime.now() - credentials.last_synced_accounts).total_seconds() < 3600
     ):  # 1 hour
         print("Last synced less than 1 hour ago")
         return None
@@ -160,6 +159,8 @@ def sync_simplefin_accounts(credentials):
 
     response = requests.get(url + "?balances-only=1")
     data = response.json()
+
+    simplefin_queries.update_simplefin_credentials_last_synced(accounts=True)
 
     if data:
         errors = data.get("errors")
