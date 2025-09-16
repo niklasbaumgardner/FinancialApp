@@ -7,6 +7,7 @@ profile %}active{% endblock profile %} {% block backButton %}
 <script>
   const CLAIM_SIMPLEFIN_TOKEN_URL =
     "{{ url_for('simplefin_bp.claim_simplefin_token') }}";
+  const SYNC_SIMPLEFIN_URL = "{{ url_for('simplefin_bp.sync_simplefin') }}";
 </script>
 
 <script src="/static/js/nb-simplefin.mjs" type="module"></script>

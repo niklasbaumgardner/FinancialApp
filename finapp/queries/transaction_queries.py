@@ -9,7 +9,7 @@ from flask_login import current_user
 from sqlalchemy.sql import func, or_, and_
 from sqlalchemy.orm import noload
 from sqlalchemy import delete, exists, extract, insert, update, select
-from datetime import date
+from datetime import date, timedelta
 
 
 ## Helper functions
@@ -578,20 +578,34 @@ def search(
     return ([], 0, 1, 1, 0)
 
 
-def find_transaction(transaction: dict):
+def find_transaction(transaction: dict, seen_transactions: list):
     transaction_timestamp = transaction.get("transacted_at") or transaction.get(
         "posted"
     )
     transaction_date = date.fromtimestamp(transaction_timestamp)
 
+    DAY_RANGE = 4
+    start_date = transaction_date - timedelta(days=DAY_RANGE)
+    end_date = transaction_date + timedelta(days=DAY_RANGE)
+
     amount = round(float(transaction.get("amount")), 2)
 
     shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
 
-    stmt = select(Transaction).where(
-        and_(
-            or_(Transaction.date == transaction_date, Transaction.amount == amount),
-            Transaction.user_id.in_(shared_user_ids),
+    stmt = (
+        select(Transaction)
+        .where(
+            and_(
+                Transaction.date.between(start_date, end_date),
+                Transaction.amount == amount,
+                Transaction.user_id.in_(shared_user_ids),
+                Transaction.id.notin_(seen_transactions),
+            )
+        )
+        .order_by(
+            func.abs(
+                extract("day", transaction_date) - extract("day", Transaction.date)
+            )
         )
     )
     transactions = db.session.scalars(stmt).unique().all()

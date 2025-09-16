@@ -12,6 +12,7 @@ class ViewTransactions extends NikElement {
     total: { type: Number },
     canSetDownloadLink: { type: Boolean },
     gotTransactions: { type: Boolean },
+    pendingTransactions: { type: Array },
   };
 
   static queries = {
@@ -33,6 +34,7 @@ class ViewTransactions extends NikElement {
     });
 
     this.transactions = this.transactions.concat(dummyArray);
+    this.pendingTransactions = [];
 
     super.connectedCallback();
 
@@ -180,6 +182,20 @@ class ViewTransactions extends NikElement {
     ></nb-transactions-grid>`;
   }
 
+  getPendingTransactions() {
+    // request pending transactions here
+  }
+
+  pendingTransactionsBadge() {
+    if (this.pendingTransactions.length > 0) {
+      return html`<wa-badge variant="brand" pill
+        >${this.pendingTransactions.length}</wa-badge
+      >`;
+    }
+
+    return null;
+  }
+
   render() {
     return html`<div class="wa-stack">
       <div class="wa-split">
@@ -188,7 +204,7 @@ class ViewTransactions extends NikElement {
           variant="neutral"
           appearance="filled outlined"
           @click=${this.addTransactionClick}
-          >Add New Transaction</wa-button
+          >Add New Transaction${this.pendingTransactionsBadge()}</wa-button
         >
       </div>
       <a

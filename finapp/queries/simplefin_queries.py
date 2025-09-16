@@ -138,6 +138,23 @@ def get_simplefin_accounts():
     return db.session.scalars(stmt).unique().all()
 
 
+def toggle_simplefin_account_sync(id, sync):
+    shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
+
+    stmt = (
+        update(SimpleFINAccount)
+        .where(
+            and_(
+                SimpleFINAccount.id == id, SimpleFINAccount.user_id.in_(shared_user_ids)
+            )
+        )
+        .values(type=sync or 0)
+    )
+
+    db.session.execute(stmt)
+    db.session.commit()
+
+
 def create_pending_transactions(account, transactions):
     if len(transactions) < 1:
         return
@@ -154,7 +171,8 @@ def create_pending_transactions(account, transactions):
         )
         pending_transactions.append(pt)
 
-    stmt = insert(PendingTransaction).values(pending_transactions)
+    stmt = pg_insert(PendingTransaction).values(pending_transactions)
+    stmt = stmt.on_conflict_do_nothing(index_elements=["simplefin_id"])
     db.session.execute(stmt)
     db.session.commit()
 

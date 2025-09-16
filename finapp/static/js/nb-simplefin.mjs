@@ -9,15 +9,62 @@ export class SimpleFIN extends NikElement {
   connectedCallback() {
     super.connectedCallback();
 
-    this.accounts.sort((a, b) => a.name.localeCompare(b.name));
+    this.accounts.forEach(
+      (a) => (a.longName = `${a.organization.name} ${a.name}`)
+    );
+    this.accounts.sort((a, b) => a.longName.localeCompare(b.longName));
     console.log(this.accounts);
   }
 
+  async handleSyncChange(event, url) {
+    // event.target.toggleAttribute("checked", event.target.checked);
+
+    let data = new FormData();
+    data.append("sync_transactions", event.target.checked ? 1 : 0);
+
+    let response = await fetch(url, { method: "POST", body: data });
+  }
+
   accountsTemplate() {
-    return html`<wa-card
-      >${this.accounts.map(
-        (a) => html`${a.organization.name} ${a.name}<br />`
-      )}</wa-card
+    return html`<wa-card>
+      <div class="wa-stack">
+        <h2>External Accounts</h2>
+        <div class="wa-split">
+          <wa-button
+            appearance="outlined"
+            variant="danger"
+            href=${SYNC_SIMPLEFIN_URL}
+            >Revoke Credentials</wa-button
+          >
+          <wa-button
+            appearance="outlined"
+            variant="brand"
+            href=${SYNC_SIMPLEFIN_URL}
+            >Sync All Accounts</wa-button
+          >
+        </div>
+        ${this.accounts
+          .flatMap((a) => [
+            html`<div class="wa-split">
+              <div class="wa-cluster">
+                ${a.longName}:
+                <wa-format-number
+                  type="currency"
+                  currency=${a.currency}
+                  value=${a.balance}
+                ></wa-format-number>
+              </div>
+              <wa-switch
+                ?checked=${a.type > 0}
+                @change=${(event) =>
+                  this.handleSyncChange(event, a.sync_transactions_url)}
+                >Sync transactions from this account</wa-switch
+              >
+            </div>`,
+            html`<wa-divider></wa-divider>`,
+          ])
+          .slice(0, -1)}
+      </div></wa-card
     >`;
   }
 

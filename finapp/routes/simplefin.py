@@ -38,7 +38,7 @@ def pending_transactions():
         pt.to_dict() for pt in simplefin_queries.get_pending_transactions()
     ]
 
-    return pending_transactions
+    return {"pending_transactions": pending_transactions}
 
 
 @simplefin_bp.post("/delete_pending_transaction/<int:id>")
@@ -111,3 +111,17 @@ def sync_simplefin():
         simplefin_helpers.sync_simplefin(credentials)
 
     return redirect(url_for("simplefin_bp.simplefin"))
+
+
+@simplefin_bp.post("/sync_simplefin_account/<string:id>")
+@login_required
+def sync_simplefin_account(id):
+    should_sync_transactions = request.form.get(
+        "sync_transactions", type=int, default=0
+    )
+
+    simplefin_queries.toggle_simplefin_account_sync(
+        id=id, sync=should_sync_transactions
+    )
+
+    return "True"
