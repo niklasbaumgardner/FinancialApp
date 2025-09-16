@@ -24,16 +24,36 @@ def find_transactions(transactions):
     not_found_transactions = []
     seen_transaction_ids = []
     for transaction in transactions:
-        found = transaction_queries.find_transaction(
+        found, found_transaction_ids = transaction_queries.find_transaction(
             transaction=transaction, seen_transactions=seen_transaction_ids
         )
 
-        if len(found) == 0:
+        if not found:
             not_found_transactions.append(transaction)
         else:
-            seen_transaction_ids.append(found[0].id)
+            if len(found_transaction_ids) > 0:
+                seen_transaction_ids.append(found_transaction_ids[0])
 
     return not_found_transactions
+
+
+def double_check_pending_transactions():
+    seen_transaction_ids = []
+    pending_transactions = simplefin_queries.get_pending_transactions()
+
+    for pending_transaction in pending_transactions:
+        found, found_transactions = (
+            transaction_queries.find_transaction_for_pending_transaction(
+                transaction=pending_transaction, seen_transactions=seen_transaction_ids
+            )
+        )
+
+        if found:
+            t, should_convert = found_transactions[0]
+            if t is not None:
+                seen_transaction_ids.append(t.id)
+
+            simplefin_queries.delete_pending_transaction(id=pending_transaction.id)
 
 
 def sf_data():
@@ -52,7 +72,14 @@ def write_sf_data(data):
 
 
 def get_simplefin_data(credentials):
-    if False:
+    if True:
+        if (
+            credentials.last_synced
+            and (datetime.now() - credentials.last_synced).total_seconds() < 3600
+        ):  # 1 hour
+            print("Last synced less than 1 hour ago")
+            return None
+
         username, password = credentials.decrypt_credentials()
 
         url = f"https://{username}:{password}@beta-bridge.simplefin.org/simplefin/accounts"
@@ -73,6 +100,8 @@ def get_simplefin_data(credentials):
         )
         data = response.json()
 
+        write_sf_data(data)
+
     else:
         data = sf_data()
 
@@ -82,28 +111,36 @@ def get_simplefin_data(credentials):
 def sync_simplefin(credentials):
     data = get_simplefin_data(credentials)
 
-    errors = data.get("errors")
-    for error in errors:
-        print("SIMPLEFIN ERROR:", error)
+    if data:
+        errors = data.get("errors")
+        for error in errors:
+            print("SIMPLEFIN ERROR:", error)
 
-    transactions = []
-    accounts = data.get("accounts")
-    for account in accounts:
-        org = account["org"]
-        sf_org = simplefin_queries.get_or_create_simplefin_organization(org)
-        simplefin_queries.upsert_simplefin_account(
-            account=account, organization_id=sf_org.id
+        transactions = []
+        accounts = data.get("accounts")
+        for account in accounts:
+            org = account["org"]
+            sf_org = simplefin_queries.get_or_create_simplefin_organization(org)
+            simplefin_queries.upsert_simplefin_account(
+                account=account, organization_id=sf_org.id
+            )
+            sf_account = simplefin_queries.get_simplefin_account(account["id"])
+
+            account_transactions = account.get("transactions")
+
+            for t in account_transactions:
+                t["simplefin_account_id"] = sf_account.id
+
+            transactions += account_transactions
+
+        # Sort by date to find duplicates easier
+        transactions.sort(key=lambda x: x["transacted_at"] or x["posted"])
+        not_found_transactions = find_transactions(transactions=transactions)
+
+        simplefin_queries.create_pending_transactions(
+            transactions=not_found_transactions
         )
-        sf_account = simplefin_queries.get_simplefin_account(account["id"])
 
-        transactions += account.get("transactions")
+        simplefin_queries.update_simplefin_credentials_last_synced()
 
-    # Sort by date to find duplicates easier
-    transactions.sort(key=lambda x: x["transacted_at"] or x["posted"])
-    not_found_transactions = find_transactions(transactions=transactions)
-
-    simplefin_queries.create_pending_transactions(
-        account=sf_account, transactions=not_found_transactions
-    )
-
-    simplefin_queries.update_simplefin_credentials_last_synced()
+    # double_check_pending_transactions()

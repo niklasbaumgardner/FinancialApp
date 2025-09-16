@@ -1,4 +1,11 @@
-from finapp.models import Budget, SharedBudget, Transaction, TransactionCategory
+from finapp.models import (
+    Budget,
+    PendingTransaction,
+    SharedBudget,
+    Transaction,
+    TransactionCategory,
+    CompletedTransaction,
+)
 from finapp.queries import (
     budget_queries,
     category_queries,
@@ -578,7 +585,25 @@ def search(
     return ([], 0, 1, 1, 0)
 
 
-def find_transaction(transaction: dict, seen_transactions: list):
+def find_transaction(
+    transaction: dict, seen_transactions: list
+) -> tuple[bool, list[int]]:
+    shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
+
+    stmt = select(CompletedTransaction).where(
+        and_(
+            CompletedTransaction.simplefin_id == transaction.get("id"),
+            CompletedTransaction.user_id.in_(shared_user_ids),
+        )
+    )
+    completed_transactions = db.session.scalars(stmt).unique().all()
+    if len(completed_transactions) > 0:
+        return True, [
+            ct.transaction_id
+            for ct in completed_transactions
+            if ct.transaction_id is not None
+        ]
+
     transaction_timestamp = transaction.get("transacted_at") or transaction.get(
         "posted"
     )
@@ -589,8 +614,6 @@ def find_transaction(transaction: dict, seen_transactions: list):
     end_date = transaction_date + timedelta(days=DAY_RANGE)
 
     amount = round(float(transaction.get("amount")), 2)
-
-    shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
 
     stmt = (
         select(Transaction)
@@ -610,7 +633,60 @@ def find_transaction(transaction: dict, seen_transactions: list):
     )
     transactions = db.session.scalars(stmt).unique().all()
 
-    return transactions
+    return len(transactions) > 0, [t.id for t in transactions]
+
+
+def find_transaction_for_pending_transaction(
+    transaction: PendingTransaction, seen_transactions: list
+) -> tuple[bool, list[tuple[Transaction | None, bool]]]:
+    shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
+
+    stmt = (
+        select(CompletedTransaction, Transaction)
+        .join(
+            Transaction,
+            CompletedTransaction.transaction_id == Transaction.id,
+            isouter=True,
+        )
+        .where(
+            and_(
+                CompletedTransaction.simplefin_id == transaction.simplefin_id,
+                CompletedTransaction.user_id.in_(shared_user_ids),
+            )
+        )
+    )
+    completed_transactions = db.session.scalars(stmt).unique().all()
+    if len(completed_transactions) > 0:
+        return True, [
+            (t, False) if ct.transaction_id is not None else (None, False)
+            for ct, t in completed_transactions
+        ]
+
+    transaction_date = transaction.date
+
+    DAY_RANGE = 4
+    start_date = transaction_date - timedelta(days=DAY_RANGE)
+    end_date = transaction_date + timedelta(days=DAY_RANGE)
+
+    stmt = (
+        select(Transaction)
+        .where(
+            and_(
+                Transaction.date.between(start_date, end_date),
+                Transaction.amount == transaction.amount,
+                Transaction.user_id.in_(shared_user_ids),
+                Transaction.id.notin_(seen_transactions),
+            )
+        )
+        .order_by(
+            func.abs(
+                extract("day", transaction_date) - extract("day", Transaction.date)
+            )
+        )
+    )
+    transactions = db.session.scalars(stmt).unique().all()
+
+    return len(transactions) > 0, [(t, True) for t in transactions]
 
 
 def get_transactions_sum(budget_id):

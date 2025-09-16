@@ -82,6 +82,9 @@
       max-width: 96rem;
     }
   }
+  .m-0\! {
+    margin: calc(var(--spacing) * 0) !important;
+  }
   .mb-2 {
     margin-bottom: calc(var(--spacing) * 2);
   }
@@ -132,6 +135,9 @@
   }
   .w-full {
     width: 100%;
+  }
+  .max-w-\[32ch\] {
+    max-width: 32ch;
   }
   .max-w-\[80rem\] {
     max-width: 80rem;
@@ -205,6 +211,9 @@
   .gap-\(--wa-space-xs\)\! {
     gap: var(--wa-space-xs) !important;
   }
+  .overflow-hidden {
+    overflow: hidden;
+  }
   .rounded {
     border-radius: 0.25rem;
   }
@@ -243,6 +252,12 @@
   }
   .text-wrap {
     text-wrap: wrap;
+  }
+  .text-ellipsis {
+    text-overflow: ellipsis;
+  }
+  .whitespace-nowrap {
+    white-space: nowrap;
   }
   .text-\[unset\]\! {
     color: unset !important;

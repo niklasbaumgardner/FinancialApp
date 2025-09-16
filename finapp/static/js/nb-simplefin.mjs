@@ -3,72 +3,20 @@ import { NikElement } from "./nik-element.mjs";
 
 export class SimpleFIN extends NikElement {
   static properties = {
-    accounts: { type: Array },
+    credentials: { type: Object },
   };
 
-  connectedCallback() {
-    super.connectedCallback();
+  get credentialsExist() {
+    for (let prop in this.credentials) {
+      if (this.credentials.hasOwnProperty(prop)) {
+        return true;
+      }
+    }
 
-    this.accounts.forEach(
-      (a) => (a.longName = `${a.organization.name} ${a.name}`)
-    );
-    this.accounts.sort((a, b) => a.longName.localeCompare(b.longName));
-    console.log(this.accounts);
+    return false;
   }
 
-  async handleSyncChange(event, url) {
-    // event.target.toggleAttribute("checked", event.target.checked);
-
-    let data = new FormData();
-    data.append("sync_transactions", event.target.checked ? 1 : 0);
-
-    let response = await fetch(url, { method: "POST", body: data });
-  }
-
-  accountsTemplate() {
-    return html`<wa-card>
-      <div class="wa-stack">
-        <h2>External Accounts</h2>
-        <div class="wa-split">
-          <wa-button
-            appearance="outlined"
-            variant="danger"
-            href=${SYNC_SIMPLEFIN_URL}
-            >Revoke Credentials</wa-button
-          >
-          <wa-button
-            appearance="outlined"
-            variant="brand"
-            href=${SYNC_SIMPLEFIN_URL}
-            >Sync All Accounts</wa-button
-          >
-        </div>
-        ${this.accounts
-          .flatMap((a) => [
-            html`<div class="wa-split">
-              <div class="wa-cluster">
-                ${a.longName}:
-                <wa-format-number
-                  type="currency"
-                  currency=${a.currency}
-                  value=${a.balance}
-                ></wa-format-number>
-              </div>
-              <wa-switch
-                ?checked=${a.type > 0}
-                @change=${(event) =>
-                  this.handleSyncChange(event, a.sync_transactions_url)}
-                >Sync transactions from this account</wa-switch
-              >
-            </div>`,
-            html`<wa-divider></wa-divider>`,
-          ])
-          .slice(0, -1)}
-      </div></wa-card
-    >`;
-  }
-
-  simpleFINFormTemplate() {
+  noCredentialsTemplate() {
     return html`<wa-card
       ><form
         id="simplefin-form"
@@ -114,12 +62,67 @@ export class SimpleFIN extends NikElement {
     >`;
   }
 
+  existingCredentialsTemplate() {
+    return html`<wa-card
+      ><form
+        id="simplefin-form"
+        action=${CLAIM_SIMPLEFIN_TOKEN_URL}
+        method="POST"
+        autocomplete="off"
+      ></form>
+      <div class="wa-stack">
+        <h2>Update SimpleFIN Token for External Accounts</h2>
+
+        <ol>
+          <li>
+            Login to your account at
+            <a href="https://beta-bridge.simplefin.org/" target="_blank"
+              >https://beta-bridge.simplefin.org/</a
+            >
+          </li>
+          <li>
+            Once logged in, from the "My Accounts" page, under "Apps", click on
+            "New Connection". Give your connection a name (eg. "NB Budgets"),
+            and click "Create Setup Token"
+          </li>
+          <li>Copy the SimpleFIN Setup Token and paste it below</li>
+        </ol>
+
+        <wa-input
+          form="simplefin-form"
+          label="SimpleFIN Setup Token"
+          id="token"
+          name="setup_token"
+          required
+        ></wa-input>
+
+        <div class="wa-cluster w-full">
+          <wa-button
+            href=${DELETE_SIMPLEFIN_CREDENTIALS_URL}
+            class="grow"
+            appearance="outlined"
+            variant="danger"
+            type="submit"
+            >Delete Credentials</wa-button
+          >
+          <wa-button
+            form="simplefin-form"
+            class="grow"
+            variant="brand"
+            type="submit"
+            >Update Credentials</wa-button
+          >
+        </div>
+      </div></wa-card
+    >`;
+  }
+
   render() {
-    if (this.accounts.length) {
-      return this.accountsTemplate();
+    if (this.credentialsExist) {
+      return this.existingCredentialsTemplate();
     }
 
-    return this.simpleFINFormTemplate();
+    return this.noCredentialsTemplate();
   }
 }
 

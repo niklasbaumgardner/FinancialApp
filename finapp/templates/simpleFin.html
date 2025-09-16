@@ -1,5 +1,5 @@
-{% extends "base.html" %} {% block title %}Profile{% endblock title %} {% block
-profile %}active{% endblock profile %} {% block backButton %}
+{% extends "base.html" %} {% block title %}SimpleFIN Setup{% endblock title %}{%
+block backButton %}
 
 <nb-back-button></nb-back-button>
 
@@ -7,13 +7,17 @@ profile %}active{% endblock profile %} {% block backButton %}
 <script>
   const CLAIM_SIMPLEFIN_TOKEN_URL =
     "{{ url_for('simplefin_bp.claim_simplefin_token') }}";
-  const SYNC_SIMPLEFIN_URL = "{{ url_for('simplefin_bp.sync_simplefin') }}";
+  const DELETE_SIMPLEFIN_CREDENTIALS_URL =
+    "{{ url_for('simplefin_bp.delete_simplefin_credentials') }}";
 </script>
 
 <script src="/static/js/nb-simplefin.mjs" type="module"></script>
 
 {% endblock head %} {% block content %}
 
-<nb-simplefin class="main-card" accounts='{{ accounts|tojson }}'></nb-simplefin>
+<nb-simplefin
+  class="main-card"
+  credentials='{{ credentials|tojson }}'
+></nb-simplefin>
 
 {% endblock content %}

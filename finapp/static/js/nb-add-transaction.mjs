@@ -1,12 +1,14 @@
 import { NikElement } from "./nik-element.mjs";
 import { html } from "./lit.bundle.mjs";
 import "./nb-categories-select.mjs";
+import "./nb-pending-transaction.mjs";
 
 export class AddTransactionModal extends NikElement {
   static properties = {
     budgets: { type: Array },
     categories: { type: Array },
     sharedUsers: { type: Array },
+    pendingTransactions: { type: Array },
   };
 
   static queries = {
@@ -16,6 +18,9 @@ export class AddTransactionModal extends NikElement {
     usersSelect: "#user-select",
     submitButton: "#submit-button",
     nameInput: "#name",
+    tabGroup: "wa-tab-group",
+    pendingTabPanel: "#pending",
+    refreshPendingButton: "#refresh-pending-transactions",
   };
 
   get selectedBudget() {
@@ -26,6 +31,12 @@ export class AddTransactionModal extends NikElement {
 
     let budget = this.budgets.find((b) => b.id == currentBudgetId);
     return budget;
+  }
+
+  constructor() {
+    super();
+
+    this.pendingTransactions = [];
   }
 
   connectedCallback() {
@@ -153,82 +164,157 @@ export class AddTransactionModal extends NikElement {
     >`;
   }
 
-  render() {
-    return html`<wa-dialog
-      label="Add New Transaction"
-      @wa-after-show=${this.handleDialogShow}
-    >
-      <form class="wa-stack">
-        <input
-          name="return-transaction"
+  setPendingTransactions(pendingTransactions) {
+    this.pendingTransactions = new Array(pendingTransactions.length).fill({});
+    this.updateComplete.then(() => {
+      this.pendingTransactions = pendingTransactions;
+    });
+  }
+
+  async handleRefreshPendingTransactionsClick() {
+    this.refreshPendingButton.loading = true;
+    this.refreshPendingButton.disabled = true;
+
+    let response = await fetch(API_SYNC_SIMPLEFIN_URL);
+    let data = await response.json();
+
+    let { pending_transactions } = data;
+    this.setPendingTransactions(pending_transactions);
+
+    document.dispatchEvent(
+      new CustomEvent("UpdatePendingTransactions", {
+        bubbles: true,
+        composed: true,
+        detail: { pendingTransactions: pending_transactions },
+      })
+    );
+
+    this.refreshPendingButton.loading = false;
+    this.refreshPendingButton.disabled = false;
+  }
+
+  tabGroupTemplate() {
+    if (this.pendingTransactions.length === 0) {
+      return this.newTransactionTemplate();
+    }
+    return html`<wa-tab-group id="transactions-tab-group">
+      <wa-tab panel="new">New Transaction</wa-tab>
+      <wa-tab panel="pending"
+        >Pending Transactions (${this.pendingTransactions.length})</wa-tab
+      >
+
+      <wa-tab-panel name="new">${this.newTransactionTemplate()}</wa-tab-panel>
+      <wa-tab-panel name="pending" id="pending"
+        ><div class="wa-stack">
+          <wa-button
+            id="refresh-pending-transactions"
+            appearance="outlined"
+            variant="brand"
+            @click=${this.handleRefreshPendingTransactionsClick}
+            class="w-full"
+            >Refresh Pending Transactions</wa-button
+          >
+          <div>${this.pendingTransactionsTemplate()}</div>
+        </div></wa-tab-panel
+      >
+    </wa-tab-group>`;
+  }
+
+  newTransactionTemplate() {
+    return html`<form class="wa-stack">
+      <input
+        name="return-transaction"
+        type="text"
+        class="hidden!"
+        value="True"
+        hidden
+      />
+      <div class="wa-stack">
+        <wa-input
+          label="Name"
+          class="grow"
           type="text"
-          class="hidden!"
-          value="True"
-          hidden
-        />
-        <div class="wa-stack">
+          id="name"
+          name="name"
+          placeholder="Spent too much?"
+          autocomplete="niklas"
+          required
+        ></wa-input>
+        <div class="wa-cluster flex-nowrap!">
           <wa-input
-            label="Name"
-            class="grow"
-            type="text"
-            id="name"
-            name="name"
-            placeholder="Spent too much?"
+            label="Amount"
+            class="grow min-w-[0]"
+            type="number"
+            step=".01"
+            id="amount"
+            name="amount"
+            placeholder="0.00"
             autocomplete="niklas"
             required
           ></wa-input>
-          <div class="wa-cluster flex-nowrap!">
-            <wa-input
-              label="Amount"
-              class="grow min-w-[0]"
-              type="number"
-              step=".01"
-              id="amount"
-              name="amount"
-              placeholder="0.00"
-              autocomplete="niklas"
-              required
-            ></wa-input>
-            <wa-input
-              label="Date"
-              class="grow min-w-min"
-              type="date"
-              id="date"
-              name="date"
-              value=${CURRENT_DATE}
-              required
-            ></wa-input>
-          </div>
+          <wa-input
+            label="Date"
+            class="grow min-w-min"
+            type="date"
+            id="date"
+            name="date"
+            value=${CURRENT_DATE}
+            required
+          ></wa-input>
         </div>
-        ${this.budgetsTemplate()} ${this.sharedUsersSelectTemplate()}
-        <div>
-          <nb-categories-select
-            .categories=${this.categories}
-          ></nb-categories-select>
-          <wa-button
-            appearance="plain"
-            variant="brand"
-            size="small"
-            @click=${this.openCategoriesModal}
-            >Create more categories</wa-button
-          >
-        </div>
-      </form>
-      <div class="wa-cluster w-full" slot="footer">
+      </div>
+      ${this.budgetsTemplate()} ${this.sharedUsersSelectTemplate()}
+      <div>
+        <nb-categories-select
+          .categories=${this.categories}
+        ></nb-categories-select>
         <wa-button
-          class="grow"
-          variant="neutral"
-          appearance="outlined"
-          data-dialog="close"
-          >Cancel</wa-button
-        ><wa-button
-          id="submit-button"
-          class="grow"
+          appearance="plain"
           variant="brand"
-          @click=${this.handleTransactionAdd}
-          >Add Transaction</wa-button
+          size="small"
+          @click=${this.openCategoriesModal}
+          >Create more categories</wa-button
         >
       </div>
+    </form>`;
+  }
+
+  pendingTransactionsTemplate() {
+    return this.pendingTransactions.map(
+      (t) =>
+        html`<nb-pending-transaction
+          .transaction=${t}
+          .budgets=${this.budgets}
+          .categories=${this.categories}
+        ></nb-pending-transaction>`
+    );
+  }
+
+  footerTemplate() {
+    return html`<div class="wa-cluster w-full" slot="footer">
+      <wa-button
+        class="grow"
+        variant="neutral"
+        appearance="outlined"
+        data-dialog="close"
+        >Cancel</wa-button
+      ><wa-button
+        id="submit-button"
+        class="grow"
+        variant="brand"
+        @click=${this.handleTransactionAdd}
+        >Add Transaction</wa-button
+      >
+    </div>`;
+  }
+
+  render() {
+    return html`<wa-dialog
+      id="transactions-dialog"
+      class="nb-tab-group-dialog"
+      label="Add New Transaction"
+      @wa-after-show=${this.handleDialogShow}
+      >${this.tabGroupTemplate()} ${this.footerTemplate()}
     </wa-dialog>`;
   }
 }

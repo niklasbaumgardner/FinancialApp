@@ -41,6 +41,10 @@ import "@awesome.me/webawesome/dist/components/switch/switch.js";
 
 import "@awesome.me/webawesome/dist/components/badge/badge.js";
 
+import "@awesome.me/webawesome/dist/components/tab-group/tab-group.js";
+import "@awesome.me/webawesome/dist/components/tab/tab.js";
+import "@awesome.me/webawesome/dist/components/tab-panel/tab-panel.js";
+
 // // Option 2: the setBasePath()
 // import { setBasePath } from "@awesome.me/webawesome/dist/webawesome.js";
 // setBasePath("");

@@ -120,3 +120,24 @@ nb-view-budgets {
 html {
   --wa-form-control-padding-block: 0.65em;
 }
+
+.nb-tab-group-dialog {
+  wa-tab-group::part(nav),
+  wa-tab-panel::part(base) {
+    padding-inline: var(--spacing);
+  }
+
+  &::part(body) {
+    padding-inline: 0;
+  }
+}
+
+wa-tab-panel[name="new"]::part(base) {
+  padding-bottom: 0;
+}
+
+#transactions-dialog:has(wa-tab-group[active="pending"]) {
+  &::part(footer) {
+    display: none;
+  }
+}

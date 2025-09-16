@@ -1,0 +1,22 @@
+{% extends "base.html" %} {% block title %}External Accounts{% endblock title
+%}{% block backButton %}
+
+<nb-back-button></nb-back-button>
+
+{% endblock backButton %} {% block head %}
+<script>
+  const SYNC_SIMPLEFIN_URL = "{{ url_for('simplefin_bp.sync_simplefin') }}";
+  const SIMPLEFIN_CREDENTIALS_URL = "{{ url_for('simplefin_bp.simplefin') }}";
+</script>
+
+<script src="/static/js/nb-simplefin-accounts.mjs" type="module"></script>
+
+{% endblock head %} {% block content %}
+
+<nb-simplefin-accounts
+  class="main-card"
+  accounts='{{ accounts|tojson }}'
+  credentials='{{ credentials|tojson }}'
+></nb-simplefin-accounts>
+
+{% endblock content %}

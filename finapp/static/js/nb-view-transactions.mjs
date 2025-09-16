@@ -24,6 +24,7 @@ class ViewTransactions extends NikElement {
 
     this.canSetDownloadLink = false;
     this.gotTransactions = false;
+    this.pendingTransactions = [];
   }
 
   connectedCallback() {
@@ -34,15 +35,16 @@ class ViewTransactions extends NikElement {
     });
 
     this.transactions = this.transactions.concat(dummyArray);
-    this.pendingTransactions = [];
 
     super.connectedCallback();
 
     this.requestData();
+    this.requestPendingTransactions();
 
     document.addEventListener("UpdateBudgets", this);
     document.addEventListener("RequestNewData", this);
     document.addEventListener("keydown", this);
+    document.addEventListener("UpdatePendingTransactions", this);
   }
 
   handleEvent(event) {
@@ -59,6 +61,11 @@ class ViewTransactions extends NikElement {
       }
       case "keydown": {
         this.handleKeyDown(event);
+        break;
+      }
+      case "UpdatePendingTransactions": {
+        let pendingTransactions = event.detail.pendingTransactions;
+        this.updatePendingTransactions(pendingTransactions);
         break;
       }
     }
@@ -105,11 +112,29 @@ class ViewTransactions extends NikElement {
     }
   }
 
+  async requestPendingTransactions() {
+    let url = PENDING_TRANSACTIONS_URL;
+    let response = await fetch(url);
+    let data = await response.json();
+
+    let { pending_transactions } = data;
+    this.updatePendingTransactions(pending_transactions);
+  }
+
+  updatePendingTransactions(pendingTransactions) {
+    this.pendingTransactions = pendingTransactions;
+
+    if (this.addTransactionModal) {
+      this.addTransactionModal.setPendingTransactions(this.pendingTransactions);
+    }
+  }
+
   addTransactionClick() {
     if (!this.addTransactionModal) {
       this.addTransactionModal = document.createElement("nb-add-transaction");
       this.addTransactionModal.budgets = this.budgets;
       this.addTransactionModal.categories = this.categories;
+      this.addTransactionModal.pendingTransactions = this.pendingTransactions;
       document.body.append(this.addTransactionModal);
     }
 
@@ -180,10 +205,6 @@ class ViewTransactions extends NikElement {
       .categories=${this.categories}
       theme=${this.theme}
     ></nb-transactions-grid>`;
-  }
-
-  getPendingTransactions() {
-    // request pending transactions here
   }
 
   pendingTransactionsBadge() {

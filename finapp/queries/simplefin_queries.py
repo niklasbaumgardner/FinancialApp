@@ -48,6 +48,14 @@ def update_simplefin_credentials_last_synced():
     db.session.commit()
 
 
+def delete_simplefin_credentials():
+    stmt = delete(SimpleFINCredentials).where(
+        SimpleFINCredentials.user_id == current_user.id
+    )
+    db.session.execute(stmt)
+    db.session.commit()
+
+
 def create_simplefin_organization(simplefin_id, name, domain, sfin_url, url):
     stmt = insert(SimpleFINOrganization).values(
         simplefin_id=simplefin_id,
@@ -109,7 +117,6 @@ def upsert_simplefin_account(account, organization_id):
     upsert_stmt = stmt.on_conflict_do_update(
         index_elements=["id"],
         set_={
-            "name": stmt.excluded.name,
             "balance": stmt.excluded.balance,
             "available_balance": stmt.excluded.available_balance,
             "balance_date": stmt.excluded.balance_date,
@@ -155,7 +162,7 @@ def toggle_simplefin_account_sync(id, sync):
     db.session.commit()
 
 
-def create_pending_transactions(account, transactions):
+def create_pending_transactions(transactions):
     if len(transactions) < 1:
         return
 
@@ -163,7 +170,7 @@ def create_pending_transactions(account, transactions):
     for t in transactions:
         pt = dict(
             simplefin_id=t["id"],
-            account_id=account.id,
+            account_id=t["simplefin_account_id"],
             user_id=current_user.id,
             name=t["description"],
             amount=round(float(t["amount"]), 2),
@@ -180,8 +187,10 @@ def create_pending_transactions(account, transactions):
 def get_pending_transactions():
     shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
 
-    stmt = select(PendingTransaction).where(
-        PendingTransaction.user_id.in_(shared_user_ids)
+    stmt = (
+        select(PendingTransaction)
+        .where(PendingTransaction.user_id.in_(shared_user_ids))
+        .order_by(PendingTransaction.date)
     )
 
     return db.session.scalars(stmt).unique().all()
@@ -199,7 +208,19 @@ def get_pending_transaction_by_id(id):
     return db.session.scalars(stmt.limit(1)).first()
 
 
-def delete_pending_transaction(id):
+def delete_pending_transaction(id, create_completed=True):
+    p_transaction = get_pending_transaction_by_id(id=id)
+
+    if create_completed:
+        create_completed_transaction(
+            simplefin_id=p_transaction.simplefin_id,
+            user_id=p_transaction.user_id,
+            account_id=p_transaction.account_id,
+            name=p_transaction.name,
+            amount=p_transaction.amount,
+            t_date=p_transaction.date,
+        )
+
     shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
 
     stmt = delete(PendingTransaction).where(
@@ -233,10 +254,22 @@ def create_completed_transaction(
     db.session.commit()
 
 
+def get_completed_transactions():
+    shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
+
+    stmt = (
+        select(CompletedTransaction)
+        .where(CompletedTransaction.user_id.in_(shared_user_ids))
+        .order_by(CompletedTransaction.date)
+    )
+
+    return db.session.scalars(stmt).unique().all()
+
+
 def convert_pending_transaction(
     user_id, name, amount, t_date, budget_id, categories, pending_transaction_id
 ):
-    p_transaction = get_pending_transaction_by_id(id=id)
+    p_transaction = get_pending_transaction_by_id(id=pending_transaction_id)
 
     transaction_id = transaction_queries.create_transaction(
         user_id=user_id,
@@ -249,7 +282,7 @@ def convert_pending_transaction(
 
     create_completed_transaction(
         simplefin_id=p_transaction.simplefin_id,
-        user_id=p_transaction.user_id,
+        user_id=user_id,
         account_id=p_transaction.account_id,
         name=p_transaction.name,
         amount=p_transaction.amount,
@@ -257,19 +290,6 @@ def convert_pending_transaction(
         transaction_id=transaction_id,
     )
 
-    delete_pending_transaction(id=p_transaction.id)
+    delete_pending_transaction(id=p_transaction.id, create_completed=False)
 
-
-def discared_pending_transaction(id):
-    p_transaction = get_pending_transaction_by_id(id=id)
-
-    create_completed_transaction(
-        simplefin_id=p_transaction.simplefin_id,
-        user_id=p_transaction.user_id,
-        account_id=p_transaction.account_id,
-        name=p_transaction.name,
-        amount=p_transaction.amount,
-        t_date=p_transaction.date,
-    )
-
-    delete_pending_transaction(id=p_transaction.id)
+    return transaction_id

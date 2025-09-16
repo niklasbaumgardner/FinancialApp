@@ -227,6 +227,12 @@ class TransactionCategory(db.Model, SerializerMixin):
 class SimpleFINCredentials(db.Model, SerializerMixin):
     __tablename__ = "simplefin_credentials"
 
+    serialize_only = (
+        "id",
+        "user_id",
+        "last_synced",
+    )
+
     id: Mapped[int_pk]
     user_id: Mapped[user_fk]
     username: Mapped[str]  # encrypted
@@ -294,6 +300,11 @@ class SimpleFINAccount(db.Model, SerializerMixin):
 class PendingTransaction(db.Model, SerializerMixin):
     __tablename__ = "pending_transaction"
 
+    serialize_rules = (
+        "convert_pending_transaction_url",
+        "delete_pending_transaction_url",
+    )
+
     id: Mapped[int_pk]
     simplefin_id: Mapped[str] = mapped_column(unique=True, index=True)
     account_id: Mapped[str] = mapped_column(ForeignKey("simplefin_account.id"))
@@ -303,6 +314,12 @@ class PendingTransaction(db.Model, SerializerMixin):
     date: Mapped[date_type]
 
     account: Mapped["SimpleFINAccount"] = relationship(lazy="joined", viewonly=True)
+
+    def convert_pending_transaction_url(self):
+        return url_for("simplefin_bp.convert_pending_transaction", id=self.id)
+
+    def delete_pending_transaction_url(self):
+        return url_for("simplefin_bp.delete_pending_transaction", id=self.id)
 
 
 class CompletedTransaction(db.Model, SerializerMixin):

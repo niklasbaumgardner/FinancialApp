@@ -1,9 +1,7 @@
 from flask import Blueprint, request, render_template, redirect, url_for, flash
 from flask_login import current_user, login_required
-from finapp.queries import simplefin_queries
+from finapp.queries import simplefin_queries, transaction_queries
 from finapp.utils import simplefin as simplefin_helpers, helpers
-from datetime import datetime
-import requests
 
 
 simplefin_bp = Blueprint("simplefin_bp", __name__)
@@ -12,33 +10,44 @@ simplefin_bp = Blueprint("simplefin_bp", __name__)
 @simplefin_bp.get("/simplefin")
 @login_required
 def simplefin():
+    force = request.args.get("force", type=bool, default=False)
+
     credentials = simplefin_queries.get_simplefin_credentials()
-    accounts = simplefin_queries.get_simplefin_accounts()
-    if credentials and len(accounts) == 0:
-        simplefin_helpers.sync_simplefin(credentials)
 
-        # hopefully accounts exist now
-        accounts = simplefin_queries.get_simplefin_accounts()
-
+    if force:
         return render_template(
-            "simplefin.html", accounts=[a.to_dict() for a in accounts]
-        )
-    elif len(accounts) > 0:
-        return render_template(
-            "simplefin.html", accounts=[a.to_dict() for a in accounts]
+            "simplefin.html", credentials=credentials.to_dict() if credentials else {}
         )
 
-    return render_template("simplefin.html", accounts=[])
+    if credentials:
+        return redirect(url_for("simplefin_bp.simplefin_accounts"))
+
+    return render_template(
+        "simplefin.html", credentials=credentials.to_dict() if credentials else {}
+    )
 
 
-@simplefin_bp.get("/pending_transaction")
+@simplefin_bp.get("/simplefin_accounts")
 @login_required
-def pending_transactions():
+def simplefin_accounts():
+    accounts = simplefin_queries.get_simplefin_accounts()
+    credentials = simplefin_queries.get_simplefin_credentials()
+
+    return render_template(
+        "simplefin_accounts.html",
+        accounts=[a.to_dict() for a in accounts],
+        credentials=credentials.to_dict() if credentials else {},
+    )
+
+
+@simplefin_bp.get("/api/get_pending_transaction")
+@login_required
+def api_get_pending_transaction():
     pending_transactions = [
         pt.to_dict() for pt in simplefin_queries.get_pending_transactions()
     ]
 
-    return {"pending_transactions": pending_transactions}
+    return dict(pending_transactions=pending_transactions)
 
 
 @simplefin_bp.post("/delete_pending_transaction/<int:id>")
@@ -46,8 +55,11 @@ def pending_transactions():
 def delete_pending_transaction(id):
     simplefin_queries.delete_pending_transaction(id=id)
 
-    # TODO: what to return?
-    return True
+    pending_transactions = [
+        pt.to_dict() for pt in simplefin_queries.get_pending_transactions()
+    ]
+
+    return dict(pending_transactions=pending_transactions)
 
 
 @simplefin_bp.post("/convert_pending_transtion/<int:id>")
@@ -67,7 +79,7 @@ def convert_pending_transaction(id):
 
     categories = request.form.getlist("categories")
 
-    simplefin_queries.convert_pending_transaction(
+    transaction_id = simplefin_queries.convert_pending_transaction(
         user_id=user_id,
         name=name,
         amount=amount,
@@ -77,8 +89,16 @@ def convert_pending_transaction(id):
         pending_transaction_id=id,
     )
 
-    # TODO: what to return?
-    return True
+    transaction = transaction_queries.get_transaction(
+        transaction_id=transaction_id, include_budget=True
+    )
+    pending_transactions = [
+        pt.to_dict() for pt in simplefin_queries.get_pending_transactions()
+    ]
+
+    return dict(
+        transaction=transaction.to_dict(), pending_transactions=pending_transactions
+    )
 
 
 @simplefin_bp.post("/claim_simplefin_token")
@@ -96,21 +116,41 @@ def claim_simplefin_token():
     return redirect(url_for("simplefin_bp.simplefin"))
 
 
+@simplefin_bp.post("/delete_simplefin_credentials")
+@login_required
+def delete_simplefin_credentials():
+    simplefin_queries.delete_simplefin_credentials()
+
+    return redirect(url_for("simplefin_bp.simplefin"))
+
+
 @simplefin_bp.get("/sync_simplefin")
 @login_required
 def sync_simplefin():
     credentials = simplefin_queries.get_simplefin_credentials()
     if not credentials:
         flash("No SimpleFIN Credentials", "danger")
-    # elif (
-    #     credentials.last_synced
-    #     and (datetime.now() - credentials.last_synced).total_seconds() < 3600
-    # ):
-    #     pass
+        return redirect(url_for("simplefin_bp.simplefin"))
     else:
         simplefin_helpers.sync_simplefin(credentials)
 
-    return redirect(url_for("simplefin_bp.simplefin"))
+    return redirect(url_for("simplefin_bp.simplefin_accounts"))
+
+
+@simplefin_bp.get("/api/sync_simplefin")
+@login_required
+def api_sync_simplefin():
+    credentials = simplefin_queries.get_simplefin_credentials()
+    if not credentials:
+        pass
+    else:
+        simplefin_helpers.sync_simplefin(credentials)
+
+    pending_transactions = [
+        pt.to_dict() for pt in simplefin_queries.get_pending_transactions()
+    ]
+
+    return dict(pending_transactions=pending_transactions)
 
 
 @simplefin_bp.post("/sync_simplefin_account/<string:id>")
