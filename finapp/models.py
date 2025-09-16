@@ -237,7 +237,8 @@ class SimpleFINCredentials(db.Model, SerializerMixin):
     user_id: Mapped[user_fk]
     username: Mapped[str]  # encrypted
     password: Mapped[str]  # encrypted
-    last_synced: Mapped[Optional[datetime_type]]
+    last_synced_accounts: Mapped[Optional[datetime_type]]
+    last_synced_transactions: Mapped[Optional[datetime_type]]
 
     @staticmethod
     def encrypt_credentials(username, password) -> tuple[str, str]:
