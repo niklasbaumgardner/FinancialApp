@@ -274,7 +274,7 @@ class SimpleFINOrganization(db.Model, SerializerMixin):
 class SimpleFINAccount(db.Model, SerializerMixin):
     __tablename__ = "simplefin_account"
 
-    serialize_rules = ("sync_transactions_url",)
+    serialize_rules = ("toggle_sync_account_transactions_url",)
 
     id: Mapped[str_pk]
     user_id: Mapped[user_fk]
@@ -293,8 +293,8 @@ class SimpleFINAccount(db.Model, SerializerMixin):
         lazy="joined", viewonly=True
     )
 
-    def sync_transactions_url(self):
-        return url_for("simplefin_bp.sync_simplefin_account", id=self.id)
+    def toggle_sync_account_transactions_url(self):
+        return url_for("simplefin_bp.toggle_sync_account_transactions", id=self.id)
 
 
 class PendingTransaction(db.Model, SerializerMixin):

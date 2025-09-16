@@ -175,7 +175,7 @@ export class AddTransactionModal extends NikElement {
     this.refreshPendingButton.loading = true;
     this.refreshPendingButton.disabled = true;
 
-    let response = await fetch(API_SYNC_SIMPLEFIN_URL);
+    let response = await fetch(API_SYNC_SIMPLEFIN_TRANSACTIONS_URL);
     let data = await response.json();
 
     let { pending_transactions } = data;
@@ -311,7 +311,7 @@ export class AddTransactionModal extends NikElement {
   render() {
     return html`<wa-dialog
       id="transactions-dialog"
-      class="nb-tab-group-dialog"
+      class=${this.pendingTransactions.length > 0 ? "nb-tab-group-dialog" : ""}
       label="Add New Transaction"
       @wa-after-show=${this.handleDialogShow}
       >${this.tabGroupTemplate()} ${this.footerTemplate()}

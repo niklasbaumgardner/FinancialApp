@@ -34,6 +34,34 @@ export class SimpleFINAccounts extends NikElement {
     data.append("sync_transactions", event.target.checked ? 1 : 0);
 
     let response = await fetch(url, { method: "POST", body: data });
+    let { type } = await response.json();
+
+    event.target.checked = type > 0;
+  }
+
+  accountTemplate(a) {
+    return html`<div class="wa-split">
+      <div class="wa-">
+        <div><b>${a.longName}</b></div>
+        <div>
+          Balance:
+          <wa-format-number
+            type="currency"
+            currency=${a.currency}
+            value=${a.balance}
+          ></wa-format-number>
+        </div>
+      </div>
+      <wa-switch
+        ?checked=${a.type > 0}
+        @change=${(event) =>
+          this.handleAccountSyncChange(
+            event,
+            a.toggle_sync_account_transactions
+          )}
+        >Sync transactions from this account</wa-switch
+      >
+    </div>`;
   }
 
   accountsTemplate() {
@@ -49,7 +77,8 @@ export class SimpleFINAccounts extends NikElement {
           </p>
           <p>
             If you have connected your Financial Institutions on SimpleFIN, you
-            can <a href=${SYNC_SIMPLEFIN_URL}>sync your accounts here</a>.
+            can
+            <a href=${SYNC_SIMPLEFIN_ACCOUNTS_URL}>sync your accounts here</a>.
           </p>`;
       } else {
         message = html`<p>
@@ -64,22 +93,7 @@ export class SimpleFINAccounts extends NikElement {
 
     return this.accounts
       .flatMap((a) => [
-        html`<div class="wa-split">
-          <div class="wa-cluster">
-            ${a.longName}:
-            <wa-format-number
-              type="currency"
-              currency=${a.currency}
-              value=${a.balance}
-            ></wa-format-number>
-          </div>
-          <wa-switch
-            ?checked=${a.type > 0}
-            @change=${(event) =>
-              this.handleAccountSyncChange(event, a.sync_transactions_url)}
-            >Sync transactions from this account</wa-switch
-          >
-        </div>`,
+        this.accountTemplate(a),
         html`<wa-divider></wa-divider>`,
       ])
       .slice(0, -1);
@@ -102,7 +116,9 @@ export class SimpleFINAccounts extends NikElement {
           <wa-button
             appearance="outlined"
             variant="brand"
-            href=${this.accounts.length === 0 ? "" : SYNC_SIMPLEFIN_URL}
+            href=${this.accounts.length === 0
+              ? ""
+              : SYNC_SIMPLEFIN_ACCOUNTS_URL}
             ?disabled=${this.accounts.length === 0}
             >Sync All Accounts</wa-button
           >

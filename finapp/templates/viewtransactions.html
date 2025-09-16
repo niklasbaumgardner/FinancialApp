@@ -5,8 +5,8 @@ head %}
     "{{ url_for('viewtransactions_bp.api_get_transactions') }}";
   const PENDING_TRANSACTIONS_URL =
     "{{ url_for('simplefin_bp.api_get_pending_transaction') }}";
-  const API_SYNC_SIMPLEFIN_URL =
-    "{{ url_for('simplefin_bp.api_sync_simplefin') }}";
+  const API_SYNC_SIMPLEFIN_TRANSACTIONS_URL =
+    "{{ url_for('simplefin_bp.api_sync_simplefin_transactions') }}";
 </script>
 
 <script src="/static/js/nb-view-transactions.mjs" type="module"></script>

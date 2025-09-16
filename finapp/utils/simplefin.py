@@ -108,8 +108,8 @@ def get_simplefin_data(credentials):
     return data
 
 
-def sync_simplefin(credentials):
-    data = get_simplefin_data(credentials)
+def sync_simplefin_transactions(credentials):
+    data = get_simplefin_data(credentials=credentials)
 
     if data:
         errors = data.get("errors")
@@ -144,3 +144,32 @@ def sync_simplefin(credentials):
         simplefin_queries.update_simplefin_credentials_last_synced()
 
     # double_check_pending_transactions()
+
+
+def sync_simplefin_accounts(credentials):
+    if (
+        credentials.last_synced
+        and (datetime.now() - credentials.last_synced).total_seconds() < 3600
+    ):  # 1 hour
+        print("Last synced less than 1 hour ago")
+        return None
+
+    username, password = credentials.decrypt_credentials()
+
+    url = f"https://{username}:{password}@beta-bridge.simplefin.org/simplefin/accounts"
+
+    response = requests.get(url + "?balances-only=1")
+    data = response.json()
+
+    if data:
+        errors = data.get("errors")
+        for error in errors:
+            print("SIMPLEFIN ERROR:", error)
+
+        accounts = data.get("accounts")
+        for account in accounts:
+            org = account["org"]
+            sf_org = simplefin_queries.get_or_create_simplefin_organization(org)
+            simplefin_queries.upsert_simplefin_account(
+                account=account, organization_id=sf_org.id
+            )

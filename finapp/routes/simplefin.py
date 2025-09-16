@@ -124,27 +124,40 @@ def delete_simplefin_credentials():
     return redirect(url_for("simplefin_bp.simplefin"))
 
 
-@simplefin_bp.get("/sync_simplefin")
+@simplefin_bp.get("/sync_simplefin_transactions")
 @login_required
-def sync_simplefin():
+def sync_simplefin_transactions():
     credentials = simplefin_queries.get_simplefin_credentials()
     if not credentials:
         flash("No SimpleFIN Credentials", "danger")
         return redirect(url_for("simplefin_bp.simplefin"))
     else:
-        simplefin_helpers.sync_simplefin(credentials)
+        simplefin_helpers.sync_simplefin_transactions(credentials=credentials)
 
     return redirect(url_for("simplefin_bp.simplefin_accounts"))
 
 
-@simplefin_bp.get("/api/sync_simplefin")
+@simplefin_bp.get("/sync_simplefin_accounts")
 @login_required
-def api_sync_simplefin():
+def sync_simplefin_accounts():
+    credentials = simplefin_queries.get_simplefin_credentials()
+    if not credentials:
+        flash("No SimpleFIN Credentials", "danger")
+        return redirect(url_for("simplefin_bp.simplefin"))
+    else:
+        simplefin_helpers.sync_simplefin_accounts(credentials=credentials)
+
+    return redirect(url_for("simplefin_bp.simplefin_accounts"))
+
+
+@simplefin_bp.get("/api/sync_simplefin_transactions")
+@login_required
+def api_sync_simplefin_transactions():
     credentials = simplefin_queries.get_simplefin_credentials()
     if not credentials:
         pass
     else:
-        simplefin_helpers.sync_simplefin(credentials)
+        simplefin_helpers.sync_simplefin_transactions(credentials=credentials)
 
     pending_transactions = [
         pt.to_dict() for pt in simplefin_queries.get_pending_transactions()
@@ -153,9 +166,9 @@ def api_sync_simplefin():
     return dict(pending_transactions=pending_transactions)
 
 
-@simplefin_bp.post("/sync_simplefin_account/<string:id>")
+@simplefin_bp.post("/toggle_sync_account_transactions/<string:id>")
 @login_required
-def sync_simplefin_account(id):
+def toggle_sync_account_transactions(id):
     should_sync_transactions = request.form.get(
         "sync_transactions", type=int, default=0
     )
@@ -164,4 +177,6 @@ def sync_simplefin_account(id):
         id=id, sync=should_sync_transactions
     )
 
-    return "True"
+    account = simplefin_queries.get_simplefin_account(id=id)
+
+    return dict(type=account.type)

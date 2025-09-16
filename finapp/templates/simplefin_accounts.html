@@ -5,7 +5,8 @@
 
 {% endblock backButton %} {% block head %}
 <script>
-  const SYNC_SIMPLEFIN_URL = "{{ url_for('simplefin_bp.sync_simplefin') }}";
+  const SYNC_SIMPLEFIN_ACCOUNTS_URL =
+    "{{ url_for('simplefin_bp.sync_simplefin_accounts') }}";
   const SIMPLEFIN_CREDENTIALS_URL = "{{ url_for('simplefin_bp.simplefin') }}";
 </script>
 
