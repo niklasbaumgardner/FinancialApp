@@ -45,6 +45,8 @@ import "@awesome.me/webawesome/dist/components/tab-group/tab-group.js";
 import "@awesome.me/webawesome/dist/components/tab/tab.js";
 import "@awesome.me/webawesome/dist/components/tab-panel/tab-panel.js";
 
+import "@awesome.me/webawesome/dist/components/textarea/textarea.js";
+
 // // Option 2: the setBasePath()
 // import { setBasePath } from "@awesome.me/webawesome/dist/webawesome.js";
 // setBasePath("");

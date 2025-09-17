@@ -1,6 +1,7 @@
 import { html } from "./lit.bundle.mjs";
 import "./nb-categories-select.mjs";
 import { NikElement } from "./nik-element.mjs";
+import "./nb-delete-pending-transaction.mjs";
 
 export class PendingTransaction extends NikElement {
   static properties = {
@@ -96,6 +97,16 @@ export class PendingTransaction extends NikElement {
   }
 
   async handleTransactionDiscard() {
+    if (!this.deletePendingTransactionModal) {
+      this.deletePendingTransactionModal = document.createElement(
+        "nb-delete-pending-transaction"
+      );
+      this.deletePendingTransactionModal.pendingTransaction = this.transaction;
+      document.body.appendChild(this.deletePendingTransactionModal);
+    }
+
+    this.deletePendingTransactionModal.show();
+    return;
     this.discardButton.loading = true;
     this.discardButton.disabled = true;
     this.submitButton.disabled = true;
@@ -149,6 +160,7 @@ export class PendingTransaction extends NikElement {
 
   budgetsTemplate() {
     return html`<wa-select
+      size="small"
       label="Select Budget"
       id="budgets-select"
       name="budget"
@@ -175,6 +187,7 @@ export class PendingTransaction extends NikElement {
 
   sharedUsersSelectTemplate() {
     return html`<wa-select
+      size="small"
       id="user-select"
       label="Select user for this transaction"
       name="user"
@@ -218,6 +231,7 @@ export class PendingTransaction extends NikElement {
         <wa-button
           id="discard-button"
           class="w-fit"
+          size="small"
           variant="danger"
           appearance="outlined"
           @click=${this.handleTransactionDiscard}
@@ -235,6 +249,7 @@ export class PendingTransaction extends NikElement {
           />
           <div class="wa-stack">
             <wa-input
+              size="small"
               label="Name"
               class="grow"
               type="text"
@@ -247,6 +262,7 @@ export class PendingTransaction extends NikElement {
             ></wa-input>
             <div class="wa-cluster flex-nowrap!">
               <wa-input
+                size="small"
                 label="Amount"
                 class="grow min-w-[0]"
                 type="number"
@@ -259,6 +275,7 @@ export class PendingTransaction extends NikElement {
                 required
               ></wa-input>
               <wa-input
+                size="small"
                 label="Date"
                 class="grow min-w-min"
                 type="date"
@@ -271,12 +288,14 @@ export class PendingTransaction extends NikElement {
           </div>
           ${this.budgetsTemplate()} ${this.sharedUsersSelectTemplate()}
           <nb-categories-select
+            size="small"
             .selected=${this.getPotentialCategories()}
             .categories=${this.categories}
           ></nb-categories-select>
         </form>
         <div class="wa-cluster w-full">
           <wa-button
+            size="small"
             id="submit-button"
             class="grow"
             variant="brand"

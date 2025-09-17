@@ -1,4 +1,4 @@
-import { html } from "./lit.bundle.mjs";
+import { html, ifDefined } from "./lit.bundle.mjs";
 import { WaSelect } from "./main.bundle.mjs";
 import { NikElement } from "./nik-element.mjs";
 import "./nb-category.mjs";
@@ -73,6 +73,7 @@ export class CategoriesSelect extends NikElement {
     categories: { type: Array },
     value: { type: Array },
     selected: { type: Array },
+    size: { type: String },
   };
 
   static get queries() {
@@ -102,6 +103,7 @@ export class CategoriesSelect extends NikElement {
       label="Select Categories"
       name="categories"
       max-options-visible="0"
+      size=${ifDefined(this.size)}
       multiple
       with-clear
       >${this.categories.map(

@@ -43,13 +43,13 @@ export class SimpleFIN extends NikElement {
           <li>Copy the SimpleFIN Setup Token and paste it below</li>
         </ol>
 
-        <wa-input
+        <wa-textarea
           form="simplefin-form"
           label="SimpleFIN Setup Token"
           id="token"
           name="setup_token"
           required
-        ></wa-input>
+        ></wa-textarea>
 
         <wa-button
           form="simplefin-form"
@@ -88,13 +88,13 @@ export class SimpleFIN extends NikElement {
           <li>Copy the SimpleFIN Setup Token and paste it below</li>
         </ol>
 
-        <wa-input
+        <wa-textarea
           form="simplefin-form"
           label="SimpleFIN Setup Token"
           id="token"
           name="setup_token"
           required
-        ></wa-input>
+        ></wa-textarea>
 
         <div class="wa-cluster w-full">
           <wa-button
