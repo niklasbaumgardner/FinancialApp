@@ -189,7 +189,7 @@ export class PendingTransaction extends NikElement {
       return null;
     }
 
-    return html`<wa-details
+    return html`<wa-details name="pending-transaction"
       ><div class="wa-stack gap-(--wa-space-xs)! w-full" slot="summary">
         <span
           ><b class="wa-split"
@@ -215,6 +215,14 @@ export class PendingTransaction extends NikElement {
             ></wa-format-date>
           </small>
         </div>
+        <wa-button
+          id="discard-button"
+          class="w-fit"
+          variant="danger"
+          appearance="outlined"
+          @click=${this.handleTransactionDiscard}
+          >Discard This Transaction</wa-button
+        >
       </div>
       <div class="wa-stack">
         <form class="wa-stack">
@@ -269,13 +277,6 @@ export class PendingTransaction extends NikElement {
         </form>
         <div class="wa-cluster w-full">
           <wa-button
-            id="discard-button"
-            class="grow"
-            variant="danger"
-            appearance="outlined"
-            @click=${this.handleTransactionDiscard}
-            >Discard</wa-button
-          ><wa-button
             id="submit-button"
             class="grow"
             variant="brand"
