@@ -34,7 +34,7 @@ export class SimpleFINAccounts extends NikElement {
     data.append("sync_transactions", event.target.checked ? 1 : 0);
 
     let response = await fetch(url, { method: "POST", body: data });
-    let { type } = await response.json();
+    let { access_type } = await response.json();
 
     event.target.checked = type > 0;
   }
@@ -53,12 +53,9 @@ export class SimpleFINAccounts extends NikElement {
         </div>
       </div>
       <wa-switch
-        ?checked=${a.type > 0}
+        ?checked=${a.access_type > 0}
         @change=${(event) =>
-          this.handleAccountSyncChange(
-            event,
-            a.toggle_sync_account_transactions_url
-          )}
+          this.handleAccountSyncChange(event, a.update_account_access_type_url)}
         >Sync transactions from this account</wa-switch
       >
     </div>`;

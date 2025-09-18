@@ -4,6 +4,7 @@ from finapp.models import (
     SimpleFINAccount,
     SimpleFINCredentials,
     SimpleFINOrganization,
+    SimpleFINTransaction,
 )
 from flask_login import current_user
 from finapp import db
@@ -149,14 +150,17 @@ def get_simplefin_account(id):
     return db.session.scalars(stmt.limit(1)).first()
 
 
-def get_simplefin_accounts():
+def get_simplefin_accounts(access_type=None):
     shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
 
     stmt = select(SimpleFINAccount).where(SimpleFINAccount.user_id.in_(shared_user_ids))
+    if access_type is not None and isinstance(access_type, int):
+        stmt = stmt.where(SimpleFINAccount.access_type > access_type)
+
     return db.session.scalars(stmt).unique().all()
 
 
-def toggle_simplefin_account_sync(id, sync):
+def update_account_access_type(id, sync):
     shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
 
     stmt = (
@@ -166,7 +170,7 @@ def toggle_simplefin_account_sync(id, sync):
                 SimpleFINAccount.id == id, SimpleFINAccount.user_id.in_(shared_user_ids)
             )
         )
-        .values(type=sync or 0)
+        .values(access_type=sync or 0)
     )
 
     db.session.execute(stmt)
@@ -304,3 +308,21 @@ def convert_pending_transaction(
     delete_pending_transaction(id=p_transaction.id, create_completed=False)
 
     return transaction_id
+
+
+def delete_transactions_for_account_id(account_id):
+    stmt = delete(SimpleFINTransaction).where(
+        SimpleFINTransaction.account_id == account_id
+    )
+
+    db.session.execute(stmt)
+    db.session.commit()
+
+
+def update_transactions_for_account(account_id, transactions):
+    delete_transactions_for_account_id(account_id=account_id)
+
+    stmt = insert(SimpleFINTransaction).values(transactions)
+
+    db.session.execute(stmt)
+    db.session.commit()

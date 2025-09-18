@@ -166,17 +166,15 @@ def api_sync_simplefin_transactions():
     return dict(pending_transactions=pending_transactions)
 
 
-@simplefin_bp.post("/toggle_sync_account_transactions/<string:id>")
+@simplefin_bp.post("/update_account_access_type/<string:id>")
 @login_required
-def toggle_sync_account_transactions(id):
+def update_account_access_type(id):
     should_sync_transactions = request.form.get(
         "sync_transactions", type=int, default=0
     )
 
-    simplefin_queries.toggle_simplefin_account_sync(
-        id=id, sync=should_sync_transactions
-    )
+    simplefin_queries.update_account_access_type(id=id, sync=should_sync_transactions)
 
     account = simplefin_queries.get_simplefin_account(id=id)
 
-    return dict(type=account.type)
+    return dict(access_type=account.access_type)
