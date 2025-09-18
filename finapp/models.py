@@ -289,7 +289,16 @@ class SimpleFINAccount(db.Model, SerializerMixin):
     available_balance: Mapped[Optional[float]]
     balance_date: Mapped[date_type]
 
-    type: Mapped[Optional[int]]  # this is for me to maybe include transactions
+    # type: Mapped[Optional[int]]  # this is for me to maybe include transactions
+
+    type: Mapped[
+        Optional[int]
+    ]  # this is for me to define the account. CC, checking, savings, etc.
+    access_type: Mapped[
+        Optional[int]
+    ]  # this is for me to maybe include transactions or only balance data, etc.
+
+    last_synced_transactions: Mapped[Optional[datetime_type]]
 
     organization: Mapped["SimpleFINOrganization"] = relationship(
         lazy="joined", viewonly=True
@@ -339,3 +348,19 @@ class CompletedTransaction(db.Model, SerializerMixin):
     name: Mapped[str]
     amount: Mapped[float]
     date: Mapped[date_type]
+
+
+class SimpleFINTransaction(db.Model, SerializerMixin):
+    __tablename__ = "simplefin_transaction"
+
+    id: Mapped[str] = mapped_column(primary_key=True)
+
+    posted: Mapped[int]  # UNIX epoch timestamp
+    amount: Mapped[str]  # numeric string
+    description: Mapped[str]
+
+    transacted_at: Mapped[Optional[int]]  # UNIX epoch timestamp
+    pending: Mapped[Optional[bool]]
+
+    account_id: Mapped[str] = mapped_column(ForeignKey("simplefin_account.id"))
+    user_id: Mapped[user_fk]
