@@ -5,6 +5,7 @@ from finapp.models import (
     Transaction,
     TransactionCategory,
     CompletedTransaction,
+    SimpleFINTransaction,
 )
 from finapp.queries import (
     budget_queries,
@@ -586,13 +587,13 @@ def search(
 
 
 def find_transaction(
-    transaction: dict, seen_transactions: list
+    transaction: SimpleFINTransaction, seen_transactions: list
 ) -> tuple[bool, list[int]]:
     shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
 
     stmt = select(CompletedTransaction).where(
         and_(
-            CompletedTransaction.simplefin_id == transaction.get("id"),
+            CompletedTransaction.simplefin_id == transaction.id,
             CompletedTransaction.user_id.in_(shared_user_ids),
         )
     )
@@ -604,16 +605,14 @@ def find_transaction(
             if ct.transaction_id is not None
         ]
 
-    transaction_timestamp = transaction.get("transacted_at") or transaction.get(
-        "posted"
-    )
+    transaction_timestamp = transaction.transacted_at or transaction.posted
     transaction_date = date.fromtimestamp(transaction_timestamp)
 
     DAY_RANGE = 4
     start_date = transaction_date - timedelta(days=DAY_RANGE)
     end_date = transaction_date + timedelta(days=DAY_RANGE)
 
-    amount = round(float(transaction.get("amount")), 2)
+    amount = round(float(transaction.amount), 2)
 
     stmt = (
         select(Transaction)

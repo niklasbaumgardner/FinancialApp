@@ -184,12 +184,12 @@ def create_pending_transactions(transactions):
     pending_transactions = []
     for t in transactions:
         pt = dict(
-            simplefin_id=t["id"],
-            account_id=t["simplefin_account_id"],
+            simplefin_id=t.id,
+            account_id=t.account_id,
             user_id=current_user.id,
-            name=t["description"],
-            amount=round(float(t["amount"]), 2),
-            date=date.fromtimestamp(t["transacted_at"] or t["posted"]),
+            name=t.description,
+            amount=round(float(t.amount), 2),
+            date=date.fromtimestamp(t.transacted_at or t.posted),
         )
         pending_transactions.append(pt)
 
@@ -322,7 +322,37 @@ def delete_transactions_for_account_id(account_id):
 def update_transactions_for_account(account_id, transactions):
     delete_transactions_for_account_id(account_id=account_id)
 
-    stmt = insert(SimpleFINTransaction).values(transactions)
+    last_synced_stmt = (
+        update(SimpleFINAccount)
+        .where(SimpleFINAccount.id == account_id)
+        .values(last_synced_transactions=datetime.now())
+    )
+    db.session.execute(last_synced_stmt)
 
+    if not transactions:
+        db.session.commit()
+        return
+
+    stmt = insert(SimpleFINTransaction).values(transactions)
     db.session.execute(stmt)
+
     db.session.commit()
+
+
+def get_simplefin_transactions_for_accounts(account_ids):
+    shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
+
+    stmt = select(SimpleFINTransaction).where()
+
+    stmt = (
+        select(SimpleFINTransaction)
+        .where(
+            and_(
+                SimpleFINTransaction.user_id.in_(shared_user_ids),
+                SimpleFINTransaction.account_id.in_(account_ids),
+            )
+        )
+        .order_by(SimpleFINTransaction.transacted_at or SimpleFINTransaction.posted)
+    )
+
+    return db.session.scalars(stmt).unique().all()

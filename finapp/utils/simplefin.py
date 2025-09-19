@@ -37,23 +37,23 @@ def find_transactions(transactions):
     return not_found_transactions
 
 
-def double_check_pending_transactions():
-    seen_transaction_ids = []
-    pending_transactions = simplefin_queries.get_pending_transactions()
+# def double_check_pending_transactions():
+#     seen_transaction_ids = []
+#     pending_transactions = simplefin_queries.get_pending_transactions()
 
-    for pending_transaction in pending_transactions:
-        found, found_transactions = (
-            transaction_queries.find_transaction_for_pending_transaction(
-                transaction=pending_transaction, seen_transactions=seen_transaction_ids
-            )
-        )
+#     for pending_transaction in pending_transactions:
+#         found, found_transactions = (
+#             transaction_queries.find_transaction_for_pending_transaction(
+#                 transaction=pending_transaction, seen_transactions=seen_transaction_ids
+#             )
+#         )
 
-        if found:
-            t, should_convert = found_transactions[0]
-            if t is not None:
-                seen_transaction_ids.append(t.id)
+#         if found:
+#             t, should_convert = found_transactions[0]
+#             if t is not None:
+#                 seen_transaction_ids.append(t.id)
 
-            simplefin_queries.delete_pending_transaction(id=pending_transaction.id)
+#             simplefin_queries.delete_pending_transaction(id=pending_transaction.id)
 
 
 def sf_data():
@@ -107,7 +107,7 @@ def get_simplefin_transaction_data(credentials):
     return data
 
 
-def get_simplefin_transactions(credentials, account_ids):
+def request_simplefin_transactions(credentials, account_ids):
     if len(account_ids) < 1:
         return {}
 
@@ -115,15 +115,47 @@ def get_simplefin_transactions(credentials, account_ids):
 
     url = f"https://{username}:{password}@beta-bridge.simplefin.org/simplefin/accounts"
 
-    # DAYS_BACK = 30
-    # start_date = int(datetime.now().timestamp() - (86400 * DAYS_BACK))
+    DAYS_BACK = 30
+    start_date = int(datetime.now().timestamp() - (86400 * DAYS_BACK))
 
     accounts_string = "&".join([f"account={id}" for id in account_ids])
 
-    response = requests.get(url + f"?pending=1&{accounts_string}")
+    response = requests.get(
+        url + f"?pending=1&{accounts_string}&start-date={start_date}"
+    )
     data = response.json()
 
     return data
+
+
+def update_account_transactions(data):
+    if data:
+        errors = data.get("errors")
+        for error in errors:
+            print("SIMPLEFIN ERROR:", error)
+
+        accounts = data.get("accounts")
+        for account in accounts:
+            account_id = account["id"]
+
+            account_transactions = account.get("transactions")
+
+            safe_for_db_transactions = [
+                {
+                    "account_id": account_id,
+                    "user_id": current_user.id,
+                    "id": t["id"],
+                    "posted": t["posted"],
+                    "amount": t["amount"],
+                    "description": t["description"],
+                    "transacted_at": t.get("transacted_at") or t["posted"],
+                }
+                for t in account_transactions
+            ]
+
+            simplefin_queries.update_transactions_for_account(
+                account_id=account_id, transactions=safe_for_db_transactions
+            )
 
 
 def sync_simplefin_transactions(credentials):
@@ -136,29 +168,17 @@ def sync_simplefin_transactions(credentials):
         or (now - a.last_synced_transactions).total_seconds() < 3600
     ]
 
-    data = get_simplefin_transactions(credentials=credentials, account_ids=account_ids)
-    if data:
-        errors = data.get("errors")
-        for error in errors:
-            print("SIMPLEFIN ERROR:", error)
+    data = request_simplefin_transactions(
+        credentials=credentials, account_ids=account_ids
+    )
 
-        accounts = data.get("accounts")
-        for account in accounts:
-            account_id = account["id"]
+    update_account_transactions(data=data)
 
-            account_transactions = account.get("transactions")
+    sf_transactions = simplefin_queries.get_simplefin_transactions_for_accounts(
+        account_ids=[a.id for a in accounts]
+    )
 
-            for t in account_transactions:
-                t["account_id"] = account_id
-                t["user_id"] = current_user.id
-
-            simplefin_queries.update_transactions_for_account(
-                account_id=account_id, transactions=account_transactions
-            )
-
-    sf_transactions = simplefin_queries.get_simplefin_transactions_for_accounts()
-    transactions.sort(key=lambda x: x["transacted_at"] or x["posted"])
-    not_found_transactions = find_transactions(transactions=transactions)
+    not_found_transactions = find_transactions(transactions=sf_transactions)
 
     simplefin_queries.create_pending_transactions(transactions=not_found_transactions)
 
