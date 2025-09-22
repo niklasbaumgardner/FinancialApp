@@ -18,6 +18,7 @@ from sqlalchemy.sql import func, or_, and_
 from sqlalchemy.orm import noload
 from sqlalchemy import delete, exists, extract, insert, update, select, cast, FLOAT
 from datetime import date, timedelta
+import os
 
 
 ## Helper functions
@@ -588,6 +589,59 @@ def search(
 
 def find_transactions_v2():
     shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
+
+    completed_stmt = (
+        select(CompletedTransaction)
+        .where(
+            and_(
+                CompletedTransaction.simplefin_id == SimpleFINTransaction.id,
+                CompletedTransaction.user_id.in_(shared_user_ids),
+            )
+        )
+        .exists()
+    )
+
+    DAY_RANGE = 5
+    stmt = (
+        select(SimpleFINTransaction, Transaction)
+        .where(
+            and_(
+                ~completed_stmt,
+                SimpleFINTransaction.user_id.in_(shared_user_ids),
+                or_(
+                    Transaction.user_id.is_(None),
+                    Transaction.user_id.in_(shared_user_ids),
+                ),
+            )
+        )
+        .join(
+            Transaction,
+            and_(
+                Transaction.date.between(
+                    func.to_timestamp(SimpleFINTransaction.transacted_at)
+                    - timedelta(days=DAY_RANGE),
+                    func.to_timestamp(SimpleFINTransaction.transacted_at)
+                    + timedelta(days=DAY_RANGE),
+                ),
+                Transaction.amount == cast(SimpleFINTransaction.amount, FLOAT),
+            ),
+            isouter=True,
+        )
+        .order_by(SimpleFINTransaction.transacted_at)
+    )
+
+    result = db.session.execute(stmt).unique().all()
+
+    return result
+
+
+def find_transactions_for_user_v2(key, user_id):
+    if key != os.environ.get("SIMPLEFIN_KEY"):
+        return
+
+    shared_user_ids = [
+        u.id for u in user_queries.get_shared_users_for_user(key=key, user_id=user_id)
+    ]
 
     completed_stmt = (
         select(CompletedTransaction)

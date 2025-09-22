@@ -2,6 +2,7 @@ from flask import Blueprint, request, render_template, redirect, url_for, flash
 from flask_login import current_user, login_required
 from finapp.queries import simplefin_queries, transaction_queries
 from finapp.utils import simplefin as simplefin_helpers, helpers
+import os
 
 
 simplefin_bp = Blueprint("simplefin_bp", __name__)
@@ -137,15 +138,28 @@ def sync_simplefin_transactions():
     return redirect(url_for("simplefin_bp.simplefin_accounts"))
 
 
-@simplefin_bp.get("/sync_simplefin_accounts")
+@simplefin_bp.get("/sync_simplefin_account_balances")
 @login_required
-def sync_simplefin_accounts():
+def sync_simplefin_account_balances():
     credentials = simplefin_queries.get_simplefin_credentials()
     if not credentials:
         flash("No SimpleFIN Credentials", "danger")
         return redirect(url_for("simplefin_bp.simplefin"))
     else:
-        simplefin_helpers.sync_simplefin_accounts(credentials=credentials)
+        simplefin_helpers.sync_simplefin_account_balances(credentials=credentials)
+
+    return redirect(url_for("simplefin_bp.simplefin_accounts"))
+
+
+@simplefin_bp.get("/sync_simplefin")
+@login_required
+def sync_simplefin():
+    credentials = simplefin_queries.get_simplefin_credentials()
+    if not credentials:
+        flash("No SimpleFIN Credentials", "danger")
+        return redirect(url_for("simplefin_bp.simplefin"))
+    else:
+        simplefin_helpers.sync_simplefin(credentials=credentials)
 
     return redirect(url_for("simplefin_bp.simplefin_accounts"))
 
@@ -178,3 +192,14 @@ def update_account_access_type(id):
     account = simplefin_queries.get_simplefin_account(id=id)
 
     return dict(access_type=account.access_type)
+
+
+@simplefin_bp.get("/api/update_all_accounts_and_transactions")
+def update_all_accounts_and_transactions():
+    key = request.args.get("key")
+    if key != os.environ.get("SIMPLEFIN_KEY"):
+        return
+
+    simplefin_helpers.update_all_accounts_and_transactions(key=key)
+
+    return dict(success=True)

@@ -3,6 +3,7 @@ from sqlalchemy.sql import or_
 from flask_login import current_user
 from finapp import bcrypt, db
 from sqlalchemy import func, insert, select, update
+import os
 
 
 ##
@@ -80,6 +81,27 @@ def get_shared_users_for_all_budgets():
             or_(
                 Budget.user_id == current_user.id,
                 SharedBudget.user_id == current_user.id,
+            )
+        )
+    )
+
+    shared_users = db.session.scalars(stmt).unique().all()
+
+    return shared_users
+
+
+def get_shared_users_for_user(key, user_id):
+    if key != os.environ.get("SIMPLEFIN_KEY"):
+        return
+
+    stmt = (
+        select(User)
+        .outerjoin(Budget, User.id == Budget.user_id)
+        .outerjoin(SharedBudget, Budget.id == SharedBudget.budget_id)
+        .where(
+            or_(
+                Budget.user_id == user_id,
+                SharedBudget.user_id == user_id,
             )
         )
     )

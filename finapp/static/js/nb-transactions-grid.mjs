@@ -362,7 +362,7 @@ export class TransactionsGrid extends NikElement {
 
           let date = param.data.date;
 
-          return `<wa-format-date month="long" day="numeric" year="numeric" date="${
+          return `<wa-format-date month="short" day="numeric" year="numeric" date="${
             date + "T00:00:00"
           }"></wa-format-date>`;
         },

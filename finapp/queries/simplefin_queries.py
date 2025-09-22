@@ -145,8 +145,8 @@ def update_simeplefin_accounts(accounts: list[dict]):
     accounts_data = [
         {
             "balance": round(float(a["balance"]), 2),
-            "available_balance": round(float(a.get("available_balance") or 0), 2),
-            "balance_date": date.fromtimestamp(a["balance_date"]),
+            "available_balance": round(float(a.get("available-balance") or 0), 2),
+            "balance_date": date.fromtimestamp(a["balance-date"]),
         }
         for a in accounts
     ]
