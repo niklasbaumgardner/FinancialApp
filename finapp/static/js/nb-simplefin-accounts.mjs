@@ -1,5 +1,6 @@
 import { html } from "./lit.bundle.mjs";
 import { NikElement } from "./nik-element.mjs";
+import "./nb-simplefin-account.mjs";
 
 export class SimpleFINAccounts extends NikElement {
   static properties = {
@@ -21,44 +22,10 @@ export class SimpleFINAccounts extends NikElement {
     super.connectedCallback();
 
     this.accounts.forEach(
-      (a) => (a.longName = `${a.organization.name} ${a.name}`)
+      (a) => (a._longName = `${a.organization.name} ${a.name}`)
     );
-    this.accounts.sort((a, b) => a.longName.localeCompare(b.longName));
+    this.accounts.sort((a, b) => a._longName.localeCompare(b._longName));
     console.log(this.accounts);
-  }
-
-  async handleAccountSyncChange(event, url) {
-    // event.target.toggleAttribute("checked", event.target.checked);
-
-    let data = new FormData();
-    data.append("sync_transactions", event.target.checked ? 1 : 0);
-
-    let response = await fetch(url, { method: "POST", body: data });
-    let { access_type } = await response.json();
-
-    event.target.checked = access_type > 0;
-  }
-
-  accountTemplate(a) {
-    return html`<div class="wa-split">
-      <div class="wa-">
-        <div><b>${a.longName}</b></div>
-        <div>
-          Balance:
-          <wa-format-number
-            type="currency"
-            currency=${a.currency}
-            value=${a.balance}
-          ></wa-format-number>
-        </div>
-      </div>
-      <wa-switch
-        ?checked=${a.access_type > 0}
-        @change=${(event) =>
-          this.handleAccountSyncChange(event, a.update_account_access_type_url)}
-        >Sync transactions from this account</wa-switch
-      >
-    </div>`;
   }
 
   accountsTemplate() {
@@ -90,7 +57,7 @@ export class SimpleFINAccounts extends NikElement {
 
     return this.accounts
       .flatMap((a) => [
-        this.accountTemplate(a),
+        html`<nb-simplefin-account .account=${a}></nb-simplefin-account>`,
         html`<wa-divider></wa-divider>`,
       ])
       .slice(0, -1);

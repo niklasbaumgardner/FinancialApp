@@ -207,6 +207,26 @@ def update_account_access_type(id, sync):
     db.session.commit()
 
 
+def update_account_name(id, name):
+    if not name:
+        return
+
+    shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
+
+    stmt = (
+        update(SimpleFINAccount)
+        .where(
+            and_(
+                SimpleFINAccount.id == id, SimpleFINAccount.user_id.in_(shared_user_ids)
+            )
+        )
+        .values(name=name)
+    )
+
+    db.session.execute(stmt)
+    db.session.commit()
+
+
 def update_last_synced_for_accounts(account_ids, account=False, transactions=False):
     if not account and not transactions:
         return

@@ -191,7 +191,19 @@ def update_account_access_type(id):
 
     account = simplefin_queries.get_simplefin_account(id=id)
 
-    return dict(access_type=account.access_type)
+    return dict(account=account.access_type)
+
+
+@simplefin_bp.post("/update_account_name/<string:id>")
+@login_required
+def update_account_name(id):
+    name = request.form.get("name", type=str)
+
+    simplefin_queries.update_account_name(id=id, name=name)
+
+    account = simplefin_queries.get_simplefin_account(id=id)
+
+    return dict(name=account.name)
 
 
 @simplefin_bp.get("/api/update_all_accounts_and_transactions")

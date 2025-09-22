@@ -272,7 +272,10 @@ class SimpleFINOrganization(db.Model, SerializerMixin):
 class SimpleFINAccount(db.Model, SerializerMixin):
     __tablename__ = "simplefin_account"
 
-    serialize_rules = ("update_account_access_type_url",)
+    serialize_rules = (
+        "update_account_access_type_url",
+        "update_account_name",
+    )
 
     id: Mapped[str_pk]
     user_id: Mapped[user_fk]
@@ -301,6 +304,9 @@ class SimpleFINAccount(db.Model, SerializerMixin):
 
     def update_account_access_type_url(self):
         return url_for("simplefin_bp.update_account_access_type", id=self.id)
+
+    def update_account_name(self):
+        return url_for("simplefin_bp.update_account_name", id=self.id)
 
 
 class PendingTransaction(db.Model, SerializerMixin):
