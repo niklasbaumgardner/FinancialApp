@@ -36,7 +36,7 @@ export class SimpleFINAccounts extends NikElement {
     let response = await fetch(url, { method: "POST", body: data });
     let { access_type } = await response.json();
 
-    event.target.checked = type > 0;
+    event.target.checked = access_type > 0;
   }
 
   accountTemplate(a) {
@@ -100,24 +100,41 @@ export class SimpleFINAccounts extends NikElement {
     return html`<wa-card>
       <div class="wa-stack">
         <div class="wa-split">
-          <h2>External Accounts</h2>
-          <wa-button
-            appearance="outlined"
-            href="${SIMPLEFIN_CREDENTIALS_URL}?force=true"
-            >Edit Credentials</wa-button
+          <h2 class="flex">
+            External Accounts
+            <wa-button
+              size="large"
+              appearance="plain"
+              href="${SIMPLEFIN_CREDENTIALS_URL}?force=true"
+              ><wa-icon
+                library="ion"
+                name="settings-outline"
+                label="Manage Credentials"
+              ></wa-icon
+            ></wa-button>
+          </h2>
+
+          <wa-button appearance="outlined" href=${SYNC_SIMPLEFIN_URL}
+            >Sync with SimpleFIN</wa-button
           >
         </div>
 
         <div class="wa-split">
-          <div></div>
+          <wa-button
+            appearance="outlined"
+            target="_blank"
+            href="https://beta-bridge.simplefin.org/my-account"
+            >Add External Accounts
+            <wa-icon slot="end" library="ion" name="open-outline"></wa-icon
+          ></wa-button>
           <wa-button
             appearance="outlined"
             variant="brand"
             href=${this.accounts.length === 0
               ? ""
-              : SYNC_SIMPLEFIN_ACCOUNTS_URL}
+              : SYNC_SIMPLEFIN_ACCOUNT_BALANCES_URL}
             ?disabled=${this.accounts.length === 0}
-            >Sync Accounts</wa-button
+            >Sync All Existing Accounts</wa-button
           >
         </div>
         ${this.accountsTemplate()}

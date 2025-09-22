@@ -230,16 +230,12 @@ class SimpleFINCredentials(db.Model, SerializerMixin):
     serialize_only = (
         "id",
         "user_id",
-        "last_synced_accounts",
-        "last_synced_transactions",
     )
 
     id: Mapped[int_pk]
     user_id: Mapped[user_fk]
     username: Mapped[str]  # encrypted
     password: Mapped[str]  # encrypted
-    last_synced_accounts: Mapped[Optional[datetime_type]]
-    last_synced_transactions: Mapped[Optional[datetime_type]]
 
     @staticmethod
     def encrypt_credentials(username, password) -> tuple[str, str]:
@@ -289,8 +285,6 @@ class SimpleFINAccount(db.Model, SerializerMixin):
     available_balance: Mapped[Optional[float]]
     balance_date: Mapped[date_type]
 
-    # type: Mapped[Optional[int]]  # this is for me to maybe include transactions
-
     type: Mapped[
         Optional[int]
     ]  # this is for me to define the account. CC, checking, savings, etc.
@@ -298,6 +292,7 @@ class SimpleFINAccount(db.Model, SerializerMixin):
         Optional[int]
     ]  # this is for me to maybe include transactions or only balance data, etc.
 
+    last_synced_account: Mapped[Optional[datetime_type]]
     last_synced_transactions: Mapped[Optional[datetime_type]]
 
     organization: Mapped["SimpleFINOrganization"] = relationship(

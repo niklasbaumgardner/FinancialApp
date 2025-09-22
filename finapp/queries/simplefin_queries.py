@@ -13,6 +13,7 @@ from sqlalchemy import delete, insert, select, update, func
 from datetime import date
 from finapp.queries import transaction_queries, user_queries
 from sqlalchemy.dialects.postgresql import insert as pg_insert
+import os
 
 
 # TODO: make upsert
@@ -44,11 +45,6 @@ def update_simplefin_credentials_last_synced(accounts=False, transactions=False)
         return
 
     values_dict = dict()
-
-    if accounts:
-        values_dict["last_synced_accounts"] = func.now()
-    if transactions:
-        values_dict["last_synced_transactions"] = func.now()
 
     stmt = (
         update(SimpleFINCredentials)
@@ -124,6 +120,7 @@ def upsert_simplefin_account(account, organization_id):
         balance=float(account["balance"]),
         available_balance=float(account["available-balance"]),
         balance_date=date.fromtimestamp(account["balance-date"]),
+        last_synced_account=func.now(),
     )
     upsert_stmt = stmt.on_conflict_do_update(
         index_elements=["id"],
@@ -131,6 +128,7 @@ def upsert_simplefin_account(account, organization_id):
             "balance": stmt.excluded.balance,
             "available_balance": stmt.excluded.available_balance,
             "balance_date": stmt.excluded.balance_date,
+            "last_synced_account": func.now(),
         },
     )
     result = db.session.execute(upsert_stmt)
@@ -138,6 +136,24 @@ def upsert_simplefin_account(account, organization_id):
 
     account_id = result.inserted_primary_key[0]
     return account_id
+
+
+def update_simeplefin_accounts(accounts: list[dict]):
+    if not accounts:
+        return
+
+    accounts_data = [
+        {
+            "balance": round(float(a["balance"]), 2),
+            "available_balance": round(float(a.get("available_balance") or 0), 2),
+            "balance_date": date.fromtimestamp(a["balance_date"]),
+        }
+        for a in accounts
+    ]
+    stmt = insert(SimpleFINAccount).values(accounts_data)
+
+    db.session.execute(stmt)
+    db.session.commit()
 
 
 def get_simplefin_account(id):
@@ -152,13 +168,24 @@ def get_simplefin_account(id):
 def get_simplefin_accounts(access_type=None):
     shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
 
+    stmt = select(SimpleFINAccount).where(SimpleFINAccount.user_id.in_(shared_user_ids))
+
+    if access_type is not None and isinstance(access_type, int):
+        stmt = stmt.where(SimpleFINAccount.access_type >= access_type)
+
+    return db.session.scalars(stmt).unique().all()
+
+
+def get_simplefin_accounts_with_timestamp(access_type=None):
+    shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
+
     stmt = select(
         SimpleFINAccount,
         func.now(),
     ).where(SimpleFINAccount.user_id.in_(shared_user_ids))
 
     if access_type is not None and isinstance(access_type, int):
-        stmt = stmt.where(SimpleFINAccount.access_type > access_type)
+        stmt = stmt.where(SimpleFINAccount.access_type >= access_type)
 
     return db.session.execute(stmt).unique().all()
 
@@ -180,20 +207,56 @@ def update_account_access_type(id, sync):
     db.session.commit()
 
 
-def update_last_synced_for_accounts(account_ids):
+def update_last_synced_for_accounts(account_ids, account=False, transactions=False):
+    if not account and not transactions:
+        return
+
+    values_dict = {}
+    if account:
+        values_dict["last_synced_account"] = func.now()
+    if transactions:
+        values_dict["last_synced_transactions"] = func.now()
+
     stmt = (
         update(SimpleFINAccount)
         .where(SimpleFINAccount.id.in_(account_ids))
-        .values(last_synced_transactions=func.now())
+        .values(values_dict)
     )
     db.session.execute(stmt)
     db.session.commit()
+
+
+def get_all_accounts_for_user_with_timestamp(key, user_id):
+    if key != os.environ.get("SIMPLEFIN_KEY"):
+        return
+
+    stmt = select(SimpleFINAccount, func.now()).where(
+        SimpleFINAccount.user_id == user_id
+    )
+
+    return db.session.execute(stmt).unique().all()
+
+
+def get_all_credentials(key):
+    if key != os.environ.get("SIMPLEFIN_KEY"):
+        return
+
+    stmt = select(SimpleFINCredentials)
+
+    return db.session.scalars(stmt).unique().all()
 
 
 def delete_pending_transactions():
     stmt = delete(PendingTransaction).where(
         PendingTransaction.user_id == current_user.id
     )
+
+    db.session.execute(stmt)
+    db.session.commit()
+
+
+def delete_pending_transactions_for_user(user_id):
+    stmt = delete(PendingTransaction).where(PendingTransaction.user_id == user_id)
 
     db.session.execute(stmt)
     db.session.commit()
@@ -211,6 +274,30 @@ def create_pending_transactions(transactions):
             simplefin_id=t.id,
             account_id=t.account_id,
             user_id=current_user.id,
+            name=t.description,
+            amount=round(float(t.amount), 2),
+            date=date.fromtimestamp(t.transacted_at or t.posted),
+        )
+        pending_transactions.append(pt)
+
+    stmt = pg_insert(PendingTransaction).values(pending_transactions)
+    stmt = stmt.on_conflict_do_nothing(index_elements=["simplefin_id"])
+    db.session.execute(stmt)
+    db.session.commit()
+
+
+def create_pending_transactions_for_user(transactions, user_id):
+    delete_pending_transactions_for_user(user_id=user_id)
+
+    if len(transactions) < 1:
+        return
+
+    pending_transactions = []
+    for t in transactions:
+        pt = dict(
+            simplefin_id=t.id,
+            account_id=t.account_id,
+            user_id=user_id,
             name=t.description,
             amount=round(float(t.amount), 2),
             date=date.fromtimestamp(t.transacted_at or t.posted),
@@ -248,7 +335,7 @@ def get_pending_transaction_by_id(id):
 
 
 def delete_pending_transaction(id, create_completed=True):
-    p_transaction = get_pending_transaction_by_id(id=id)
+    p_transaction: PendingTransaction = get_pending_transaction_by_id(id=id)
 
     if create_completed:
         create_completed_transaction(
