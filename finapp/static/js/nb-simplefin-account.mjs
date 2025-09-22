@@ -29,7 +29,6 @@ export class SimpleFINAccount extends NikElement {
       }
 
       this.account.name = name;
-      // this.requestUpdate();
       this.update();
     }
   }
@@ -60,10 +59,10 @@ export class SimpleFINAccount extends NikElement {
   }
 
   render() {
-    return html`<div class="wa-split">
+    return html`<div class="wa-split ps-(--wa-space-2xl)">
       <div class="wa-">
         <div class="flex items-center">
-          <b>${this.longName}</b>
+          <b>${this.account.name}</b>
           <wa-button appearance="plain" @click=${this.handleEditClick}
             ><wa-icon
               library="ion"

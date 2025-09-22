@@ -230,6 +230,9 @@
   .py-\(--wa-space-2xs\) {
     padding-block: var(--wa-space-2xs);
   }
+  .ps-\(--wa-space-2xl\) {
+    padding-inline-start: var(--wa-space-2xl);
+  }
   .text-end {
     text-align: end;
   }

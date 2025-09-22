@@ -6,6 +6,7 @@ export class SimpleFINAccounts extends NikElement {
   static properties = {
     accounts: { type: Array },
     credentials: { type: Object },
+    organizations: { type: Array },
   };
 
   get credentialsExist() {
@@ -21,14 +22,48 @@ export class SimpleFINAccounts extends NikElement {
   connectedCallback() {
     super.connectedCallback();
 
-    this.accounts.forEach(
-      (a) => (a._longName = `${a.organization.name} ${a.name}`)
-    );
-    this.accounts.sort((a, b) => a._longName.localeCompare(b._longName));
-    console.log(this.accounts);
+    let seenOrgs = new Set();
+    this.organizations = [];
+    for (let a of this.accounts) {
+      if (!seenOrgs.has(a.organization.id)) {
+        a.organization.accounts = [];
+        this.organizations.push(a.organization);
+        seenOrgs.add(a.organization.id);
+      }
+    }
+
+    for (let a of this.accounts) {
+      let o = this.organizations.find((org) => org.id === a.organization.id);
+      o.accounts.push(a);
+
+      a.organization = o;
+    }
+
+    this.organizations.sort((a, b) => a.name.localeCompare(b.name));
+
+    console.log(this.organizations);
+
+    // this.accounts.forEach(
+    //   (a) => (a._longName = `${a.organization.name} ${a.name}`)
+    // );
+    // this.accounts.sort((a, b) => a._longName.localeCompare(b._longName));
+    // console.log(this.accounts);
   }
 
-  accountsTemplate() {
+  orgTemplate() {
+    return this.organizations
+      .flatMap((o) => [
+        html`<h3>${o.name}</h3>`,
+        o.accounts.map(
+          (a) =>
+            html`<nb-simplefin-account .account=${a}></nb-simplefin-account>`
+        ),
+        html`<wa-divider></wa-divider>`,
+      ])
+      .slice(0, -1);
+  }
+
+  contentTemplate() {
     if (this.accounts.length === 0) {
       let message;
       if (this.credentialsExist) {
@@ -54,6 +89,8 @@ export class SimpleFINAccounts extends NikElement {
 
       return message;
     }
+
+    return this.orgTemplate();
 
     return this.accounts
       .flatMap((a) => [
@@ -104,7 +141,7 @@ export class SimpleFINAccounts extends NikElement {
             >Sync All Existing Accounts</wa-button
           >
         </div>
-        ${this.accountsTemplate()}
+        ${this.contentTemplate()}
       </div></wa-card
     >`;
   }
