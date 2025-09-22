@@ -1,6 +1,6 @@
-workflow:
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+# workflow:
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
 railway-deploy-web:
   stage: deploy
@@ -9,6 +9,8 @@ railway-deploy-web:
     SVC_ID: 0c17b7d5-5d73-4f11-a7be-edc64c0cf5d4
   script:
     - railway up --service=$SVC_ID
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
 railway-deploy-caddy:
   stage: deploy
@@ -18,6 +20,17 @@ railway-deploy-caddy:
   script:
     - railway up --service=$SVC_ID
   rules:
-    - changes:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes:
         - caddy/*
         - finapp/static/**/*
+
+railway-deploy-simplefin:
+  stage: deploy
+  image: ghcr.io/railwayapp/cli:latest
+  variables:
+    SVC_ID: 24b7d575-0ef1-4d69-9a03-30e09fb8e1eb
+  script:
+    - railway up --service=$SVC_ID
+  rules:
+    - if: $CI_COMMIT_BRANCH == "simpleFIN"
