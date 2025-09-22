@@ -9,8 +9,8 @@ from finapp.models import (
 from flask_login import current_user
 from finapp import db
 from sqlalchemy.sql import or_, and_
-from sqlalchemy import delete, insert, select, update
-from datetime import datetime, date
+from sqlalchemy import delete, insert, select, update, func
+from datetime import date
 from finapp.queries import transaction_queries, user_queries
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 
@@ -45,11 +45,10 @@ def update_simplefin_credentials_last_synced(accounts=False, transactions=False)
 
     values_dict = dict()
 
-    now = datetime.now()
     if accounts:
-        values_dict["last_synced_accounts"] = now
+        values_dict["last_synced_accounts"] = func.now()
     if transactions:
-        values_dict["last_synced_transactions"] = now
+        values_dict["last_synced_transactions"] = func.now()
 
     stmt = (
         update(SimpleFINCredentials)
@@ -153,11 +152,15 @@ def get_simplefin_account(id):
 def get_simplefin_accounts(access_type=None):
     shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
 
-    stmt = select(SimpleFINAccount).where(SimpleFINAccount.user_id.in_(shared_user_ids))
+    stmt = select(
+        SimpleFINAccount,
+        func.now(),
+    ).where(SimpleFINAccount.user_id.in_(shared_user_ids))
+
     if access_type is not None and isinstance(access_type, int):
         stmt = stmt.where(SimpleFINAccount.access_type > access_type)
 
-    return db.session.scalars(stmt).unique().all()
+    return db.session.execute(stmt).unique().all()
 
 
 def update_account_access_type(id, sync):
@@ -177,7 +180,28 @@ def update_account_access_type(id, sync):
     db.session.commit()
 
 
+def update_last_synced_for_accounts(account_ids):
+    stmt = (
+        update(SimpleFINAccount)
+        .where(SimpleFINAccount.id.in_(account_ids))
+        .values(last_synced_transactions=func.now())
+    )
+    db.session.execute(stmt)
+    db.session.commit()
+
+
+def delete_pending_transactions():
+    stmt = delete(PendingTransaction).where(
+        PendingTransaction.user_id == current_user.id
+    )
+
+    db.session.execute(stmt)
+    db.session.commit()
+
+
 def create_pending_transactions(transactions):
+    delete_pending_transactions()
+
     if len(transactions) < 1:
         return
 
@@ -322,20 +346,11 @@ def delete_transactions_for_account_id(account_id):
 def update_transactions_for_account(account_id, transactions):
     delete_transactions_for_account_id(account_id=account_id)
 
-    last_synced_stmt = (
-        update(SimpleFINAccount)
-        .where(SimpleFINAccount.id == account_id)
-        .values(last_synced_transactions=datetime.now())
-    )
-    db.session.execute(last_synced_stmt)
-
     if not transactions:
-        db.session.commit()
         return
 
     stmt = insert(SimpleFINTransaction).values(transactions)
     db.session.execute(stmt)
-
     db.session.commit()
 
 

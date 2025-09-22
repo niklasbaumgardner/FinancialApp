@@ -16,7 +16,7 @@ from finapp import db
 from flask_login import current_user
 from sqlalchemy.sql import func, or_, and_
 from sqlalchemy.orm import noload
-from sqlalchemy import delete, exists, extract, insert, update, select
+from sqlalchemy import delete, exists, extract, insert, update, select, cast, FLOAT
 from datetime import date, timedelta
 
 
@@ -586,53 +586,52 @@ def search(
     return ([], 0, 1, 1, 0)
 
 
-def find_transaction(
-    transaction: SimpleFINTransaction, seen_transactions: list
-) -> tuple[bool, list[int]]:
+def find_transactions_v2():
     shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
 
-    stmt = select(CompletedTransaction).where(
-        and_(
-            CompletedTransaction.simplefin_id == transaction.id,
-            CompletedTransaction.user_id.in_(shared_user_ids),
-        )
-    )
-    completed_transactions = db.session.scalars(stmt).unique().all()
-    if len(completed_transactions) > 0:
-        return True, [
-            ct.transaction_id
-            for ct in completed_transactions
-            if ct.transaction_id is not None
-        ]
-
-    transaction_timestamp = transaction.transacted_at or transaction.posted
-    transaction_date = date.fromtimestamp(transaction_timestamp)
-
-    DAY_RANGE = 4
-    start_date = transaction_date - timedelta(days=DAY_RANGE)
-    end_date = transaction_date + timedelta(days=DAY_RANGE)
-
-    amount = round(float(transaction.amount), 2)
-
-    stmt = (
-        select(Transaction)
+    completed_stmt = (
+        select(CompletedTransaction)
         .where(
             and_(
-                Transaction.date.between(start_date, end_date),
-                Transaction.amount == amount,
-                Transaction.user_id.in_(shared_user_ids),
-                Transaction.id.notin_(seen_transactions),
+                CompletedTransaction.simplefin_id == SimpleFINTransaction.id,
+                CompletedTransaction.user_id.in_(shared_user_ids),
             )
         )
-        .order_by(
-            func.abs(
-                extract("day", transaction_date) - extract("day", Transaction.date)
-            )
-        )
+        .exists()
     )
-    transactions = db.session.scalars(stmt).unique().all()
 
-    return len(transactions) > 0, [t.id for t in transactions]
+    DAY_RANGE = 5
+    stmt = (
+        select(SimpleFINTransaction, Transaction)
+        .where(
+            and_(
+                ~completed_stmt,
+                SimpleFINTransaction.user_id.in_(shared_user_ids),
+                or_(
+                    Transaction.user_id.is_(None),
+                    Transaction.user_id.in_(shared_user_ids),
+                ),
+            )
+        )
+        .join(
+            Transaction,
+            and_(
+                Transaction.date.between(
+                    func.to_timestamp(SimpleFINTransaction.transacted_at)
+                    - timedelta(days=DAY_RANGE),
+                    func.to_timestamp(SimpleFINTransaction.transacted_at)
+                    + timedelta(days=DAY_RANGE),
+                ),
+                Transaction.amount == cast(SimpleFINTransaction.amount, FLOAT),
+            ),
+            isouter=True,
+        )
+        .order_by(SimpleFINTransaction.transacted_at)
+    )
+
+    result = db.session.execute(stmt).unique().all()
+
+    return result
 
 
 def find_transaction_for_pending_transaction(
