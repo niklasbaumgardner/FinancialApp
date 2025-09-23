@@ -37,12 +37,21 @@ def load_user(id):
 class User(db.Model, UserMixin, SerializerMixin):
     __tablename__ = "user"
 
-    serialize_only = ("id", "username", "email")
+    serialize_only = (
+        "id",
+        "username",
+        "email",
+        "credentials",
+    )
 
     id: Mapped[int_pk]
     username: Mapped[str] = mapped_column(unique=True)
     email: Mapped[str] = mapped_column(unique=True)
     password: Mapped[str]
+
+    credentials: Mapped["SimpleFINCredentials"] = relationship(
+        lazy="joined", viewonly=True
+    )
 
     def get_reset_token(self):
         s = URLSafeTimedSerializer(os.environ.get("SECRET_KEY"))
@@ -240,12 +249,17 @@ class SimpleFINCredentials(db.Model, SerializerMixin):
     serialize_only = (
         "id",
         "user_id",
+        "exists",
     )
 
     id: Mapped[int_pk]
     user_id: Mapped[user_fk]
     username: Mapped[str]  # encrypted
     password: Mapped[str]  # encrypted
+
+    @property
+    def exists(self):
+        return len(self.username) > 0 and len(self.password) > 0
 
     @staticmethod
     def encrypt_credentials(username, password) -> tuple[str, str]:

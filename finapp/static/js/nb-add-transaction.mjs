@@ -194,30 +194,31 @@ export class AddTransactionModal extends NikElement {
   }
 
   tabGroupTemplate() {
-    if (this.pendingTransactions.length === 0) {
-      return this.newTransactionTemplate();
-    }
-    return html`<wa-tab-group id="transactions-tab-group">
-      <wa-tab panel="new">New Transaction</wa-tab>
-      <wa-tab panel="pending"
-        >Pending Transactions (${this.pendingTransactions.length})</wa-tab
-      >
+    if (CURRENT_USER.credentials?.exists) {
+      return html`<wa-tab-group id="transactions-tab-group">
+        <wa-tab panel="new">New Transaction</wa-tab>
+        <wa-tab panel="pending"
+          >Pending Transactions (${this.pendingTransactions.length})</wa-tab
+        >
 
-      <wa-tab-panel name="new">${this.newTransactionTemplate()}</wa-tab-panel>
-      <wa-tab-panel name="pending" id="pending"
-        ><div class="wa-stack">
-          <wa-button
-            id="refresh-pending-transactions"
-            appearance="outlined"
-            variant="brand"
-            @click=${this.handleRefreshPendingTransactionsClick}
-            class="w-full"
-            >Refresh Pending Transactions</wa-button
-          >
-          <div>${this.pendingTransactionsTemplate()}</div>
-        </div></wa-tab-panel
-      >
-    </wa-tab-group>`;
+        <wa-tab-panel name="new">${this.newTransactionTemplate()}</wa-tab-panel>
+        <wa-tab-panel name="pending" id="pending"
+          ><div class="wa-stack">
+            <wa-button
+              id="refresh-pending-transactions"
+              appearance="outlined"
+              variant="brand"
+              @click=${this.handleRefreshPendingTransactionsClick}
+              class="w-full"
+              >Refresh Pending Transactions</wa-button
+            >
+            <div>${this.pendingTransactionsTemplate()}</div>
+          </div></wa-tab-panel
+        >
+      </wa-tab-group>`;
+    }
+
+    return this.newTransactionTemplate();
   }
 
   newTransactionTemplate() {
@@ -311,7 +312,7 @@ export class AddTransactionModal extends NikElement {
   render() {
     return html`<wa-dialog
       id="transactions-dialog"
-      class=${this.pendingTransactions.length > 0 ? "nb-tab-group-dialog" : ""}
+      class=${CURRENT_USER.credentials?.exists ? "nb-tab-group-dialog" : ""}
       label="Add New Transaction"
       @wa-after-show=${this.handleDialogShow}
       >${this.tabGroupTemplate()} ${this.footerTemplate()}
