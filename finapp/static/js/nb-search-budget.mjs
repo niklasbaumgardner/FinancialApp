@@ -270,7 +270,7 @@ export class SearchBudget extends NikElement {
       return html`<div class="wa-cluster items-center!">
         <wa-input
           label="Amount"
-          type="number"
+          type="text"
           step=".01"
           id="searchAmount"
           placeholder="0.00"
@@ -292,7 +292,7 @@ export class SearchBudget extends NikElement {
       <wa-input
         class="grow"
         label="Min amount"
-        type="number"
+        type="text"
         step=".01"
         id="minAmount"
         placeholder="0.00"
@@ -302,7 +302,7 @@ export class SearchBudget extends NikElement {
       <wa-input
         class="grow"
         label="Max amount"
-        type="number"
+        type="text"
         step=".01"
         id="maxAmount"
         placeholder="0.00"
