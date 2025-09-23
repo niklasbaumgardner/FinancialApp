@@ -152,7 +152,12 @@ def update_simeplefin_accounts(accounts: list[dict]):
         }
         for a in accounts
     ]
-    stmt = update(SimpleFINAccount).values(accounts_data)
+    account_ids = [a["id"] for a in accounts]
+    stmt = (
+        update(SimpleFINAccount)
+        .where(SimpleFINAccount.id.in_(account_ids))
+        .values(accounts_data)
+    )
 
     db.session.execute(stmt)
     db.session.commit()
@@ -173,8 +178,9 @@ def get_simplefin_accounts(access_type=None):
     stmt = select(SimpleFINAccount).where(SimpleFINAccount.user_id.in_(shared_user_ids))
 
     if access_type is not None and isinstance(access_type, int):
+        access_type_int = int(access_type)
         stmt = stmt.where(
-            SimpleFINAccount.access_type & access_type == SimpleFINAccount.access_type
+            access_type_int == SimpleFINAccount.access_type.op("&")(access_type_int)
         )
 
     return db.session.scalars(stmt).unique().all()
@@ -189,8 +195,9 @@ def get_simplefin_accounts_with_timestamp(access_type=None):
     ).where(SimpleFINAccount.user_id.in_(shared_user_ids))
 
     if access_type is not None and isinstance(access_type, int):
+        access_type_int = int(access_type)
         stmt = stmt.where(
-            SimpleFINAccount.access_type & access_type == SimpleFINAccount.access_type
+            access_type_int == SimpleFINAccount.access_type.op("&")(access_type_int)
         )
 
     return db.session.execute(stmt).unique().all()
@@ -205,8 +212,9 @@ def get_all_accounts_for_user_with_timestamp(key, user_id, access_type=None):
     )
 
     if access_type is not None and isinstance(access_type, int):
+        access_type_int = int(access_type)
         stmt = stmt.where(
-            SimpleFINAccount.access_type & access_type == SimpleFINAccount.access_type
+            access_type_int == SimpleFINAccount.access_type.op("&")(access_type_int)
         )
 
     return db.session.execute(stmt).unique().all()
