@@ -1,5 +1,6 @@
 from finapp.models import (
     AccountAccess,
+    AccountBalance,
     CompletedTransaction,
     PendingTransaction,
     SimpleFINAccount,
@@ -140,27 +141,56 @@ def upsert_simplefin_account(account, organization_id):
     return account_id
 
 
+def upsert_account_balances(accounts: list[dict]):
+    if not accounts:
+        return
+
+    accounts_data = [
+        {
+            "account_id": a["id"],
+            "user_id": current_user.id,
+            "balance": round(float(a["balance"]), 2),
+            "date": date.fromtimestamp(a["balance-date"]),
+        }
+        for a in accounts
+    ]
+
+    stmt = pg_insert(AccountBalance).values(accounts_data)
+    upsert_stmt = stmt.on_conflict_do_update(
+        constraint="simplefin_account_balance_account_id_date_key",
+        set_={
+            "balance": stmt.excluded.balance,
+        },
+    )
+
+    db.session.execute(upsert_stmt)
+    db.session.commit()
+
+
 def update_simeplefin_accounts(accounts: list[dict]):
     if not accounts:
         return
 
     accounts_data = [
         {
+            "id": a["id"],
             "balance": round(float(a["balance"]), 2),
             "available_balance": round(float(a.get("available-balance") or 0), 2),
             "balance_date": date.fromtimestamp(a["balance-date"]),
         }
         for a in accounts
     ]
-    account_ids = [a["id"] for a in accounts]
-    stmt = (
-        update(SimpleFINAccount)
-        .where(SimpleFINAccount.id.in_(account_ids))
-        .values(accounts_data)
-    )
+    # account_ids = [a["id"] for a in accounts]
+    # stmt = (
+    #     update(SimpleFINAccount)
+    #     .where(SimpleFINAccount.id.in_(account_ids))
+    #     .values(accounts_data)
+    # )
 
-    db.session.execute(stmt)
+    db.session.execute(update(SimpleFINAccount), accounts_data)
     db.session.commit()
+
+    upsert_account_balances(accounts=accounts)
 
 
 def get_simplefin_account(id):

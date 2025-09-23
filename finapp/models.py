@@ -397,3 +397,14 @@ class SimpleFINTransaction(db.Model, SerializerMixin):
 
     account_id: Mapped[str] = mapped_column(ForeignKey("simplefin_account.id"))
     user_id: Mapped[user_fk]
+
+
+class AccountBalance(db.Model, SerializerMixin):
+    __tablename__ = "simplefin_account_balance"
+    __table_args__ = (UniqueConstraint("account_id", "date"),)
+
+    id: Mapped[int_pk]
+    account_id: Mapped[str] = mapped_column(ForeignKey("simplefin_account.id"))
+    user_id: Mapped[user_fk]
+    balance: Mapped[float]
+    date: Mapped[date_type]
