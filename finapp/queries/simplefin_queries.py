@@ -459,7 +459,7 @@ def update_transactions_for_account(account_id, transactions):
     if not transactions:
         return
 
-    stmt = update(SimpleFINTransaction).values(transactions)
+    stmt = insert(SimpleFINTransaction).values(transactions)
     db.session.execute(stmt)
     db.session.commit()
 
