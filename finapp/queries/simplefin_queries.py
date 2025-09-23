@@ -150,7 +150,7 @@ def update_simeplefin_accounts(accounts: list[dict]):
         }
         for a in accounts
     ]
-    stmt = insert(SimpleFINAccount).values(accounts_data)
+    stmt = update(SimpleFINAccount).values(accounts_data)
 
     db.session.execute(stmt)
     db.session.commit()
@@ -183,6 +183,20 @@ def get_simplefin_accounts_with_timestamp(access_type=None):
         SimpleFINAccount,
         func.now(),
     ).where(SimpleFINAccount.user_id.in_(shared_user_ids))
+
+    if access_type is not None and isinstance(access_type, int):
+        stmt = stmt.where(SimpleFINAccount.access_type >= access_type)
+
+    return db.session.execute(stmt).unique().all()
+
+
+def get_all_accounts_for_user_with_timestamp(key, user_id, access_type=None):
+    if key != os.environ.get("SIMPLEFIN_KEY"):
+        return
+
+    stmt = select(SimpleFINAccount, func.now()).where(
+        SimpleFINAccount.user_id == user_id
+    )
 
     if access_type is not None and isinstance(access_type, int):
         stmt = stmt.where(SimpleFINAccount.access_type >= access_type)
@@ -244,17 +258,6 @@ def update_last_synced_for_accounts(account_ids, account=False, transactions=Fal
     )
     db.session.execute(stmt)
     db.session.commit()
-
-
-def get_all_accounts_for_user_with_timestamp(key, user_id):
-    if key != os.environ.get("SIMPLEFIN_KEY"):
-        return
-
-    stmt = select(SimpleFINAccount, func.now()).where(
-        SimpleFINAccount.user_id == user_id
-    )
-
-    return db.session.execute(stmt).unique().all()
 
 
 def get_all_credentials(key):
@@ -456,7 +459,7 @@ def update_transactions_for_account(account_id, transactions):
     if not transactions:
         return
 
-    stmt = insert(SimpleFINTransaction).values(transactions)
+    stmt = update(SimpleFINTransaction).values(transactions)
     db.session.execute(stmt)
     db.session.commit()
 

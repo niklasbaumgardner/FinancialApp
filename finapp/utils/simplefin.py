@@ -234,15 +234,28 @@ def update_all_accounts_and_transactions(key):
             key=key, user_id=credentials.user_id
         )
 
-        account_ids = [
+        transaction_sync_account_ids = [
             a.id
             for a, now in accounts
-            if a.last_synced_account is None
-            or (now.timestamp() - a.last_synced_account.timestamp()) > 3600
+            if a.access_type >= 1
+            and (
+                a.last_synced_transactions is None
+                or (now.timestamp() - a.last_synced_transactions.timestamp()) > 3600
+            )
+        ]
+
+        account_sync_account_ids = [
+            a.id
+            for a, now in accounts
+            if a.access_type < 1
+            and (
+                a.last_synced_account is None
+                or (now.timestamp() - a.last_synced_account.timestamp()) > 3600
+            )
         ]
 
         data = request_simplefin_transactions(
-            credentials=credentials, account_ids=account_ids
+            credentials=credentials, account_ids=transaction_sync_account_ids
         )
 
         update_account_transactions(data=data)
@@ -254,3 +267,14 @@ def update_all_accounts_and_transactions(key):
         simplefin_queries.create_pending_transactions_for_user(
             transactions=missing_SFTs, user_id=credentials.user_id
         )
+
+        data = request_simplefin_accounts(
+            credentials=credentials, account_ids=account_sync_account_ids
+        )
+        if data:
+            errors = data.get("errors")
+            for error in errors:
+                print("SIMPLEFIN ERROR:", error)
+
+            accounts = data.get("accounts")
+            simplefin_queries.update_simeplefin_accounts(accounts=accounts)
