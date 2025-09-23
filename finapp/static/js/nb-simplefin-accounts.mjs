@@ -22,6 +22,8 @@ export class SimpleFINAccounts extends NikElement {
   connectedCallback() {
     super.connectedCallback();
 
+    this.accounts.sort((a, b) => a.name.localeCompare(b.name));
+
     let seenOrgs = new Set();
     this.organizations = [];
     for (let a of this.accounts) {
@@ -40,14 +42,6 @@ export class SimpleFINAccounts extends NikElement {
     }
 
     this.organizations.sort((a, b) => a.name.localeCompare(b.name));
-
-    console.log(this.organizations);
-
-    // this.accounts.forEach(
-    //   (a) => (a._longName = `${a.organization.name} ${a.name}`)
-    // );
-    // this.accounts.sort((a, b) => a._longName.localeCompare(b._longName));
-    // console.log(this.accounts);
   }
 
   orgTemplate() {

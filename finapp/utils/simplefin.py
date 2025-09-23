@@ -4,6 +4,7 @@ from finapp.queries import transaction_queries, simplefin_queries
 from flask_login import current_user
 from datetime import datetime
 import os
+from finapp.models import AccountAccess
 
 
 def claim_simplefin_token(setup_token):
@@ -166,7 +167,9 @@ def update_account_transactions(data):
 
 
 def sync_simplefin_transactions(credentials):
-    accounts = simplefin_queries.get_simplefin_accounts_with_timestamp(access_type=1)
+    accounts = simplefin_queries.get_simplefin_accounts_with_timestamp(
+        access_type=AccountAccess.TRANSACTION
+    )
 
     account_ids = [
         a.id
@@ -237,7 +240,7 @@ def update_all_accounts_and_transactions(key):
         transaction_sync_account_ids = [
             a.id
             for a, now in accounts
-            if a.access_type >= 1
+            if a.access in AccountAccess.TRANSACTION
             and (
                 a.last_synced_transactions is None
                 or (now.timestamp() - a.last_synced_transactions.timestamp()) > 3600
@@ -247,7 +250,7 @@ def update_all_accounts_and_transactions(key):
         account_sync_account_ids = [
             a.id
             for a, now in accounts
-            if a.access_type < 1
+            if a.access in AccountAccess.BALANCE
             and (
                 a.last_synced_account is None
                 or (now.timestamp() - a.last_synced_account.timestamp()) > 3600

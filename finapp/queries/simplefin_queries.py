@@ -1,4 +1,5 @@
 from finapp.models import (
+    AccountAccess,
     CompletedTransaction,
     PendingTransaction,
     SimpleFINAccount,
@@ -121,6 +122,7 @@ def upsert_simplefin_account(account, organization_id):
         available_balance=float(account["available-balance"]),
         balance_date=date.fromtimestamp(account["balance-date"]),
         last_synced_account=func.now(),
+        access_type=2,
     )
     upsert_stmt = stmt.on_conflict_do_update(
         index_elements=["id"],
@@ -171,7 +173,9 @@ def get_simplefin_accounts(access_type=None):
     stmt = select(SimpleFINAccount).where(SimpleFINAccount.user_id.in_(shared_user_ids))
 
     if access_type is not None and isinstance(access_type, int):
-        stmt = stmt.where(SimpleFINAccount.access_type >= access_type)
+        stmt = stmt.where(
+            SimpleFINAccount.access_type & access_type == SimpleFINAccount.access_type
+        )
 
     return db.session.scalars(stmt).unique().all()
 
@@ -185,7 +189,9 @@ def get_simplefin_accounts_with_timestamp(access_type=None):
     ).where(SimpleFINAccount.user_id.in_(shared_user_ids))
 
     if access_type is not None and isinstance(access_type, int):
-        stmt = stmt.where(SimpleFINAccount.access_type >= access_type)
+        stmt = stmt.where(
+            SimpleFINAccount.access_type & access_type == SimpleFINAccount.access_type
+        )
 
     return db.session.execute(stmt).unique().all()
 
@@ -199,13 +205,20 @@ def get_all_accounts_for_user_with_timestamp(key, user_id, access_type=None):
     )
 
     if access_type is not None and isinstance(access_type, int):
-        stmt = stmt.where(SimpleFINAccount.access_type >= access_type)
+        stmt = stmt.where(
+            SimpleFINAccount.access_type & access_type == SimpleFINAccount.access_type
+        )
 
     return db.session.execute(stmt).unique().all()
 
 
-def update_account_access_type(id, sync):
+def update_account_access_type(id, access_type=2):
     shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
+
+    new_access = AccountAccess(access_type)
+    if AccountAccess.TRANSACTION not in new_access:
+        delete_pending_transactions(account_ids=[id])
+        delete_transactions_for_account_id(account_id=id)
 
     stmt = (
         update(SimpleFINAccount)
@@ -214,7 +227,7 @@ def update_account_access_type(id, sync):
                 SimpleFINAccount.id == id, SimpleFINAccount.user_id.in_(shared_user_ids)
             )
         )
-        .values(access_type=sync or 0)
+        .values(access_type=access_type, last_synced_transactions=None)
     )
 
     db.session.execute(stmt)
@@ -269,10 +282,13 @@ def get_all_credentials(key):
     return db.session.scalars(stmt).unique().all()
 
 
-def delete_pending_transactions():
+def delete_pending_transactions(account_ids=None):
     stmt = delete(PendingTransaction).where(
         PendingTransaction.user_id == current_user.id
     )
+
+    if account_ids:
+        stmt = stmt.where(PendingTransaction.account_id.in_(account_ids))
 
     db.session.execute(stmt)
     db.session.commit()

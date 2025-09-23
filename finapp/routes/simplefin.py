@@ -184,14 +184,16 @@ def api_sync_simplefin_transactions():
 @login_required
 def update_account_access_type(id):
     should_sync_transactions = request.form.get(
-        "sync_transactions", type=int, default=0
+        "sync_transactions", type=int, default=2
     )
 
-    simplefin_queries.update_account_access_type(id=id, sync=should_sync_transactions)
+    simplefin_queries.update_account_access_type(
+        id=id, access_type=should_sync_transactions
+    )
 
     account = simplefin_queries.get_simplefin_account(id=id)
 
-    return dict(account=account.access_type)
+    return dict(access_type=account.access_type)
 
 
 @simplefin_bp.post("/update_account_name/<string:id>")

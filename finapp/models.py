@@ -10,6 +10,8 @@ from datetime import date as date_type, datetime as datetime_type
 from typing_extensions import Annotated
 from finapp.utils.Serializer import SerializerMixin
 from cryptography.fernet import Fernet
+from enum import IntFlag
+
 
 FERNET_KEY: bytes = os.environ.get("FERNET_KEY").encode()
 
@@ -17,6 +19,14 @@ FERNET_KEY: bytes = os.environ.get("FERNET_KEY").encode()
 int_pk = Annotated[int, mapped_column(primary_key=True)]
 str_pk = Annotated[str, mapped_column(primary_key=True)]
 user_fk = Annotated[int, mapped_column(ForeignKey("user.id"))]
+
+
+class AccountAccess(IntFlag):
+    NOT_SET = -1
+    NONE = 1
+    BALANCE = 2
+    TRANSACTION = 4
+    ALL = BALANCE | TRANSACTION
 
 
 @login_manager.user_loader
@@ -301,6 +311,14 @@ class SimpleFINAccount(db.Model, SerializerMixin):
     organization: Mapped["SimpleFINOrganization"] = relationship(
         lazy="joined", viewonly=True
     )
+
+    @property
+    def access(self):
+        return AccountAccess(self.access_type)
+
+    @access.setter
+    def access(self, value):
+        self.access_type = int(value)
 
     def update_account_access_type_url(self):
         return url_for("simplefin_bp.update_account_access_type", id=self.id)
