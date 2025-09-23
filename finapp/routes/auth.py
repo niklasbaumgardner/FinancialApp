@@ -35,9 +35,10 @@ def login():
 
         elif user:
             flash("Password was incorrect. Try again", "danger")
-            return render_template("login.html", email=email)
+            return redirect(url_for("auth_bp.login", email=email))
 
         flash("User not found. Please create an acount", "neutral")
+        return redirect(url_for("auth_bp.login"))
 
     return render_template("login.html", email=email)
 

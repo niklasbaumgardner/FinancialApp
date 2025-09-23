@@ -1,5 +1,5 @@
 import { NikElement } from "./nik-element.mjs";
-import { html } from "./lit.bundle.mjs";
+import { html, ifDefined } from "./lit.bundle.mjs";
 
 export class LoginCard extends NikElement {
   static properties = {
@@ -33,7 +33,7 @@ export class LoginCard extends NikElement {
             label="Email"
             placeholder="Your email"
             maxlength="60"
-            ?value=${this.email}
+            value=${ifDefined(this.email)}
             required
         /></label>
 
@@ -90,7 +90,7 @@ export class LoginCard extends NikElement {
           label="Email"
           placeholder="Your email"
           maxlength="60"
-          ?value=${this.email}
+          value=${ifDefined(this.email)}
           required
         ></wa-input>
 
