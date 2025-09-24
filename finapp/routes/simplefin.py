@@ -212,7 +212,7 @@ def update_account_name(id):
 def update_all_accounts_and_transactions():
     key = request.args.get("key")
     if key != os.environ.get("SIMPLEFIN_KEY"):
-        return
+        return dict(success=False)
 
     simplefin_helpers.update_all_accounts_and_transactions(key=key)
 

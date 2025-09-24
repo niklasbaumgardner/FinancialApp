@@ -163,7 +163,8 @@ def update_account_transactions(data):
                 account_id=account_id, transactions=safe_for_db_transactions
             )
 
-        simplefin_queries.update_simeplefin_accounts(accounts=accounts)
+        if current_user.is_authenticated:
+            simplefin_queries.update_simeplefin_accounts(accounts=accounts)
 
 
 def sync_simplefin_transactions(credentials):
@@ -240,7 +241,7 @@ def update_all_accounts_and_transactions(key):
         transaction_sync_account_ids = [
             a.id
             for a, now in accounts
-            if a.access in AccountAccess.TRANSACTION
+            if AccountAccess.TRANSACTION in a.access
             and (
                 a.last_synced_transactions is None
                 or (now.timestamp() - a.last_synced_transactions.timestamp()) > 3600
@@ -250,7 +251,7 @@ def update_all_accounts_and_transactions(key):
         account_sync_account_ids = [
             a.id
             for a, now in accounts
-            if a.access in AccountAccess.BALANCE
+            if AccountAccess.BALANCE in a.access
             and (
                 a.last_synced_account is None
                 or (now.timestamp() - a.last_synced_account.timestamp()) > 3600
@@ -280,4 +281,6 @@ def update_all_accounts_and_transactions(key):
                 print("SIMPLEFIN ERROR:", error)
 
             accounts = data.get("accounts")
-            simplefin_queries.update_simeplefin_accounts(accounts=accounts)
+            simplefin_queries.update_simeplefin_accounts_for_user(
+                accounts=accounts, user_id=credentials.user_id
+            )
