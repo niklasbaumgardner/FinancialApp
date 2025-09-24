@@ -141,6 +141,7 @@ def upsert_simplefin_account(account, organization_id):
     return account_id
 
 
+# TODO: add another method _for_user to when called globally
 def upsert_account_balances(accounts: list[dict]):
     if not accounts:
         return
@@ -167,6 +168,7 @@ def upsert_account_balances(accounts: list[dict]):
     db.session.commit()
 
 
+# TODO: add another method _for_user to when called globally
 def update_simeplefin_accounts(accounts: list[dict]):
     if not accounts:
         return

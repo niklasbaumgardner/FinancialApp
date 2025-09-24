@@ -114,9 +114,15 @@ def get_budgets(separate=False, active_only=False, inactive_only=False):
 
     if active_only:
         active = (
-            db.session.scalars(query.where(Budget.is_active.is_(True))).unique().all()
+            db.session.scalars(
+                query.where(Budget.is_active.is_(True)).order_by(
+                    func.lower(Budget.name)
+                )
+            )
+            .unique()
+            .all()
         )
-        active.sort(key=lambda x: x.name.lower())
+        # active.sort(key=lambda x: x.name.lower())
         return active
 
     elif inactive_only:

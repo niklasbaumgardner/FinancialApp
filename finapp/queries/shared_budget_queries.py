@@ -3,6 +3,7 @@ from finapp import db
 from flask_login import current_user
 from sqlalchemy.sql import and_
 from sqlalchemy import insert, select
+from finapp.utils.cache import TIMED_CACHE
 
 
 ##
@@ -20,6 +21,10 @@ def create_shared_budget(budget):
 
     budget.is_shared = True
     db.session.commit()
+
+    cache = TIMED_CACHE.get("get_shared_users_for_all_budgets")
+    if cache:
+        cache.invalidate()
 
 
 def get_shared_budget(budget_id):

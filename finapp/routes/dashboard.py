@@ -1,5 +1,10 @@
 from unicodedata import category
-from finapp.queries import budget_queries, category_queries, transaction_queries
+from finapp.queries import (
+    budget_queries,
+    category_queries,
+    dashboard_queries,
+    transaction_queries,
+)
 from flask import Blueprint, render_template, request
 from flask_login import login_required
 from datetime import date
@@ -55,6 +60,8 @@ def get_spending_for_month():
 @dashboard_bp.route("/get_all_budgets_line_data", methods=["GET"])
 @login_required
 def get_all_budgets_line_data():
+    dashboard_queries.get_line_chart_data()
+
     start_date = request.args.get("startDate")
     if start_date:
         start_date = helpers.get_date_from_string(start_date)
