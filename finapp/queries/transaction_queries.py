@@ -52,29 +52,22 @@ def get_transaction_query(
     if selection is None:
         selection = [Transaction]
 
-    transactions_query = (
-        select(*selection)
-        .join(Budget, Budget.id == Transaction.budget_id)
-        .outerjoin(SharedBudget, SharedBudget.budget_id == Transaction.budget_id)
-        .where(
-            and_(
-                Transaction.id == transaction_id,
-                or_(
-                    Transaction.user_id == current_user.id,
-                    Budget.user_id == current_user.id,
-                    SharedBudget.user_id == current_user.id,
-                ),
-            )
+    budget_ids = [b.id for b in budget_queries.get_budgets()]
+
+    transaction_query = select(*selection).where(
+        and_(
+            Transaction.id == transaction_id,
+            Transaction.budget_id.in_(budget_ids),
         )
     )
 
     if skip_no_load:
-        return transactions_query
+        return transaction_query
 
     if not include_budget:
-        transactions_query = transactions_query.options(noload(Transaction.budget))
+        transaction_query = transaction_query.options(noload(Transaction.budget))
 
-    return transactions_query
+    return transaction_query
 
 
 def get_transactions_query(
@@ -86,17 +79,9 @@ def get_transactions_query(
     if stmt is None:
         stmt = select(*selection)
 
-    transactions_query = (
-        stmt.join(Budget, Budget.id == Transaction.budget_id)
-        .outerjoin(SharedBudget, SharedBudget.budget_id == Transaction.budget_id)
-        .where(
-            or_(
-                Transaction.user_id == current_user.id,
-                Budget.user_id == current_user.id,
-                SharedBudget.user_id == current_user.id,
-            ),
-        )
-    )
+    budget_ids = [b.id for b in budget_queries.get_budgets()]
+
+    transactions_query = stmt.where(Transaction.budget_id.in_(budget_ids))
 
     if skip_no_load:
         return transactions_query
