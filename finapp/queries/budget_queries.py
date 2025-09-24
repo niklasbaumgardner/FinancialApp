@@ -122,30 +122,45 @@ def get_budgets(separate=False, active_only=False, inactive_only=False):
             .unique()
             .all()
         )
-        # active.sort(key=lambda x: x.name.lower())
         return active
 
     elif inactive_only:
         inactive = (
-            db.session.scalars(query.where(Budget.is_active.is_(False))).unique().all()
+            db.session.scalars(
+                query.where(Budget.is_active.is_(False)).order_by(
+                    func.lower(Budget.name)
+                )
+            )
+            .unique()
+            .all()
         )
-        inactive.sort(key=lambda x: x.name.lower())
         return inactive
 
     elif separate:
         active = (
-            db.session.scalars(query.where(Budget.is_active.is_(True))).unique().all()
+            db.session.scalars(
+                query.where(Budget.is_active.is_(True)).order_by(
+                    func.lower(Budget.name)
+                )
+            )
+            .unique()
+            .all()
         )
         inactive = (
-            db.session.scalars(query.where(Budget.is_active.is_(False))).unique().all()
+            db.session.scalars(
+                query.where(Budget.is_active.is_(False)).order_by(
+                    func.lower(Budget.name)
+                )
+            )
+            .unique()
+            .all()
         )
-        active.sort(key=lambda x: x.name.lower())
-        inactive.sort(key=lambda x: x.name.lower())
         return active, inactive
 
     else:
-        budgets = db.session.scalars(query).unique().all()
-        budgets.sort(key=lambda x: x.name.lower())
+        budgets = (
+            db.session.scalars(query.order_by(func.lower(Budget.name))).unique().all()
+        )
         return budgets
 
 
