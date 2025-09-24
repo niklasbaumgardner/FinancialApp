@@ -144,14 +144,14 @@ class ChartManager {
   }
 
   async init() {
-    this.startDateEl = document.getElementById("startDate");
-    this.startDateEl.addEventListener("change", this);
+    // this.startDateEl = document.getElementById("startDate");
+    // this.startDateEl.addEventListener("change", this);
 
     this.selectEl = document.getElementById("budgets");
     this.selectEl.addEventListener("change", () => this.updateLineChart());
 
     await this.createLineChart();
-    this.addBudgetsToLineChart();
+    this.addBudgetOptionsToSelect();
   }
 
   handleEvent(event) {
@@ -162,49 +162,12 @@ class ChartManager {
   }
 
   async handleSlChangeEvent(event) {
-    let date = event.target.value;
-    let currentDate = this.lastDate;
-
-    if (date === currentDate) {
-      return;
-    }
-
-    let response = await getAllBudgetsLineData(date);
-    let { data, keys } = await response.json();
-    this.lineChartData = data;
-    this.lineChartKeys = keys;
+    // Do this in js
 
     this.updateLineChart();
   }
 
   updateChartColors() {
-    this.updateLineChartColors();
-  }
-
-  async addBudgetsToLineChart() {
-    let response = await getAllBudgetNames();
-    let { names } = await response.json();
-    this.names = names;
-
-    for (let name of this.names) {
-      if (
-        name === "allBudgets" ||
-        !Object.keys(this.lineChartData).includes(name)
-      ) {
-        continue;
-      }
-
-      let item = document.createElement("wa-option");
-      item.value = name.replaceAll(" ", "_");
-      item.textContent = name;
-
-      this.selectEl.appendChild(item);
-    }
-
-    this.selectEl.disabled = false;
-  }
-
-  updateLineChartColors() {
     if (!this.lineChart) {
       return;
     }
@@ -231,41 +194,91 @@ class ChartManager {
     this.lineChart.update();
   }
 
-  fixBudgetValues(oldValues) {
-    let newValues = {};
-    for (let k of this.lineChartKeys) {
-      let temp = oldValues[k];
-      if (temp != undefined) {
-        newValues[k] = temp;
+  addBudgetOptionsToSelect() {
+    this.names = this.datasets.map((dataset) => {
+      return { id: dataset.id, name: dataset.label };
+    });
+    this.names.sort((a, b) => a.name.localeCompare(b.name));
+
+    for (let { id, name } of this.names) {
+      if (id === -1) {
+        continue;
       }
+
+      let item = document.createElement("wa-option");
+      item.value = id;
+      item.textContent = name;
+
+      this.selectEl.appendChild(item);
     }
-    return newValues;
+
+    this.selectEl.disabled = false;
   }
 
-  setLineBudgetStartDate(string, setAsMin = false) {
-    let [month, day, year] = string.split("/");
-    let date = new Date(year, month - 1, day);
-    let strDate = year + "-" + month + "-" + day;
-    this.startDateEl.valueAsDate = date;
-    this.startDateEl.value = strDate;
+  getDatesFromRange(startDate, endDate) {
+    let start = new Date(startDate + "T00:00:00");
+    let end = new Date(endDate + "T00:00:00");
 
-    this.lastDate = strDate;
-
-    if (setAsMin) {
-      this.startDateEl.min = strDate;
-      return date;
+    let step = Math.floor((end - start) / 10);
+    let dates = [];
+    let curr = start.getTime();
+    while (curr < end.getTime()) {
+      dates.push(new Date(curr));
+      curr += step;
     }
+    dates.push(end);
+
+    return dates;
+  }
+
+  parseData(data, startDate, endDate) {
+    let keys = this.getDatesFromRange(startDate, endDate);
+    let datasets = [];
+
+    for (let { budget, line_data } of Object.values(data)) {
+      let budgetData = { id: budget.id, label: budget.name };
+      let data = [];
+      for (let key of keys) {
+        let result = line_data.findLast((el) => {
+          let [d, _] = el;
+
+          return new Date(d + "T00:00:00") <= key;
+        });
+        data.push(result ? result.at(1) : 0);
+      }
+
+      budgetData.data = data;
+
+      datasets.push(budgetData);
+    }
+    console.log(datasets);
+    let prettyKeys = keys.map((d) => d.toLocaleDateString());
+    return { keys: prettyKeys, datasets };
+  }
+
+  getAllBudgetsData(datasets) {
+    let allBudgetsDataset = { id: -1, label: "All Budgets" };
+    let data = [];
+    for (let i = 0; i < datasets[0].data.length; i++) {
+      let sum = 0;
+      for (let dataset of datasets) {
+        sum += dataset.data[i];
+      }
+      data.push(sum);
+    }
+    allBudgetsDataset.data = data;
+    return allBudgetsDataset;
   }
 
   async createLineChart() {
     let response = await getAllBudgetsLineData();
+    let { data, start_date, end_date } = await response.json();
 
-    let { data, keys } = await response.json();
-    this.lineChartKeys = keys;
-    this.setLineBudgetStartDate(this.lineChartKeys[0], true);
-    this.lineChartData = data;
-    let fixedData = this.fixBudgetValues(data.allBudgets);
-    this.fixedLineChartData = { allBudgets: fixedData };
+    let { keys, datasets } = this.parseData(data, start_date, end_date);
+    let allBudgetsDataset = this.getAllBudgetsData(datasets);
+
+    this.datasets = [allBudgetsDataset, ...datasets];
+
     const ctx = document.getElementById("lineChart").getContext("2d");
     this.lineChart = new Chart(ctx, {
       type: "line",
@@ -273,9 +286,7 @@ class ChartManager {
         labels: keys,
         datasets: [
           {
-            id: "allBudgets",
-            label: "All Budgets",
-            data: fixedData,
+            ...allBudgetsDataset,
             backgroundColor: this.colors.getColor("neutral0"),
             borderColor: this.colors.getColor("neutral0"),
             borderWidth: 2,
@@ -335,24 +346,24 @@ class ChartManager {
 
   updateLineChart() {
     let arr = [];
-    for (let item of this.selectEl.value) {
-      let budgetName = item.replaceAll("_", " ");
-      let index;
+    for (let id of this.selectEl.value) {
       let color;
       let colorName;
-      if (budgetName === "allBudgets") {
+      let dataset = this.datasets.find((o) => o.id == id);
+      let name = dataset.label;
+      if (id == -1) {
         color = this.colors.getColor("neutral0");
         colorName = "neutral0";
       } else {
-        index = (this.names.indexOf(budgetName) - 1) % 17;
+        let index = (this.names.findIndex((el) => el.id == id) - 1) % 17;
         color = this.colors.getColor(index.toString());
         colorName = index.toString();
       }
 
       arr.push({
-        id: budgetName,
-        label: budgetName,
-        data: this.fixBudgetValues(this.lineChartData[budgetName]),
+        id: id,
+        label: name,
+        data: dataset.data,
         backgroundColor: color,
         borderColor: color,
         borderWidth: 2,
@@ -362,7 +373,6 @@ class ChartManager {
     }
 
     this.lineChart.data.datasets = arr;
-    this.lineChart.data.labels = this.lineChartKeys;
 
     this.lineChart.update();
   }

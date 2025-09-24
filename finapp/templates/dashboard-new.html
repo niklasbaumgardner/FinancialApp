@@ -34,10 +34,10 @@ block dashboard %}active{% endblock dashboard %} {% block backButton
           hoist
           disabled
         >
-          <wa-option selected value="allBudgets">All budgets</wa-option>
+          <wa-option selected value="-1">All Budgets</wa-option>
         </wa-select>
         <wa-input
-          class="w-fit"
+          class="w-fit hidden"
           id="startDate"
           type="date"
           label="Start date"

@@ -60,22 +60,9 @@ def get_spending_for_month():
 @dashboard_bp.route("/get_all_budgets_line_data", methods=["GET"])
 @login_required
 def get_all_budgets_line_data():
-    dashboard_queries.get_line_chart_data()
+    lc_data, start_date_, end_date = dashboard_queries.get_line_chart_data()
 
-    start_date = request.args.get("startDate")
-    if start_date:
-        start_date = helpers.get_date_from_string(start_date)
-
-    data, dates = helpers.all_budgets_net_worth(start_date)
-    month, day, year = dates[0].split("/")
-    actualStartDate = date(int(year), int(month), int(day))
-    dataNW, datesNW = helpers.net_worth(actualStartDate)
-
-    names = ["allBudgets"] + [k for k in data.keys()]
-
-    data["allBudgets"] = dataNW
-
-    return {"names": names, "keys": dates, "data": data}
+    return {"data": lc_data, "start_date": start_date_, "end_date": end_date}
 
 
 @dashboard_bp.route("/get_net_spending", methods=["GET"])
