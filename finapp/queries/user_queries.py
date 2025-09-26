@@ -4,7 +4,6 @@ from flask_login import current_user
 from finapp import bcrypt, db
 from sqlalchemy import func, insert, select, update
 import os
-from finapp.utils.cache import timed_cache_decorator
 
 
 ##
@@ -73,7 +72,6 @@ def is_username_unique(username):
     return count == 0
 
 
-@timed_cache_decorator
 def get_shared_users_for_all_budgets():
     stmt = (
         select(User)
