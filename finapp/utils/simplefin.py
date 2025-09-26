@@ -135,6 +135,14 @@ def request_simplefin(credentials):
 
 
 def update_account_transactions(data):
+    __update_account_transactions_for_user(data=data, user_id=current_user.id)
+
+    if data:
+        accounts = data.get("accounts")
+        simplefin_queries.update_simeplefin_accounts(accounts=accounts)
+
+
+def __update_account_transactions_for_user(data, user_id):
     if data:
         errors = data.get("errors")
         for error in errors:
@@ -149,7 +157,7 @@ def update_account_transactions(data):
             safe_for_db_transactions = [
                 {
                     "account_id": account_id,
-                    "user_id": current_user.id,
+                    "user_id": user_id,
                     "id": t["id"],
                     "posted": t["posted"],
                     "amount": t["amount"],
@@ -162,9 +170,6 @@ def update_account_transactions(data):
             simplefin_queries.update_transactions_for_account(
                 account_id=account_id, transactions=safe_for_db_transactions
             )
-
-        if current_user.is_authenticated:
-            simplefin_queries.update_simeplefin_accounts(accounts=accounts)
 
 
 def sync_simplefin_transactions(credentials):
@@ -262,7 +267,7 @@ def update_all_accounts_and_transactions(key):
             credentials=credentials, account_ids=transaction_sync_account_ids
         )
 
-        update_account_transactions(data=data)
+        __update_account_transactions_for_user(data=data, user_id=credentials.user_id)
 
         missing_SFTs = find_missing_transactions_for_user(
             key=key, user_id=credentials.user_id
