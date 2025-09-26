@@ -1,4 +1,5 @@
 from finapp.models import (
+    AccountBalance,
     Budget,
     PendingTransaction,
     SharedBudget,
@@ -62,3 +63,32 @@ def get_line_chart_data():
         # print(row)
 
     return data, str(start_date), str(end_date)
+
+
+def net_worth_query():
+    shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
+    stmt = (
+        select(AccountBalance)
+        .where(AccountBalance.user_id.in_(shared_user_ids))
+        .order_by(AccountBalance.date)
+    )
+
+    result = db.session.scalars(stmt).all()
+
+    nw_stmt = (
+        select(func.sum(AccountBalance.balance), AccountBalance.date)
+        .where(AccountBalance.user_id.in_(shared_user_ids))
+        .group_by(AccountBalance.date)
+        .order_by(AccountBalance.date)
+    )
+
+    nw_result = db.session.execute(nw_stmt).all()
+    print(len(nw_result))
+    for a in nw_result:
+        print(a)
+
+    print(len(result))
+    for ab in result:
+        print(ab.to_dict())
+
+    return result
