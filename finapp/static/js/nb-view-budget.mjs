@@ -1,6 +1,6 @@
 import { NikElement } from "./nik-element.mjs";
 import { html } from "./lit.bundle.mjs";
-import "./shareBudgetElement.mjs";
+import "./nb-share-budget-dialog.mjs";
 import "./nb-transaction.mjs";
 import "./nb-categories-select.mjs";
 import "./nb-search-budget.mjs";
@@ -287,6 +287,16 @@ export class ViewBudget extends NikElement {
 
   openCategoriesModal() {
     document.querySelector("nb-category-modal").show();
+  }
+
+  handleShareButtonClick() {
+    if (!this.shareBudgetDialog) {
+      this.shareBudgetDialog = document.createElement("nb-share-budget-dialog");
+      this.shareBudgetDialog.url = this.budget.share_budget_url;
+      document.body.append(this.shareBudgetDialog);
+    }
+
+    this.shareBudgetDialog.show();
   }
 
   render() {
