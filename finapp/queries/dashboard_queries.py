@@ -65,7 +65,7 @@ def get_line_chart_data():
     return data, str(start_date), str(end_date)
 
 
-def net_worth_query():
+def get_net_worth_data():
     shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
     stmt = (
         select(AccountBalance)
@@ -83,6 +83,8 @@ def net_worth_query():
     )
 
     nw_result = db.session.execute(nw_stmt).all()
+
+    return [{"amount": round(a, 2), "date": str(d)} for a, d in nw_result]
     print(len(nw_result))
     for a in nw_result:
         print(a)

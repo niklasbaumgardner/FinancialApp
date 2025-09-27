@@ -1,0 +1,51 @@
+{% extends "base.html" %} {% block title %}Dashboard{% endblock title %} {%
+block dashboard %}active{% endblock dashboard %} {% block backButton
+%}<nb-back-button></nb-back-button>{% endblock backButton %} {% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+<script src="/static/js/nb-dashboard.mjs" type="module"></script>
+
+<script>
+  const GET_NET_WORTH_DATA_URL =
+    "{{ url_for('dashboard_bp.api_get_net_worth_data') }}";
+  const GET_LINE_CHART_DATA_URL =
+    "{{ url_for('dashboard_bp.api_get_budget_totals_by_date') }}";
+  const GET_BUDGET_SPENDING_URL =
+    "{{ url_for('dashboard_bp.api_get_spending_by_budget') }}";
+  const GET_CATEGORY_SPENDING_URL =
+    "{{ url_for('dashboard_bp.api_get_spending_by_category') }}";
+
+  const START_DATE = "{{ startDate }}";
+</script>
+
+<link
+  rel="preload"
+  href="{{ url_for('dashboard_bp.api_get_net_worth_data') }}"
+  as="fetch"
+  crossorigin="anonymous"
+/>
+<link
+  rel="preload"
+  href="{{ url_for('dashboard_bp.api_get_budget_totals_by_date') }}"
+  as="fetch"
+  crossorigin="anonymous"
+/>
+<!-- <link
+  rel="preload"
+  href="{{ url_for('dashboard_bp.api_get_spending_by_budget') }}"
+  as="fetch"
+  crossorigin="anonymous"
+/>
+<link
+  id="categorySpendingLink"
+  rel="preload"
+  href="{{ url_for('dashboard_bp.api_get_spending_by_category') }}"
+  as="fetch"
+  crossorigin="anonymous"
+/> -->
+
+{% endblock head %} {% block content %}
+
+<nb-dashboard></nb-dashboard>
+
+{% endblock content %}

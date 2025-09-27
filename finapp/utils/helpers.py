@@ -60,7 +60,7 @@ def net_spending(month, year, ytd):
     if ytd:
         month = None
 
-    all_budgets = budget_queries.get_budgets()
+    all_budgets = budget_queries.get_budgets(active_only=True)
 
     income = transaction_queries.get_total_income(year=year, month=month)
     spent = transaction_queries.get_total_spent(year=year, month=month)
@@ -69,6 +69,7 @@ def net_spending(month, year, ytd):
         b.id: {
             "id": b.id,
             "name": b.name,
+            "budget": b.to_dict(),
             "in": 0,
             "out": 0,
             "net": 0,
@@ -78,11 +79,17 @@ def net_spending(month, year, ytd):
     }
 
     for total, b_id in spent:
+        if b_id not in data_dict:
+            continue
+
         rounded = round(total, 2)
         data_dict[b_id]["out"] = rounded
         total_out += rounded
 
     for total, b_id in income:
+        if b_id not in data_dict:
+            continue
+
         rounded = round(total, 2)
         data_dict[b_id]["in"] = rounded
         total_in += rounded
@@ -100,11 +107,11 @@ def net_spending(month, year, ytd):
     total_net = total_in + total_out
     data = [
         {
-            "name": "All budgets",
-            "in": total_in,
-            "out": total_out,
-            "net": total_net,
-            "total": total_sum,
+            "name": "All Budgets",
+            "in": round(total_in, 2),
+            "out": round(total_out, 2),
+            "net": round(total_net, 2),
+            "total": round(total_sum, 2),
         }
     ] + data
     return data

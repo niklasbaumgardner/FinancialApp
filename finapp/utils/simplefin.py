@@ -232,6 +232,8 @@ def sync_simplefin(credentials):
                 account=account, organization_id=sf_org.id
             )
 
+        simplefin_queries.upsert_account_balances(accounts=accounts)
+
 
 def update_all_accounts_and_transactions(key):
     if key != os.environ.get("SIMPLEFIN_KEY"):

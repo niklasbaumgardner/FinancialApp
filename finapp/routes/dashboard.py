@@ -17,57 +17,29 @@ dashboard_bp = Blueprint("dashboard_bp", __name__)
 @dashboard_bp.route("/dashboard", methods=["GET"])
 @login_required
 def dashboard():
-    budgets = budget_queries.get_budgets()
     start_date = transaction_queries.get_first_transaction_date()
-    return render_template("dashboard-new.html", budgets=budgets, startDate=start_date)
+    return render_template("dashboard.newest.html", startDate=start_date)
 
 
-@dashboard_bp.route("/get_budget_name", methods={"GET"})
+@dashboard_bp.route("/api/get_net_worth_data", methods=["GET"])
 @login_required
-def get_budget_name():
-    names = ["allBudgets"] + [b.name for b in budget_queries.get_budgets()]
+def api_get_net_worth_data():
+    data = dashboard_queries.get_net_worth_data()
 
-    return {"names": names}
+    return {"data": data}
 
 
-@dashboard_bp.route("/get_pie_data", methods=["GET"])
+@dashboard_bp.route("/api/get_budget_totals_by_date", methods=["GET"])
 @login_required
-def get_pie_data():
-    date = request.args.get("date")
-    if date:
-        date = helpers.get_date_from_string(date)
-
-    data = helpers.pie_data(date)
-
-    keys = [k for k in data.keys()]
-    values = [v for v in data.values()]
-
-    return {"keys": keys, "values": values}
-
-
-@dashboard_bp.route("/get_spending_for_month", methods=["GET"])
-@login_required
-def get_spending_for_month():
-    month = request.args.get("month", 0, type=int)
-    year = request.args.get("year", 0, type=int)
-    ytd = request.args.get("ytd") == "true"
-
-    data = helpers.spending_for_month(month, year, ytd)
-
-    return data
-
-
-@dashboard_bp.route("/get_all_budgets_line_data", methods=["GET"])
-@login_required
-def get_all_budgets_line_data():
+def api_get_budget_totals_by_date():
     lc_data, start_date_, end_date = dashboard_queries.get_line_chart_data()
 
     return {"data": lc_data, "start_date": start_date_, "end_date": end_date}
 
 
-@dashboard_bp.route("/get_net_spending", methods=["GET"])
+@dashboard_bp.route("/api/get_spending_by_budget", methods=["GET"])
 @login_required
-def get_net_spending():
+def api_get_spending_by_budget():
     month = request.args.get("month", 0, type=int)
     year = request.args.get("year", 0, type=int)
     ytd = request.args.get("ytd") == "true"
@@ -77,9 +49,9 @@ def get_net_spending():
     return data
 
 
-@dashboard_bp.get("/get_spending_by_category")
+@dashboard_bp.get("/api/get_spending_by_category")
 @login_required
-def get_spending_by_category():
+def api_get_spending_by_category():
     current_date = request.args.get("date")
     interval = request.args.get("interval", default="monthly")
 
