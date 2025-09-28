@@ -16,7 +16,7 @@ def create_shared_budget(budget):
     if maybe:
         return maybe
 
-    stmt = insert(SharedBudget).values(user_id=current_user, budget_id=budget.id)
+    stmt = insert(SharedBudget).values(user_id=current_user.id, budget_id=budget.id)
     db.session.execute(stmt)
 
     budget.is_shared = True
