@@ -26,9 +26,16 @@ export class DeletePendingTransactionModal extends NikElement {
     this.dialog.open = false;
   }
 
-  async handleTransactionDelete() {
+  setLoadingState() {
     this.deleteButton.loading = true;
     this.deleteButton.disabled = true;
+
+    this.deleteButton.requestUpdate();
+    return this.deleteButton.updateComplete;
+  }
+
+  async handleTransactionDelete() {
+    await this.setLoadingState();
 
     let response = await fetch(
       this.pendingTransaction.delete_pending_transaction_url,

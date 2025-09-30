@@ -85,13 +85,21 @@ export class CreateCategoryModal extends NikElement {
     this.input.focus();
   }
 
+  setLoadingState(state) {
+    this.submitButton.loading = state;
+    this.submitButton.disabled = state;
+
+    this.submitButton.requestUpdate();
+    return this.submitButton.updateComplete;
+  }
+
   async handleSubmitClick() {
     if (!this.form.reportValidity()) {
-      return true;
+      return;
     }
 
-    this.submitButton.loading = true;
-    this.submitButton.disabled = true;
+    await this.setLoadingState(true);
+
     let formData = new FormData(this.form);
 
     let request = await fetch(CREATE_CATEGORY_URL, {
@@ -100,8 +108,7 @@ export class CreateCategoryModal extends NikElement {
     });
     let data = await request.json();
 
-    this.submitButton.loading = false;
-    this.submitButton.disabled = false;
+    await this.setLoadingState(false);
     this.form.reset();
     this.setExistingCategories(data.categories);
   }

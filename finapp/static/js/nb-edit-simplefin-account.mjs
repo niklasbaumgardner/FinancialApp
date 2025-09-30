@@ -36,10 +36,17 @@ export class EditSimpleFINAccount extends NikElement {
   }
 
   reset() {
-    this.submitButton.loading = false;
-    this.submitButton.disabled = false;
+    this.setLoadingState(false);
 
     this.hide();
+  }
+
+  setLoadingState(state) {
+    this.submitButton.loading = state;
+    this.submitButton.disabled = state;
+
+    this.submitButton.requestUpdate();
+    return this.submitButton.updateComplete;
   }
 
   async handleSubmit() {
@@ -47,8 +54,7 @@ export class EditSimpleFINAccount extends NikElement {
       return;
     }
 
-    this.submitButton.loading = true;
-    this.submitButton.disabled = true;
+    await this.setLoadingState(true);
 
     let formData = new FormData(this.form);
 

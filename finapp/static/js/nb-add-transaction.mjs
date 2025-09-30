@@ -68,11 +68,18 @@ export class AddTransactionModal extends NikElement {
   }
 
   reset() {
-    this.submitButton.loading = false;
-    this.submitButton.disabled = false;
+    this.setLoadingState(false);
     this.sharedUsers = [];
     this.form.reset();
     this.hide();
+  }
+
+  setLoadingState(state) {
+    this.submitButton.loading = state;
+    this.submitButton.disabled = state;
+
+    this.submitButton.requestUpdate();
+    return this.submitButton.updateComplete;
   }
 
   async handleTransactionAdd() {
@@ -80,8 +87,7 @@ export class AddTransactionModal extends NikElement {
       return;
     }
 
-    this.submitButton.loading = true;
-    this.submitButton.disabled = true;
+    await this.setLoadingState(true);
 
     let formData = new FormData(this.form);
 
@@ -171,9 +177,16 @@ export class AddTransactionModal extends NikElement {
     });
   }
 
+  setRefreshPendingButtonLoadingState(state) {
+    this.refreshPendingButton.loading = state;
+    this.refreshPendingButton.disabled = state;
+
+    this.refreshPendingButton.requestUpdate();
+    return this.refreshPendingButton.updateComplete;
+  }
+
   async handleRefreshPendingTransactionsClick() {
-    this.refreshPendingButton.loading = true;
-    this.refreshPendingButton.disabled = true;
+    await this.setRefreshPendingButtonLoadingState(true);
 
     let response = await fetch(API_SYNC_SIMPLEFIN_TRANSACTIONS_URL);
     let data = await response.json();
@@ -189,8 +202,7 @@ export class AddTransactionModal extends NikElement {
       })
     );
 
-    this.refreshPendingButton.loading = false;
-    this.refreshPendingButton.disabled = false;
+    await this.setRefreshPendingButtonLoadingState(false);
   }
 
   tabGroupTemplate() {

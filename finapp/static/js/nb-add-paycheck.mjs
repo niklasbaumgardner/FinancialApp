@@ -101,6 +101,7 @@ export class AddPaycheck extends NikElement {
   handleSubmitClick() {
     this.submitButton.disabled = true;
     this.submitButton.loading = true;
+    this.submitButton.requestUpdate();
   }
 
   budegtsTemplate() {
