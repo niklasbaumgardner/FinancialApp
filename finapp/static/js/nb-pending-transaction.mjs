@@ -117,21 +117,6 @@ export class PendingTransaction extends NikElement {
     }
 
     this.deletePendingTransactionModal.show();
-    return;
-    this.discardButton.loading = true;
-    this.discardButton.disabled = true;
-    this.submitButton.disabled = true;
-
-    let response = await fetch(
-      this.transaction.delete_pending_transaction_url,
-      {
-        method: "POST",
-      }
-    );
-
-    let { pending_transactions } = await response.json();
-
-    this.updatePendingTransactions(pending_transactions);
   }
 
   updatePendingTransactions(pendingTransactions) {
