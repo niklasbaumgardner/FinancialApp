@@ -25,21 +25,25 @@ class Dashboard extends NikElement {
   }
 
   async requestInitialData() {
-    let response = await fetch(GET_NET_WORTH_DATA_URL);
-    this.netWorthData = (await response.json()).data;
+    fetch(GET_NET_WORTH_DATA_URL).then(async (response) => {
+      this.netWorthData = (await response.json()).data;
+    });
 
-    response = await fetch(GET_LINE_CHART_DATA_URL);
-    this.lineChartData = await response.json();
+    fetch(GET_LINE_CHART_DATA_URL).then(async (response) => {
+      this.lineChartData = await response.json();
+    });
 
-    response = await fetch(
+    fetch(
       GET_BUDGET_SPENDING_URL + `?month=${month}&year=${year}&ytd=${false}`
-    );
-    this.budgetSpendingData = await response.json();
+    ).then(async (response) => {
+      this.budgetSpendingData = await response.json();
+    });
 
-    response = await fetch(
+    fetch(
       GET_CATEGORY_SPENDING_URL + `?date=${CURRENT_DATE}&interval=monthly`
-    );
-    this.categorySpendingData = await response.json();
+    ).then(async (response) => {
+      this.categorySpendingData = await response.json();
+    });
   }
 
   netWorthTemplate() {

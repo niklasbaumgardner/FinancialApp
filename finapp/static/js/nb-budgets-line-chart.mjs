@@ -1,96 +1,143 @@
-import { NikElement } from "./nik-element.mjs";
 import { html } from "./lit.bundle.mjs";
-import { Colors } from "./colors.mjs";
+import { BaseChart } from "./nb-base-chart.mjs";
 
-class BudgetsLineChart extends NikElement {
+class BudgetsLineChart extends BaseChart {
   static properties = {
     data: { type: Object },
-    datasets: { type: Array },
   };
 
   static queries = {
-    lineChartEl: "#lineChart",
+    ...BaseChart.queries,
     selectEl: "#budgets",
   };
 
-  connectedCallback() {
-    super.connectedCallback();
+  get selectedBudgets() {
+    if (this.selectEl?.value) {
+      return this.selectEl.value;
+    }
+    return ["-1"];
+  }
 
-    this.colors = new Colors();
+  get currentData() {
+    let arr = [];
+    for (let date of this.dates) {
+      let dataset = { date: date };
+      for (let id of this.selectedBudgets) {
+        dataset[id] = this.datasets[date][id];
+      }
+      arr.push(dataset);
+    }
 
-    this.init();
+    return arr;
+  }
+
+  get currentSeries() {
+    let series = [];
+    for (let key of Object.keys(this.currentData[0])) {
+      if (key === "date") {
+        continue;
+      }
+      series.push({
+        type: "line",
+        xKey: "date",
+        yKey: key,
+        yName: this.namesObject[key],
+      });
+    }
+
+    return series;
+  }
+
+  get chartOptions() {
+    return {
+      ...this.defaultOptions,
+      background: {
+        visible: false,
+      },
+      data: this.currentData,
+      title: {
+        text: "Budgets Over Time",
+      },
+      series: this.currentSeries,
+      legend: {
+        enabled: true,
+      },
+      axes: [
+        {
+          type: "unit-time",
+          position: "bottom",
+          gridLine: {
+            enabled: true,
+          },
+          label: { format: "%B %Y" },
+        },
+        {
+          type: "number",
+          position: "left",
+          gridLine: {
+            enabled: true,
+          },
+          label: {},
+        },
+      ],
+      formatter: {
+        y(params) {
+          if (params.source === "axis-label") {
+            return params.value.toLocaleString("en-US", {
+              style: "currency",
+              currency: "USD",
+              notation: "compact",
+            });
+          }
+
+          return params.value.toLocaleString("en-US", {
+            style: "currency",
+            currency: "USD",
+          });
+        },
+      },
+    };
   }
 
   async init() {
     let { data, start_date, end_date } = this.data;
 
-    let { keys, datasets } = this.parseData(data, start_date, end_date);
+    this.dates = this.getDatesFromRange(start_date, end_date);
 
-    let allBudgetsDataset = this.getAllBudgetsData(datasets);
+    this.datasets = this.parseDatasets(data);
 
-    this.keys = keys;
-    this.datasets = [allBudgetsDataset, ...datasets];
+    this.makeAllBudgetsData();
 
-    this.names = this.datasets.map((dataset) => {
-      return { id: dataset.id, name: dataset.label };
+    data[-1] = { budget: { id: -1, name: "All Budgets" } };
+    this.names = Object.values(data).map((o) => {
+      return { id: o.budget.id, name: o.budget.name };
     });
     this.names.sort((a, b) => a.name.localeCompare(b.name));
-
-    // this.startDateEl = document.getElementById("startDate");
-    // this.startDateEl.addEventListener("change", this);
-
-    // this.selectEl.addEventListener("change", () => this.updateLineChart());
+    this.namesObject = {};
+    Object.values(data).forEach((o) => {
+      this.namesObject[`${o.budget.id}`] = o.budget.name;
+    });
 
     await this.updateComplete;
-    await this.createLineChart();
+    await this.createChart();
     this.setupThemeWatcher();
   }
 
-  handleEvent(event) {
-    switch (event.type) {
-      case "change":
-        this.handleSlChangeEvent(event);
+  makeAllBudgetsData() {
+    for (let [date, dataset] of Object.entries(this.datasets)) {
+      let sum = 0;
+      for (let amount of Object.values(dataset)) {
+        sum += amount ?? 0;
+      }
+      dataset["-1"] = sum;
     }
-  }
-
-  async handleSlChangeEvent(event) {
-    // Do this in js
-
-    this.updateLineChart();
-  }
-
-  updateChartColors() {
-    if (!this.lineChart) {
-      return;
-    }
-
-    for (let dataset of this.lineChart.data.datasets) {
-      let color = this.colors.getColor(dataset.colorName);
-      dataset.backgroundColor = color;
-      dataset.borderColor = color;
-      dataset.color = this.colors.getColor("neutral0");
-    }
-
-    this.lineChart.options.plugins.legend.labels.color =
-      this.colors.getColor("neutral0");
-    this.lineChart.options.plugins.title.color =
-      this.colors.getColor("neutral0");
-
-    this.lineChart.options.scales.y.labels.color = this.colors.getColor("text");
-    this.lineChart.options.scales.y.grid.color = this.colors.getColor("grid");
-    this.lineChart.options.scales.y.ticks.color = this.colors.getColor("ticks");
-
-    this.lineChart.options.scales.x.grid.color = this.colors.getColor("grid");
-    this.lineChart.options.scales.x.ticks.color = this.colors.getColor("ticks");
-
-    this.lineChart.update();
   }
 
   getDatesFromRange(startDate, endDate) {
     let start = new Date(startDate + "T00:00:00");
     let end = new Date(endDate + "T00:00:00");
 
-    let step = Math.floor((end - start) / 10);
+    let step = Math.floor((end - start) / 15);
     let dates = [];
     let curr = start.getTime();
     while (curr < end.getTime()) {
@@ -102,142 +149,21 @@ class BudgetsLineChart extends NikElement {
     return dates;
   }
 
-  parseData(data, startDate, endDate) {
-    let keys = this.getDatesFromRange(startDate, endDate);
-    let datasets = [];
-
-    for (let { budget, line_data } of Object.values(data)) {
-      let budgetData = { id: budget.id, label: budget.name };
-      let data = [];
-      for (let key of keys) {
+  parseDatasets(data) {
+    let datasets = {};
+    for (let date of this.dates) {
+      datasets[date] = {};
+      for (let { budget, line_data } of Object.values(data)) {
         let result = line_data.findLast((el) => {
           let [d, _] = el;
 
-          return new Date(d + "T00:00:00") <= key;
+          return new Date(d + "T00:00:00") <= date;
         });
-        data.push(result ? result.at(1) : 0);
+        datasets[date][`${budget.id}`] = result?.at(1);
       }
-
-      budgetData.data = data;
-
-      datasets.push(budgetData);
     }
 
-    let prettyKeys = keys.map((d) => d.toLocaleDateString());
-    return { keys: prettyKeys, datasets };
-  }
-
-  getAllBudgetsData(datasets) {
-    let allBudgetsDataset = { id: -1, label: "All Budgets" };
-    let data = [];
-    for (let i = 0; i < datasets[0].data.length; i++) {
-      let sum = 0;
-      for (let dataset of datasets) {
-        sum += dataset.data[i];
-      }
-      data.push(sum);
-    }
-    allBudgetsDataset.data = data;
-    return allBudgetsDataset;
-  }
-
-  async createLineChart() {
-    const ctx = this.lineChartEl.getContext("2d");
-    this.lineChart = new Chart(ctx, {
-      type: "line",
-      data: {
-        labels: this.keys,
-        datasets: [
-          {
-            ...this.datasets[0],
-            backgroundColor: this.colors.getColor("neutral0"),
-            borderColor: this.colors.getColor("neutral0"),
-            borderWidth: 2,
-            color: this.colors.getColor("neutral0"),
-            colorName: "neutral0",
-          },
-        ],
-      },
-      options: {
-        plugins: {
-          legend: {
-            labels: {
-              color: this.colors.getColor("neutral0"),
-            },
-          },
-          title: {
-            display: true,
-            text: "Budgets",
-            color: this.colors.getColor("neutral0"),
-            font: {
-              size: 19,
-              weight: "normal",
-            },
-          },
-        },
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          y: {
-            beginAtZero: true,
-            labels: {
-              color: this.colors.getColor("text"),
-            },
-            grid: {
-              color: this.colors.getColor("grid"),
-            },
-            ticks: {
-              // Include a dollar sign in the ticks
-              callback: function (value, index, values) {
-                return "$" + value;
-              },
-              color: this.colors.getColor("ticks"),
-            },
-          },
-          x: {
-            grid: {
-              color: this.colors.getColor("grid"),
-            },
-            ticks: {
-              color: this.colors.getColor("ticks"),
-            },
-          },
-        },
-      },
-    });
-  }
-
-  updateLineChart() {
-    let arr = [];
-    for (let id of this.selectEl.value) {
-      let color;
-      let colorName;
-      let dataset = this.datasets.find((o) => o.id == id);
-      let name = dataset.label;
-      if (id == -1) {
-        color = this.colors.getColor("neutral0");
-        colorName = "neutral0";
-      } else {
-        let index = (this.names.findIndex((el) => el.id == id) - 1) % 17;
-        color = this.colors.getColor(index.toString());
-        colorName = index.toString();
-      }
-
-      arr.push({
-        id: id,
-        label: name,
-        data: dataset.data,
-        backgroundColor: color,
-        borderColor: color,
-        borderWidth: 2,
-        color: this.colors.getColor("neutral0"),
-        colorName,
-      });
-    }
-
-    this.lineChart.data.datasets = arr;
-
-    this.lineChart.update();
+    return datasets;
   }
 
   optionsTemplate() {
@@ -249,13 +175,6 @@ class BudgetsLineChart extends NikElement {
     );
   }
 
-  setupThemeWatcher() {
-    this.themeObserver = new MutationObserver(() => {
-      this.updateChartColors();
-    });
-    this.themeObserver.observe(document.documentElement, { attributes: true });
-  }
-
   render() {
     return html`<wa-details
       summary="Budgets line chart"
@@ -265,7 +184,7 @@ class BudgetsLineChart extends NikElement {
       <div class="wa-stack">
         <div class="wa-split">
           <wa-select
-            @change=${this.updateLineChart}
+            @change=${this.updateChart}
             id="budgets"
             label="Select the budgets to show"
             class="w-fit"
@@ -282,7 +201,7 @@ class BudgetsLineChart extends NikElement {
           ></wa-input>
         </div>
         <div>
-          <canvas id="lineChart"></canvas>
+          <div id="chart"></div>
         </div>
       </div>
     </wa-details>`;

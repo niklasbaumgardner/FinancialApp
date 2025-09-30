@@ -124,9 +124,6 @@
   .max-h-\[400px\] {
     max-height: 400px;
   }
-  .w-50 {
-    width: calc(var(--spacing) * 50);
-  }
   .w-100 {
     width: calc(var(--spacing) * 100);
   }
