@@ -10,6 +10,8 @@ from sqlalchemy.pool import NullPool
 import sentry_sdk
 import os
 from werkzeug.middleware.proxy_fix import ProxyFix
+from scout_apm.flask import ScoutApm
+from scout_apm.flask.sqlalchemy import instrument_sqlalchemy
 # from flask_compress import Compress
 # from flask_caching import Cache
 # from sqlalchemy import event
@@ -33,7 +35,7 @@ if not os.environ.get("FLASK_DEBUG"):
         dsn=os.environ.get("SENTRY_DSN"),
         traces_sample_rate=1.0,
         send_default_pii=True,
-        release="nb-budgets@2.0.4",
+        release="nb-budgets@2.0.5",
     )
 
 
@@ -52,6 +54,10 @@ login_manager.login_message_category = "alert-primary"
 
 mail = Mail()
 mail.init_app(app)
+
+ScoutApm(app)
+instrument_sqlalchemy(db)
+
 
 # cache = Cache(
 #     config={

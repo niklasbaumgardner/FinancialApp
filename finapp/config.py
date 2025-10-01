@@ -16,3 +16,6 @@ class Config:
     REMEMBER_COOKIE_DOMAIN = os.environ.get("COOKIE_DOMAIN")
     SESSION_COOKIE_NAME = os.environ.get("SESSION_COOKIE_NAME")
     SESSION_COOKIE_DOMAIN = os.environ.get("COOKIE_DOMAIN")
+    SCOUT_MONITOR = True
+    SCOUT_KEY = os.environ.get("SCOUT_KEY")
+    SCOUT_NAME = "NB Budgets"
