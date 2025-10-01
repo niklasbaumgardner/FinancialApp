@@ -36,7 +36,6 @@ export class DeleteBudget extends NikElement {
   handleDeleteClick() {
     this.deleteButton.disabled = true;
     this.deleteButton.loading = true;
-    this.deleteButton.requestUpdate();
   }
 
   render() {

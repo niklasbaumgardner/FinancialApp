@@ -28,11 +28,9 @@ export class BudgetCard extends NikElement {
   setEditingFalse() {
     this.saveButton.disabled = true;
     this.saveButton.loading = false;
-    this.saveButton.requestUpdate();
 
     this.deleteButton.disabled = false;
     this.deleteButton.loading = false;
-    this.deleteButton.requestUpdate();
 
     this.editing = false;
   }
@@ -48,16 +46,9 @@ export class BudgetCard extends NikElement {
     this.deleteModal.show();
   }
 
-  setSaveButtonLoadingState(state) {
-    this.saveButton.loading = state;
-    this.saveButton.disabled = state;
-
-    this.saveButton.requestUpdate();
-    return this.saveButton.updateComplete;
-  }
-
   async handleSaveClick() {
-    await this.setSaveButtonLoadingState(true);
+    this.saveButton.disabled = true;
+    this.saveButton.loading = true;
 
     let formData = new FormData();
 

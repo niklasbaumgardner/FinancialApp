@@ -64,25 +64,14 @@ export class PendingTransaction extends NikElement {
     return selectedCategories;
   }
 
-  async setLoadingState() {
-    this.submitButton.loading = true;
-    this.submitButton.disabled = true;
-
-    this.submitButton.requestUpdate();
-    await this.submitButton.updateComplete;
-
-    this.discardButton.disabled = true;
-
-    this.discardButton.requestUpdate();
-    await this.discardButton.updateComplete;
-  }
-
   async handleTransactionAdd() {
     if (!this.form.reportValidity()) {
       return;
     }
 
-    await this.setLoadingState();
+    this.submitButton.loading = true;
+    this.submitButton.disabled = true;
+    this.discardButton.disabled = true;
 
     let formData = new FormData(this.form);
 

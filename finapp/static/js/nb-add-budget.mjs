@@ -29,7 +29,8 @@ export class AddBudget extends NikElement {
   }
 
   reset() {
-    this.setLoadingState(false);
+    this.saveButton.disabled = false;
+    this.saveButton.loading = false;
     this.form.reset();
     this.hide();
   }
@@ -62,20 +63,13 @@ export class AddBudget extends NikElement {
     }
   }
 
-  setLoadingState(state) {
-    this.saveButton.loading = state;
-    this.saveButton.disabled = state;
-
-    this.saveButton.requestUpdate();
-    return this.saveButton.updateComplete;
-  }
-
   async handleSaveClick() {
     if (!this.form.reportValidity()) {
       return;
     }
 
-    await this.setLoadingState(true);
+    this.saveButton.disabled = true;
+    this.saveButton.loading = true;
 
     let formData = new FormData(this.form);
 
@@ -95,7 +89,8 @@ export class AddBudget extends NikElement {
         })
       );
     } else {
-      await this.setLoadingState(false);
+      this.saveButton.disabled = false;
+      this.saveButton.loading = false;
 
       this.nameInput.setAttribute(
         "help-text",

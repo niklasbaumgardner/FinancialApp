@@ -26,22 +26,14 @@ class ShareBudgetDialog extends NikElement {
     this.dialog.open = false;
   }
 
-  setLoadingState(state) {
-    this.shareButton.loading = state;
-    this.shareButton.disabled = state;
-
-    this.shareButton.requestUpdate();
-    return this.shareButton.updateComplete;
-  }
-
   async handleClick() {
-    await this.setLoadingState(true);
+    this.shareButton.loading = true;
 
     let response = await fetch(
       this.url + "?" + new URLSearchParams({ email: this.emailInputEl.value })
     );
 
-    await this.setLoadingState(false);
+    this.shareButton.loading = false;
 
     let alert = document.createElement("nb-alert");
     if (response?.ok) {

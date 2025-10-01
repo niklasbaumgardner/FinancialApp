@@ -27,16 +27,9 @@ class SimpleFINAccountAccessConfirmation extends NikElement {
     this.dialog.open = false;
   }
 
-  setLoadingState(state) {
-    this.deleteButton.loading = state;
-    this.deleteButton.disabled = state;
-
-    this.deleteButton.requestUpdate();
-    return this.deleteButton.updateComplete;
-  }
-
   async handleSubmit() {
-    await this.setLoadingState(true);
+    this.deleteButton.loading = true;
+    this.deleteButton.disabled = true;
 
     let data = new FormData();
     data.append("sync_transactions", 2 & this.account.access_type);
@@ -55,7 +48,8 @@ class SimpleFINAccountAccessConfirmation extends NikElement {
       })
     );
 
-    await this.setLoadingState(false);
+    this.deleteButton.loading = false;
+    this.deleteButton.disabled = false;
 
     this.hide();
   }

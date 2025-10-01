@@ -39,7 +39,8 @@ export class EditTransactionModal extends AddTransactionModal {
   }
 
   reset() {
-    this.setLoadingState(false);
+    this.submitButton.loading = false;
+    this.submitButton.disabled = false;
 
     this.hide();
   }
@@ -63,7 +64,8 @@ export class EditTransactionModal extends AddTransactionModal {
       return;
     }
 
-    await this.setLoadingState(true);
+    this.submitButton.loading = true;
+    this.submitButton.disabled = true;
 
     let currentCategories = this.transaction.categories.map(
       (c) => c.category_id

@@ -54,20 +54,12 @@ export class Transaction extends NikElement {
       button.disabled = false;
     }
 
-    this.setLoadingState(false);
+    this.saveButton.loading = false;
     this.editing = false;
   }
 
-  setLoadingState(state) {
-    this.saveButton.loading = state;
-    this.saveButton.disabled = state;
-
-    this.saveButton.requestUpdate();
-    return this.saveButton.updateComplete;
-  }
-
   async handleSaveClick() {
-    await this.setLoadingState(true);
+    this.saveButton.loading = true;
 
     for (let button of this.buttons) {
       button.disabled = true;
@@ -141,7 +133,6 @@ export class Transaction extends NikElement {
     );
 
     this.setViewingState();
-    await this.setLoadingState(false);
   }
 
   handleMoveTransactionClick() {

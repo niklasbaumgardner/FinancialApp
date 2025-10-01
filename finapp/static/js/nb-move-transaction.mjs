@@ -42,20 +42,13 @@ export class MoveTransactionModal extends NikElement {
     this.dialog.open = false;
   }
 
-  setLoadingState() {
-    this.submitButton.loading = true;
-    this.submitButton.disabled = true;
-
-    this.submitButton.requestUpdate();
-    return this.submitButton.updateComplete;
-  }
-
   async handleTransactionMove() {
     if (!this.form.reportValidity()) {
       return;
     }
 
-    await this.setLoadingState();
+    this.submitButton.loading = true;
+    this.submitButton.disabled = true;
 
     let formData = new FormData(this.form);
 
