@@ -16,7 +16,7 @@ export class AddTransactionModal extends NikElement {
     form: "form",
     budgetsSelect: "#budgets-select",
     usersSelect: "#user-select",
-    submitButton: "#submit-button",
+    submitButton: "#add-transaction-button",
     nameInput: "#name",
     tabGroup: "wa-tab-group",
     pendingTabPanel: "#pending",
@@ -312,7 +312,7 @@ export class AddTransactionModal extends NikElement {
         data-dialog="close"
         >Cancel</wa-button
       ><wa-button
-        id="submit-button"
+        id="add-transaction-button"
         class="grow"
         variant="brand"
         @click=${this.handleTransactionAdd}
