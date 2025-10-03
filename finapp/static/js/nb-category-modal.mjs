@@ -1,4 +1,4 @@
-import { NikElement } from "./nik-element.mjs";
+import { BaseDialog } from "./nb-base-dialog.mjs";
 import { html } from "./lit.bundle.mjs";
 import "./nb-category.mjs";
 import "./nb-radio.mjs";
@@ -8,7 +8,7 @@ function toUpper(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-export class CreateCategoryModal extends NikElement {
+export class CreateCategoryModal extends BaseDialog {
   static properties = {
     existingCategories: { type: Array },
   };
@@ -64,25 +64,7 @@ export class CreateCategoryModal extends NikElement {
     let newCategories = await request.json();
     this.setExistingCategories(newCategories);
 
-    customElements.whenDefined("wa-dialog").then(() => {
-      this.updateComplete.then(() => {
-        this.dialog.updateComplete.then(() => {
-          this.dialog.open = true;
-        });
-      });
-    });
-  }
-
-  hide() {
-    this.dialog.open = false;
-  }
-
-  handleDialogShow(event) {
-    if (event.target !== this.dialog) {
-      return;
-    }
-
-    this.input.focus();
+    super.show();
   }
 
   async handleSubmitClick() {

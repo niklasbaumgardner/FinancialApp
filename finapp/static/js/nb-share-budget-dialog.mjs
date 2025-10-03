@@ -1,7 +1,7 @@
 import { html } from "./lit.bundle.mjs";
-import { NikElement } from "./nik-element.mjs";
+import { BaseDialog } from "./nb-base-dialog.mjs";
 
-class ShareBudgetDialog extends NikElement {
+class ShareBudgetDialog extends BaseDialog {
   static properties = { url: String };
 
   static get queries() {
@@ -49,7 +49,10 @@ class ShareBudgetDialog extends NikElement {
   }
 
   render() {
-    return html`<wa-dialog label="Share this budget with someone">
+    return html`<wa-dialog
+      @wa-after-show=${this.handleDialogShow}
+      label="Share this budget with someone"
+    >
       <div class="wa-stack">
         <span
           >Please input the email of the person you would like to share this

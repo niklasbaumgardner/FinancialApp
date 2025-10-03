@@ -1,9 +1,9 @@
-import { NikElement } from "./nik-element.mjs";
+import { BaseDialog } from "./nb-base-dialog.mjs";
 import { html } from "./lit.bundle.mjs";
 import "./nb-categories-select.mjs";
 import "./nb-pending-transaction.mjs";
 
-export class AddTransactionModal extends NikElement {
+export class AddTransactionModal extends BaseDialog {
   static properties = {
     budgets: { type: Array },
     categories: { type: Array },
@@ -43,28 +43,6 @@ export class AddTransactionModal extends NikElement {
     super.connectedCallback();
 
     this.budgets.sort((a, b) => a.name.localeCompare(b.name));
-  }
-
-  handleDialogShow(event) {
-    if (event.target !== this.dialog) {
-      return;
-    }
-
-    this.nameInput.focus();
-  }
-
-  show() {
-    customElements.whenDefined("wa-dialog").then(() => {
-      this.updateComplete.then(() => {
-        this.dialog.updateComplete.then(() => {
-          this.dialog.open = true;
-        });
-      });
-    });
-  }
-
-  hide() {
-    this.dialog.open = false;
   }
 
   reset() {
@@ -315,6 +293,7 @@ export class AddTransactionModal extends NikElement {
       class=${CURRENT_USER.credentials?.exists ? "nb-tab-group-dialog" : ""}
       label="Add New Transaction"
       @wa-after-show=${this.handleDialogShow}
+      @wa-hide=${this.handleWaHide}
       >${this.tabGroupTemplate()} ${this.footerTemplate()}
     </wa-dialog>`;
   }

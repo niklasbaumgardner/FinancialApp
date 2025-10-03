@@ -1,7 +1,7 @@
-import { NikElement } from "./nik-element.mjs";
+import { BaseDialog } from "./nb-base-dialog.mjs";
 import { html } from "./lit.bundle.mjs";
 
-export class AddBudget extends NikElement {
+export class AddBudget extends BaseDialog {
   static properties = {
     budget: { type: Object },
   };
@@ -14,33 +14,11 @@ export class AddBudget extends NikElement {
     amountInput: "#starting-budget-amount",
   };
 
-  show() {
-    customElements.whenDefined("wa-dialog").then(() => {
-      this.updateComplete.then(() => {
-        this.dialog.updateComplete.then(() => {
-          this.dialog.open = true;
-        });
-      });
-    });
-  }
-
-  hide() {
-    this.dialog.open = false;
-  }
-
   reset() {
     this.saveButton.disabled = false;
     this.saveButton.loading = false;
     this.form.reset();
     this.hide();
-  }
-
-  handleDialogShow(event) {
-    if (event.target !== this.dialog) {
-      return;
-    }
-
-    this.nameInput.focus();
   }
 
   handleInput() {

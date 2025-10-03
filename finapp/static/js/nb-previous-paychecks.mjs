@@ -1,5 +1,6 @@
 import { NikElement } from "./nik-element.mjs";
 import { html } from "./lit.bundle.mjs";
+import { BaseDialog } from "./nb-base-dialog.mjs";
 
 class Paycheck extends NikElement {
   static properties = {
@@ -71,7 +72,7 @@ class Paycheck extends NikElement {
 }
 customElements.define("nb-paycheck", Paycheck);
 
-export class PreviousPaychecks extends NikElement {
+export class PreviousPaychecks extends BaseDialog {
   static properties = {
     paychecks: { type: Array },
   };
@@ -79,20 +80,6 @@ export class PreviousPaychecks extends NikElement {
   static queries = {
     dialog: "wa-dialog",
   };
-
-  show() {
-    customElements.whenDefined("wa-dialog").then(() => {
-      this.updateComplete.then(() => {
-        this.dialog.updateComplete.then(() => {
-          this.dialog.show();
-        });
-      });
-    });
-  }
-
-  hide() {
-    this.dialog.open = false;
-  }
 
   paychecksTemplate() {
     return this.paychecks.map(

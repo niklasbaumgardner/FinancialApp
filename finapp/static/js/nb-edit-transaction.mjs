@@ -173,6 +173,7 @@ export class EditTransactionModal extends AddTransactionModal {
     return html`<wa-dialog
       label="Edit Transaction"
       @wa-after-show=${this.handleDialogShow}
+      @wa-hide=${this.handleWaHide}
     >
       <form class="wa-stack">
         <input

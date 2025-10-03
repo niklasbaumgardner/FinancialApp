@@ -1,7 +1,7 @@
-import { NikElement } from "./nik-element.mjs";
+import { BaseDialog } from "./nb-base-dialog.mjs";
 import { html } from "./lit.bundle.mjs";
 
-export class DeleteBudget extends NikElement {
+export class DeleteBudget extends BaseDialog {
   static properties = {
     budget: { type: Object },
     transferBudgets: { type: Array },
@@ -11,20 +11,6 @@ export class DeleteBudget extends NikElement {
     deleteButton: "#delete-button",
     dialog: "wa-dialog",
   };
-
-  show() {
-    customElements.whenDefined("wa-dialog").then(() => {
-      this.updateComplete.then(() => {
-        this.dialog.updateComplete.then(() => {
-          this.dialog.open = true;
-        });
-      });
-    });
-  }
-
-  hide() {
-    this.dialog.open = false;
-  }
 
   transferBudgetsTemplate() {
     return this.transferBudgets.map(

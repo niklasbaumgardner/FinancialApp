@@ -1,7 +1,7 @@
-import { NikElement } from "./nik-element.mjs";
+import { BaseDialog } from "./nb-base-dialog.mjs";
 import { html } from "./lit.bundle.mjs";
 
-export class DeletePendingTransactionModal extends NikElement {
+export class DeletePendingTransactionModal extends BaseDialog {
   static properties = {
     pendingTransaction: { type: Object },
   };
@@ -11,20 +11,6 @@ export class DeletePendingTransactionModal extends NikElement {
     deleteButton: "#delete-button",
     form: "form",
   };
-
-  show() {
-    customElements.whenDefined("wa-dialog").then(() => {
-      this.updateComplete.then(() => {
-        this.dialog.updateComplete.then(() => {
-          this.dialog.open = true;
-        });
-      });
-    });
-  }
-
-  hide() {
-    this.dialog.open = false;
-  }
 
   async handleTransactionDelete() {
     this.deleteButton.loading = true;

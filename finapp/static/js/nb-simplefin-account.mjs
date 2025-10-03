@@ -1,8 +1,8 @@
 import { html } from "./lit.bundle.mjs";
-import { NikElement } from "./nik-element.mjs";
+import { BaseDialog } from "./nb-base-dialog.mjs";
 import "./nb-edit-simplefin-account.mjs";
 
-class SimpleFINAccountAccessConfirmation extends NikElement {
+class SimpleFINAccountAccessConfirmation extends BaseDialog {
   static properties = {
     account: { type: Object },
   };
@@ -12,20 +12,6 @@ class SimpleFINAccountAccessConfirmation extends NikElement {
     deleteButton: "#delete-button",
     form: "form",
   };
-
-  show() {
-    customElements.whenDefined("wa-dialog").then(() => {
-      this.updateComplete.then(() => {
-        this.dialog.updateComplete.then(() => {
-          this.dialog.open = true;
-        });
-      });
-    });
-  }
-
-  hide() {
-    this.dialog.open = false;
-  }
 
   async handleSubmit() {
     this.deleteButton.loading = true;

@@ -1,7 +1,7 @@
-import { NikElement } from "./nik-element.mjs";
+import { BaseDialog } from "./nb-base-dialog.mjs";
 import { html } from "./lit.bundle.mjs";
 
-export class MoveTransactionModal extends NikElement {
+export class MoveTransactionModal extends BaseDialog {
   static properties = {
     transaction: { type: Object },
     budgets: { type: Array },
@@ -26,20 +26,6 @@ export class MoveTransactionModal extends NikElement {
     }
 
     return this.budgets.filter((b) => b.id !== this.transaction.budget_id);
-  }
-
-  show() {
-    customElements.whenDefined("wa-dialog").then(() => {
-      this.updateComplete.then(() => {
-        this.dialog.updateComplete.then(() => {
-          this.dialog.open = true;
-        });
-      });
-    });
-  }
-
-  hide() {
-    this.dialog.open = false;
   }
 
   async handleTransactionMove() {
@@ -98,6 +84,7 @@ export class MoveTransactionModal extends NikElement {
 
   render() {
     return html`<wa-dialog
+      @wa-hide=${this.handleWaHide}
       label="Move transaction named ${this.transaction.name}?"
     >
       <form>${this.availableNewBudgetsTemplate()}</form>

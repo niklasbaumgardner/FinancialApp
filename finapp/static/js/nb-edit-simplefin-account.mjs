@@ -1,7 +1,7 @@
 import { html } from "./lit.bundle.mjs";
-import { NikElement } from "./nik-element.mjs";
+import { BaseDialog } from "./nb-base-dialog.mjs";
 
-export class EditSimpleFINAccount extends NikElement {
+export class EditSimpleFINAccount extends BaseDialog {
   static properties = {
     account: { type: Object },
   };
@@ -12,28 +12,6 @@ export class EditSimpleFINAccount extends NikElement {
     submitButton: "#submit-button",
     nameInput: "#name",
   };
-
-  handleDialogShow(event) {
-    if (event.target !== this.dialog) {
-      return;
-    }
-
-    this.nameInput.focus();
-  }
-
-  show() {
-    customElements.whenDefined("wa-dialog").then(() => {
-      this.updateComplete.then(() => {
-        this.dialog.updateComplete.then(() => {
-          this.dialog.open = true;
-        });
-      });
-    });
-  }
-
-  hide() {
-    this.dialog.open = false;
-  }
 
   reset() {
     this.submitButton.loading = false;
