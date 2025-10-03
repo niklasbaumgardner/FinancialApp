@@ -2,7 +2,7 @@
 head %}
 <script>
   const VIEW_TRANSACTIONS_CONTENT_URL =
-    "{{ url_for('viewtransactions_bp.api_get_transactions') }}";
+    "{{ url_for('viewtransactions_bp.api_get_transactions_stream') }}";
   const PENDING_TRANSACTIONS_URL =
     "{{ url_for('simplefin_bp.api_get_pending_transaction') }}";
   const API_SYNC_SIMPLEFIN_TRANSACTIONS_URL =
@@ -13,7 +13,7 @@ head %}
 
 <link
   rel="preload"
-  href="{{ url_for('viewtransactions_bp.api_get_transactions') }}"
+  href="{{ url_for('viewtransactions_bp.api_get_transactions_stream') }}"
   as="fetch"
   crossorigin="anonymous"
 />
