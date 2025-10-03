@@ -21,6 +21,7 @@ export class AddTransactionModal extends BaseDialog {
     tabGroup: "wa-tab-group",
     pendingTabPanel: "#pending",
     refreshPendingButton: "#refresh-pending-transactions",
+    pendingTransactionEls: { all: "nb-pending-transaction" },
   };
 
   get selectedBudget() {
@@ -143,6 +144,10 @@ export class AddTransactionModal extends BaseDialog {
   }
 
   setPendingTransactions(pendingTransactions) {
+    this.pendingTransactionEls.forEach((el) => {
+      el.deletePendingTransactionModal?.remove();
+      el.deletePendingTransactionModal = null;
+    });
     this.pendingTransactions = new Array(pendingTransactions.length).fill({});
     this.updateComplete.then(() => {
       this.pendingTransactions = pendingTransactions;
