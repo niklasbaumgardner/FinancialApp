@@ -1,3 +1,4 @@
+import { NikElement } from "./nik-element.mjs";
 import { html } from "./lit.bundle.mjs";
 import { BaseDialog } from "./nb-base-dialog.mjs";
 import "./nb-edit-simplefin-account.mjs";
