@@ -2,6 +2,9 @@ import { html } from "./lit.bundle.mjs";
 import { BaseChart } from "./nb-base-chart.mjs";
 
 class BudgetsLineChart extends BaseChart {
+  #firstTransactionDate;
+  #lastTransactionDate;
+
   static properties = {
     data: { type: Object },
   };
@@ -9,6 +12,7 @@ class BudgetsLineChart extends BaseChart {
   static queries = {
     ...BaseChart.queries,
     selectEl: "#budgets",
+    radioGroup: "#time",
   };
 
   get selectedBudgets() {
@@ -23,7 +27,7 @@ class BudgetsLineChart extends BaseChart {
     for (let date of this.dates) {
       let dataset = { date: date };
       for (let id of this.selectedBudgets) {
-        dataset[id] = this.datasets[date][id];
+        dataset[id] = this.currentDatasets[date][id];
       }
       arr.push(dataset);
     }
@@ -48,6 +52,10 @@ class BudgetsLineChart extends BaseChart {
     return series;
   }
 
+  get currentTimeSelection() {
+    return Number(this.radioGroup?.value ?? "1");
+  }
+
   get chartOptions() {
     return {
       ...this.defaultOptions,
@@ -69,7 +77,7 @@ class BudgetsLineChart extends BaseChart {
           gridLine: {
             enabled: true,
           },
-          label: { format: "%B %Y" },
+          label: { format: "%b %d, %Y" },
         },
         {
           type: "number",
@@ -100,15 +108,16 @@ class BudgetsLineChart extends BaseChart {
   }
 
   async init() {
+    this.datasetsMap = {};
+
     let { data, start_date, end_date } = this.data;
+    this.data = data;
+    this.#firstTransactionDate = new Date(start_date + "T00:00:00");
+    this.#lastTransactionDate = new Date(end_date + "T00:00:00");
 
-    this.dates = this.getDatesFromRange(start_date, end_date);
+    this.updateCurrentData(false);
 
-    this.datasets = this.parseDatasets(data);
-
-    this.makeAllBudgetsData();
-
-    data[-1] = { budget: { id: -1, name: "All Budgets" } };
+    this.data[-1] = { budget: { id: -1, name: "All Budgets" }, line_data: [] };
     this.names = Object.values(data).map((o) => {
       return { id: o.budget.id, name: o.budget.name };
     });
@@ -123,8 +132,32 @@ class BudgetsLineChart extends BaseChart {
     this.setupThemeWatcher();
   }
 
+  updateCurrentData(updateChart = true) {
+    if (!this.datasetsMap[this.currentTimeSelection]) {
+      let startDate = new Date(this.#lastTransactionDate).setMonth(
+        this.#lastTransactionDate.getMonth() - this.currentTimeSelection
+      );
+
+      startDate = new Date(Math.max(startDate, this.#firstTransactionDate));
+
+      this.dates = this.getDatesFromRange(startDate, this.#lastTransactionDate);
+
+      let currentDatasets = this.parseDatasets();
+      this.datasetsMap[this.currentTimeSelection] = currentDatasets;
+      this.currentDatasets = currentDatasets;
+
+      this.makeAllBudgetsData();
+    } else {
+      this.currentDatasets = this.datasetsMap[this.currentTimeSelection];
+    }
+
+    if (updateChart) {
+      this.updateChart();
+    }
+  }
+
   makeAllBudgetsData() {
-    for (let [date, dataset] of Object.entries(this.datasets)) {
+    for (let [date, dataset] of Object.entries(this.currentDatasets)) {
       let sum = 0;
       for (let amount of Object.values(dataset)) {
         sum += amount ?? 0;
@@ -134,26 +167,26 @@ class BudgetsLineChart extends BaseChart {
   }
 
   getDatesFromRange(startDate, endDate) {
-    let start = new Date(startDate + "T00:00:00");
-    let end = new Date(endDate + "T00:00:00");
-
-    let step = Math.floor((end - start) / 15);
+    let step = Math.floor((endDate - startDate) / 15);
+    if (step < 1) {
+      step = 1;
+    }
     let dates = [];
-    let curr = start.getTime();
-    while (curr < end.getTime()) {
+    let curr = startDate.getTime();
+    while (curr < endDate.getTime()) {
       dates.push(new Date(curr));
       curr += step;
     }
-    dates.push(end);
+    dates.push(endDate);
 
     return dates;
   }
 
-  parseDatasets(data) {
+  parseDatasets() {
     let datasets = {};
     for (let date of this.dates) {
       datasets[date] = {};
-      for (let { budget, line_data } of Object.values(data)) {
+      for (let { budget, line_data } of Object.values(this.data)) {
         let result = line_data.findLast((el) => {
           let [d, _] = el;
 
@@ -164,6 +197,10 @@ class BudgetsLineChart extends BaseChart {
     }
 
     return datasets;
+  }
+
+  handleTimeChange() {
+    this.updateCurrentData();
   }
 
   optionsTemplate() {
@@ -193,6 +230,18 @@ class BudgetsLineChart extends BaseChart {
           >
             ${this.optionsTemplate()}
           </wa-select>
+          <wa-radio-group
+            @change=${this.handleTimeChange}
+            orientation="horizontal"
+            value="1"
+            id="time"
+          >
+            <wa-radio appearance="button" value="1">1 Month</wa-radio>
+            <wa-radio appearance="button" value="3">3 Months</wa-radio>
+            <wa-radio appearance="button" value="6">6 Months</wa-radio>
+            <wa-radio appearance="button" value="12">1 Year</wa-radio>
+            <wa-radio appearance="button" value="-1">All Time</wa-radio>
+          </wa-radio-group>
           <wa-input
             class="w-fit hidden"
             id="startDate"
