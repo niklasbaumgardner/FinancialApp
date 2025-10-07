@@ -35,7 +35,7 @@ if not os.environ.get("FLASK_DEBUG"):
         dsn=os.environ.get("SENTRY_DSN"),
         traces_sample_rate=1.0,
         send_default_pii=True,
-        release="nb-budgets@2.0.6",
+        release="nb-budgets@2.0.7",
     )
 
 

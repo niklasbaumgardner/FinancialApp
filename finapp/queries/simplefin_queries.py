@@ -530,7 +530,6 @@ def convert_pending_transaction(
         name=p_transaction.name,
         amount=p_transaction.amount,
         t_date=p_transaction.date,
-        transaction_id=transaction_id,
     )
 
     delete_pending_transaction(id=p_transaction.id, create_completed=False)
