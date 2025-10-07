@@ -62,7 +62,7 @@ class Dashboard extends NikElement {
     }
 
     return html`<nb-budgets-line-chart
-      .data=${this.lineChartData}
+      .initialData=${this.lineChartData}
     ></nb-budgets-line-chart>`;
   }
 

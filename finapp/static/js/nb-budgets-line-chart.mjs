@@ -6,7 +6,7 @@ class BudgetsLineChart extends BaseChart {
   #lastTransactionDate;
 
   static properties = {
-    data: { type: Object },
+    initialData: { type: Object },
   };
 
   static queries = {
@@ -46,6 +46,7 @@ class BudgetsLineChart extends BaseChart {
         xKey: "date",
         yKey: key,
         yName: this.namesObject[key],
+        marker: { enabled: false },
       });
     }
 
@@ -110,7 +111,7 @@ class BudgetsLineChart extends BaseChart {
   async init() {
     this.datasetsMap = {};
 
-    let { data, start_date, end_date } = this.data;
+    let { data, start_date, end_date } = this.initialData;
     this.data = data;
     this.#firstTransactionDate = new Date(start_date + "T00:00:00");
     this.#lastTransactionDate = new Date(end_date + "T00:00:00");
@@ -132,16 +133,25 @@ class BudgetsLineChart extends BaseChart {
     this.setupThemeWatcher();
   }
 
-  updateCurrentData(updateChart = true) {
-    if (!this.datasetsMap[this.currentTimeSelection]) {
-      let startDate = new Date(this.#lastTransactionDate).setMonth(
+  updateDates() {
+    let startDate;
+    if (this.currentTimeSelection === -1) {
+      startDate = new Date(this.#firstTransactionDate);
+    } else {
+      startDate = new Date(this.#lastTransactionDate).setMonth(
         this.#lastTransactionDate.getMonth() - this.currentTimeSelection
       );
 
       startDate = new Date(Math.max(startDate, this.#firstTransactionDate));
+    }
 
-      this.dates = this.getDatesFromRange(startDate, this.#lastTransactionDate);
+    this.dates = this.getDatesFromRange(startDate, this.#lastTransactionDate);
+  }
 
+  updateCurrentData(updateChart = true) {
+    this.updateDates();
+
+    if (!this.datasetsMap[this.currentTimeSelection]) {
       let currentDatasets = this.parseDatasets();
       this.datasetsMap[this.currentTimeSelection] = currentDatasets;
       this.currentDatasets = currentDatasets;
@@ -167,10 +177,7 @@ class BudgetsLineChart extends BaseChart {
   }
 
   getDatesFromRange(startDate, endDate) {
-    let step = Math.floor((endDate - startDate) / 15);
-    if (step < 1) {
-      step = 1;
-    }
+    let step = 1000 * 24 * 60 * 60;
     let dates = [];
     let curr = startDate.getTime();
     while (curr < endDate.getTime()) {
