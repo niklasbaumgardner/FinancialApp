@@ -41,7 +41,6 @@ class ViewTransactions extends NikElement {
     this.requestData();
     this.requestPendingTransactions();
 
-    document.addEventListener("UpdateBudgets", this);
     document.addEventListener("RequestNewData", this);
     document.addEventListener("keydown", this);
     document.addEventListener("UpdatePendingTransactions", this);
@@ -49,11 +48,6 @@ class ViewTransactions extends NikElement {
 
   handleEvent(event) {
     switch (event.type) {
-      case "UpdateBudgets": {
-        let budgets = event.detail.budgets;
-        this.updateBudgets(budgets);
-        break;
-      }
       case "RequestNewData": {
         let includeBudgets = event.detail.includeBudgets;
         this.requestData(includeBudgets);
@@ -81,7 +75,10 @@ class ViewTransactions extends NikElement {
     }
 
     if (this.addTransactionModal) {
-      this.addTransactionModal.budgets = this.budgets;
+      this.addTransactionModal.updateBudgets(this.budgets);
+    }
+    for (let el of document.querySelectorAll("nb-edit-transaction")) {
+      el.updateBudgets(this.budgets);
     }
   }
 
