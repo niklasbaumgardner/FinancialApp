@@ -51,7 +51,7 @@ export class AddTransactionModal extends BaseDialog {
     this.budgets.sort((a, b) => a.name.localeCompare(b.name));
     this.requestUpdate();
     this.updateComplete.then(() => {
-      if (this.budgetsSelect.selectedOptions[0].updateDefaultLabel()) {
+      if (this.budgetsSelect.selectedOptions[0]?.updateDefaultLabel()) {
         this.budgetsSelect.selectionChanged();
       }
     });
