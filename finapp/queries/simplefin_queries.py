@@ -145,12 +145,19 @@ def upsert_account_balances(accounts: list[dict]):
     if not accounts:
         return
 
+    # force all account balances to take most recent date
+    max_date = None
+    for a in accounts:
+        d = date.fromtimestamp(a["balance-date"])
+        if max_date is None or d > max_date:
+            max_date = d
+
     accounts_data = [
         {
             "account_id": a["id"],
             "user_id": current_user.id,
             "balance": round(float(a["balance"]), 2),
-            "date": date.fromtimestamp(a["balance-date"]),
+            "date": max_date,
         }
         for a in accounts
     ]
