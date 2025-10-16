@@ -50,12 +50,17 @@ export class ThemeSelector extends NikElement {
       button.checked = button.id === this.theme.mode;
     }
 
-    this.icon.name =
-      this.theme.mode === "dark" ? "moon-outline" : "sunny-outline";
+    this.icon.name = this.getThemeIconName();
   }
 
   setTheme(themeMode) {
     this.theme.mode = themeMode;
+
+    for (let button of this.themeItems) {
+      button.checked = button.id === this.theme.mode;
+    }
+
+    this.icon.name = this.getThemeIconName();
 
     console.log("setting theme mode", this.theme.mode);
   }
