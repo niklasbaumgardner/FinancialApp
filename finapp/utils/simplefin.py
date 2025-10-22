@@ -196,7 +196,9 @@ def sync_simplefin_transactions(credentials):
 
 
 def sync_simplefin_account_balances(credentials):
-    accounts = simplefin_queries.get_simplefin_accounts_with_timestamp()
+    accounts = simplefin_queries.get_simplefin_accounts_with_timestamp(
+        access_type=AccountAccess.BALANCE
+    )
 
     account_ids = [
         a.id
