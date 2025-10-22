@@ -65,7 +65,7 @@ class BudgetsLineChart extends BaseChart {
       },
       data: this.currentData,
       title: {
-        text: "Budgets Over Time",
+        text: "Budget Totals",
       },
       series: this.currentSeries,
       legend: {

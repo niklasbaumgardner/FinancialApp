@@ -14,7 +14,7 @@ class NetWorthLineChart extends BaseChart {
       },
       data: this.data,
       title: {
-        text: "Net Worth Over Time",
+        text: "Net Worth",
       },
       subtitle: {
         text: `Current Net Worth: ${this.data
@@ -30,6 +30,7 @@ class NetWorthLineChart extends BaseChart {
           xKey: "date",
           yKey: "amount",
           yName: "Net Worth",
+          marker: { enabled: false },
           // fill: {
           //   type: "gradient",
           // },
