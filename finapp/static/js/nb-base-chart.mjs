@@ -1,4 +1,5 @@
 import { NikElement } from "./nik-element.mjs";
+import { AgCharts } from "./agCharts.bundle.mjs";
 
 export class BaseChart extends NikElement {
   static properties = {
@@ -36,7 +37,7 @@ export class BaseChart extends NikElement {
   }
 
   async createChart() {
-    this.chart = agCharts.AgCharts.create(this.chartOptions);
+    this.chart = AgCharts.create(this.chartOptions);
   }
 
   updateChart() {

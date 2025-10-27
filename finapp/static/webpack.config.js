@@ -6,6 +6,7 @@ const config = {
   entry: {
     main: __dirname + "/js/main.mjs",
     css: __dirname + "/js/css.mjs",
+    agCharts: __dirname + "/js/agCharts.mjs",
     agGrid: __dirname + "/js/agGrid.mjs",
     lit: __dirname + "/js/lit.mjs",
   },
