@@ -52,6 +52,8 @@ class NetWorthLineChart extends BaseChart {
             enabled: true,
           },
           label: {},
+          nice: true,
+          min: Math.min(0, ...this.data.map((o) => o.amount)),
         },
       ],
       formatter: {

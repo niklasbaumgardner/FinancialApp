@@ -58,12 +58,13 @@ class BudgetsLineChart extends BaseChart {
   }
 
   get chartOptions() {
+    const currentData = this.currentData;
     return {
       ...this.defaultOptions,
       background: {
         visible: false,
       },
-      data: this.currentData,
+      data: currentData,
       title: {
         text: "Budget Totals",
       },
@@ -87,6 +88,8 @@ class BudgetsLineChart extends BaseChart {
             enabled: true,
           },
           label: {},
+          nice: true,
+          min: Math.min(0, ...currentData.flatMap((o) => Object.values(o))),
         },
       ],
       formatter: {
