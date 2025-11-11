@@ -75,9 +75,21 @@ class NetWorthLineChart extends BaseChart {
     };
   }
 
+  maybeCleanData() {
+    let a = this.data.at(-1).amount;
+    let b = this.data.at(-2).amount;
+
+    let percentChange = (100 * Math.abs(a - b)) / ((a + b) / 2);
+
+    if (percentChange > 100) {
+      this.data.pop();
+    }
+  }
+
   async init() {
     await this.updateComplete;
     this.data.forEach((o) => (o.date = new Date(o.date + "T00:00:00")));
+    this.maybeCleanData();
     await this.createChart();
     this.setupThemeWatcher();
   }
