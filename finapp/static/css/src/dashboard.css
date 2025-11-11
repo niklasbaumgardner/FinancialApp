@@ -7,3 +7,11 @@
     height: 500px;
   }
 }
+
+.text-greater-than-zero {
+  color: var(--color-green-50);
+}
+
+.text-less-than-zero {
+  color: var(--color-red-60);
+}

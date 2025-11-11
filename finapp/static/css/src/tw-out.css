@@ -208,6 +208,11 @@
   .gap-\(--wa-space-xs\)\! {
     gap: var(--wa-space-xs) !important;
   }
+  .truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
   .overflow-hidden {
     overflow: hidden;
   }
@@ -261,6 +266,9 @@
   }
   .text-\[unset\]\! {
     color: unset !important;
+  }
+  .italic {
+    font-style: italic;
   }
   .no-underline\! {
     text-decoration-line: none !important;
