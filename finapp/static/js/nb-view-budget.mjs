@@ -41,6 +41,7 @@ export class ViewBudget extends NikElement {
     // this.currentPagination = this.pagination;
 
     // this.search = new Search([], 0, 1, 1, SEARCH_PAGE_URL);
+    const currentPageParams = window.location.search;
 
     this.pagination = new Pagination(
       this.transactions,
@@ -48,10 +49,19 @@ export class ViewBudget extends NikElement {
       this.currentPage,
       this.numPages,
       GET_PAGE_URL,
+      currentPageParams,
       this
     );
 
-    this.search = new Search([], 0, 1, 1, SEARCH_PAGE_URL, this);
+    this.search = new Search(
+      [],
+      0,
+      1,
+      1,
+      SEARCH_PAGE_URL,
+      currentPageParams,
+      this
+    );
 
     this.currentPagination = this.pagination;
 

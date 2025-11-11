@@ -4,6 +4,7 @@ export class Pagination {
   #currentPage = null;
   #numPages = null;
   #url = null;
+  #searchParamsString = null;
   #controller = null;
 
   constructor(
@@ -12,6 +13,7 @@ export class Pagination {
     currentPage,
     numPages,
     url,
+    searchParamsString,
     controller
   ) {
     this.currentRequests = {};
@@ -24,6 +26,7 @@ export class Pagination {
     this.#currentPage = currentPage;
     this.#numPages = numPages;
     this.#url = url;
+    this.#searchParamsString = searchParamsString;
     this.#controller = controller;
   }
 
@@ -98,7 +101,7 @@ export class Pagination {
   }
 
   getParams(page) {
-    let params = new URLSearchParams();
+    let params = new URLSearchParams(this.#searchParamsString);
     params.set("page", page);
     params.set("sort", this.currentSort);
 
