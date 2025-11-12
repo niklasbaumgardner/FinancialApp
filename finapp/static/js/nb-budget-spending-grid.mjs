@@ -241,7 +241,7 @@ class BudgetSpendingGrid extends NikElement {
   render() {
     return html`<wa-details
       summary="Spending by budget"
-      appearance="filled outlined"
+      appearance="filled-outlined"
       open
     >
       <div class="wa-stack">
