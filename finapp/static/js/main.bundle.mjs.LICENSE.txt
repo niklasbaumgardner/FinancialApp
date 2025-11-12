@@ -1,29 +1,31 @@
-/**
- * @license
- * Copyright 2017 Google LLC
- * SPDX-License-Identifier: BSD-3-Clause
- */
+/*! Bundled license information:
 
-/**
- * @license
- * Copyright 2018 Google LLC
- * SPDX-License-Identifier: BSD-3-Clause
- */
+lit-html/directive-helpers.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   * SPDX-License-Identifier: BSD-3-Clause
+   *)
+*/
 
-/**
- * @license
- * Copyright 2019 Google LLC
- * SPDX-License-Identifier: BSD-3-Clause
- */
+/*! Bundled license information:
 
-/**
- * @license
- * Copyright 2020 Google LLC
- * SPDX-License-Identifier: BSD-3-Clause
- */
+lit-html/directives/unsafe-html.js:
+  (**
+   * @license
+   * Copyright 2017 Google LLC
+   * SPDX-License-Identifier: BSD-3-Clause
+   *)
+*/
 
-/**
- * @license
- * Copyright 2022 Google LLC
- * SPDX-License-Identifier: BSD-3-Clause
- */
+/*! Bundled license information:
+
+lit-html/lit-html.js:
+  (**
+   * @license
+   * Copyright 2017 Google LLC
+   * SPDX-License-Identifier: BSD-3-Clause
+   *)
+*/
+
+/*! Copyright 2025 Fonticons, Inc. - https://webawesome.com/license */

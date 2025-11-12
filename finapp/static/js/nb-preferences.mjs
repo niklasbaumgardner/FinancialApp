@@ -613,7 +613,7 @@ export class PreferencesCard extends NikElement {
                 <dd class="wa-heading-l">$5,610.00</dd>
               </dl>
               <wa-badge
-                appearance="filled outlined"
+                appearance="filled-outlined"
                 variant="success"
                 attention="none"
                 >Paid</wa-badge

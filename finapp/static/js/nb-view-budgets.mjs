@@ -119,7 +119,7 @@ export class ViewBudgets extends NikElement {
         </div>
         <wa-button
           variant="neutral"
-          appearance="filled outlined"
+          appearance="filled-outlined"
           @click=${this.handleAddBudgetClick}
           >Add New Budget</wa-button
         >

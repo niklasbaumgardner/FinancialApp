@@ -240,7 +240,7 @@ export class ViewBudget extends NikElement {
         html`<wa-button
           value=${n}
           variant=${n === this.currentPage ? "brand" : null}
-          appearance=${n !== this.currentPage ? "filled outlined" : null}
+          appearance=${n !== this.currentPage ? "filled-outlined" : null}
           >${n}</wa-button
         >`
     );
@@ -266,7 +266,7 @@ export class ViewBudget extends NikElement {
       >
         <wa-button
           id="prev"
-          appearance="filled outlined"
+          appearance="filled-outlined"
           value=${this.currentPage - 1}
           ?disabled=${this.currentPage === 1}
         >
@@ -280,7 +280,7 @@ export class ViewBudget extends NikElement {
         ${this.pageButtonsTemplate()}
         <wa-button
           id="next"
-          appearance="filled outlined"
+          appearance="filled-outlined"
           value=${this.currentPage + 1}
           ?disabled=${this.currentPage === this.numPages}
         >

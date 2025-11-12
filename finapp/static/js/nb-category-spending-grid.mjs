@@ -270,7 +270,7 @@ class CategorySpendingGrid extends NikElement {
   render() {
     return html`<wa-details
       summary="Spending by category"
-      appearance="filled outlined"
+      appearance="filled-outlined"
       open
     >
       <div class="wa-stack">

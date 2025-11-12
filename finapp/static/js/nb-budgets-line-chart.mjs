@@ -225,7 +225,7 @@ class BudgetsLineChart extends BaseChart {
   render() {
     return html`<wa-details
       summary="Budgets line chart"
-      appearance="filled outlined"
+      appearance="filled-outlined"
       open
     >
       <div class="wa-stack">

@@ -97,7 +97,7 @@ class NetWorthLineChart extends BaseChart {
   render() {
     return html`<wa-details
       summary="Net worth"
-      appearance="filled outlined"
+      appearance="filled-outlined"
       open
     >
       <div class="wa-stack">

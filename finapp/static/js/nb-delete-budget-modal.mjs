@@ -45,7 +45,7 @@ export class DeleteBudget extends BaseDialog {
         <wa-button
           class="grow"
           variant="neutral"
-          appearance="filled outlined"
+          appearance="filled-outlined"
           data-dialog="close"
           >Cancel</wa-button
         >

@@ -18,7 +18,7 @@ class Paycheck extends NikElement {
   }
 
   render() {
-    return html`<wa-details appearance="filled outlined">
+    return html`<wa-details appearance="filled-outlined">
       <div slot="summary">
         Paycheck on
         <wa-format-date
