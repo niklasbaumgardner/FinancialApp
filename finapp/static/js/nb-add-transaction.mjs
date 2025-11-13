@@ -111,7 +111,7 @@ export class AddTransactionModal extends BaseDialog {
   budgetOptionsTemplate() {
     return this.budgets.map(
       (b) => html`<wa-option value=${b.id}
-        ><span class="wa-heading-s">${b.name}</span>:
+        ><span class="">${b.name}</span>:
         ${new Intl.NumberFormat(undefined, {
           style: "currency",
           currency: "USD",

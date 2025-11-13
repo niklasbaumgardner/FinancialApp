@@ -36,7 +36,7 @@ export class Transfer extends NikElement {
   sourceOptionsTemplate() {
     return this.sourceOptions.map(
       (b) => html`<wa-option value=${b.id}
-        ><span class="wa-heading-s">${b.name}</span>:
+        ><span class="">${b.name}</span>:
         ${new Intl.NumberFormat(undefined, {
           style: "currency",
           currency: "USD",
@@ -61,7 +61,7 @@ export class Transfer extends NikElement {
   destOptionsTemplate() {
     return this.destOptions.map(
       (b) => html`<wa-option value=${b.id}
-        ><span class="wa-heading-s">${b.name}</span>:
+        ><span class="">${b.name}</span>:
         ${new Intl.NumberFormat(undefined, {
           style: "currency",
           currency: "USD",

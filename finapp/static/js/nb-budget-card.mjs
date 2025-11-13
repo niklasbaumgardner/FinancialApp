@@ -152,6 +152,7 @@ export class BudgetCard extends NikElement {
             class="grow"
             id="budget-name"
             name="name"
+            label="Name"
             value="${this.budget.name}"
             autocomplete="niklas"
             size="small"
@@ -213,7 +214,7 @@ export class BudgetCard extends NikElement {
         href=${this.budget.url}
       >
         <div class="wa-split">
-          <span class="wa-heading-m">${this.budget.name}</span>
+          <span class="wa-heading-l">${this.budget.name}</span>
           ${this.sharedUserTemplate()}
         </div>
         <div class="wa-split flex-nowrap!">

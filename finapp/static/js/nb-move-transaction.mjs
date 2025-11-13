@@ -67,7 +67,7 @@ export class MoveTransactionModal extends BaseDialog {
         ${moveableBudgets.map(
           (budget) =>
             html`<wa-option value="${budget.id}"
-              ><span class="wa-heading-s">${budget.name}</span>:
+              ><span class="">${budget.name}</span>:
               ${new Intl.NumberFormat(undefined, {
                 style: "currency",
                 currency: "USD",

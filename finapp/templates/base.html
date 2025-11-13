@@ -98,7 +98,7 @@
       if (window.Sentry) {
         Sentry.onLoad(function () {
           Sentry.init({
-            release: "nb-budgets@2.1.0",
+            release: "nb-budgets@2.1.1",
             environment: "production",
             integrations: [
               Sentry.browserTracingIntegration(),
@@ -118,24 +118,24 @@
           <div class="wa-split">
             <div class="wa-cluster">
               {% block backButton %}{% endblock backButton %}
-              <a class="wa-heading-l" href="/">NB Budgets</a>
+              <a class="wa-heading-xl" href="/">NB Budgets</a>
               <a
-                class="wa-desktop-only wa-heading-m"
+                class="wa-desktop-only wa-heading-l"
                 href="{{ url_for('viewbudgets_bp.viewbudgets') }}"
                 >Budgets</a
               >
               <a
-                class="wa-desktop-only wa-heading-m"
+                class="wa-desktop-only wa-heading-l"
                 href="{{ url_for('paycheck_bp.add_paycheck') }}"
                 >Add Paycheck</a
               >
               <a
-                class="wa-desktop-only wa-heading-m"
+                class="wa-desktop-only wa-heading-l"
                 href="{{ url_for('transfer_bp.transfer') }}"
                 >Transfer</a
               >
               <a
-                class="wa-desktop-only wa-heading-m"
+                class="wa-desktop-only wa-heading-l"
                 href="{{ url_for('dashboard_bp.dashboard') }}"
                 >Dashboard</a
               >
@@ -193,19 +193,19 @@
         </div>
       </header>
       <nav slot="navigation" class="wa-mobile-only">
-        <a class="wa-heading-l" href="/">NB Budgets</a>
+        <a class="wa-heading-xl" href="/">NB Budgets</a>
         <a
-          class="wa-heading-m"
+          class="wa-heading-l"
           href="{{ url_for('viewbudgets_bp.viewbudgets') }}"
           >Budgets</a
         >
-        <a class="wa-heading-m" href="{{ url_for('paycheck_bp.add_paycheck') }}"
+        <a class="wa-heading-l" href="{{ url_for('paycheck_bp.add_paycheck') }}"
           >Add Paycheck</a
         >
-        <a class="wa-heading-m" href="{{ url_for('transfer_bp.transfer') }}"
+        <a class="wa-heading-l" href="{{ url_for('transfer_bp.transfer') }}"
           >Transfer</a
         >
-        <a class="wa-heading-m" href="{{ url_for('dashboard_bp.dashboard') }}"
+        <a class="wa-heading-l" href="{{ url_for('dashboard_bp.dashboard') }}"
           >Dashboard</a
         >
 

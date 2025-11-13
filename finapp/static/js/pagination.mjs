@@ -224,6 +224,7 @@ export class Search extends Pagination {
     currentPage,
     numPages,
     url,
+    searchParamsString,
     controller
   ) {
     super(
@@ -232,6 +233,7 @@ export class Search extends Pagination {
       currentPage,
       numPages,
       url,
+      searchParamsString,
       controller
     );
 

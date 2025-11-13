@@ -123,7 +123,7 @@ export class EditTransactionModal extends AddTransactionModal {
       (b) => html`<wa-option
         value=${b.id}
         ?selected=${b.id === this.transaction.budget_id}
-        ><span class="wa-heading-s">${b.name}</span>:
+        ><span class="">${b.name}</span>:
         ${new Intl.NumberFormat(undefined, {
           style: "currency",
           currency: "USD",

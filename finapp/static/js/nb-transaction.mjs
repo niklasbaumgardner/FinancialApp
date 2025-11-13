@@ -295,6 +295,7 @@ export class Transaction extends NikElement {
             <wa-input
               id="name"
               name="name"
+              label="Name"
               autocomplete="niklas"
               value=${this.transaction.name}
               required
@@ -304,6 +305,7 @@ export class Transaction extends NikElement {
               class="w-fit"
               name="date"
               type="date"
+              label="Date"
               value=${this.transaction.date}
               size="small"
               required
@@ -314,6 +316,7 @@ export class Transaction extends NikElement {
           <wa-input
             id="amount"
             name="amount"
+            label="Amount"
             class="min-w-[0]"
             autocomplete="niklas"
             step=".01"

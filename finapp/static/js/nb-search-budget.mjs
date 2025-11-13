@@ -426,7 +426,7 @@ export class SearchBudget extends NikElement {
       </div>
 
       <div
-        class="wa-cluster flex-nowrap"
+        class="wa-cluster flex-nowrap items-end!"
         @SearchItemRemoved=${this.handleSearchItemRemoved}
       >
         ${this.searchItems}

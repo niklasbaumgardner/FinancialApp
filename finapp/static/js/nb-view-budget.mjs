@@ -352,12 +352,13 @@ export class ViewBudget extends NikElement {
             </div>
           </div>
 
-          <div class="wa-cluster @5xl:flex-nowrap!">
+          <div class="wa-cluster @5xl:flex-nowrap! items-end!">
             <wa-input
               class="grow basis-[200%]"
               type="text"
               id="name"
               name="name"
+              label="Name"
               placeholder="Spent too much?"
               autocomplete="niklas"
               required
@@ -369,6 +370,7 @@ export class ViewBudget extends NikElement {
               step=".01"
               id="amount"
               name="amount"
+              label="Amount"
               placeholder="0.00"
               autocomplete="niklas"
               required
@@ -379,6 +381,7 @@ export class ViewBudget extends NikElement {
               type="date"
               id="date"
               name="date"
+              label="Date"
               value=${CURRENT_DATE}
               required
             ></wa-input>

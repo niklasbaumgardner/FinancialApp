@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto+Serif:ital,opsz,wght@0,8..144,100..900;1,8..144,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Wix+Madefor+Text:ital,wght@0,400..800;1,400..800&display=swap');
+@import url("https://fonts.bunny.net/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto+Serif:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Wix+Madefor+Text:ital,wght@0,400..800;1,400..800&display=swap");
 
 @layer wa-theme {
   .wa-theme-matter,
@@ -22,8 +22,16 @@
     --wa-color-text-quiet: var(--wa-color-neutral-40);
     --wa-color-text-link: var(--wa-color-brand-40);
 
-    --wa-color-overlay-modal: color-mix(in oklab, var(--wa-color-neutral-05) 50%, transparent);
-    --wa-color-overlay-inline: color-mix(in oklab, var(--wa-color-neutral-80) 25%, transparent);
+    --wa-color-overlay-modal: color-mix(
+      in oklab,
+      var(--wa-color-neutral-05) 50%,
+      transparent
+    );
+    --wa-color-overlay-inline: color-mix(
+      in oklab,
+      var(--wa-color-neutral-80) 25%,
+      transparent
+    );
 
     --wa-color-shadow: rgb(0 0 0 / 0.3);
 
@@ -97,7 +105,11 @@
 
     --wa-color-surface-raised: var(--wa-color-neutral-10);
     --wa-color-surface-default: var(--wa-color-neutral-05);
-    --wa-color-surface-lowered: color-mix(in oklab, var(--wa-color-surface-default), black 20%);
+    --wa-color-surface-lowered: color-mix(
+      in oklab,
+      var(--wa-color-surface-default),
+      black 20%
+    );
     --wa-color-surface-border: var(--wa-color-neutral-20);
 
     --wa-color-text-normal: var(--wa-color-neutral-95);
@@ -105,11 +117,16 @@
     --wa-color-text-link: var(--wa-color-brand-70);
 
     --wa-color-overlay-modal: color-mix(in oklab, black 60%, transparent);
-    --wa-color-overlay-inline: color-mix(in oklab, var(--wa-color-neutral-50) 10%, transparent);
+    --wa-color-overlay-inline: color-mix(
+      in oklab,
+      var(--wa-color-neutral-50) 10%,
+      transparent
+    );
 
     --wa-color-shadow: color-mix(
       in oklab,
-      var(--wa-color-surface-lowered) calc(var(--wa-shadow-blur-scale) * 32% + 40%),
+      var(--wa-color-surface-lowered)
+        calc(var(--wa-shadow-blur-scale) * 32% + 40%),
       transparent
     );
 
@@ -180,24 +197,48 @@
     font-family: var(--wa-font-family-body);
 
     /* #region Fonts ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-    --wa-font-family-body: 'Wix Madefor Text', sans-serif;
+    --wa-font-family-body: "Wix Madefor Text", sans-serif;
     --wa-font-family-heading: var(--wa-font-family-body);
-    --wa-font-family-code: 'Roboto Mono', monospace;
-    --wa-font-family-longform: 'Roboto Serif', serif;
+    --wa-font-family-code: "Roboto Mono", monospace;
+    --wa-font-family-longform: "Roboto Serif", serif;
 
     /* Font sizes use a ratio of 1.125 to scale sizes proportionally.
      * For larger font sizes, each size is twice 1.125x larger to maximize impact.
      * Each value uses `rem` units and is rounded to the nearest whole pixel when rendered. */
     --wa-font-size-scale: 1;
-    --wa-font-size-2xs: round(calc(var(--wa-font-size-xs) / 1.125), 1px); /* 11px */
-    --wa-font-size-xs: round(calc(var(--wa-font-size-s) / 1.125), 1px); /* 12px */
-    --wa-font-size-s: round(calc(var(--wa-font-size-m) / 1.125), 1px); /* 14px */
+    --wa-font-size-2xs: round(
+      calc(var(--wa-font-size-xs) / 1.125),
+      1px
+    ); /* 11px */
+    --wa-font-size-xs: round(
+      calc(var(--wa-font-size-s) / 1.125),
+      1px
+    ); /* 12px */
+    --wa-font-size-s: round(
+      calc(var(--wa-font-size-m) / 1.125),
+      1px
+    ); /* 14px */
     --wa-font-size-m: calc(1rem * var(--wa-font-size-scale)); /* 16px */
-    --wa-font-size-l: round(calc(var(--wa-font-size-m) * 1.125 * 1.125), 1px); /* 20px */
-    --wa-font-size-xl: round(calc(var(--wa-font-size-l) * 1.125 * 1.125), 1px); /* 25px */
-    --wa-font-size-2xl: round(calc(var(--wa-font-size-xl) * 1.125 * 1.125), 1px); /* 32px */
-    --wa-font-size-3xl: round(calc(var(--wa-font-size-2xl) * 1.125 * 1.125), 1px); /* 41px */
-    --wa-font-size-4xl: round(calc(var(--wa-font-size-3xl) * 1.125 * 1.125), 1px); /* 52px */
+    --wa-font-size-l: round(
+      calc(var(--wa-font-size-m) * 1.125 * 1.125),
+      1px
+    ); /* 20px */
+    --wa-font-size-xl: round(
+      calc(var(--wa-font-size-l) * 1.125 * 1.125),
+      1px
+    ); /* 25px */
+    --wa-font-size-2xl: round(
+      calc(var(--wa-font-size-xl) * 1.125 * 1.125),
+      1px
+    ); /* 32px */
+    --wa-font-size-3xl: round(
+      calc(var(--wa-font-size-2xl) * 1.125 * 1.125),
+      1px
+    ); /* 41px */
+    --wa-font-size-4xl: round(
+      calc(var(--wa-font-size-3xl) * 1.125 * 1.125),
+      1px
+    ); /* 52px */
 
     --wa-font-size-smaller: round(calc(1em / 1.125), 1px);
     --wa-font-size-larger: round(calc(1em * 1.125 * 1.125), 1px);
@@ -260,7 +301,8 @@
     /* #region Focus ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
     --wa-focus-ring-style: solid;
     --wa-focus-ring-width: 0.125rem; /* 2px */
-    --wa-focus-ring: var(--wa-focus-ring-style) var(--wa-focus-ring-width) var(--wa-color-focus);
+    --wa-focus-ring: var(--wa-focus-ring-style) var(--wa-focus-ring-width)
+      var(--wa-color-focus);
     --wa-focus-ring-offset: 0rem; /* 0px */
     /* #endregion */
 
@@ -285,12 +327,12 @@
     --wa-shadow-spread-m: calc(var(--wa-shadow-spread-scale) * 0.25rem);
     --wa-shadow-spread-l: calc(var(--wa-shadow-spread-scale) * 0.5rem);
 
-    --wa-shadow-s: var(--wa-shadow-offset-x-s) var(--wa-shadow-offset-y-s) var(--wa-shadow-blur-s)
-      var(--wa-shadow-spread-s) var(--wa-color-shadow);
-    --wa-shadow-m: var(--wa-shadow-offset-x-m) var(--wa-shadow-offset-y-m) var(--wa-shadow-blur-m)
-      var(--wa-shadow-spread-m) var(--wa-color-shadow);
-    --wa-shadow-l: var(--wa-shadow-offset-x-l) var(--wa-shadow-offset-y-l) var(--wa-shadow-blur-l)
-      var(--wa-shadow-spread-l) var(--wa-color-shadow);
+    --wa-shadow-s: var(--wa-shadow-offset-x-s) var(--wa-shadow-offset-y-s)
+      var(--wa-shadow-blur-s) var(--wa-shadow-spread-s) var(--wa-color-shadow);
+    --wa-shadow-m: var(--wa-shadow-offset-x-m) var(--wa-shadow-offset-y-m)
+      var(--wa-shadow-blur-m) var(--wa-shadow-spread-m) var(--wa-color-shadow);
+    --wa-shadow-l: var(--wa-shadow-offset-x-l) var(--wa-shadow-offset-y-l)
+      var(--wa-shadow-blur-l) var(--wa-shadow-spread-l) var(--wa-color-shadow);
     /* #endregion */
 
     /* #region Transitions ~~~~~~~~~~~~~~~~~~~~~~ */
@@ -325,14 +367,17 @@
 
     --wa-form-control-placeholder-color: var(--wa-color-gray-50);
 
-    --wa-form-control-required-content: '*';
+    --wa-form-control-required-content: "*";
     --wa-form-control-required-content-color: inherit;
-    --wa-form-control-required-content-offset: -0.1em;
+    --wa-form-control-required-content-offset: 0.1em;
 
     --wa-form-control-padding-block: 0.75em;
     --wa-form-control-padding-inline: 1em;
     --wa-form-control-height: round(
-      calc(2 * var(--wa-form-control-padding-block) + 1em * var(--wa-form-control-value-line-height)),
+      calc(
+        2 * var(--wa-form-control-padding-block) + 1em *
+          var(--wa-form-control-value-line-height)
+      ),
       1px
     );
     --wa-form-control-toggle-size: round(1.25em, 1px);
@@ -361,7 +406,7 @@
 
 @layer wa-theme-overrides {
   @property --ripple-progress {
-    syntax: '<number>';
+    syntax: "<number>";
     initial-value: 0;
     inherits: false;
   }
@@ -373,7 +418,7 @@
 
     wa-button,
     button,
-    input:where([type='button'], [type='reset'], [type='submit']) {
+    input:where([type="button"], [type="reset"], [type="submit"]) {
       --wa-form-control-border-radius: var(--wa-border-radius-pill);
 
       &:where(:not(wa-button)),
@@ -381,14 +426,14 @@
         box-shadow: 0 0 transparent;
       }
 
-      &:not([appearance~='plain']) {
+      &:not([appearance~="plain"]) {
         &:where(:not(wa-button)),
         &::part(base) {
           padding-inline: calc(var(--wa-form-control-padding-inline) * 1.5);
         }
       }
 
-      &:not([appearance~='outlined'], [appearance~='plain']):hover {
+      &:not([appearance~="outlined"], [appearance~="plain"]):hover {
         &:where(:not(wa-button)),
         &::part(base) {
           box-shadow: var(--wa-shadow-s);
@@ -402,7 +447,7 @@
         }
       }
 
-      &:is([appearance~='outlined']) {
+      &:is([appearance~="outlined"]) {
         &:where(:not(wa-button)),
         &::part(base) {
           border-color: var(--wa-form-control-border-color);
@@ -413,8 +458,13 @@
       /* TODO: fix */
       --ripple-progress: 1;
       --ripple-progress-inv: calc(1 - var(--ripple-progress));
-      --ripple-radius: calc(var(--ripple-start-radius) * var(--ripple-progress-inv) + 100% * var(--ripple-progress));
-      --ripple-opacity: calc(var(--ripple-start-opacity) * var(--ripple-progress-inv));
+      --ripple-radius: calc(
+        var(--ripple-start-radius) * var(--ripple-progress-inv) + 100% *
+          var(--ripple-progress)
+      );
+      --ripple-opacity: calc(
+        var(--ripple-start-opacity) * var(--ripple-progress-inv)
+      );
       --ripple-color: hsl(0 0% 100% / var(--ripple-opacity));
       --ripple-center-x: calc(100% * var(--mouse-local-x, 0.5));
       --ripple-center-y: calc(100% * var(--mouse-local-y, 0.5));
@@ -424,8 +474,7 @@
         var(--ripple-color) var(--ripple-radius),
         transparent 0
       );
-      transition:
-        var(--wa-transition-fast),
+      transition: var(--wa-transition-fast),
         --ripple-progress var(--ripple-duration);
 
       &:active {
@@ -434,7 +483,7 @@
       }
     }
 
-    input[type='checkbox'],
+    input[type="checkbox"],
     wa-checkbox::part(control),
     wa-tree-item::part(checkbox__control) {
       border-radius: calc(var(--wa-border-radius-s) / 2);
@@ -442,17 +491,17 @@
 
     input:where(
         :not(
-          [type='button'],
-          [type='checkbox'],
-          [type='color'],
-          [type='file'],
-          [type='hidden'],
-          [type='image'],
-          [type='radio'],
-          [type='range'],
-          [type='reset'],
-          [type='submit']
-        )
+            [type="button"],
+            [type="checkbox"],
+            [type="color"],
+            [type="file"],
+            [type="hidden"],
+            [type="image"],
+            [type="radio"],
+            [type="range"],
+            [type="reset"],
+            [type="submit"]
+          )
       ),
     select,
     textarea,
@@ -464,26 +513,30 @@
       /* Needed for floating label */
       position: relative;
 
-      &:is([appearance~='filled']):not([appearance~='outlined'], [pill]) {
+      &:is([appearance~="filled"]):not([appearance~="outlined"], [pill]) {
         --wa-focus-ring: ;
 
         &:focus,
         &:focus-within {
           &:where(:not(wa-input):not(wa-select):not(wa-textarea)),
-          &:where(wa-input)::part(input),
+          &:where(wa-input)::part(base),
           &:where(wa-select)::part(combobox),
           &:where(wa-textarea)::part(base) {
-            border-color: transparent transparent var(--wa-color-focus) transparent;
-            box-shadow: inset 0 calc(var(--wa-form-control-border-width) * -2) 0 0 var(--wa-color-focus);
+            border-color: transparent transparent var(--wa-color-focus)
+              transparent;
+            box-shadow: inset 0 calc(var(--wa-form-control-border-width) * -2) 0
+              0 var(--wa-color-focus);
           }
         }
 
         &:where(:not(wa-input):not(wa-select):not(wa-textarea)),
-        &:where(wa-input)::part(input),
+        &:where(wa-input)::part(base),
         &:where(wa-select)::part(combobox),
         &:where(wa-textarea)::part(base) {
-          border-color: transparent transparent var(--wa-form-control-border-color) transparent;
-          border-radius: var(--wa-form-control-border-radius) var(--wa-form-control-border-radius) 0px 0px;
+          border-color: transparent transparent
+            var(--wa-form-control-border-color) transparent;
+          border-radius: var(--wa-form-control-border-radius)
+            var(--wa-form-control-border-radius) 0px 0px;
         }
       }
 
@@ -521,7 +574,7 @@
       }
 
       /* Different positioning and appearance for filled */
-      &:where([appearance~='filled'])[label]:not([placeholder]) {
+      &:where([appearance~="filled"])[label]:not([placeholder]) {
         &::part(base) {
           /* We want to move this down a bit to make space for the floating label */
           translate: 0 0.3em;
@@ -551,7 +604,7 @@
       height: 0.25rem;
     }
 
-    input:is([type='checkbox'], [type='radio']),
+    input:is([type="checkbox"], [type="radio"]),
     wa-checkbox::part(control),
     wa-tree-item::part(checkbox__control),
     wa-radio::part(control) {
@@ -561,17 +614,32 @@
       margin-inline-end: 0.75em;
     }
     @media (hover: hover) {
-      :is(input:where([type='checkbox'], [type='radio']), wa-checkbox, wa-tree-item, wa-radio):hover {
+      :is(
+          input:where([type="checkbox"], [type="radio"]),
+          wa-checkbox,
+          wa-tree-item,
+          wa-radio
+        ):hover {
         &:where(input),
         &::part(control),
         &::part(checkbox__control) {
-          box-shadow: 0 0 0 0.5em color-mix(in oklab, var(--wa-form-control-border-color), transparent 85%);
+          box-shadow: 0 0 0 0.5em
+            color-mix(
+              in oklab,
+              var(--wa-form-control-border-color),
+              transparent 85%
+            );
         }
         &:is(:checked, :indeterminate, :state(checked), :state(indeterminate)) {
           &:where(input),
           &::part(control),
           &::part(checkbox__control) {
-            box-shadow: 0 0 0 0.5em color-mix(in oklab, var(--wa-form-control-activated-color), transparent 85%);
+            box-shadow: 0 0 0 0.5em
+              color-mix(
+                in oklab,
+                var(--wa-form-control-activated-color),
+                transparent 85%
+              );
           }
         }
       }
@@ -579,7 +647,12 @@
 
     @media (hover: hover) {
       wa-slider:hover::part(thumb) {
-        box-shadow: 0 0 0 0.5em color-mix(in oklab, var(--wa-form-control-activated-color), transparent 85%);
+        box-shadow: 0 0 0 0.5em
+          color-mix(
+            in oklab,
+            var(--wa-form-control-activated-color),
+            transparent 85%
+          );
       }
     }
 
@@ -602,7 +675,8 @@
       @media (hover: hover) {
         &:hover {
           &::part(thumb) {
-            box-shadow: 0 0 0 0.5em color-mix(in oklab, var(--border-color), transparent 85%);
+            box-shadow: 0 0 0 0.5em
+              color-mix(in oklab, var(--border-color), transparent 85%);
           }
         }
       }

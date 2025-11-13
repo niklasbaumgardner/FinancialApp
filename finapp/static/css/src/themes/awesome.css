@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,200..900;1,200..900&family=Quicksand:wght@300..700&display=swap');
+@import url("https://fonts.bunny.net/css2?family=Crimson+Pro:ital,wght@0,200..900;1,200..900&family=Quicksand:wght@300..700&display=swap");
 
 @layer wa-theme {
   .wa-theme-awesome,
@@ -22,8 +22,16 @@
     --wa-color-text-quiet: var(--wa-color-neutral-40);
     --wa-color-text-link: var(--wa-color-brand-40);
 
-    --wa-color-overlay-modal: color-mix(in oklab, var(--wa-color-neutral-05) 50%, transparent);
-    --wa-color-overlay-inline: color-mix(in oklab, var(--wa-color-neutral-80) 25%, transparent);
+    --wa-color-overlay-modal: color-mix(
+      in oklab,
+      var(--wa-color-neutral-05) 50%,
+      transparent
+    );
+    --wa-color-overlay-inline: color-mix(
+      in oklab,
+      var(--wa-color-neutral-80) 25%,
+      transparent
+    );
 
     --wa-color-shadow: color-mix(
       in oklab,
@@ -101,7 +109,11 @@
 
     --wa-color-surface-raised: var(--wa-color-neutral-10);
     --wa-color-surface-default: var(--wa-color-neutral-05);
-    --wa-color-surface-lowered: color-mix(in oklab, var(--wa-color-surface-default), black 20%);
+    --wa-color-surface-lowered: color-mix(
+      in oklab,
+      var(--wa-color-surface-default),
+      black 20%
+    );
     --wa-color-surface-border: var(--wa-color-neutral-20);
 
     --wa-color-text-normal: var(--wa-color-neutral-95);
@@ -109,11 +121,16 @@
     --wa-color-text-link: var(--wa-color-brand-70);
 
     --wa-color-overlay-modal: color-mix(in oklab, black 60%, transparent);
-    --wa-color-overlay-inline: color-mix(in oklab, var(--wa-color-neutral-50) 10%, transparent);
+    --wa-color-overlay-inline: color-mix(
+      in oklab,
+      var(--wa-color-neutral-50) 10%,
+      transparent
+    );
 
     --wa-color-shadow: color-mix(
       in oklab,
-      var(--wa-color-surface-lowered) calc(var(--wa-shadow-blur-scale) * 32% + 40%),
+      var(--wa-color-surface-lowered)
+        calc(var(--wa-shadow-blur-scale) * 32% + 40%),
       transparent
     );
 
@@ -184,24 +201,48 @@
     font-family: var(--wa-font-family-body);
 
     /* #region Fonts ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-    --wa-font-family-body: 'Quicksand', sans-serif;
+    --wa-font-family-body: "Quicksand", sans-serif;
     --wa-font-family-heading: var(--wa-font-family-body);
     --wa-font-family-code: ui-monospace, monospace;
-    --wa-font-family-longform: 'Crimson Pro', serif;
+    --wa-font-family-longform: "Crimson Pro", serif;
 
     /* Font sizes use a ratio of 1.125 to scale sizes proportionally.
      * For larger font sizes, each size is twice 1.125x larger to maximize impact.
      * Each value uses `rem` units and is rounded to the nearest whole pixel when rendered. */
     --wa-font-size-scale: 1;
-    --wa-font-size-2xs: round(calc(var(--wa-font-size-xs) / 1.125), 1px); /* 11px */
-    --wa-font-size-xs: round(calc(var(--wa-font-size-s) / 1.125), 1px); /* 12px */
-    --wa-font-size-s: round(calc(var(--wa-font-size-m) / 1.125), 1px); /* 14px */
+    --wa-font-size-2xs: round(
+      calc(var(--wa-font-size-xs) / 1.125),
+      1px
+    ); /* 11px */
+    --wa-font-size-xs: round(
+      calc(var(--wa-font-size-s) / 1.125),
+      1px
+    ); /* 12px */
+    --wa-font-size-s: round(
+      calc(var(--wa-font-size-m) / 1.125),
+      1px
+    ); /* 14px */
     --wa-font-size-m: calc(1rem * var(--wa-font-size-scale)); /* 16px */
-    --wa-font-size-l: round(calc(var(--wa-font-size-m) * 1.125 * 1.125), 1px); /* 20px */
-    --wa-font-size-xl: round(calc(var(--wa-font-size-l) * 1.125 * 1.125), 1px); /* 25px */
-    --wa-font-size-2xl: round(calc(var(--wa-font-size-xl) * 1.125 * 1.125), 1px); /* 32px */
-    --wa-font-size-3xl: round(calc(var(--wa-font-size-2xl) * 1.125 * 1.125), 1px); /* 41px */
-    --wa-font-size-4xl: round(calc(var(--wa-font-size-3xl) * 1.125 * 1.125), 1px); /* 52px */
+    --wa-font-size-l: round(
+      calc(var(--wa-font-size-m) * 1.125 * 1.125),
+      1px
+    ); /* 20px */
+    --wa-font-size-xl: round(
+      calc(var(--wa-font-size-l) * 1.125 * 1.125),
+      1px
+    ); /* 25px */
+    --wa-font-size-2xl: round(
+      calc(var(--wa-font-size-xl) * 1.125 * 1.125),
+      1px
+    ); /* 32px */
+    --wa-font-size-3xl: round(
+      calc(var(--wa-font-size-2xl) * 1.125 * 1.125),
+      1px
+    ); /* 41px */
+    --wa-font-size-4xl: round(
+      calc(var(--wa-font-size-3xl) * 1.125 * 1.125),
+      1px
+    ); /* 52px */
 
     --wa-font-size-smaller: round(calc(1em / 1.125), 1px);
     --wa-font-size-larger: round(calc(1em * 1.125 * 1.125), 1px);
@@ -221,7 +262,8 @@
     --wa-line-height-normal: 1.6;
     --wa-line-height-expanded: 2;
 
-    --wa-link-decoration-default: underline color-mix(in oklab, currentColor 70%, transparent) dotted;
+    --wa-link-decoration-default: underline
+      color-mix(in oklab, currentColor 70%, transparent) dotted;
     --wa-link-decoration-hover: underline;
     /* #endregion */
 
@@ -264,7 +306,8 @@
     /* #region Focus ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
     --wa-focus-ring-style: solid;
     --wa-focus-ring-width: 0.1875rem; /* 3px */
-    --wa-focus-ring: var(--wa-focus-ring-style) var(--wa-focus-ring-width) var(--wa-color-focus);
+    --wa-focus-ring: var(--wa-focus-ring-style) var(--wa-focus-ring-width)
+      var(--wa-color-focus);
     --wa-focus-ring-offset: 0.0625rem; /* 1px */
     /* #endregion */
 
@@ -289,12 +332,12 @@
     --wa-shadow-spread-m: calc(var(--wa-shadow-spread-scale) * 0.25rem);
     --wa-shadow-spread-l: calc(var(--wa-shadow-spread-scale) * 0.5rem);
 
-    --wa-shadow-s: var(--wa-shadow-offset-x-s) var(--wa-shadow-offset-y-s) var(--wa-shadow-blur-s)
-      var(--wa-shadow-spread-s) var(--wa-color-shadow);
-    --wa-shadow-m: var(--wa-shadow-offset-x-m) var(--wa-shadow-offset-y-m) var(--wa-shadow-blur-m)
-      var(--wa-shadow-spread-m) var(--wa-color-shadow);
-    --wa-shadow-l: var(--wa-shadow-offset-x-l) var(--wa-shadow-offset-y-l) var(--wa-shadow-blur-l)
-      var(--wa-shadow-spread-l) var(--wa-color-shadow);
+    --wa-shadow-s: var(--wa-shadow-offset-x-s) var(--wa-shadow-offset-y-s)
+      var(--wa-shadow-blur-s) var(--wa-shadow-spread-s) var(--wa-color-shadow);
+    --wa-shadow-m: var(--wa-shadow-offset-x-m) var(--wa-shadow-offset-y-m)
+      var(--wa-shadow-blur-m) var(--wa-shadow-spread-m) var(--wa-color-shadow);
+    --wa-shadow-l: var(--wa-shadow-offset-x-l) var(--wa-shadow-offset-y-l)
+      var(--wa-shadow-blur-l) var(--wa-shadow-spread-l) var(--wa-color-shadow);
     /* #endregion */
 
     /* #region Transitions ~~~~~~~~~~~~~~~~~~~~~~ */
@@ -329,14 +372,17 @@
 
     --wa-form-control-placeholder-color: var(--wa-color-gray-50);
 
-    --wa-form-control-required-content: '*';
+    --wa-form-control-required-content: "*";
     --wa-form-control-required-content-color: inherit;
-    --wa-form-control-required-content-offset: -0.1em;
+    --wa-form-control-required-content-offset: 0.1em;
 
     --wa-form-control-padding-block: 1em;
     --wa-form-control-padding-inline: 1.25em;
     --wa-form-control-height: round(
-      calc(2 * var(--wa-form-control-padding-block) + 1em * var(--wa-form-control-value-line-height)),
+      calc(
+        2 * var(--wa-form-control-padding-block) + 1em *
+          var(--wa-form-control-value-line-height)
+      ),
       1px
     );
     --wa-form-control-toggle-size: round(1.25em, 1px);
@@ -367,15 +413,15 @@
   .wa-theme-awesome {
     wa-button,
     button,
-    input[type='button'],
-    input[type='reset'],
-    input[type='submit'] {
+    input[type="button"],
+    input[type="reset"],
+    input[type="submit"] {
       --wa-color-shadow: var(--wa-color-border-normal);
       --wa-transition-slow: 0;
       --wa-transition-normal: 0;
       --wa-transition-fast: 0;
 
-      &[appearance='outlined'],
+      &[appearance="outlined"],
       &.wa-outlined:not(.wa-filled) {
         --wa-color-shadow: var(--wa-color-border-loud);
       }
@@ -383,16 +429,19 @@
 
     wa-button,
     button,
-    input[type='button'],
-    input[type='reset'],
-    input[type='submit'] {
-      &:not([appearance~='plain']):not(.wa-plain) {
+    input[type="button"],
+    input[type="reset"],
+    input[type="submit"] {
+      &:not([appearance~="plain"]):not(.wa-plain) {
         &:where(:not(wa-button)),
         &::part(base) {
-          height: calc(var(--wa-form-control-height) - var(--wa-shadow-offset-y-s));
+          height: calc(
+            var(--wa-form-control-height) - var(--wa-shadow-offset-y-s)
+          );
           margin-bottom: var(--wa-shadow-offset-y-s);
           margin-right: var(--wa-shadow-offset-x-s);
-          box-shadow: var(--wa-shadow-offset-x-s) var(--wa-shadow-offset-y-s) 0 0 var(--wa-color-shadow);
+          box-shadow: var(--wa-shadow-offset-x-s) var(--wa-shadow-offset-y-s) 0
+            0 var(--wa-color-shadow);
         }
         &:not([disabled]):not(:disabled):active {
           &:where(:not(wa-button)),
@@ -401,12 +450,15 @@
             background-color: var(--wa-color-shadow);
             border-color: var(--wa-color-shadow);
             box-shadow: none;
-            transform: translate(var(--wa-shadow-offset-x-s), var(--wa-shadow-offset-y-s));
+            transform: translate(
+              var(--wa-shadow-offset-x-s),
+              var(--wa-shadow-offset-y-s)
+            );
           }
         }
       }
       .wa-dark & {
-        &[appearance~='accent'],
+        &[appearance~="accent"],
         &.wa-accent {
           &:not([disabled]):not(:disabled):active {
             &:where(:not(wa-button)),
@@ -418,52 +470,57 @@
       }
     }
 
-    wa-radio[appearance='button'] {
+    wa-radio[appearance="button"] {
       &:state(checked) {
         background-color: var(--wa-form-control-activated-color);
         border-color: var(--wa-form-control-activated-color);
         color: var(--wa-color-surface-default);
       }
     }
-    wa-radio-group[orientation='horizontal'] wa-radio[appearance='button'] {
-      box-shadow: var(--wa-shadow-offset-x-s) max(var(--wa-shadow-offset-y-s), var(--border-width)) 0 0
+    wa-radio-group[orientation="horizontal"] wa-radio[appearance="button"] {
+      box-shadow: var(--wa-shadow-offset-x-s)
+        max(var(--wa-shadow-offset-y-s), var(--border-width)) 0 0
         var(--wa-form-control-border-color);
       margin-bottom: var(--wa-shadow-offset-y-s);
       margin-right: var(--wa-shadow-offset-x-s);
 
       &:state(checked) {
         box-shadow: initial;
-        transform: translate(var(--wa-shadow-offset-x-s), var(--wa-shadow-offset-y-s));
+        transform: translate(
+          var(--wa-shadow-offset-x-s),
+          var(--wa-shadow-offset-y-s)
+        );
       }
     }
 
     :is(
         input:where(
             :not(
-              [type='button'],
-              [type='checkbox'],
-              [type='color'],
-              [type='file'],
-              [type='hidden'],
-              [type='image'],
-              [type='radio'],
-              [type='range'],
-              [type='reset'],
-              [type='submit']
-            )
+                [type="button"],
+                [type="checkbox"],
+                [type="color"],
+                [type="file"],
+                [type="hidden"],
+                [type="image"],
+                [type="radio"],
+                [type="range"],
+                [type="reset"],
+                [type="submit"]
+              )
           ),
         select,
         textarea,
         wa-input,
         wa-select,
         wa-textarea
-      ):not(:focus):not([appearance='filled']) {
+      ):not(:focus):not([appearance="filled"]) {
       &:where(:not(wa-input):not(wa-select):not(wa-textarea)),
-      &:where(wa-input)::part(input),
+      &:where(wa-input)::part(base),
       &:where(wa-select)::part(combobox),
       &:where(wa-textarea)::part(base) {
         box-shadow: inset var(--wa-shadow-offset-x-s)
-          max(var(--wa-shadow-offset-y-s), var(--wa-form-control-border-width)) 0 0 var(--wa-color-shadow);
+          max(var(--wa-shadow-offset-y-s), var(--wa-form-control-border-width))
+          0 0 var(--wa-color-shadow);
       }
     }
   }
@@ -473,10 +530,10 @@
   .wa-theme-awesome {
     wa-button,
     button,
-    input[type='button'],
-    input[type='reset'],
-    input[type='submit'] {
-      &[appearance='accent'],
+    input[type="button"],
+    input[type="reset"],
+    input[type="submit"] {
+      &[appearance="accent"],
       &.wa-accent {
         &:where(:not(wa-button)),
         &::part(base) {
@@ -486,7 +543,7 @@
       }
 
       .wa-dark & {
-        &[appearance='accent'],
+        &[appearance="accent"],
         &.wa-accent {
           &:where(:not(wa-button)),
           &::part(base) {
@@ -503,7 +560,7 @@
     }
 
     wa-callout {
-      &:is([appearance~='outlined']) {
+      &:is([appearance~="outlined"]) {
         border-color: var(--wa-color-border-normal);
       }
     }
@@ -518,7 +575,7 @@
       border-top-style: dotted;
     }
 
-    input[type='checkbox'],
+    input[type="checkbox"],
     wa-checkbox,
     wa-tree-item::part(checkbox__control) {
       --checked-icon-color: var(--wa-color-surface-default);

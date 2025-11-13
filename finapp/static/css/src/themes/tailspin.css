@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import url("https://fonts.bunny.net/css2?family=Inter:ital,wght@0,100..900;1,100..900&display=swap");
 
 @layer wa-theme {
   .wa-theme-tailspin,
@@ -22,8 +22,16 @@
     --wa-color-text-quiet: var(--wa-color-neutral-40);
     --wa-color-text-link: var(--wa-color-brand-40);
 
-    --wa-color-overlay-modal: color-mix(in oklab, var(--wa-color-neutral-05) 50%, transparent);
-    --wa-color-overlay-inline: color-mix(in oklab, var(--wa-color-neutral-80) 25%, transparent);
+    --wa-color-overlay-modal: color-mix(
+      in oklab,
+      var(--wa-color-neutral-05) 50%,
+      transparent
+    );
+    --wa-color-overlay-inline: color-mix(
+      in oklab,
+      var(--wa-color-neutral-80) 25%,
+      transparent
+    );
 
     --wa-color-shadow: rgb(0 0 0 / 0.05);
 
@@ -32,52 +40,132 @@
     --wa-color-mix-hover: var(--wa-color-neutral-80) 20%;
     --wa-color-mix-active: var(--wa-color-neutral-80) 10%;
 
-    --wa-color-brand-fill-quiet: color-mix(in oklab, var(--wa-color-brand-95) 85%, transparent);
+    --wa-color-brand-fill-quiet: color-mix(
+      in oklab,
+      var(--wa-color-brand-95) 85%,
+      transparent
+    );
     --wa-color-brand-fill-normal: var(--wa-color-brand-90);
     --wa-color-brand-fill-loud: var(--wa-color-brand-40);
-    --wa-color-brand-border-quiet: color-mix(in oklab, var(--wa-color-brand-80), transparent);
-    --wa-color-brand-border-normal: color-mix(in oklab, var(--wa-color-brand-70) 60%, transparent);
-    --wa-color-brand-border-loud: color-mix(in oklab, var(--wa-color-brand-60) 70%, transparent);
+    --wa-color-brand-border-quiet: color-mix(
+      in oklab,
+      var(--wa-color-brand-80),
+      transparent
+    );
+    --wa-color-brand-border-normal: color-mix(
+      in oklab,
+      var(--wa-color-brand-70) 60%,
+      transparent
+    );
+    --wa-color-brand-border-loud: color-mix(
+      in oklab,
+      var(--wa-color-brand-60) 70%,
+      transparent
+    );
     --wa-color-brand-on-quiet: var(--wa-color-brand-40);
     --wa-color-brand-on-normal: var(--wa-color-brand-30);
     --wa-color-brand-on-loud: white;
 
-    --wa-color-success-fill-quiet: color-mix(in oklab, var(--wa-color-success-95) 85%, transparent);
+    --wa-color-success-fill-quiet: color-mix(
+      in oklab,
+      var(--wa-color-success-95) 85%,
+      transparent
+    );
     --wa-color-success-fill-normal: var(--wa-color-success-90);
     --wa-color-success-fill-loud: var(--wa-color-success-50);
-    --wa-color-success-border-quiet: color-mix(in oklab, var(--wa-color-success-80), transparent);
-    --wa-color-success-border-normal: color-mix(in oklab, var(--wa-color-success-70) 60%, transparent);
-    --wa-color-success-border-loud: color-mix(in oklab, var(--wa-color-success-60) 70%, transparent);
+    --wa-color-success-border-quiet: color-mix(
+      in oklab,
+      var(--wa-color-success-80),
+      transparent
+    );
+    --wa-color-success-border-normal: color-mix(
+      in oklab,
+      var(--wa-color-success-70) 60%,
+      transparent
+    );
+    --wa-color-success-border-loud: color-mix(
+      in oklab,
+      var(--wa-color-success-60) 70%,
+      transparent
+    );
     --wa-color-success-on-quiet: var(--wa-color-success-40);
     --wa-color-success-on-normal: var(--wa-color-success-30);
     --wa-color-success-on-loud: white;
 
-    --wa-color-warning-fill-quiet: color-mix(in oklab, var(--wa-color-warning-95) 85%, transparent);
+    --wa-color-warning-fill-quiet: color-mix(
+      in oklab,
+      var(--wa-color-warning-95) 85%,
+      transparent
+    );
     --wa-color-warning-fill-normal: var(--wa-color-warning-90);
     --wa-color-warning-fill-loud: var(--wa-color-warning-50);
-    --wa-color-warning-border-quiet: color-mix(in oklab, var(--wa-color-warning-80), transparent);
-    --wa-color-warning-border-normal: color-mix(in oklab, var(--wa-color-warning-70) 60%, transparent);
-    --wa-color-warning-border-loud: color-mix(in oklab, var(--wa-color-warning-60) 70%, transparent);
+    --wa-color-warning-border-quiet: color-mix(
+      in oklab,
+      var(--wa-color-warning-80),
+      transparent
+    );
+    --wa-color-warning-border-normal: color-mix(
+      in oklab,
+      var(--wa-color-warning-70) 60%,
+      transparent
+    );
+    --wa-color-warning-border-loud: color-mix(
+      in oklab,
+      var(--wa-color-warning-60) 70%,
+      transparent
+    );
     --wa-color-warning-on-quiet: var(--wa-color-warning-40);
     --wa-color-warning-on-normal: var(--wa-color-warning-30);
     --wa-color-warning-on-loud: white;
 
-    --wa-color-danger-fill-quiet: color-mix(in oklab, var(--wa-color-danger-95) 85%, transparent);
+    --wa-color-danger-fill-quiet: color-mix(
+      in oklab,
+      var(--wa-color-danger-95) 85%,
+      transparent
+    );
     --wa-color-danger-fill-normal: var(--wa-color-danger-90);
     --wa-color-danger-fill-loud: var(--wa-color-danger-50);
-    --wa-color-danger-border-quiet: color-mix(in oklab, var(--wa-color-danger-80), transparent);
-    --wa-color-danger-border-normal: color-mix(in oklab, var(--wa-color-danger-70) 60%, transparent);
-    --wa-color-danger-border-loud: color-mix(in oklab, var(--wa-color-danger-60) 70%, transparent);
+    --wa-color-danger-border-quiet: color-mix(
+      in oklab,
+      var(--wa-color-danger-80),
+      transparent
+    );
+    --wa-color-danger-border-normal: color-mix(
+      in oklab,
+      var(--wa-color-danger-70) 60%,
+      transparent
+    );
+    --wa-color-danger-border-loud: color-mix(
+      in oklab,
+      var(--wa-color-danger-60) 70%,
+      transparent
+    );
     --wa-color-danger-on-quiet: var(--wa-color-danger-40);
     --wa-color-danger-on-normal: var(--wa-color-danger-30);
     --wa-color-danger-on-loud: white;
 
-    --wa-color-neutral-fill-quiet: color-mix(in oklab, var(--wa-color-neutral-95) 85%, transparent);
+    --wa-color-neutral-fill-quiet: color-mix(
+      in oklab,
+      var(--wa-color-neutral-95) 85%,
+      transparent
+    );
     --wa-color-neutral-fill-normal: var(--wa-color-neutral-90);
     --wa-color-neutral-fill-loud: var(--wa-color-neutral-10);
-    --wa-color-neutral-border-quiet: color-mix(in oklab, var(--wa-color-neutral-80), transparent);
-    --wa-color-neutral-border-normal: color-mix(in oklab, var(--wa-color-neutral-70) 60%, transparent);
-    --wa-color-neutral-border-loud: color-mix(in oklab, var(--wa-color-neutral-60) 70%, transparent);
+    --wa-color-neutral-border-quiet: color-mix(
+      in oklab,
+      var(--wa-color-neutral-80),
+      transparent
+    );
+    --wa-color-neutral-border-normal: color-mix(
+      in oklab,
+      var(--wa-color-neutral-70) 60%,
+      transparent
+    );
+    --wa-color-neutral-border-loud: color-mix(
+      in oklab,
+      var(--wa-color-neutral-60) 70%,
+      transparent
+    );
     --wa-color-neutral-on-quiet: var(--wa-color-neutral-30);
     --wa-color-neutral-on-normal: var(--wa-color-neutral-30);
     --wa-color-neutral-on-loud: white;
@@ -97,7 +185,11 @@
 
     --wa-color-surface-raised: var(--wa-color-neutral-10);
     --wa-color-surface-default: var(--wa-color-neutral-05);
-    --wa-color-surface-lowered: color-mix(in oklab, var(--wa-color-surface-default), black 20%);
+    --wa-color-surface-lowered: color-mix(
+      in oklab,
+      var(--wa-color-surface-default),
+      black 20%
+    );
     --wa-color-surface-border: rgb(255 255 255 / 0.1);
 
     --wa-color-text-normal: white;
@@ -105,7 +197,11 @@
     --wa-color-text-link: var(--wa-color-brand-70);
 
     --wa-color-overlay-modal: color-mix(in oklab, black 60%, transparent);
-    --wa-color-overlay-inline: color-mix(in oklab, var(--wa-color-neutral-50) 10%, transparent);
+    --wa-color-overlay-inline: color-mix(
+      in oklab,
+      var(--wa-color-neutral-50) 10%,
+      transparent
+    );
 
     --wa-color-shadow: rgb(0 0 0 / 0.2);
 
@@ -114,52 +210,132 @@
     --wa-color-mix-hover: var(--wa-color-neutral-70) 20%;
     --wa-color-mix-active: var(--wa-color-neutral-70) 10%;
 
-    --wa-color-brand-fill-quiet: color-mix(in oklab, var(--wa-color-brand-10) 90%, transparent);
+    --wa-color-brand-fill-quiet: color-mix(
+      in oklab,
+      var(--wa-color-brand-10) 90%,
+      transparent
+    );
     --wa-color-brand-fill-normal: var(--wa-color-brand-20);
     --wa-color-brand-fill-loud: var(--wa-color-brand-50);
-    --wa-color-brand-border-quiet: color-mix(in oklab, var(--wa-color-brand-20), transparent);
-    --wa-color-brand-border-normal: color-mix(in oklab, var(--wa-color-brand-30), transparent);
-    --wa-color-brand-border-loud: color-mix(in oklab, var(--wa-color-brand-40), transparent);
+    --wa-color-brand-border-quiet: color-mix(
+      in oklab,
+      var(--wa-color-brand-20),
+      transparent
+    );
+    --wa-color-brand-border-normal: color-mix(
+      in oklab,
+      var(--wa-color-brand-30),
+      transparent
+    );
+    --wa-color-brand-border-loud: color-mix(
+      in oklab,
+      var(--wa-color-brand-40),
+      transparent
+    );
     --wa-color-brand-on-quiet: var(--wa-color-brand-60);
     --wa-color-brand-on-normal: var(--wa-color-brand-70);
     --wa-color-brand-on-loud: white;
 
-    --wa-color-success-fill-quiet: color-mix(in oklab, var(--wa-color-success-10) 90%, transparent);
+    --wa-color-success-fill-quiet: color-mix(
+      in oklab,
+      var(--wa-color-success-10) 90%,
+      transparent
+    );
     --wa-color-success-fill-normal: var(--wa-color-success-20);
     --wa-color-success-fill-loud: var(--wa-color-success-50);
-    --wa-color-success-border-quiet: color-mix(in oklab, var(--wa-color-success-20), transparent);
-    --wa-color-success-border-normal: color-mix(in oklab, var(--wa-color-success-30) 60%, transparent);
-    --wa-color-success-border-loud: color-mix(in oklab, var(--wa-color-success-40) 70%, transparent);
+    --wa-color-success-border-quiet: color-mix(
+      in oklab,
+      var(--wa-color-success-20),
+      transparent
+    );
+    --wa-color-success-border-normal: color-mix(
+      in oklab,
+      var(--wa-color-success-30) 60%,
+      transparent
+    );
+    --wa-color-success-border-loud: color-mix(
+      in oklab,
+      var(--wa-color-success-40) 70%,
+      transparent
+    );
     --wa-color-success-on-quiet: var(--wa-color-success-60);
     --wa-color-success-on-normal: var(--wa-color-success-70);
     --wa-color-success-on-loud: white;
 
-    --wa-color-warning-fill-quiet: color-mix(in oklab, var(--wa-color-warning-10) 90%, transparent);
+    --wa-color-warning-fill-quiet: color-mix(
+      in oklab,
+      var(--wa-color-warning-10) 90%,
+      transparent
+    );
     --wa-color-warning-fill-normal: var(--wa-color-warning-20);
     --wa-color-warning-fill-loud: var(--wa-color-warning-50);
-    --wa-color-warning-border-quiet: color-mix(in oklab, var(--wa-color-warning-20), transparent);
-    --wa-color-warning-border-normal: color-mix(in oklab, var(--wa-color-warning-30) 60%, transparent);
-    --wa-color-warning-border-loud: color-mix(in oklab, var(--wa-color-warning-40) 70%, transparent);
+    --wa-color-warning-border-quiet: color-mix(
+      in oklab,
+      var(--wa-color-warning-20),
+      transparent
+    );
+    --wa-color-warning-border-normal: color-mix(
+      in oklab,
+      var(--wa-color-warning-30) 60%,
+      transparent
+    );
+    --wa-color-warning-border-loud: color-mix(
+      in oklab,
+      var(--wa-color-warning-40) 70%,
+      transparent
+    );
     --wa-color-warning-on-quiet: var(--wa-color-warning-60);
     --wa-color-warning-on-normal: var(--wa-color-warning-70);
     --wa-color-warning-on-loud: white;
 
-    --wa-color-danger-fill-quiet: color-mix(in oklab, var(--wa-color-danger-10) 90%, transparent);
+    --wa-color-danger-fill-quiet: color-mix(
+      in oklab,
+      var(--wa-color-danger-10) 90%,
+      transparent
+    );
     --wa-color-danger-fill-normal: var(--wa-color-danger-20);
     --wa-color-danger-fill-loud: var(--wa-color-danger-50);
-    --wa-color-danger-border-quiet: color-mix(in oklab, var(--wa-color-danger-20), transparent);
-    --wa-color-danger-border-normal: color-mix(in oklab, var(--wa-color-danger-30) 60%, transparent);
-    --wa-color-danger-border-loud: color-mix(in oklab, var(--wa-color-danger-40) 70%, transparent);
+    --wa-color-danger-border-quiet: color-mix(
+      in oklab,
+      var(--wa-color-danger-20),
+      transparent
+    );
+    --wa-color-danger-border-normal: color-mix(
+      in oklab,
+      var(--wa-color-danger-30) 60%,
+      transparent
+    );
+    --wa-color-danger-border-loud: color-mix(
+      in oklab,
+      var(--wa-color-danger-40) 70%,
+      transparent
+    );
     --wa-color-danger-on-quiet: var(--wa-color-danger-60);
     --wa-color-danger-on-normal: var(--wa-color-danger-70);
     --wa-color-danger-on-loud: white;
 
-    --wa-color-neutral-fill-quiet: color-mix(in oklab, var(--wa-color-neutral-10) 90%, transparent);
+    --wa-color-neutral-fill-quiet: color-mix(
+      in oklab,
+      var(--wa-color-neutral-10) 90%,
+      transparent
+    );
     --wa-color-neutral-fill-normal: var(--wa-color-neutral-20);
     --wa-color-neutral-fill-loud: white;
-    --wa-color-neutral-border-quiet: color-mix(in oklab, var(--wa-color-neutral-20), transparent);
-    --wa-color-neutral-border-normal: color-mix(in oklab, var(--wa-color-neutral-30) 60%, transparent);
-    --wa-color-neutral-border-loud: color-mix(in oklab, var(--wa-color-neutral-40) 70%, transparent);
+    --wa-color-neutral-border-quiet: color-mix(
+      in oklab,
+      var(--wa-color-neutral-20),
+      transparent
+    );
+    --wa-color-neutral-border-normal: color-mix(
+      in oklab,
+      var(--wa-color-neutral-30) 60%,
+      transparent
+    );
+    --wa-color-neutral-border-loud: color-mix(
+      in oklab,
+      var(--wa-color-neutral-40) 70%,
+      transparent
+    );
     --wa-color-neutral-on-quiet: var(--wa-color-neutral-60);
     --wa-color-neutral-on-normal: var(--wa-color-neutral-70);
     --wa-color-neutral-on-loud: var(--wa-color-neutral-10);
@@ -176,7 +352,7 @@
     font-family: var(--wa-font-family-body);
 
     /* #region Fonts ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-    --wa-font-family-body: 'Inter', sans-serif;
+    --wa-font-family-body: "Inter", sans-serif;
     --wa-font-family-heading: var(--wa-font-family-body);
     --wa-font-family-code: ui-monospace, monospace;
     --wa-font-family-longform: ui-serif, serif;
@@ -185,15 +361,39 @@
      * For larger font sizes, each size is twice 1.125x larger to maximize impact.
      * Each value uses `rem` units and is rounded to the nearest whole pixel when rendered. */
     --wa-font-size-scale: 0.875;
-    --wa-font-size-2xs: round(calc(var(--wa-font-size-xs) / 1.125), 1px); /* 9.625px */
-    --wa-font-size-xs: round(calc(var(--wa-font-size-s) / 1.125), 1px); /* 10.5px */
-    --wa-font-size-s: round(calc(var(--wa-font-size-m) / 1.125), 1px); /* 12.25px */
+    --wa-font-size-2xs: round(
+      calc(var(--wa-font-size-xs) / 1.125),
+      1px
+    ); /* 9.625px */
+    --wa-font-size-xs: round(
+      calc(var(--wa-font-size-s) / 1.125),
+      1px
+    ); /* 10.5px */
+    --wa-font-size-s: round(
+      calc(var(--wa-font-size-m) / 1.125),
+      1px
+    ); /* 12.25px */
     --wa-font-size-m: calc(1rem * var(--wa-font-size-scale)); /* 14px */
-    --wa-font-size-l: round(calc(var(--wa-font-size-m) * 1.125 * 1.125), 1px); /* 17.5px */
-    --wa-font-size-xl: round(calc(var(--wa-font-size-l) * 1.125 * 1.125), 1px); /* 21.875px */
-    --wa-font-size-2xl: round(calc(var(--wa-font-size-xl) * 1.125 * 1.125), 1px); /* 28px */
-    --wa-font-size-3xl: round(calc(var(--wa-font-size-2xl) * 1.125 * 1.125), 1px); /* 35.875px */
-    --wa-font-size-4xl: round(calc(var(--wa-font-size-3xl) * 1.125 * 1.125), 1px); /* 45.5px */
+    --wa-font-size-l: round(
+      calc(var(--wa-font-size-m) * 1.125 * 1.125),
+      1px
+    ); /* 17.5px */
+    --wa-font-size-xl: round(
+      calc(var(--wa-font-size-l) * 1.125 * 1.125),
+      1px
+    ); /* 21.875px */
+    --wa-font-size-2xl: round(
+      calc(var(--wa-font-size-xl) * 1.125 * 1.125),
+      1px
+    ); /* 28px */
+    --wa-font-size-3xl: round(
+      calc(var(--wa-font-size-2xl) * 1.125 * 1.125),
+      1px
+    ); /* 35.875px */
+    --wa-font-size-4xl: round(
+      calc(var(--wa-font-size-3xl) * 1.125 * 1.125),
+      1px
+    ); /* 45.5px */
 
     --wa-font-size-smaller: round(calc(1em / 1.125), 1px);
     --wa-font-size-larger: round(calc(1em * 1.125 * 1.125), 1px);
@@ -256,7 +456,8 @@
     /* #region Focus ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
     --wa-focus-ring-style: solid;
     --wa-focus-ring-width: 0.125rem; /* 2px */
-    --wa-focus-ring: var(--wa-focus-ring-style) var(--wa-focus-ring-width) var(--wa-color-focus);
+    --wa-focus-ring: var(--wa-focus-ring-style) var(--wa-focus-ring-width)
+      var(--wa-color-focus);
     --wa-focus-ring-offset: 0;
     /* #endregion */
 
@@ -281,12 +482,12 @@
     --wa-shadow-spread-m: calc(var(--wa-shadow-spread-scale) * 0.25rem);
     --wa-shadow-spread-l: calc(var(--wa-shadow-spread-scale) * 0.5rem);
 
-    --wa-shadow-s: var(--wa-shadow-offset-x-s) var(--wa-shadow-offset-y-s) var(--wa-shadow-blur-s)
-      var(--wa-shadow-spread-s) var(--wa-color-shadow);
-    --wa-shadow-m: var(--wa-shadow-offset-x-m) var(--wa-shadow-offset-y-m) var(--wa-shadow-blur-m)
-      var(--wa-shadow-spread-m) var(--wa-color-shadow);
-    --wa-shadow-l: var(--wa-shadow-offset-x-l) var(--wa-shadow-offset-y-l) var(--wa-shadow-blur-l)
-      var(--wa-shadow-spread-l) var(--wa-color-shadow);
+    --wa-shadow-s: var(--wa-shadow-offset-x-s) var(--wa-shadow-offset-y-s)
+      var(--wa-shadow-blur-s) var(--wa-shadow-spread-s) var(--wa-color-shadow);
+    --wa-shadow-m: var(--wa-shadow-offset-x-m) var(--wa-shadow-offset-y-m)
+      var(--wa-shadow-blur-m) var(--wa-shadow-spread-m) var(--wa-color-shadow);
+    --wa-shadow-l: var(--wa-shadow-offset-x-l) var(--wa-shadow-offset-y-l)
+      var(--wa-shadow-blur-l) var(--wa-shadow-spread-l) var(--wa-color-shadow);
     /* #endregion */
 
     /* #region Transitions ~~~~~~~~~~~~~~~~~~~~~~ */
@@ -298,7 +499,11 @@
 
     /* #region Components ~~~~~~~~~~~~~~~~~~~~~~~ */
     /* Form Controls */
-    --wa-form-control-background-color: color-mix(in oklab, var(--wa-color-surface-raised), transparent);
+    --wa-form-control-background-color: color-mix(
+      in oklab,
+      var(--wa-color-surface-raised),
+      transparent
+    );
     --wa-form-control-border-color: var(--wa-color-neutral-border-normal);
     --wa-form-control-border-style: var(--wa-border-style);
     --wa-form-control-border-width: var(--wa-border-width-s);
@@ -320,14 +525,17 @@
 
     --wa-form-control-placeholder-color: var(--wa-color-gray-50);
 
-    --wa-form-control-required-content: '*';
+    --wa-form-control-required-content: "*";
     --wa-form-control-required-content-color: inherit;
-    --wa-form-control-required-content-offset: -0.1em;
+    --wa-form-control-required-content-offset: 0.1em;
 
     --wa-form-control-padding-block: 0.75em;
     --wa-form-control-padding-inline: 1em;
     --wa-form-control-height: round(
-      calc(2 * var(--wa-form-control-padding-block) + 1em * var(--wa-form-control-value-line-height)),
+      calc(
+        2 * var(--wa-form-control-padding-block) + 1em *
+          var(--wa-form-control-value-line-height)
+      ),
       1px
     );
     --wa-form-control-toggle-size: round(1.25em, 1px);
@@ -374,7 +582,11 @@
       font-weight: var(--wa-font-weight-semibold);
     }
 
-    :is(wa-button, button, input:where([type='button'], [type='reset'], [type='submit'])):not([appearance='plain']) {
+    :is(
+        wa-button,
+        button,
+        input:where([type="button"], [type="reset"], [type="submit"])
+      ):not([appearance="plain"]) {
       &:where(:not(wa-button)),
       &::part(base) {
         box-shadow: var(--wa-shadow-s);
@@ -390,7 +602,7 @@
     }
 
     wa-radio,
-    input[type='radio'] {
+    input[type="radio"] {
       --checked-icon-color: var(--wa-color-surface-default);
       --checked-icon-scale: 0.4;
 
