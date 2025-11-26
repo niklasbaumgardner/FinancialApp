@@ -1,0 +1,21 @@
+/*! Bundled license information:
+
+lit-html/directives/unsafe-html.js:
+  (**
+   * @license
+   * Copyright 2017 Google LLC
+   * SPDX-License-Identifier: BSD-3-Clause
+   *)
+*/
+
+/*! Bundled license information:
+
+lit-html/lit-html.js:
+  (**
+   * @license
+   * Copyright 2017 Google LLC
+   * SPDX-License-Identifier: BSD-3-Clause
+   *)
+*/
+
+/*! Copyright 2025 Fonticons, Inc. - https://webawesome.com/license */

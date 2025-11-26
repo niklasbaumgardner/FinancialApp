@@ -4,11 +4,11 @@ const CopyPlugin = require("copy-webpack-plugin");
 
 const config = {
   entry: {
-    main: __dirname + "/js/main.mjs",
+    main: { import: __dirname + "/js/main.mjs", dependOn: "lit" },
     css: __dirname + "/js/css.mjs",
     agCharts: __dirname + "/js/agCharts.mjs",
     agGrid: __dirname + "/js/agGrid.mjs",
-    lit: __dirname + "/js/lit.mjs",
+    lit: { import: __dirname + "/js/lit.mjs" },
   },
   output: {
     path: __dirname + "/js",
@@ -31,6 +31,10 @@ const config = {
       new CssMinimizerPlugin({ minify: CssMinimizerPlugin.lightningCssMinify }),
       "...",
     ],
+    splitChunks: {
+      // include all types of chunks
+      chunks: "all",
+    },
   },
   plugins: [
     new MiniCssExtractPlugin({
