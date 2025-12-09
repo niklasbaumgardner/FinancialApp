@@ -169,7 +169,7 @@ def sync_simplefin():
 def api_sync_simplefin_transactions():
     credentials = simplefin_queries.get_simplefin_credentials()
     if not credentials:
-        pass
+        simplefin_helpers.sync_simplefin_transactions(credentials=None)
     else:
         simplefin_helpers.sync_simplefin_transactions(credentials=credentials)
 

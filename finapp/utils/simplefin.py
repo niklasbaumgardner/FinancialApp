@@ -173,23 +173,25 @@ def __update_account_transactions_for_user(data, user_id):
 
 
 def sync_simplefin_transactions(credentials):
-    accounts = simplefin_queries.get_simplefin_accounts_with_timestamp(
-        access_type=AccountAccess.TRANSACTION
-    )
+    if credentials:
+        accounts = simplefin_queries.get_simplefin_accounts_with_timestamp(
+            access_type=AccountAccess.TRANSACTION
+        )
 
-    account_ids = [
-        a.id
-        for a, now in accounts
-        if a.last_synced_transactions is None
-        or (now.timestamp() - a.last_synced_transactions.timestamp()) > 3600
-    ]
+        account_ids = [
+            a.id
+            for a, now in accounts
+            if a.last_synced_transactions is None
+            or (now.timestamp() - a.last_synced_transactions.timestamp()) > 3600
+        ]
 
-    data = request_simplefin_transactions(
-        credentials=credentials, account_ids=account_ids
-    )
+        data = request_simplefin_transactions(
+            credentials=credentials, account_ids=account_ids
+        )
 
-    update_account_transactions(data=data)
+        update_account_transactions(data=data)
 
+    # Allow these steps with no credentials so shared users can clear pending transactions
     missing_SFTs = find_missing_transactions()
 
     simplefin_queries.create_pending_transactions(transactions=missing_SFTs)

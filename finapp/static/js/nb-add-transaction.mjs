@@ -34,6 +34,10 @@ export class AddTransactionModal extends BaseDialog {
     return budget;
   }
 
+  get showPendingTransactions() {
+    return CURRENT_USER.credentials?.exists || this.pendingTransactions.length;
+  }
+
   constructor() {
     super();
 
@@ -188,7 +192,7 @@ export class AddTransactionModal extends BaseDialog {
   }
 
   tabGroupTemplate() {
-    if (CURRENT_USER.credentials?.exists) {
+    if (this.showPendingTransactions) {
       return html`<wa-tab-group id="transactions-tab-group">
         <wa-tab panel="new">New Transaction</wa-tab>
         <wa-tab panel="pending"
@@ -306,7 +310,7 @@ export class AddTransactionModal extends BaseDialog {
   render() {
     return html`<wa-dialog
       id="transactions-dialog"
-      class=${CURRENT_USER.credentials?.exists ? "nb-tab-group-dialog" : ""}
+      class=${this.showPendingTransactions ? "nb-tab-group-dialog" : ""}
       label="Add New Transaction"
       @wa-after-show=${this.handleDialogShow}
       @wa-hide=${this.handleWaHide}

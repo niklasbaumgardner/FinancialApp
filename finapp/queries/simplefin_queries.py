@@ -375,8 +375,9 @@ def get_all_credentials(key):
 
 
 def delete_pending_transactions(account_ids=None):
+    shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
     stmt = delete(PendingTransaction).where(
-        PendingTransaction.user_id == current_user.id
+        PendingTransaction.user_id.in_(shared_user_ids)
     )
 
     if account_ids:
