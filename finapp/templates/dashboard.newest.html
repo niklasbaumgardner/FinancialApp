@@ -8,6 +8,8 @@ block dashboard %}active{% endblock dashboard %} {% block backButton
     "{{ url_for('dashboard_bp.api_get_net_worth_data') }}";
   const GET_LINE_CHART_DATA_URL =
     "{{ url_for('dashboard_bp.api_get_budget_totals_by_date') }}";
+  const GET_SPENDING_BY_MONTH_URL =
+    "{{ url_for('dashboard_bp.api_get_spending_by_month') }}";
   const GET_BUDGET_SPENDING_URL =
     "{{ url_for('dashboard_bp.api_get_spending_by_budget') }}";
   const GET_CATEGORY_SPENDING_URL =

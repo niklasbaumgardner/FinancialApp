@@ -17,6 +17,7 @@ dashboard_bp = Blueprint("dashboard_bp", __name__)
 @dashboard_bp.route("/dashboard", methods=["GET"])
 @login_required
 def dashboard():
+    dashboard_queries.get_spending_by_budget_and_month()
     start_date = transaction_queries.get_first_transaction_date()
     return render_template("dashboard.newest.html", startDate=start_date)
 
@@ -47,6 +48,16 @@ def api_get_spending_by_budget():
     data = helpers.net_spending(month, year, ytd)
 
     return data
+
+
+@dashboard_bp.get("/api/get_spending_by_month")
+@login_required
+def api_get_spending_by_month():
+    budgets, income, spending = dashboard_queries.get_spending_by_budget_and_month()
+
+    budgets = {b.id: b.to_dict() for b in budgets}
+
+    return {"budgets": budgets, "spending": spending, "income": income}
 
 
 @dashboard_bp.get("/api/get_spending_by_category")

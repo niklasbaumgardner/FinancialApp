@@ -94,3 +94,55 @@ def get_net_worth_data():
         print(ab.to_dict())
 
     return result
+
+
+def get_spending_by_budget_and_month():
+    budgets = budget_queries.get_budgets(active_only=True)
+    budget_ids = [b.id for b in budgets]
+    month_label = extract("month", Transaction.date)
+    year_label = extract("year", Transaction.date)
+    twelve_months_ago = date.today() - timedelta(days=365)
+    spending_stmt = (
+        select(
+            func.sum(Transaction.amount),
+            Transaction.budget_id,
+            month_label,
+            year_label,
+        )
+        .where(
+            Transaction.amount < 0,
+            Transaction.budget_id.in_(budget_ids),
+            Transaction.date >= twelve_months_ago,
+        )
+        .group_by(Transaction.budget_id, month_label, year_label)
+        .order_by(month_label.desc(), year_label.desc(), Transaction.budget_id)
+    )
+    income_stmt = (
+        select(
+            func.sum(Transaction.amount),
+            Transaction.budget_id,
+            month_label,
+            year_label,
+        )
+        .where(
+            Transaction.amount > 0,
+            Transaction.budget_id.in_(budget_ids),
+            Transaction.date >= twelve_months_ago,
+        )
+        .group_by(Transaction.budget_id, month_label, year_label)
+        .order_by(month_label.desc(), year_label.desc(), Transaction.budget_id)
+    )
+
+    spending_results = db.session.execute(spending_stmt).all()
+    spending_results = [
+        dict(amount=s[0], budget_id=s[1], month=int(s[2]), year=int(s[3]))
+        for s in spending_results
+    ]
+
+    income_results = db.session.execute(income_stmt).all()
+    income_results = [
+        dict(amount=i[0], budget_id=i[1], month=int(i[2]), year=int(i[3]))
+        for i in income_results
+    ]
+
+    return budgets, income_results, spending_results

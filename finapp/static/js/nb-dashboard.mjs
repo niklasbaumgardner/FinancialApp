@@ -4,6 +4,7 @@ import "./nb-net-worth-chart.mjs";
 import "./nb-budgets-line-chart.mjs";
 import "./nb-budget-spending-grid.mjs";
 import "./nb-category-spending-grid.mjs";
+import "./nb-spending-by-month-grid.mjs";
 
 class Dashboard extends NikElement {
   static properties = {
@@ -31,6 +32,10 @@ class Dashboard extends NikElement {
 
     fetch(GET_LINE_CHART_DATA_URL).then(async (response) => {
       this.lineChartData = await response.json();
+    });
+
+    fetch(GET_SPENDING_BY_MONTH_URL).then(async (response) => {
+      this.spendingByMonthData = await response.json();
     });
 
     fetch(
@@ -66,6 +71,16 @@ class Dashboard extends NikElement {
     ></nb-budgets-line-chart>`;
   }
 
+  spendingByMonthTemplate() {
+    if (!this.spendingByMonthData) {
+      return;
+    }
+
+    return html`<nb-spending-by-month-grid
+      .data=${this.spendingByMonthData}
+    ></nb-spending-by-month-grid>`;
+  }
+
   budgetSpendingTemplate() {
     if (!this.budgetSpendingData) {
       return;
@@ -89,7 +104,8 @@ class Dashboard extends NikElement {
   render() {
     return html`<div class="wa-stack">
       ${this.netWorthTemplate()} ${this.budgetsLineChartTemplate()}
-      ${this.budgetSpendingTemplate()} ${this.categorySpendingTemplate()}
+      ${this.spendingByMonthTemplate()} ${this.budgetSpendingTemplate()}
+      ${this.categorySpendingTemplate()}
     </div>`;
   }
 }

@@ -113,6 +113,7 @@ class BudgetSpendingGrid extends NikElement {
     const columnDefs = [
       {
         field: "name",
+        headerName: "Budget",
         cellRenderer: (param) => {
           if (param.data.id) {
             return `<a href="${this.getCurrentURL(param.data.budget.url)}">${
