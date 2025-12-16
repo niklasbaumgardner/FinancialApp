@@ -178,9 +178,9 @@ class SpendingByMonth extends NikElement {
       autoSizeStrategy: {
         type: "fitGridWidth",
         defaultMinWidth: 150,
-        olumnLimits: [
+        columnLimits: [
           {
-            colId: "budget",
+            colId: "name",
             minWidth: 200,
           },
         ],
