@@ -133,13 +133,13 @@ export class EditTransactionModal extends AddTransactionModal {
   }
 
   budgetsTemplate() {
-    return html`<wa-select
+    return html`<nb-combobox
       label="Select Budget"
       id="budgets-select"
       name="budget"
       required
       @input=${this.budgetChange}
-      >${this.budgetOptionsTemplate()}</wa-select
+      >${this.budgetOptionsTemplate()}</nb-combobox
     >`;
   }
 
@@ -159,13 +159,13 @@ export class EditTransactionModal extends AddTransactionModal {
   }
 
   sharedUsersSelectTemplate() {
-    return html`<wa-select
+    return html`<nb-combobox
       id="user-select"
       label="Select user for this transaction"
       name="user"
       ?disabled=${!this.selectedBudget}
       required
-      >${this.sharedUsersOptionsTemplate()}</wa-select
+      >${this.sharedUsersOptionsTemplate()}</nb-combobox
     >`;
   }
 

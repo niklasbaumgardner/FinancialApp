@@ -246,13 +246,12 @@ class BudgetSpendingGrid extends NikElement {
       open
     >
       <div class="wa-stack">
-        <wa-select
+        <nb-combobox
           @change=${this.handleEvent}
           id="netSpendingSelect"
           label="Spending in"
           class="w-fit"
-          hoist
-          >${this.optionsTemplate()}</wa-select
+          >${this.optionsTemplate()}</nb-combobox
         >
 
         <div id="spending-by-budget-grid"></div>

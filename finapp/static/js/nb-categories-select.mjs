@@ -1,9 +1,9 @@
 import { html, ifDefined } from "./lit.bundle.mjs";
-import { WaSelect } from "./main.bundle.mjs";
+import { Combobox } from "./nb-combobox.mjs";
 import { NikElement } from "./nik-element.mjs";
 import "./nb-category.mjs";
 
-export class BaseSelect extends WaSelect {
+export class BaseCombobox extends Combobox {
   constructor() {
     super();
     this.getTag = this.getTagFunction;
@@ -66,7 +66,7 @@ export class BaseSelect extends WaSelect {
   }
 }
 
-customElements.define("nb-base-select", BaseSelect);
+customElements.define("nb-base-combobox", BaseCombobox);
 
 export class CategoriesSelect extends NikElement {
   static properties = {
@@ -99,7 +99,7 @@ export class CategoriesSelect extends NikElement {
   }
 
   render() {
-    return html`<nb-base-select
+    return html`<nb-base-combobox
       label="Select Categories"
       name="categories"
       max-options-visible="0"
@@ -113,7 +113,7 @@ export class CategoriesSelect extends NikElement {
             ?selected=${this.selected?.includes(c.id)}
             ><nb-category name="${c.name}" color="${c.color}"></nb-category
           ></wa-option>`
-      )}</nb-base-select
+      )}</nb-base-combobox
     >`;
   }
 }

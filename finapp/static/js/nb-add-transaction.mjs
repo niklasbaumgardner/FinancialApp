@@ -125,12 +125,12 @@ export class AddTransactionModal extends BaseDialog {
   }
 
   budgetsTemplate() {
-    return html`<wa-select
+    return html`<nb-combobox
       label="Select Budget"
       id="budgets-select"
       required
       @input=${this.budgetChange}
-      >${this.budgetOptionsTemplate()}</wa-select
+      >${this.budgetOptionsTemplate()}</nb-combobox
     >`;
   }
 
@@ -148,13 +148,13 @@ export class AddTransactionModal extends BaseDialog {
   }
 
   sharedUsersSelectTemplate() {
-    return html`<wa-select
+    return html`<nb-combobox
       id="user-select"
       label="Select user for this transaction"
       name="user"
       ?disabled=${!this.selectedBudget}
       required
-      >${this.sharedUsersOptionsTemplate()}</wa-select
+      >${this.sharedUsersOptionsTemplate()}</nb-combobox
     >`;
   }
 

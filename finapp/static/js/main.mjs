@@ -32,7 +32,7 @@ import "@awesome.me/webawesome-pro/dist/components/radio-group/radio-group.js";
 
 import "@awesome.me/webawesome-pro/dist/components/scroller/scroller.js";
 
-import WaSelect from "@awesome.me/webawesome-pro/dist/components/select/select.js";
+import "@awesome.me/webawesome-pro/dist/components/select/select.js";
 import WaCombobox from "@awesome.me/webawesome-pro/dist/components/combobox/combobox.js";
 import "@awesome.me/webawesome-pro/dist/components/option/option.js";
 
@@ -78,4 +78,4 @@ registerIconLibrary("remix", {
   mutator: (svg) => svg.setAttribute("fill", "currentColor"),
 });
 
-export { WaSelect, WaCombobox };
+export { WaCombobox };

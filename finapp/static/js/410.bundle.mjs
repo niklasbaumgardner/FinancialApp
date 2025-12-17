@@ -3134,7 +3134,7 @@ export const __webpack_esm_id__=410;export const __webpack_esm_ids__=[410];expor
           </footer>`:a.qy` <footer part="footer" class="footer">
             <slot name="footer"></slot>
           </footer>`}
-    `}};d.css=[s.J,i],(0,l.Cc)([(0,c.MZ)({reflect:!0})],d.prototype,"appearance",2),(0,l.Cc)([(0,c.MZ)({attribute:"with-header",type:Boolean,reflect:!0})],d.prototype,"withHeader",2),(0,l.Cc)([(0,c.MZ)({attribute:"with-media",type:Boolean,reflect:!0})],d.prototype,"withMedia",2),(0,l.Cc)([(0,c.MZ)({attribute:"with-footer",type:Boolean,reflect:!0})],d.prototype,"withFooter",2),(0,l.Cc)([(0,c.MZ)({reflect:!0})],d.prototype,"orientation",2),d=(0,l.Cc)([(0,c.EM)("wa-card")],d)},5894(t,e,o){o.d(e,{A:()=>C});var a=o(6337),i=a.AH`
+    `}};d.css=[s.J,i],(0,l.Cc)([(0,c.MZ)({reflect:!0})],d.prototype,"appearance",2),(0,l.Cc)([(0,c.MZ)({attribute:"with-header",type:Boolean,reflect:!0})],d.prototype,"withHeader",2),(0,l.Cc)([(0,c.MZ)({attribute:"with-media",type:Boolean,reflect:!0})],d.prototype,"withMedia",2),(0,l.Cc)([(0,c.MZ)({attribute:"with-footer",type:Boolean,reflect:!0})],d.prototype,"withFooter",2),(0,l.Cc)([(0,c.MZ)({reflect:!0})],d.prototype,"orientation",2),d=(0,l.Cc)([(0,c.EM)("wa-card")],d)},5894(t,e,o){var a=o(6337),i=a.AH`
   :host {
     --tag-max-size: 10ch;
     --show-duration: 100ms;

@@ -58,7 +58,7 @@ export class MoveTransactionModal extends BaseDialog {
     const moveableBudgets = this.availableBudgets;
 
     if (moveableBudgets.length) {
-      return html`<wa-select
+      return html`<nb-combobox
         id="new_budget"
         name="new_budget"
         label="Move to"
@@ -74,7 +74,7 @@ export class MoveTransactionModal extends BaseDialog {
               }).format(budget.total)}</wa-option
             >`
         )}
-      </wa-select>`;
+      </nb-combobox>`;
     }
 
     return html`There are no other budgets shared with

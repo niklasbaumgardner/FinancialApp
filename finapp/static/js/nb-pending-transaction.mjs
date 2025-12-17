@@ -144,14 +144,14 @@ export class PendingTransaction extends NikElement {
   }
 
   budgetsTemplate() {
-    return html`<wa-select
+    return html`<nb-combobox
       size="small"
       label="Select Budget"
       id="budgets-select"
       name="budget"
       required
       @input=${this.budgetChange}
-      >${this.budgetOptionsTemplate()}</wa-select
+      >${this.budgetOptionsTemplate()}</nb-combobox
     >`;
   }
 
@@ -171,14 +171,14 @@ export class PendingTransaction extends NikElement {
   }
 
   sharedUsersSelectTemplate() {
-    return html`<wa-select
+    return html`<nb-combobox
       size="small"
       id="user-select"
       label="Select user for this transaction"
       name="user"
       ?disabled=${!this.selectedBudget}
       required
-      >${this.sharedUsersOptionsTemplate()}</wa-select
+      >${this.sharedUsersOptionsTemplate()}</nb-combobox
     >`;
   }
 

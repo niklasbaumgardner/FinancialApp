@@ -46,7 +46,7 @@ export class Transfer extends NikElement {
   }
 
   sourceBudgetTemplate() {
-    return html`<wa-select
+    return html`<nb-combobox
       label="Source budget"
       placeholder="Please select"
       name="source_budget"
@@ -55,7 +55,7 @@ export class Transfer extends NikElement {
       required
     >
       ${this.sourceOptionsTemplate()}
-    </wa-select>`;
+    </nb-combobox>`;
   }
 
   destOptionsTemplate() {
@@ -71,7 +71,7 @@ export class Transfer extends NikElement {
   }
 
   destBudgetTemplate() {
-    return html`<wa-select
+    return html`<nb-combobox
       label="Destination budget"
       placeholder="Please select"
       name="dest_budget"
@@ -80,7 +80,7 @@ export class Transfer extends NikElement {
       required
     >
       ${this.destOptionsTemplate()}
-    </wa-select>`;
+    </nb-combobox>`;
   }
 
   handleInput() {

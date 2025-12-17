@@ -230,16 +230,15 @@ class BudgetsLineChart extends BaseChart {
     >
       <div class="wa-stack">
         <div class="wa-split">
-          <wa-select
+          <nb-combobox
             @change=${this.updateChart}
             id="budgets"
             label="Select the budgets to show"
             class="w-fit"
             multiple
-            hoist
           >
             ${this.optionsTemplate()}
-          </wa-select>
+          </nb-combobox>
           <wa-radio-group
             @change=${this.handleTimeChange}
             orientation="horizontal"

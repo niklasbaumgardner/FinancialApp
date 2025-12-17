@@ -87,7 +87,7 @@ export class PreferencesCard extends NikElement {
         <div class="wa-stack">
           <h2>Preferences</h2>
 
-          <wa-select
+          <nb-combobox
             id="themes"
             label="Builtin Themes"
             @input=${this.handleThemeChange}
@@ -98,22 +98,22 @@ export class PreferencesCard extends NikElement {
                   value=${theme}
                   >${toUpper(theme)}</wa-option
                 >`
-            )}</wa-select
+            )}</nb-combobox
           >
 
-          <wa-select id="mode" label="Mode" @input=${this.handleModeChange}
+          <nb-combobox id="mode" label="Mode" @input=${this.handleModeChange}
             ><wa-option value="light" ?selected=${this.theme.mode === "light"}
               >Light</wa-option
             ><wa-option value="dark" ?selected=${this.theme.mode === "dark"}
               >Dark</wa-option
-            ></wa-select
+            ></nb-combobox
           >
 
           <wa-divider></wa-divider>
 
           <p>Custom Theming Options</p>
 
-          <wa-select
+          <nb-combobox
             with-clear
             id="primary-color"
             label="Primary Color"
@@ -125,10 +125,10 @@ export class PreferencesCard extends NikElement {
                   value=${color}
                   >${toUpper(color)}</wa-option
                 >`
-            )}</wa-select
+            )}</nb-combobox
           >
 
-          <wa-select
+          <nb-combobox
             with-clear
             id="background-color"
             label="Background Color"
@@ -140,10 +140,10 @@ export class PreferencesCard extends NikElement {
                   value=${color}
                   >${toUpper(color)}</wa-option
                 >`
-            )}</wa-select
+            )}</nb-combobox
           >
 
-          <wa-select
+          <nb-combobox
             with-clear
             id="color-palette"
             label="Color Palette"
@@ -155,7 +155,7 @@ export class PreferencesCard extends NikElement {
                   value=${color}
                   >${toUpper(color)}</wa-option
                 >`
-            )}</wa-select
+            )}</nb-combobox
           >
         </div>
       </div>

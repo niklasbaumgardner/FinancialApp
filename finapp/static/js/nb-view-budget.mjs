@@ -175,8 +175,10 @@ export class ViewBudget extends NikElement {
       return null;
     }
 
-    return html`<wa-select label="Select user for this transaction" name="user"
-      >${this.sharedUsersOptionsTemplate()}</wa-select
+    return html`<nb-combobox
+      label="Select user for this transaction"
+      name="user"
+      >${this.sharedUsersOptionsTemplate()}</nb-combobox
     >`;
   }
 
