@@ -1,57 +1,58 @@
-import "@awesome.me/webawesome/dist/components/page/page.js";
+import "@awesome.me/webawesome-pro/dist/components/page/page.js";
 
-import "@awesome.me/webawesome/dist/components/button/button.js";
-import "@awesome.me/webawesome/dist/components/button-group/button-group.js";
+import "@awesome.me/webawesome-pro/dist/components/button/button.js";
+import "@awesome.me/webawesome-pro/dist/components/button-group/button-group.js";
 
-import "@awesome.me/webawesome/dist/components/card/card.js";
+import "@awesome.me/webawesome-pro/dist/components/card/card.js";
 
-import "@awesome.me/webawesome/dist/components/callout/callout.js";
+import "@awesome.me/webawesome-pro/dist/components/callout/callout.js";
 
-import "@awesome.me/webawesome/dist/components/checkbox/checkbox.js";
+import "@awesome.me/webawesome-pro/dist/components/checkbox/checkbox.js";
 
-import "@awesome.me/webawesome/dist/components/details/details.js";
+import "@awesome.me/webawesome-pro/dist/components/details/details.js";
 
-import "@awesome.me/webawesome/dist/components/dialog/dialog.js";
+import "@awesome.me/webawesome-pro/dist/components/dialog/dialog.js";
 
-import "@awesome.me/webawesome/dist/components/divider/divider.js";
+import "@awesome.me/webawesome-pro/dist/components/divider/divider.js";
 
-import "@awesome.me/webawesome/dist/components/dropdown/dropdown.js";
-import "@awesome.me/webawesome/dist/components/dropdown-item/dropdown-item.js";
+import "@awesome.me/webawesome-pro/dist/components/dropdown/dropdown.js";
+import "@awesome.me/webawesome-pro/dist/components/dropdown-item/dropdown-item.js";
 
-import "@awesome.me/webawesome/dist/components/format-date/format-date.js";
-import "@awesome.me/webawesome/dist/components/format-number/format-number.js";
+import "@awesome.me/webawesome-pro/dist/components/format-date/format-date.js";
+import "@awesome.me/webawesome-pro/dist/components/format-number/format-number.js";
 
-import "@awesome.me/webawesome/dist/components/icon/icon.js";
+import "@awesome.me/webawesome-pro/dist/components/icon/icon.js";
 
-import "@awesome.me/webawesome/dist/components/input/input.js";
+import "@awesome.me/webawesome-pro/dist/components/input/input.js";
 
-import "@awesome.me/webawesome/dist/components/popup/popup.js";
+import "@awesome.me/webawesome-pro/dist/components/popup/popup.js";
 
-import "@awesome.me/webawesome/dist/components/radio/radio.js";
-import "@awesome.me/webawesome/dist/components/radio-group/radio-group.js";
+import "@awesome.me/webawesome-pro/dist/components/radio/radio.js";
+import "@awesome.me/webawesome-pro/dist/components/radio-group/radio-group.js";
 
-import "@awesome.me/webawesome/dist/components/scroller/scroller.js";
+import "@awesome.me/webawesome-pro/dist/components/scroller/scroller.js";
 
-import WaSelect from "@awesome.me/webawesome/dist/components/select/select.js";
-import "@awesome.me/webawesome/dist/components/option/option.js";
+import WaSelect from "@awesome.me/webawesome-pro/dist/components/select/select.js";
+import WaCombobox from "@awesome.me/webawesome-pro/dist/components/combobox/combobox.js";
+import "@awesome.me/webawesome-pro/dist/components/option/option.js";
 
-import "@awesome.me/webawesome/dist/components/tooltip/tooltip.js";
+import "@awesome.me/webawesome-pro/dist/components/tooltip/tooltip.js";
 
-import "@awesome.me/webawesome/dist/components/switch/switch.js";
+import "@awesome.me/webawesome-pro/dist/components/switch/switch.js";
 
-import "@awesome.me/webawesome/dist/components/badge/badge.js";
+import "@awesome.me/webawesome-pro/dist/components/badge/badge.js";
 
-import "@awesome.me/webawesome/dist/components/tab-group/tab-group.js";
-import "@awesome.me/webawesome/dist/components/tab/tab.js";
-import "@awesome.me/webawesome/dist/components/tab-panel/tab-panel.js";
+import "@awesome.me/webawesome-pro/dist/components/tab-group/tab-group.js";
+import "@awesome.me/webawesome-pro/dist/components/tab/tab.js";
+import "@awesome.me/webawesome-pro/dist/components/tab-panel/tab-panel.js";
 
-import "@awesome.me/webawesome/dist/components/textarea/textarea.js";
+import "@awesome.me/webawesome-pro/dist/components/textarea/textarea.js";
 
 // // Option 2: the setBasePath()
-// import { setBasePath } from "@awesome.me/webawesome/dist/webawesome.js";
+// import { setBasePath } from "@awesome.me/webawesome-pro/dist/webawesome.js";
 // setBasePath("");
 
-import { registerIconLibrary } from "@awesome.me/webawesome/dist/webawesome.js";
+import { registerIconLibrary } from "@awesome.me/webawesome-pro/dist/webawesome.js";
 
 registerIconLibrary("ion", {
   resolver: (name) =>
@@ -77,4 +78,4 @@ registerIconLibrary("remix", {
   mutator: (svg) => svg.setAttribute("fill", "currentColor"),
 });
 
-export { WaSelect };
+export { WaSelect, WaCombobox };

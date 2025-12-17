@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@awesome.me/webawesome": "^3.0.0",
+    "@awesome.me/webawesome-pro": "^3.1.0",
     "@tailwindcss/cli": "^4.1.8",
     "ag-charts-community": "^12.3.0",
     "ag-grid-community": "^34.1.1",

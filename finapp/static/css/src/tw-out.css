@@ -1,4 +1,4 @@
-/*! tailwindcss v4.1.13 | MIT License | https://tailwindcss.com */
+/*! tailwindcss v4.1.18 | MIT License | https://tailwindcss.com */
 @layer properties;
 @layer theme, base, components, utilities;
 @layer theme {
@@ -42,14 +42,14 @@
   .pointer-events-none {
     pointer-events: none;
   }
+  .\!visible {
+    visibility: visible !important;
+  }
   .invisible {
     visibility: hidden;
   }
   .visible {
     visibility: visible;
-  }
-  .visible\! {
-    visibility: visible !important;
   }
   .absolute {
     position: absolute;
@@ -62,6 +62,9 @@
   }
   .static {
     position: static;
+  }
+  .sticky {
+    position: sticky;
   }
   .col-2 {
     grid-column: 2;
