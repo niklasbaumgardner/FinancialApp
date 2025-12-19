@@ -507,6 +507,7 @@
     textarea,
     wa-input,
     wa-select,
+    wa-combobox,
     wa-textarea {
       --wa-form-control-value-line-height: var(--wa-line-height-normal);
 
@@ -518,9 +519,10 @@
 
         &:focus,
         &:focus-within {
-          &:where(:not(wa-input):not(wa-select):not(wa-textarea)),
+          &:where(:is(input, select, textarea)),
           &:where(wa-input)::part(base),
           &:where(wa-select)::part(combobox),
+          &:where(wa-combobox)::part(combobox),
           &:where(wa-textarea)::part(base) {
             border-color: transparent transparent var(--wa-color-focus)
               transparent;
@@ -529,9 +531,10 @@
           }
         }
 
-        &:where(:not(wa-input):not(wa-select):not(wa-textarea)),
+        &:where(:is(input, select, textarea)),
         &:where(wa-input)::part(base),
         &:where(wa-select)::part(combobox),
+        &:where(wa-combobox)::part(combobox),
         &:where(wa-textarea)::part(base) {
           border-color: transparent transparent
             var(--wa-form-control-border-color) transparent;

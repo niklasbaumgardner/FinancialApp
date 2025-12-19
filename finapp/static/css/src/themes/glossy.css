@@ -470,21 +470,24 @@
     textarea,
     wa-input,
     wa-select,
+    wa-combobox,
     wa-textarea {
       --upper-tint: inset 0 -1.25em 0 0 rgb(255 255 255 / 0.085);
       --lower-shade: inset 0 1.125em 0 0 rgb(0 0 0 / 0.02);
-      &:where(:not(wa-input):not(wa-select):not(wa-textarea)),
+      &:where(:is(input, select, textarea)),
       &:where(wa-input)::part(base),
       &:where(wa-select)::part(combobox),
+      &:where(wa-combobox)::part(combobox),
       &:where(wa-textarea)::part(base) {
         box-shadow: var(--upper-tint), var(--lower-shade);
         transition: all var(--wa-transition-fast);
       }
 
       &:focus {
-        &:where(:not(wa-input):not(wa-select):not(wa-textarea)),
+        &:where(:is(input, select, textarea)),
         &:where(wa-input)::part(base),
         &:where(wa-select)::part(combobox),
+        &:where(wa-combobox)::part(combobox),
         &:where(wa-textarea)::part(base) {
           box-shadow: 0 0 transparent, 0 0 transparent;
         }

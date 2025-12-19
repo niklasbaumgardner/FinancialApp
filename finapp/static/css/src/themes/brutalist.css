@@ -456,6 +456,7 @@
 
     wa-input::part(base),
     wa-select::part(combobox),
+    wa-combobox::part(combobox),
     wa-textarea::part(textarea),
     input:where(
         :not(

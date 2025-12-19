@@ -455,17 +455,15 @@
     :is(wa-checkbox, wa-radio, wa-switch):not(:state(checked)),
     wa-input,
     wa-select,
+    wa-combobox,
     wa-textarea {
       &:not([appearance="filled"]):not(.wa-filled):not([disabled]):not(
           :disabled
         ) {
-        &:where(
-            :not(wa-radio):not(wa-checkbox):not(wa-switch):not(wa-input):not(
-                wa-select
-              ):not(wa-textarea)
-          ),
+        &:where(:is(input, select, textarea)),
         &:where(wa-checkbox, wa-radio, wa-switch)::part(control),
         &:where(wa-input)::part(base),
+        &:where(wa-combobox)::part(combobox),
         &:where(wa-select)::part(combobox),
         &:where(wa-textarea)::part(base) {
           box-shadow: inset var(--wa-shadow-s);
