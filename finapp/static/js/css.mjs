@@ -1,3 +1,5 @@
+import "../css/src/webawesome.css";
+
 import "../css/src/category-colors.css";
 import "../css/src/category-modal.css";
 import "../css/src/colors.css";
@@ -31,5 +33,4 @@ import "../css/src/tw-out.css";
 // import "../css/color/shoelace.css";
 // import "../css/color/vogue.css";
 
-import "../css/src/webawesome.css";
 // import "../css/src/themes/default.css";

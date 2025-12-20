@@ -1,5 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" class="wa-{{ theme.mode }} wa-cloak">
+<html
+  lang="en"
+  class="wa-{{ user_settings.settings.mode }} wa-cloak"
+  style="{% if user_settings.settings.rounding %}--wa-border-radius-scale:{{user_settings.settings.rounding}};{% endif %}{% if user_settings.settings.spacing %}--wa-space-scale:{{user_settings.settings.spacing}};{% endif %}{% if user_settings.settings.border_width %}--wa-border-width-scale:{{user_settings.settings.border_width}};{% endif %}"
+>
   <head>
     <!-- Required meta tags -->
     <meta charset="utf-8" />
@@ -12,9 +16,26 @@
 
     <link rel="manifest" href="/static/manifest.webmanifest" />
 
-    <link rel="stylesheet" href="/static/css/bundle.min.css" />
-    <link id="theme" rel="stylesheet" href="" />
-    <link id="palette" rel="stylesheet" href="" />
+    <link
+      rel="stylesheet"
+      href="/static/css/bundle.min.css"
+      render="blocking"
+      fetchpriority="high"
+    />
+    <link
+      id="theme"
+      rel="stylesheet"
+      href=""
+      render="blocking"
+      fetchpriority="high"
+    />
+    <link
+      id="palette"
+      rel="stylesheet"
+      href=""
+      render="blocking"
+      fetchpriority="high"
+    />
 
     <link rel="icon" type="image/png" href="/static/images/logo.svg" />
 
@@ -32,6 +53,8 @@
           "{{ url_for('theme_bp.set_background_color') }}";
         const SET_COLOR_PALETTE_URL =
           "{{ url_for('theme_bp.set_color_palette') }}";
+        const UPDATE_USER_SETTINGS =
+          "{{ url_for('user_settings_bp.update_settings') }}"
 
         // URLs for categories
         const CREATE_CATEGORY_URL =
@@ -73,9 +96,13 @@
     </script>
 
     <script type="module">
-      import { Theme, THEME_LIST, COLOR_PALETTE_LIST } from "/static/js/theme.mjs";
+      import {
+        Theme,
+        THEME_LIST,
+        COLOR_PALETTE_LIST,
+      } from "/static/js/theme.mjs";
+      window.THEME = new Theme({{ user_settings.settings|tojson }});
 
-      window.THEME = new Theme({{ theme|tojson }});
       let storedTheme = window.localStorage.getItem("theme");
       if (storedTheme === "dark" || storedTheme === "light") {
         window.THEME.migrateTheme(storedTheme);
@@ -99,7 +126,7 @@
       if (window.Sentry) {
         Sentry.onLoad(function () {
           Sentry.init({
-            release: "nb-budgets@2.1.7",
+            release: "nb-budgets@2.2.0",
             environment: "production",
             integrations: [
               Sentry.browserTracingIntegration(),

@@ -5,12 +5,13 @@ import os
 from finapp import db, login_manager
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 from sqlalchemy import ForeignKey, UniqueConstraint
-from typing import List, Optional
+from typing import List, Optional, Any
 from datetime import date as date_type, datetime as datetime_type
 from typing_extensions import Annotated
 from finapp.utils.Serializer import SerializerMixin
 from cryptography.fernet import Fernet
 from enum import IntFlag
+from sqlalchemy.dialects.postgresql import JSONB
 
 
 FERNET_KEY: bytes = os.environ.get("FERNET_KEY").encode()
@@ -83,6 +84,16 @@ class Theme(db.Model, SerializerMixin):
     background_color: Mapped[Optional[str]]
     color_contrast: Mapped[Optional[str]]  # web-awesome values
     color_palette: Mapped[Optional[str]]  # web-awesome values
+
+
+class UserSettings(db.Model, SerializerMixin):
+    __tablename__ = "user_settings"
+
+    id: Mapped[int_pk]
+    user_id: Mapped[user_fk]
+    settings: Mapped[dict[str, Any]] = mapped_column(
+        JSONB, default=dict, nullable=False
+    )
 
 
 class Budget(db.Model, SerializerMixin):

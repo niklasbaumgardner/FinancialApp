@@ -204,6 +204,9 @@
   .gap-\(--wa-space-2xs\)\! {
     gap: var(--wa-space-2xs) !important;
   }
+  .gap-\(--wa-space-l\) {
+    gap: var(--wa-space-l);
+  }
   .gap-\(--wa-space-m\) {
     gap: var(--wa-space-m);
   }

@@ -29,7 +29,7 @@ head %}
   transactions='{{ transactions|tojson }}'
   budgets='{{ budgets|tojson }}'
   categories='{{ categories|tojson }}'
-  theme="{{ theme.mode }}"
+  theme="{{ user_settings.settings.mode }}"
   total="{{ total }}"
 ></nb-view-transactions>
 

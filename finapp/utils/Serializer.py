@@ -55,6 +55,8 @@ def serialize(value):
         return value
     elif isinstance(value, list):
         return [serialize(v) for v in value]
+    elif isinstance(value, dict):
+        return {serialize(k): serialize(v) for k, v in value.items()}
     elif callable(value):
         return serialize(value())
     elif hasattr(value, "to_dict"):

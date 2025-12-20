@@ -141,3 +141,7 @@ wa-tab-panel[name="new"]::part(base) {
     display: none;
   }
 }
+
+wa-page {
+  transition: all 0.001ms step-start;
+}

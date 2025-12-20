@@ -76,20 +76,28 @@ export const COLOR_PALETTE_LIST = [
 ];
 
 export class Theme {
+  #domProperties;
   #theme;
   #mode;
   #primaryColor;
   #backgroundColor;
   #colorPalette;
+  #rounding;
+  #spacing;
+  #borderWidth;
   #initing;
 
   constructor(theme) {
     this.#initing = true;
+    this.#domProperties = window.getComputedStyle(document.documentElement);
     this.theme = theme.theme;
     this.mode = theme.mode;
     this.primaryColor = theme.primary_color;
     this.backgroundColor = theme.background_color;
     this.colorPalette = theme.color_palette;
+    this.rounding = theme.rounding;
+    this.spacing = theme.spacing;
+    this.borderWidth = theme.border_width;
 
     this.#initing = false;
 
@@ -118,6 +126,26 @@ export class Theme {
     return this.#colorPalette;
   }
 
+  get rounding() {
+    return (
+      this.#rounding ??
+      this.#domProperties.getPropertyValue("--wa-border-radius-scale")
+    );
+  }
+
+  get spacing() {
+    return (
+      this.#spacing ?? this.#domProperties.getPropertyValue("--wa-space-scale")
+    );
+  }
+
+  get borderWidth() {
+    return (
+      this.#borderWidth ??
+      this.#domProperties.getPropertyValue("--wa-border-width-scale")
+    );
+  }
+
   get themeLinkEl() {
     return document.getElementById("theme");
   }
@@ -144,7 +172,7 @@ export class Theme {
     this.themeLinkEl.href = `/static/css/${this.theme}.min.css`;
 
     if (!this.#initing) {
-      fetch(SET_THEME_URL + "?" + new URLSearchParams({ theme: this.theme }));
+      this.updateSettings({ theme: this.theme });
     }
   }
 
@@ -169,9 +197,7 @@ export class Theme {
     );
 
     if (!this.#initing) {
-      fetch(
-        SET_THEME_MODE_URL + "?" + new URLSearchParams({ mode: this.mode })
-      );
+      this.updateSettings({ mode: this.mode });
     }
   }
 
@@ -197,11 +223,7 @@ export class Theme {
     }
 
     if (!this.#initing) {
-      fetch(
-        SET_PRIMARY_COLOR_URL +
-          "?" +
-          new URLSearchParams({ primary_color: this.primaryColor })
-      );
+      this.updateSettings({ primary_color: this.primaryColor });
     }
   }
 
@@ -237,11 +259,7 @@ export class Theme {
     }
 
     if (!this.#initing) {
-      fetch(
-        SET_BACKGROUND_COLOR_URL +
-          "?" +
-          new URLSearchParams({ background_color: this.backgroundColor })
-      );
+      this.updateSettings({ background_color: this.backgroundColor });
     }
   }
 
@@ -276,12 +294,90 @@ export class Theme {
     }
 
     if (!this.#initing) {
-      fetch(
-        SET_COLOR_PALETTE_URL +
-          "?" +
-          new URLSearchParams({ color_palette: this.colorPalette })
+      this.updateSettings({ color_palette: this.colorPalette });
+    }
+  }
+
+  set rounding(rounding) {
+    if (rounding === this.#rounding) {
+      return;
+    }
+
+    document.documentElement.style.removeProperty("--wa-border-radius-scale");
+    if (rounding >= 0 && rounding <= 4) {
+      this.#rounding = rounding;
+    } else {
+      this.#rounding = null;
+    }
+
+    if (this.#rounding !== null) {
+      document.documentElement.style.setProperty(
+        "--wa-border-radius-scale",
+        this.#rounding
       );
     }
+
+    if (!this.#initing) {
+      this.updateSettings({ rounding: this.#rounding });
+    }
+  }
+
+  set spacing(spacing) {
+    if (spacing === this.#spacing) {
+      return;
+    }
+
+    document.documentElement.style.removeProperty("--wa-space-scale");
+    if (spacing >= 0.5 && spacing <= 2) {
+      this.#spacing = spacing;
+    } else {
+      this.#spacing = null;
+    }
+
+    if (this.#spacing !== null) {
+      document.documentElement.style.setProperty(
+        "--wa-space-scale",
+        this.#spacing
+      );
+    }
+
+    if (!this.#initing) {
+      this.updateSettings({ spacing: this.#spacing });
+    }
+  }
+
+  set borderWidth(borderWidth) {
+    if (borderWidth === this.#borderWidth) {
+      return;
+    }
+
+    document.documentElement.style.removeProperty("--wa-border-width-scale");
+    if (borderWidth >= 0.5 && borderWidth <= 4) {
+      this.#borderWidth = borderWidth;
+    } else {
+      this.#borderWidth = null;
+    }
+
+    if (this.#borderWidth !== null) {
+      document.documentElement.style.setProperty(
+        "--wa-border-width-scale",
+        this.#borderWidth
+      );
+    }
+
+    if (!this.#initing) {
+      this.updateSettings({ border_width: this.#borderWidth });
+    }
+  }
+
+  updateSettings(args) {
+    fetch(UPDATE_USER_SETTINGS, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(args),
+    });
   }
 
   makeDefault() {

@@ -35,7 +35,7 @@ if not os.environ.get("FLASK_DEBUG"):
         dsn=os.environ.get("SENTRY_DSN"),
         traces_sample_rate=1.0,
         send_default_pii=True,
-        release="nb-budgets@2.0.12",
+        release="nb-budgets@2.1.0",
     )
 
 
@@ -113,6 +113,7 @@ from finapp.routes.simplefin import simplefin_bp
 from finapp.routes.theme import theme_bp
 from finapp.routes.transaction import transaction_bp
 from finapp.routes.transfer import transfer_bp
+from finapp.routes.user_settings import user_settings_bp
 from finapp.routes.viewbudget import viewbudget_bp
 from finapp.routes.viewbudgets import viewbudgets_bp
 from finapp.routes.viewtransactions import viewtransactions_bp
@@ -130,6 +131,7 @@ app.register_blueprint(simplefin_bp)
 app.register_blueprint(theme_bp)
 app.register_blueprint(transaction_bp)
 app.register_blueprint(transfer_bp)
+app.register_blueprint(user_settings_bp)
 app.register_blueprint(viewbudget_bp)
 app.register_blueprint(viewbudgets_bp)
 app.register_blueprint(viewtransactions_bp)

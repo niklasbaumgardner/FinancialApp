@@ -23,6 +23,9 @@ export class PreferencesCard extends NikElement {
     backgroundColorSelect: "#background-color",
     colorContrastSelect: "#color-contrast",
     colorPaletteSelect: "#color-palette",
+    roundingSlider: "#theme-rounding",
+    spacingSlider: "#theme-spacing",
+    borderWidthSlider: "#theme-border-width",
   };
 
   connectedCallback() {
@@ -32,6 +35,12 @@ export class PreferencesCard extends NikElement {
 
   init() {
     this.theme = THEME;
+
+    document.addEventListener("transitionstart", this);
+    this.styleOberserver = new MutationObserver(() => this.handleCSSChange());
+    this.styleOberserver.observe(document.documentElement, {
+      attributeFilter: ["style"],
+    });
   }
 
   handleThemeChange() {
@@ -76,18 +85,60 @@ export class PreferencesCard extends NikElement {
     this.theme.colorContrast = colorContrast;
   }
 
+  handleRoundingChange() {
+    let rounding = this.roundingSlider.value;
+    // console.log(rounding);
+    this.theme.rounding = rounding;
+  }
+
+  resetRounding() {
+    this.theme.rounding = null;
+  }
+
+  handleSpacingChange() {
+    let spacing = this.spacingSlider.value;
+    // console.log(spacing);
+    this.theme.spacing = spacing;
+  }
+
+  resetSpacing() {
+    this.theme.spacing = null;
+  }
+
+  handleBorderWidthChange() {
+    let borderWidth = this.borderWidthSlider.value;
+    // console.log(borderWidth);
+    this.theme.borderWidth = borderWidth;
+  }
+
+  resetBorderWidth() {
+    this.theme.borderWidth = null;
+  }
+
+  handleEvent(event) {
+    switch (event.type) {
+      case "transitionstart": {
+        this.handleCSSChange(event);
+        break;
+      }
+    }
+  }
+
+  handleCSSChange() {
+    this.requestUpdate();
+  }
+
   render() {
     if (!this.theme) {
       return null;
     }
 
     return html`<wa-card>
-      <form id="profile-form" action="" method="POST" autocomplete="off"></form>
       <div class="wa-stack">
         <div class="wa-stack">
           <h2>Preferences</h2>
 
-          <nb-combobox
+          <wa-select
             id="themes"
             label="Builtin Themes"
             @input=${this.handleThemeChange}
@@ -98,65 +149,131 @@ export class PreferencesCard extends NikElement {
                   value=${theme}
                   >${toUpper(theme)}</wa-option
                 >`
-            )}</nb-combobox
+            )}</wa-select
           >
 
-          <nb-combobox id="mode" label="Mode" @input=${this.handleModeChange}
+          <wa-select id="mode" label="Mode" @input=${this.handleModeChange}
             ><wa-option value="light" ?selected=${this.theme.mode === "light"}
               >Light</wa-option
             ><wa-option value="dark" ?selected=${this.theme.mode === "dark"}
               >Dark</wa-option
-            ></nb-combobox
+            ></wa-select
           >
 
           <wa-divider></wa-divider>
 
-          <p>Custom Theming Options</p>
+          <div class="wa-stack">
+            <h4>Custom Theming Options</h4>
 
-          <nb-combobox
-            with-clear
-            id="primary-color"
-            label="Primary Color"
-            @input=${this.handlePrimaryColorChange}
-            >${PRIMARY_COLOR_LIST.map(
-              (color) =>
-                html`<wa-option
-                  ?selected=${this.theme.primaryColor === color}
-                  value=${color}
-                  >${toUpper(color)}</wa-option
-                >`
-            )}</nb-combobox
-          >
+            <div class="wa-grid">
+              <div class="wa-stack">
+                <wa-select
+                  with-clear
+                  id="primary-color"
+                  label="Primary Color"
+                  @input=${this.handlePrimaryColorChange}
+                  >${PRIMARY_COLOR_LIST.map(
+                    (color) =>
+                      html`<wa-option
+                        ?selected=${this.theme.primaryColor === color}
+                        value=${color}
+                        >${toUpper(color)}</wa-option
+                      >`
+                  )}</wa-select
+                >
 
-          <nb-combobox
-            with-clear
-            id="background-color"
-            label="Background Color"
-            @input=${this.handleBackgroundColorChange}
-            >${BACKGROUND_COLOR_LIST.map(
-              (color) =>
-                html`<wa-option
-                  ?selected=${this.theme.backgroundColor === color}
-                  value=${color}
-                  >${toUpper(color)}</wa-option
-                >`
-            )}</nb-combobox
-          >
+                <wa-select
+                  with-clear
+                  id="background-color"
+                  label="Background Color"
+                  @input=${this.handleBackgroundColorChange}
+                  >${BACKGROUND_COLOR_LIST.map(
+                    (color) =>
+                      html`<wa-option
+                        ?selected=${this.theme.backgroundColor === color}
+                        value=${color}
+                        >${toUpper(color)}</wa-option
+                      >`
+                  )}</wa-select
+                >
 
-          <nb-combobox
-            with-clear
-            id="color-palette"
-            label="Color Palette"
-            @input=${this.handleColorPaletteChange}
-            >${COLOR_PALETTE_LIST.map(
-              (color) =>
-                html`<wa-option
-                  ?selected=${this.theme.colorPalette === color}
-                  value=${color}
-                  >${toUpper(color)}</wa-option
-                >`
-            )}</nb-combobox
-          >
+                <wa-select
+                  with-clear
+                  id="color-palette"
+                  label="Color Palette"
+                  @input=${this.handleColorPaletteChange}
+                  >${COLOR_PALETTE_LIST.map(
+                    (color) =>
+                      html`<wa-option
+                        ?selected=${this.theme.colorPalette === color}
+                        value=${color}
+                        >${toUpper(color)}</wa-option
+                      >`
+                  )}</wa-select
+                >
+              </div>
+
+              <div class="wa-stack gap-(--wa-space-l)">
+                <div class="wa-split">
+                  <wa-slider
+                    class="grow"
+                    id="theme-rounding"
+                    label="Rounding"
+                    min="0"
+                    max="4"
+                    step="0.1"
+                    .value=${this.theme.rounding}
+                    with-tooltip
+                    @change=${this.handleRoundingChange}
+                  ></wa-slider
+                  ><wa-button
+                    appearance="outlined"
+                    variant="danger"
+                    @click=${this.resetRounding}
+                    >Reset</wa-button
+                  >
+                </div>
+                <div class="wa-split">
+                  <wa-slider
+                    class="grow"
+                    id="theme-spacing"
+                    label="Spacing"
+                    min="0.5"
+                    max="2"
+                    step="0.0125"
+                    .value=${this.theme.spacing}
+                    with-tooltip
+                    @change=${this.handleSpacingChange}
+                  ></wa-slider
+                  ><wa-button
+                    appearance="outlined"
+                    variant="danger"
+                    @click=${this.resetSpacing}
+                    >Reset</wa-button
+                  >
+                </div>
+                <div class="wa-split">
+                  <wa-slider
+                    class="grow"
+                    id="theme-border-width"
+                    label="Border Width"
+                    min="0.5"
+                    max="4"
+                    step="0.5"
+                    .value=${this.theme.borderWidth}
+                    with-tooltip
+                    @change=${this.handleBorderWidthChange}
+                  ></wa-slider
+                  ><wa-button
+                    appearance="outlined"
+                    variant="danger"
+                    @click=${this.resetBorderWidth}
+                    >Reset</wa-button
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </wa-card>`;
