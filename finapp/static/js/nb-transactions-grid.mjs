@@ -1,6 +1,7 @@
 import { html } from "./lit.bundle.mjs";
 import { NikElement } from "./nik-element.mjs";
 import * as agGrid from "./agGrid.bundle.mjs";
+import { BaseGrid } from "./nb-base-grid.mjs";
 import "./nb-category.mjs";
 import "./nb-delete-transaction.mjs";
 import "./nb-edit-transaction.mjs";
@@ -57,7 +58,7 @@ class TransactionActions extends NikElement {
 }
 customElements.define("nb-transaction-actions", TransactionActions);
 
-export class TransactionsGrid extends NikElement {
+export class TransactionsGrid extends BaseGrid {
   static properties = {
     transactions: {
       type: Array,
@@ -73,33 +74,16 @@ export class TransactionsGrid extends NikElement {
     paginationButtons: { all: ".ag-paging-page-summary-panel > .ag-button" },
   };
 
-  get currentColorScheme() {
-    let theme = document.documentElement.classList.contains("wa-dark")
-      ? "dark"
-      : "light";
-
-    let colorScheme =
-      theme === "dark" ? agGrid.colorSchemeDark : agGrid.colorSchemeLight;
-    return colorScheme;
-  }
-
-  constructor() {
-    super();
-
-    // this.queue = [];
-    // this.disablePagination = true;
-  }
-
   firstUpdated() {
     this.init();
   }
 
   async init() {
+    this.requestUpdate();
     await this.updateComplete;
 
     this.createDataGrid();
     this.setupThemeWatcher();
-    // this.disablePaginationPanel();
   }
 
   connectedCallback() {
@@ -397,6 +381,7 @@ export class TransactionsGrid extends NikElement {
     ];
 
     const gridOptions = {
+      ...this.defaultGridOptions,
       columnDefs,
       rowData: this.transactions,
       autoSizeStrategy: {
@@ -441,39 +426,13 @@ export class TransactionsGrid extends NikElement {
           },
         ],
       },
-      defaultColDef: {
-        resizable: false,
-      },
-      domLayout: "autoHeight",
-      suppressCellFocus: true,
-      suppressMovableColumns: true,
       enableCellSpan: true,
       pagination: true,
       paginationPageSize: 20,
       paginationPageSizeSelector: false,
-      theme: agGrid.themeAlpine.withPart(this.currentColorScheme),
       getRowId: (params) => `${params.data.id}`,
     };
     this.dataGrid = agGrid.createGrid(this.transactionsGridEl, gridOptions);
-  }
-
-  setupThemeWatcher() {
-    this.mutationObserver = new MutationObserver(() =>
-      this.handleThemeChange()
-    );
-
-    this.mutationObserver.observe(document.documentElement, {
-      attributes: true,
-    });
-
-    this.handleThemeChange();
-  }
-
-  handleThemeChange() {
-    this.dataGrid.setGridOption(
-      "theme",
-      agGrid.themeAlpine.withPart(this.currentColorScheme)
-    );
   }
 
   handleDisabledPaginationButtonClick(event) {
@@ -527,7 +486,7 @@ export class TransactionsGrid extends NikElement {
       return null;
     }
 
-    return html`<div id="grid" style="--ag-grid-size: 4px;"></div>`;
+    return super.render();
   }
 }
 

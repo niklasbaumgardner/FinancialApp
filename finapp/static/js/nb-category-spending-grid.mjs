@@ -1,8 +1,8 @@
-import { NikElement } from "./nik-element.mjs";
 import { html } from "./lit.bundle.mjs";
 import "./nb-transactions-grid.mjs";
 import "./nb-add-transaction.mjs";
 import * as agGrid from "./agGrid.bundle.mjs";
+import { BaseGrid } from "./nb-base-grid.mjs";
 
 const MONTHS = {
   1: "January",
@@ -19,7 +19,7 @@ const MONTHS = {
   12: "December",
 };
 
-class CategorySpendingGrid extends NikElement {
+class CategorySpendingGrid extends BaseGrid {
   static properties = {
     data: { type: Array },
     key: { type: String },
@@ -29,17 +29,6 @@ class CategorySpendingGrid extends NikElement {
     categorySpendingGridEl: "#spending-by-category-grid",
     categorySpendingSelect: "#categorySpendingSelect",
   };
-
-  get currentColorScheme() {
-    let theme = document.documentElement.classList.contains("wa-dark")
-      ? "dark"
-      : "light";
-
-    let colorScheme =
-      theme === "dark" ? agGrid.colorSchemeDark : agGrid.colorSchemeLight;
-
-    return colorScheme;
-  }
 
   get interval() {
     return this.categorySpendingSelect.value;
@@ -242,29 +231,15 @@ class CategorySpendingGrid extends NikElement {
     this.createGridColumns();
     const columnDefs = this.columnsCache[this.interval];
     const gridOptions = {
+      ...this.defaultGridOptions,
       columnDefs,
       rowData: [],
       autoSizeStrategy: {
         type: "fitGridWidth",
         defaultMinWidth: 150,
       },
-      domLayout: "autoHeight",
-      theme: agGrid.themeAlpine.withPart(this.currentColorScheme),
     };
     this.dataGrid = agGrid.createGrid(this.categorySpendingGridEl, gridOptions);
-  }
-
-  setupThemeWatcher() {
-    this.mutationObserver = new MutationObserver(() =>
-      this.dataGrid.setGridOption(
-        "theme",
-        agGrid.themeAlpine.withPart(this.currentColorScheme)
-      )
-    );
-
-    this.mutationObserver.observe(document.documentElement, {
-      attributes: true,
-    });
   }
 
   render() {
