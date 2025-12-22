@@ -1,3 +1,5 @@
+import { DeferredTask } from "./DeferredTask.mjs";
+
 const themeStorage = window.localStorage;
 
 export const THEME_LIST = [
@@ -74,6 +76,17 @@ export const COLOR_PALETTE_LIST = [
   "anodized",
   "vogue",
 ];
+
+function round(num, digits = 2) {
+  if (num === null) {
+    return null;
+  }
+
+  return (
+    Math.round((num + Number.EPSILON) * Math.pow(10, digits)) /
+    Math.pow(10, digits)
+  );
+}
 
 export class Theme {
   #domProperties;
@@ -299,9 +312,12 @@ export class Theme {
   }
 
   set rounding(rounding) {
-    if (rounding === this.#rounding) {
+    rounding = rounding === null ? null : Number(rounding);
+    if (isNaN(rounding) || rounding === this.#rounding) {
       return;
     }
+
+    rounding = round(rounding, 1);
 
     document.documentElement.style.removeProperty("--wa-border-radius-scale");
     if (rounding >= 0 && rounding <= 4) {
@@ -323,9 +339,12 @@ export class Theme {
   }
 
   set spacing(spacing) {
-    if (spacing === this.#spacing) {
+    spacing = spacing === null ? null : Number(spacing);
+    if (isNaN(spacing) || spacing === this.#spacing) {
       return;
     }
+
+    spacing = round(spacing, 4);
 
     document.documentElement.style.removeProperty("--wa-space-scale");
     if (spacing >= 0.5 && spacing <= 2) {
@@ -347,9 +366,12 @@ export class Theme {
   }
 
   set borderWidth(borderWidth) {
-    if (borderWidth === this.#borderWidth) {
+    borderWidth = borderWidth === null ? null : Number(borderWidth);
+    if (isNaN(borderWidth) || borderWidth === this.#borderWidth) {
       return;
     }
+
+    borderWidth = round(borderWidth, 1);
 
     document.documentElement.style.removeProperty("--wa-border-width-scale");
     if (borderWidth >= 0.5 && borderWidth <= 4) {
@@ -371,13 +393,22 @@ export class Theme {
   }
 
   updateSettings(args) {
-    fetch(UPDATE_USER_SETTINGS, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(args),
-    });
+    if (!this.updateTask) {
+      this.updateTask = new DeferredTask(
+        (callbackArgs) => {
+          return fetch(UPDATE_USER_SETTINGS, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(callbackArgs),
+          });
+        },
+        1000,
+        { finalizeBeforeUnload: true }
+      );
+    }
+    this.updateTask.arm(args);
   }
 
   makeDefault() {
