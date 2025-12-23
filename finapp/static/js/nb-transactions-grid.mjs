@@ -38,7 +38,7 @@ class TransactionActions extends NikElement {
   }
 
   render() {
-    return html`<div class="wa-cluster wa-align-items-center">
+    return html`<div class="wa-cluster items-center gap-4">
       <wa-button
         class="icon-button no-border"
         variant="brand"
@@ -354,28 +354,20 @@ export class TransactionsGrid extends BaseGrid {
       {
         field: "actions",
         headerName: "Actions",
+        autoHeight: true,
         cellRenderer: (param) => {
           if (!param.data.name) {
             return null;
           }
-
-          let div = document.createElement("div");
-          div.classList.add(
-            "wa-cluster",
-            "w-full",
-            "h-full",
-            "items-center",
-            "py-(--wa-space-2xs)"
-          );
 
           let actions = document.createElement("nb-transaction-actions");
           actions.transaction = param.data;
           actions.budgets = this.budgets;
           actions.categories = this.categories;
 
-          div.append(actions);
+          actions.classList.add("w-full", "h-full", "py-(--wa-space-2xs)");
 
-          return div;
+          return actions;
         },
       },
     ];

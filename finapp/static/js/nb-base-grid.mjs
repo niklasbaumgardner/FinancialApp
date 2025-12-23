@@ -13,6 +13,30 @@ export class BaseGrid extends NikElement {
     return colorScheme;
   }
 
+  get gridTheme() {
+    const spacing = 8 * window.THEME.spacing;
+    const borderRadius = 4 * window.THEME.rounding;
+    const borderWidth = window.THEME.borderWidth;
+    let temp = agGrid.themeAlpine.withPart(this.currentColorScheme).withParams({
+      spacing,
+      borderRadius: borderRadius,
+      wrapperBorderRadius: borderRadius,
+      borderWidth,
+      headerRowBorder: true,
+      rowBorder: true,
+
+      backgroundColor: "var(--wa-color-surface-raised)",
+      borderColor: "var(--wa-color-surface-border)",
+      cellTextColor: "var(--wa-color-text-normal)",
+      headerTextColor: "var(--wa-color-text-normal)",
+      rowHoverColor:
+        "color-mix(in srgb, var(--wa-color-brand-fill-quiet), transparent)",
+      fontFamily: "inherit",
+    });
+    console.log(temp);
+    return temp;
+  }
+
   get defaultGridOptions() {
     return {
       defaultColDef: {
@@ -21,16 +45,13 @@ export class BaseGrid extends NikElement {
       domLayout: "autoHeight",
       suppressCellFocus: true,
       suppressMovableColumns: true,
-      theme: agGrid.themeAlpine.withPart(this.currentColorScheme),
+      theme: this.gridTheme,
     };
   }
 
   setupThemeWatcher() {
     this.mutationObserver = new MutationObserver(() => {
-      this.dataGrid.setGridOption(
-        "theme",
-        agGrid.themeAlpine.withPart(this.currentColorScheme)
-      );
+      this.dataGrid.setGridOption("theme", this.gridTheme);
     });
 
     this.mutationObserver.observe(document.documentElement, {

@@ -145,3 +145,7 @@ wa-tab-panel[name="new"]::part(base) {
 wa-page {
   transition: all 0.001ms step-start;
 }
+
+nb-transaction-actions {
+  display: flex;
+}
