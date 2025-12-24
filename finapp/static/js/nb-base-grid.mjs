@@ -17,7 +17,7 @@ export class BaseGrid extends NikElement {
     const spacing = 8 * window.THEME.spacing;
     const borderRadius = 4 * window.THEME.rounding;
     const borderWidth = window.THEME.borderWidth;
-    let temp = agGrid.themeAlpine.withPart(this.currentColorScheme).withParams({
+    return agGrid.themeAlpine.withPart(this.currentColorScheme).withParams({
       spacing,
       borderRadius: borderRadius,
       wrapperBorderRadius: borderRadius,
@@ -33,8 +33,6 @@ export class BaseGrid extends NikElement {
         "color-mix(in srgb, var(--wa-color-brand-fill-quiet), transparent)",
       fontFamily: "inherit",
     });
-    console.log(temp);
-    return temp;
   }
 
   get defaultGridOptions() {
