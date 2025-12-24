@@ -365,7 +365,12 @@ export class TransactionsGrid extends BaseGrid {
           actions.budgets = this.budgets;
           actions.categories = this.categories;
 
-          actions.classList.add("w-full", "h-full", "py-(--wa-space-2xs)");
+          actions.classList.add(
+            "w-full",
+            "h-full",
+            "py-(--wa-space-2xs)",
+            "block"
+          );
 
           return actions;
         },
