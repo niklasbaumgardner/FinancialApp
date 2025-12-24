@@ -562,12 +562,15 @@ def delete_transactions_for_account_id(account_id):
 
 
 def update_transactions_for_account(account_id, transactions):
-    delete_transactions_for_account_id(account_id=account_id)
-
+    # TODO: Add an option to keep or delete old transactions
+    # if credentials.delete_old_transactions:
+    #     delete_transactions_for_account_id(account_id=account_id)
     if not transactions:
         return
 
-    stmt = insert(SimpleFINTransaction).values(transactions)
+    stmt = pg_insert(SimpleFINTransaction).values(transactions)
+    stmt = stmt.on_conflict_do_nothing(index_elements=["id"])
+
     db.session.execute(stmt)
     db.session.commit()
 

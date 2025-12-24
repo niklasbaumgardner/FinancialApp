@@ -268,6 +268,12 @@ class SimpleFINCredentials(db.Model, SerializerMixin):
     username: Mapped[str]  # encrypted
     password: Mapped[str]  # encrypted
 
+    # TODO: Add an option to keep or delete old transactions
+    # keep_old_transactions: Mapped[bool]
+    # @property
+    # def delete_old_transactions(self):
+    #     return not self.keep_old_transactions
+
     @property
     def exists(self):
         return len(self.username) > 0 and len(self.password) > 0

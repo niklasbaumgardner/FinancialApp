@@ -167,6 +167,7 @@ def __update_account_transactions_for_user(data, user_id):
                 for t in account_transactions
             ]
 
+            # Can probably do this in 1 query
             simplefin_queries.update_transactions_for_account(
                 account_id=account_id, transactions=safe_for_db_transactions
             )
