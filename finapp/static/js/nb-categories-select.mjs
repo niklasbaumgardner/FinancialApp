@@ -78,7 +78,7 @@ export class CategoriesSelect extends NikElement {
 
   static get queries() {
     return {
-      select: "nb-base-select",
+      select: "nb-base-combobox",
     };
   }
 
