@@ -6,24 +6,24 @@ from finapp.queries import (
 from flask import Blueprint, request, abort, redirect, url_for
 from flask_login import login_required, current_user
 from finapp.utils import helpers
+from finapp.utils.Sqids import sqids
 
 
 editbudget_bp = Blueprint("editbudget_bp", __name__)
 
 
-@editbudget_bp.get("/toggle_budget")
+@editbudget_bp.get("/toggle_budget/<string:sqid>/")
+@editbudget_bp.get("/toggle_budget/<string:sqid>/<string:name>")
 @login_required
-def toggle_budget():
+def toggle_budget(sqid=None, name=None):
+    budget_id = sqids.decode_one(sqid)
+
     active = request.args.get("active")
-    id_ = request.args.get("id", 0, type=int)
 
-    if id_ != 0:
-        active = False if active == "false" else True
-        budget_queries.update_budget(budget_id=id_, is_active=active)
+    active = False if active == "false" else True
+    budget_queries.update_budget(budget_id=budget_id, is_active=active)
 
-        return {"success": True}
-
-    return {"success": False}
+    return {"success": True}
 
 
 @editbudget_bp.post("/add_budget")
@@ -57,22 +57,28 @@ def add_budget():
     abort(400)
 
 
-@editbudget_bp.post("/edit_budget/<int:id>")
+@editbudget_bp.post("/edit_budget/<string:sqid>/")
+@editbudget_bp.post("/edit_budget/<string:sqid>/<string:name>")
 @login_required
-def edit_budget(id):
+def edit_budget(sqid=None, name=None):
+    budget_id = sqids.decode_one(sqid)
+
     new_name = request.form.get("name")
     duplicate = budget_queries.get_duplicate_budget_by_name(new_name)
     if not duplicate:
-        budget_queries.update_budget(budget_id=id, name=new_name)
+        budget_queries.update_budget(budget_id=budget_id, name=new_name)
         return {"sucess": True}
 
     abort(409)
 
 
-@editbudget_bp.post("/delete_budget/<int:b_id>")
+@editbudget_bp.post("/delete_budget/<string:sqid>/")
+@editbudget_bp.post("/delete_budget/<string:sqid>/<string:name>")
 @login_required
-def delete_budget(b_id):
-    budget = budget_queries.get_budget(budget_id=b_id)
+def delete_budget(sqid=None, name=None):
+    budget_id = sqids.decode_one(sqid)
+
+    budget = budget_queries.get_budget(budget_id=budget_id)
 
     new_budget_id = request.form.get("new_budget")
 

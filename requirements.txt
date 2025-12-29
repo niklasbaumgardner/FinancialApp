@@ -31,6 +31,7 @@ scout-apm==3.4.0
 sentry-sdk==2.35.0
 setuptools==80.9.0
 six==1.17.0
+sqids==0.5.2
 sqlalchemy==2.0.43
 typing-extensions==4.14.1
 urllib3==2.5.0

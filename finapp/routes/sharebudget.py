@@ -3,13 +3,15 @@ from flask import Blueprint, redirect, url_for, request, abort
 from flask_login import login_required, current_user
 from finapp.utils.send_email import send_share_budget_email
 from finapp.models import Budget
+from finapp.utils.Sqids import sqids
 
 sharebudget_bp = Blueprint("sharebudget_bp", __name__)
 
 
-@sharebudget_bp.route("/share_budget/<int:budget_id>", methods=["GET"])
+@sharebudget_bp.get("/share_budget/<string:sqid>/")
+@sharebudget_bp.get("/share_budget/<string:sqid>/<string:name>")
 @login_required
-def share_budget(budget_id):
+def share_budget(sqid=None, name=None):
     email = request.args.get("email", "", type=str)
     if email == current_user.email:
         abort(400)
@@ -17,6 +19,8 @@ def share_budget(budget_id):
     user = user_queries.get_user_by_email(email=email)
     if not user:
         return abort(400)
+
+    budget_id = sqids.decode_one(sqid)
 
     shared_budget = shared_budget_queries.get_shared_budget_for_user_id(
         budget_id=budget_id, user_id=user.id

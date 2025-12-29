@@ -46,3 +46,9 @@ def transfer():
     budgets = budget_queries.get_budgets(active_only=True)
     budgets = [b.to_dict() for b in budgets]
     return render_template("transfer.html", budgets=budgets)
+
+
+# @transfer_bp.post("/transfer")
+# @login_required
+# def transfer_post():
+#     pass
