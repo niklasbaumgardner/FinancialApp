@@ -11,12 +11,11 @@ from finapp.utils.Sqids import sqids
 transaction_bp = Blueprint("transaction_bp", __name__)
 
 
-@transaction_bp.post("/add_transaction/<int:budget_id>")
-@transaction_bp.post("/add_transaction/<string:budget_sqid>")
+@transaction_bp.post("/add_transaction/<string:sqid>/")
+@transaction_bp.post("/add_transaction/<string:sqid>/<string:name>")
 @login_required
-def add_transaction(budget_id=None, budget_sqid=None):
-    if budget_sqid:
-        budget_id = sqids.decode_one(budget_sqid)
+def add_transaction(sqid=None, name=None):
+    budget_id = sqids.decode_one(sqid)
 
     user_id = request.form.get("user", type=int, default=current_user.id)
     name = request.form.get("name")
@@ -57,16 +56,10 @@ def add_transaction(budget_id=None, budget_sqid=None):
     return redirect(url_for("viewbudget_bp.view_budget", id=budget_id))
 
 
-@transaction_bp.post("/edit_transaction/<int:b_id>/<int:t_id>")
-@transaction_bp.post("/edit_transaction/<string:b_sqid>/<string:t_sqid>")
-@transaction_bp.post("/edit_transaction/<string:sqid_ids>")
+@transaction_bp.post("/edit_transaction/<string:sqid>")
 @login_required
-def edit_transaction(b_id=None, t_id=None, b_sqid=None, t_sqid=None, sqid_ids=None):
-    if sqid_ids:
-        b_id, t_id = sqids.decode(sqid_ids)
-    elif b_sqid and t_sqid:
-        b_id = sqids.decode_one(b_sqid)
-        t_id - sqids.decode_one(t_sqid)
+def edit_transaction(sqid=None):
+    budget_id, transaction_id = sqids.decode(sqid)
 
     name = request.form.get("name")
     amount = request.form.get("amount", type=float)
@@ -87,8 +80,8 @@ def edit_transaction(b_id=None, t_id=None, b_sqid=None, t_sqid=None, sqid_ids=No
     date = helpers.get_date_from_string(date)
 
     transaction_queries.update_transaction(
-        budget_id=b_id,
-        transaction_id=t_id,
+        budget_id=budget_id,
+        transaction_id=transaction_id,
         new_budget_id=new_budget_id,
         user_id=user_id,
         name=name,
@@ -118,42 +111,32 @@ def edit_transaction(b_id=None, t_id=None, b_sqid=None, t_sqid=None, sqid_ids=No
     }
 
 
-@transaction_bp.post("/move_transaction/<int:sb_id>/<int:t_id>")
-@transaction_bp.post("/move_transaction/<string:sb_sqid>/<string:t_sqid>")
-@transaction_bp.post("/move_transaction/<string:sqid_ids>")
+@transaction_bp.post("/move_transaction/<string:sqid>")
 @login_required
-def move_transaction(sb_id=None, t_id=None, sb_sqid=None, t_sqid=None, sqid_ids=None):
-    if sqid_ids:
-        sb_id, t_id = sqids.decode(sqid_ids)
-    elif sb_sqid and t_sqid:
-        sb_id = sqids.decode_one(sb_sqid)
-        t_id - sqids.decode_one(t_sqid)
+def move_transaction(sqid=None):
+    source_budget_id, transaction_id = sqids.decode(sqid)
 
     new_budget_id = request.form.get("new_budget")
 
-    print(sqid_ids, sb_id, t_id, new_budget_id)
-
     transaction_queries.update_transaction(
-        budget_id=sb_id, transaction_id=t_id, new_budget_id=new_budget_id
+        budget_id=source_budget_id,
+        transaction_id=transaction_id,
+        new_budget_id=new_budget_id,
     )
 
     return {"success": True}
 
 
-@transaction_bp.delete("/delete_transaction/<int:b_id>/<int:t_id>")
-@transaction_bp.delete("/delete_transaction/<string:b_sqid>/<string:t_sqid>")
-@transaction_bp.delete("/delete_transaction/<string:sqid_ids>")
+@transaction_bp.delete("/delete_transaction/<string:sqid>")
 @login_required
-def delete_transaction(b_id=None, t_id=None, b_sqid=None, t_sqid=None, sqid_ids=None):
-    if sqid_ids:
-        b_id, t_id = sqids.decode(sqid_ids)
-    elif b_sqid and t_sqid:
-        b_id = sqids.decode_one(b_sqid)
-        t_id - sqids.decode_one(t_sqid)
+def delete_transaction(sqid=None):
+    budget_id, transaction_id = sqids.decode(sqid)
 
     page = request.form.get("page")
     page = page if page else 1
 
-    transaction_queries.delete_transaction(transaction_id=t_id, budget_id=b_id)
+    transaction_queries.delete_transaction(
+        transaction_id=transaction_id, budget_id=budget_id
+    )
 
     return {"success": True}

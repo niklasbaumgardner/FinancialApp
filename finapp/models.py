@@ -116,6 +116,7 @@ class Budget(db.Model, SerializerMixin):
     name: Mapped[str]
     is_active: Mapped[bool]
     is_shared: Mapped[bool]
+    sqid: Mapped[Optional[str]]
 
     user: Mapped["User"] = relationship(lazy="joined", viewonly=True)
 
@@ -128,37 +129,23 @@ class Budget(db.Model, SerializerMixin):
         viewonly=True,
     )
 
-    @property
-    def sqid(self):
-        sqid = sqids.encode_one(self.id)
-        return sqid
-
     def url(self):
         return url_for("viewbudget_bp.view_budget", sqid=self.sqid, name=self.name)
 
     def edit_url(self):
         return url_for("editbudget_bp.edit_budget", sqid=self.sqid, name=self.name)
-        # return url_for("editbudget_bp.edit_budget", id=self.id)
 
     def toggle_active_url(self):
         return url_for("editbudget_bp.toggle_budget", sqid=self.sqid, name=self.name)
-        # return url_for("editbudget_bp.toggle_budget", sqid)
 
     def add_transaction_url(self):
-        return url_for(
-            "transaction_bp.add_transaction", budget_sqid=self.sqid, name=self.name
-        )
-        # return url_for("transaction_bp.add_transaction", budget_id=self.id)
+        return url_for("transaction_bp.add_transaction", sqid=self.sqid, name=self.name)
 
     def delete_url(self):
-        return url_for("editbudget_bp.delete_budget", b_sqid=self.sqid, name=self.name)
-        # return url_for("editbudget_bp.delete_budget", b_id=self.id)
+        return url_for("editbudget_bp.delete_budget", sqid=self.sqid, name=self.name)
 
     def share_budget_url(self):
-        return url_for(
-            "sharebudget_bp.share_budget", budget_sqid=self.sqid, name=self.name
-        )
-        # return url_for("sharebudget_bp.share_budget", budget_id=self.id)
+        return url_for("sharebudget_bp.share_budget", sqid=self.sqid, name=self.name)
 
     # I don't think this will work because of the shared_budget model
     # transactions = relationship("Transaction", uselist=False)
@@ -209,6 +196,7 @@ class Transaction(db.Model, SerializerMixin):
     date: Mapped[date_type]
     is_transfer: Mapped[Optional[bool]]
     paycheck_id: Mapped[Optional[int]] = mapped_column(ForeignKey("paycheck.id"))
+    sqid: Mapped[Optional[str]]
 
     categories: Mapped[List["TransactionCategory"]] = relationship(
         lazy="joined", passive_deletes=True
@@ -216,28 +204,14 @@ class Transaction(db.Model, SerializerMixin):
     user: Mapped["User"] = relationship(lazy="joined", viewonly=True)
     budget: Mapped["Budget"] = relationship(lazy="joined", viewonly=True)
 
-    @property
-    def sqid(self):
-        sqid = sqids.encode_one(self.id)
-        return sqid
-
-    @property
-    def budget_sqid(self):
-        b_sqid = sqids.encode_one(self.budget_id)
-        return b_sqid
-
-    @property
-    def sqid_ids(self):
-        return sqids.encode([self.budget_id, self.id])
-
     def edit_url(self):
-        return url_for("transaction_bp.edit_transaction", sqid_ids=self.sqid_ids)
+        return url_for("transaction_bp.edit_transaction", sqid=self.sqid)
 
     def move_transaction_url(self):
-        return url_for("transaction_bp.move_transaction", sqid_ids=self.sqid_ids)
+        return url_for("transaction_bp.move_transaction", sqid=self.sqid)
 
     def delete_url(self):
-        return url_for("transaction_bp.delete_transaction", sqid_ids=self.sqid_ids)
+        return url_for("transaction_bp.delete_transaction", sqid=self.sqid)
 
 
 class Paycheck(db.Model, SerializerMixin):

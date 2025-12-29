@@ -14,12 +14,11 @@ from finapp.utils.Sqids import sqids
 viewbudget_bp = Blueprint("viewbudget_bp", __name__)
 
 
-@viewbudget_bp.get("/view_budget/<int:id>")
+@viewbudget_bp.get("/view_budget/<string:sqid>/")
 @viewbudget_bp.get("/view_budget/<string:sqid>/<string:name>")
 @login_required
-def view_budget(id=None, sqid=None, name=None):
-    if sqid:
-        id = sqids.decode_one(sqid)
+def view_budget(sqid, name=None):
+    budget_id = sqids.decode_one(sqid)
 
     page = request.args.get("page", 1, type=int)
 
@@ -27,7 +26,7 @@ def view_budget(id=None, sqid=None, name=None):
     year = request.args.get("year", 0, type=int)
     ytd = request.args.get("ytd") == "true"
 
-    budget = budget_queries.get_budget(budget_id=id)
+    budget = budget_queries.get_budget(budget_id=budget_id)
     budgets = [b.to_dict() for b in budget_queries.get_budgets(active_only=True)]
 
     if ytd:
@@ -65,17 +64,16 @@ def view_budget(id=None, sqid=None, name=None):
     )
 
 
-@viewbudget_bp.get("/get_page/<int:budget_id>")
+@viewbudget_bp.get("/get_page/<string:sqid>/")
 @viewbudget_bp.get("/get_page/<string:sqid>/<string:name>")
 @login_required
-def get_page(budget_id=None, budget_sqid=None, name=None):
+def get_page(sqid, name=None):
     page = request.args.get("page", -1, type=int)
 
     if page < 1:
         return {"sucess": False}
 
-    if budget_sqid:
-        budget_id = sqids.decode_one(budget_sqid)
+    budget_id = sqids.decode_one(sqid)
 
     month = request.args.get("month", 0, type=int)
     year = request.args.get("year", 0, type=int)
@@ -125,12 +123,11 @@ def get_page(budget_id=None, budget_sqid=None, name=None):
     }
 
 
-@viewbudget_bp.get("/search/<int:b_id>")
+@viewbudget_bp.get("/search/<string:sqid>/")
 @viewbudget_bp.get("/search/<string:sqid>/<string:name>")
 @login_required
-def search(b_id=None, b_sqid=None, name=None):
-    if b_sqid:
-        b_id = sqids.decode_one(b_sqid)
+def search(sqid, name=None):
+    budget_id = sqids.decode_one(sqid)
 
     start_date = request.args.get("startDate")
     end_date = request.args.get("endDate")
@@ -152,7 +149,7 @@ def search(b_id=None, b_sqid=None, name=None):
     sort_by = request.args.get("sort")
 
     transactions, total, page, num_pages, search_sum = helpers.search_for(
-        budget_id=b_id,
+        budget_id=budget_id,
         name=name,
         categories=categories,
         start_date=start_date,

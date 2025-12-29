@@ -8,10 +8,10 @@ from finapp.utils.Sqids import sqids
 sharebudget_bp = Blueprint("sharebudget_bp", __name__)
 
 
-@sharebudget_bp.get("/share_budget/<int:budget_id>")
-@sharebudget_bp.get("/share_budget/<string:budget_sqid>/<string:name>")
+@sharebudget_bp.get("/share_budget/<string:sqid>/")
+@sharebudget_bp.get("/share_budget/<string:sqid>/<string:name>")
 @login_required
-def share_budget(budget_id=None, budget_sqid=None, name=None):
+def share_budget(sqid=None, name=None):
     email = request.args.get("email", "", type=str)
     if email == current_user.email:
         abort(400)
@@ -20,8 +20,7 @@ def share_budget(budget_id=None, budget_sqid=None, name=None):
     if not user:
         return abort(400)
 
-    if budget_sqid:
-        budget_id = sqids.decode_one(budget_sqid)
+    budget_id = sqids.decode_one(sqid)
 
     shared_budget = shared_budget_queries.get_shared_budget_for_user_id(
         budget_id=budget_id, user_id=user.id

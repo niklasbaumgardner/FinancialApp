@@ -12,17 +12,16 @@ from finapp.utils.Sqids import sqids
 editbudget_bp = Blueprint("editbudget_bp", __name__)
 
 
-@editbudget_bp.get("/toggle_budget/<int:id>")
+@editbudget_bp.get("/toggle_budget/<string:sqid>/")
 @editbudget_bp.get("/toggle_budget/<string:sqid>/<string:name>")
 @login_required
-def toggle_budget(id=None, sqid=None):
-    if sqid:
-        id = sqids.decode_one(sqid)
+def toggle_budget(sqid=None, name=None):
+    budget_id = sqids.decode_one(sqid)
 
     active = request.args.get("active")
 
     active = False if active == "false" else True
-    budget_queries.update_budget(budget_id=id, is_active=active)
+    budget_queries.update_budget(budget_id=budget_id, is_active=active)
 
     return {"success": True}
 
@@ -58,30 +57,28 @@ def add_budget():
     abort(400)
 
 
-@editbudget_bp.post("/edit_budget/<int:id>")
+@editbudget_bp.post("/edit_budget/<string:sqid>/")
 @editbudget_bp.post("/edit_budget/<string:sqid>/<string:name>")
 @login_required
-def edit_budget(id=None, sqid=None, name=None):
-    if sqid:
-        id = sqids.decode_one(sqid)
+def edit_budget(sqid=None, name=None):
+    budget_id = sqids.decode_one(sqid)
 
     new_name = request.form.get("name")
     duplicate = budget_queries.get_duplicate_budget_by_name(new_name)
     if not duplicate:
-        budget_queries.update_budget(budget_id=id, name=new_name)
+        budget_queries.update_budget(budget_id=budget_id, name=new_name)
         return {"sucess": True}
 
     abort(409)
 
 
-@editbudget_bp.post("/delete_budget/<int:b_id>")
-@editbudget_bp.post("/delete_budget/<string:b_sqid>/<string:name>")
+@editbudget_bp.post("/delete_budget/<string:sqid>/")
+@editbudget_bp.post("/delete_budget/<string:sqid>/<string:name>")
 @login_required
-def delete_budget(b_id=None, b_sqid=None, name=None):
-    if b_sqid:
-        b_id = sqids.decode_one(b_sqid)
+def delete_budget(sqid=None, name=None):
+    budget_id = sqids.decode_one(sqid)
 
-    budget = budget_queries.get_budget(budget_id=b_id)
+    budget = budget_queries.get_budget(budget_id=budget_id)
 
     new_budget_id = request.form.get("new_budget")
 
