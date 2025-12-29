@@ -9,13 +9,18 @@ from flask import Blueprint, render_template, redirect, url_for, request
 from flask_login import login_required, current_user
 from finapp.utils import helpers
 import json
+from finapp.utils.Sqids import sqids
 
 viewbudget_bp = Blueprint("viewbudget_bp", __name__)
 
 
-@viewbudget_bp.route("/view_budget/<int:id>")
+@viewbudget_bp.get("/view_budget/<int:id>")
+@viewbudget_bp.get("/view_budget/<string:sqid>/<string:name>")
 @login_required
-def view_budget(id):
+def view_budget(id=None, sqid=None, name=None):
+    if sqid:
+        id = sqids.decode_one(sqid)
+
     page = request.args.get("page", 1, type=int)
 
     month = request.args.get("month", 0, type=int)
@@ -60,13 +65,17 @@ def view_budget(id):
     )
 
 
-@viewbudget_bp.route("/get_page/<int:budget_id>")
+@viewbudget_bp.get("/get_page/<int:budget_id>")
+@viewbudget_bp.get("/get_page/<string:sqid>/<string:name>")
 @login_required
-def get_page(budget_id):
+def get_page(budget_id=None, budget_sqid=None, name=None):
     page = request.args.get("page", -1, type=int)
 
     if page < 1:
         return {"sucess": False}
+
+    if budget_sqid:
+        budget_id = sqids.decode_one(budget_sqid)
 
     month = request.args.get("month", 0, type=int)
     year = request.args.get("year", 0, type=int)
@@ -116,9 +125,13 @@ def get_page(budget_id):
     }
 
 
-@viewbudget_bp.route("/search/<int:b_id>", methods=["GET"])
+@viewbudget_bp.get("/search/<int:b_id>")
+@viewbudget_bp.get("/search/<string:sqid>/<string:name>")
 @login_required
-def search(b_id):
+def search(b_id=None, b_sqid=None, name=None):
+    if b_sqid:
+        b_id = sqids.decode_one(b_sqid)
+
     start_date = request.args.get("startDate")
     end_date = request.args.get("endDate")
     amount = request.args.get("amount")

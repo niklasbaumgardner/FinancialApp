@@ -17,7 +17,7 @@ from flask_login import current_user
 from sqlalchemy.sql import func, or_, and_
 from sqlalchemy.orm import noload
 from sqlalchemy import delete, exists, extract, insert, update, select, cast, FLOAT
-from datetime import date, timedelta
+from datetime import timedelta
 import os
 
 
@@ -107,7 +107,7 @@ def create_transaction(
     paycheck_id=None,
     commit=True,
 ):
-    user_ids = set([user_id, current_user.id])
+    user_ids = [id for id in set([user_id, current_user.id]) if id is not None]
 
     can_add_transaction = True
     for u_id in user_ids:
@@ -349,7 +349,7 @@ def update_transaction(
     categories_added=None,
     categories_deleted=None,
 ):
-    user_ids = set([user_id, current_user.id])
+    user_ids = [id for id in set([user_id, current_user.id]) if id is not None]
     budget_ids = [id for id in set([budget_id, new_budget_id]) if id is not None]
 
     can_add_transaction = True

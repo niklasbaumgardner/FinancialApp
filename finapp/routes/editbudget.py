@@ -6,24 +6,25 @@ from finapp.queries import (
 from flask import Blueprint, request, abort, redirect, url_for
 from flask_login import login_required, current_user
 from finapp.utils import helpers
+from finapp.utils.Sqids import sqids
 
 
 editbudget_bp = Blueprint("editbudget_bp", __name__)
 
 
-@editbudget_bp.get("/toggle_budget")
+@editbudget_bp.get("/toggle_budget/<int:id>")
+@editbudget_bp.get("/toggle_budget/<string:sqid>/<string:name>")
 @login_required
-def toggle_budget():
+def toggle_budget(id=None, sqid=None):
+    if sqid:
+        id = sqids.decode_one(sqid)
+
     active = request.args.get("active")
-    id_ = request.args.get("id", 0, type=int)
 
-    if id_ != 0:
-        active = False if active == "false" else True
-        budget_queries.update_budget(budget_id=id_, is_active=active)
+    active = False if active == "false" else True
+    budget_queries.update_budget(budget_id=id, is_active=active)
 
-        return {"success": True}
-
-    return {"success": False}
+    return {"success": True}
 
 
 @editbudget_bp.post("/add_budget")
@@ -58,8 +59,12 @@ def add_budget():
 
 
 @editbudget_bp.post("/edit_budget/<int:id>")
+@editbudget_bp.post("/edit_budget/<string:sqid>/<string:name>")
 @login_required
-def edit_budget(id):
+def edit_budget(id=None, sqid=None, name=None):
+    if sqid:
+        id = sqids.decode_one(sqid)
+
     new_name = request.form.get("name")
     duplicate = budget_queries.get_duplicate_budget_by_name(new_name)
     if not duplicate:
@@ -70,8 +75,12 @@ def edit_budget(id):
 
 
 @editbudget_bp.post("/delete_budget/<int:b_id>")
+@editbudget_bp.post("/delete_budget/<string:b_sqid>/<string:name>")
 @login_required
-def delete_budget(b_id):
+def delete_budget(b_id=None, b_sqid=None, name=None):
+    if b_sqid:
+        b_id = sqids.decode_one(b_sqid)
+
     budget = budget_queries.get_budget(budget_id=b_id)
 
     new_budget_id = request.form.get("new_budget")

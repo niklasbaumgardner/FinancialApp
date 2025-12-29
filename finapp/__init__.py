@@ -12,6 +12,7 @@ import os
 from werkzeug.middleware.proxy_fix import ProxyFix
 from scout_apm.flask import ScoutApm
 from scout_apm.flask.sqlalchemy import instrument_sqlalchemy
+
 # from flask_compress import Compress
 # from flask_caching import Cache
 # from sqlalchemy import event

@@ -12,6 +12,7 @@ from finapp.utils.Serializer import SerializerMixin
 from cryptography.fernet import Fernet
 from enum import IntFlag
 from sqlalchemy.dialects.postgresql import JSONB
+from finapp.utils.Sqids import sqids
 
 
 FERNET_KEY: bytes = os.environ.get("FERNET_KEY").encode()
@@ -127,23 +128,37 @@ class Budget(db.Model, SerializerMixin):
         viewonly=True,
     )
 
+    @property
+    def sqid(self):
+        sqid = sqids.encode_one(self.id)
+        return sqid
+
     def url(self):
-        return url_for("viewbudget_bp.view_budget", id=self.id)
+        return url_for("viewbudget_bp.view_budget", sqid=self.sqid, name=self.name)
 
     def edit_url(self):
-        return url_for("editbudget_bp.edit_budget", id=self.id)
+        return url_for("editbudget_bp.edit_budget", sqid=self.sqid, name=self.name)
+        # return url_for("editbudget_bp.edit_budget", id=self.id)
 
     def toggle_active_url(self):
-        return url_for("editbudget_bp.toggle_budget")
+        return url_for("editbudget_bp.toggle_budget", sqid=self.sqid, name=self.name)
+        # return url_for("editbudget_bp.toggle_budget", sqid)
 
     def add_transaction_url(self):
-        return url_for("transaction_bp.add_transaction", budget_id=self.id)
+        return url_for(
+            "transaction_bp.add_transaction", budget_sqid=self.sqid, name=self.name
+        )
+        # return url_for("transaction_bp.add_transaction", budget_id=self.id)
 
     def delete_url(self):
-        return url_for("editbudget_bp.delete_budget", b_id=self.id)
+        return url_for("editbudget_bp.delete_budget", b_sqid=self.sqid, name=self.name)
+        # return url_for("editbudget_bp.delete_budget", b_id=self.id)
 
     def share_budget_url(self):
-        return url_for("sharebudget_bp.share_budget", budget_id=self.id)
+        return url_for(
+            "sharebudget_bp.share_budget", budget_sqid=self.sqid, name=self.name
+        )
+        # return url_for("sharebudget_bp.share_budget", budget_id=self.id)
 
     # I don't think this will work because of the shared_budget model
     # transactions = relationship("Transaction", uselist=False)
@@ -201,20 +216,28 @@ class Transaction(db.Model, SerializerMixin):
     user: Mapped["User"] = relationship(lazy="joined", viewonly=True)
     budget: Mapped["Budget"] = relationship(lazy="joined", viewonly=True)
 
+    @property
+    def sqid(self):
+        sqid = sqids.encode_one(self.id)
+        return sqid
+
+    @property
+    def budget_sqid(self):
+        b_sqid = sqids.encode_one(self.budget_id)
+        return b_sqid
+
+    @property
+    def sqid_ids(self):
+        return sqids.encode([self.budget_id, self.id])
+
     def edit_url(self):
-        return url_for(
-            "transaction_bp.edit_transaction", b_id=self.budget_id, t_id=self.id
-        )
+        return url_for("transaction_bp.edit_transaction", sqid_ids=self.sqid_ids)
 
     def move_transaction_url(self):
-        return url_for(
-            "transaction_bp.move_transaction", sb_id=self.budget_id, t_id=self.id
-        )
+        return url_for("transaction_bp.move_transaction", sqid_ids=self.sqid_ids)
 
     def delete_url(self):
-        return url_for(
-            "transaction_bp.delete_transaction", b_id=self.budget_id, t_id=self.id
-        )
+        return url_for("transaction_bp.delete_transaction", sqid_ids=self.sqid_ids)
 
 
 class Paycheck(db.Model, SerializerMixin):
