@@ -17,7 +17,7 @@ transaction_bp = Blueprint("transaction_bp", __name__)
 def add_transaction(sqid=None, name=None):
     budget_id = sqids.decode_one(sqid)
 
-    user_id = request.form.get("user", type=int, default=current_user.id)
+    user_id = sqids.decode_one(request.form.get("user")) or current_user.id
     name = request.form.get("name")
     amount = request.form.get("amount", type=float, default=0.0)
     str_date = request.form.get("date")
@@ -28,7 +28,7 @@ def add_transaction(sqid=None, name=None):
     return_transaction = request.form.get("return-transaction")
     return_transaction = return_transaction and return_transaction == "True"
 
-    categories = request.form.getlist("categories")
+    categories = sqids.decode_list(request.form.getlist("categories"))
 
     transaction_id = transaction_queries.create_transaction(
         user_id=user_id,
@@ -63,8 +63,10 @@ def edit_transaction(sqid=None):
 
     name = request.form.get("name")
     amount = request.form.get("amount", type=float)
-    new_budget_id = request.form.get("budget", type=int)
-    user_id = request.form.get("user", type=int, default=current_user.id)
+
+    user_id = sqids.decode_one(request.form.get("user")) or current_user.id
+    new_budget_id = sqids.decode_one(request.form.get("budget"))
+
     date = request.form.get("date")
     page = request.form.get("page")
     page = page if page else 1
@@ -74,8 +76,8 @@ def edit_transaction(sqid=None):
     return_transaction = request.form.get("return-transaction")
     return_transaction = return_transaction and return_transaction == "True"
 
-    categories_added = request.form.getlist("categoriesAdded")
-    categories_deleted = request.form.getlist("categoriesDeleted")
+    categories_added = sqids.decode_list(request.form.getlist("categoriesAdded"))
+    categories_deleted = sqids.decode_list(request.form.getlist("categoriesDeleted"))
 
     date = helpers.get_date_from_string(date)
 
@@ -93,20 +95,20 @@ def edit_transaction(sqid=None):
 
     if return_transaction:
         transaction = transaction_queries.get_transaction(
-            transaction_id=t_id, include_budget=True
+            transaction_id=transaction_id, include_budget=True
         )
         return dict(transaction=transaction.to_dict())
 
     if return_transactions:
         transactions, _ = transaction_queries.get_recent_transactions()
-        budgets = [budget_queries.get_budget(budget_id=b_id).to_dict()]
+        budgets = [budget_queries.get_budget(budget_id=budget_id).to_dict()]
 
         return dict(transactions=[t.to_dict() for t in transactions], budgets=budgets)
 
     return {
         "success": True,
         "transaction": transaction_queries.get_transaction(
-            transaction_id=t_id
+            transaction_id=transaction_id
         ).to_dict(),
     }
 
@@ -116,7 +118,7 @@ def edit_transaction(sqid=None):
 def move_transaction(sqid=None):
     source_budget_id, transaction_id = sqids.decode(sqid)
 
-    new_budget_id = request.form.get("new_budget")
+    new_budget_id = sqids.decode_one(request.form.get("budget"))
 
     transaction_queries.update_transaction(
         budget_id=source_budget_id,

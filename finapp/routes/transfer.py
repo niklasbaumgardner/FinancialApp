@@ -2,6 +2,7 @@ from flask import Blueprint, request, redirect, render_template, url_for
 from flask_login import login_required, current_user
 from finapp.utils import helpers
 from finapp.queries import budget_queries, transaction_queries
+from finapp.utils.Sqids import sqids
 
 
 transfer_bp = Blueprint("transfer_bp", __name__)
@@ -20,8 +21,8 @@ def transfer():
         str_date = request.form.get("date")
         date = helpers.get_date_from_string(str_date)
 
-        source_budget = request.form.get("source_budget")
-        dest_budget = request.form.get("dest_budget")
+        source_budget = sqids.decode_one(request.form.get("source_budget"))
+        dest_budget = sqids.decode_one(request.form.get("dest_budget"))
 
         if name and amount and source_budget and dest_budget:
             transaction_queries.create_transaction(

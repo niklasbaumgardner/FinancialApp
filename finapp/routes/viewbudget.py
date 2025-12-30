@@ -139,7 +139,7 @@ def search(sqid, name=None):
         name = json.loads(name)
     else:
         name = []
-    categories = request.args.getlist("categories", type=int)
+    categories = sqids.decode_list(request.form.getlist("categories"))
     page = request.args.get("page", -1, type=int)
 
     month = request.args.get("month", 0, type=int)

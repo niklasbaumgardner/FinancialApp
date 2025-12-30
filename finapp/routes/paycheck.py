@@ -5,6 +5,7 @@ from finapp.queries import (
     budget_queries,
     paycheck_queries,
 )
+from finapp.utils.Sqids import sqids
 
 paycheck_bp = Blueprint("paycheck_bp", __name__)
 
@@ -40,6 +41,7 @@ def paycheck():
                 continue
             else:
                 t_amount = request.form.get(key, type=float)
+                budget_id = sqids.decode_one(key)
 
                 transactions.append(
                     dict(
@@ -47,7 +49,7 @@ def paycheck():
                         name=name,
                         amount=t_amount,
                         date=date,
-                        budget_id=key,
+                        budget_id=budget_id,
                     )
                 )
 

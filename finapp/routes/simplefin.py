@@ -3,6 +3,7 @@ from flask_login import current_user, login_required
 from finapp.queries import simplefin_queries, transaction_queries
 from finapp.utils import simplefin as simplefin_helpers, helpers
 import os
+from finapp.utils.Sqids import sqids
 
 
 simplefin_bp = Blueprint("simplefin_bp", __name__)
@@ -66,8 +67,8 @@ def delete_pending_transaction(id):
 @simplefin_bp.post("/convert_pending_transtion/<int:id>")
 @login_required
 def convert_pending_transaction(id):
-    user_id = request.form.get("user", type=int, default=current_user.id)
-    budget_id = request.form.get("budget", type=int)
+    user_id = sqids.decode_one(request.form.get("user")) or current_user.id
+    budget_id = sqids.decode_one(request.form.get("budget"))
     name = request.form.get("name")
     amount = request.form.get("amount", type=float, default=0.0)
     str_date = request.form.get("date")
@@ -78,7 +79,7 @@ def convert_pending_transaction(id):
     return_transaction = request.form.get("return-transaction")
     return_transaction = return_transaction and return_transaction == "True"
 
-    categories = request.form.getlist("categories")
+    categories = sqids.decode_list(request.form.getlist("categories"))
 
     transaction_id = simplefin_queries.convert_pending_transaction(
         user_id=user_id,

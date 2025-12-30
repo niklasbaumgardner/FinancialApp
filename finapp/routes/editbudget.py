@@ -80,7 +80,7 @@ def delete_budget(sqid=None, name=None):
 
     budget = budget_queries.get_budget(budget_id=budget_id)
 
-    new_budget_id = request.form.get("new_budget")
+    new_budget_id = sqids.decode_one(request.form.get("new_budget"))
 
     # move or delete the transactions
     new_budget = (
@@ -101,13 +101,13 @@ def delete_budget(sqid=None, name=None):
 
     if new_budget:
         transaction_queries.bulk_update_transactions_budget(
-            old_budget_id=b_id, new_budget_id=new_budget_id
+            old_budget_id=budget_id, new_budget_id=new_budget_id
         )
 
     else:
-        transaction_queries.bulk_delete_transactions_for_budget(budget_id=b_id)
+        transaction_queries.bulk_delete_transactions_for_budget(budget_id=budget_id)
 
     # finally delete the budget
-    budget_queries.delete_budget(b_id)
+    budget_queries.delete_budget(budget_id)
 
     return redirect(url_for("viewbudgets_bp.viewbudgets"))
