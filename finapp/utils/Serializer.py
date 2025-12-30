@@ -5,6 +5,7 @@ from typing import Any, Optional
 class SerializerMixin:
     serialize_only: Optional[tuple[str, ...]] = None
     serialize_rules: Optional[tuple[str, ...]] = None
+    custom_mappings: Optional[dict[str, str]] = None
 
     def to_dict(self, rules=None, only=None) -> dict:
         inspector = sa_inspect(self)
@@ -41,7 +42,10 @@ class SerializerMixin:
             if key in exclude:
                 continue
 
-            data[key] = serialize(getattr(self, key))
+            if getattr(self, "custom_mappings") and key in self.custom_mappings:
+                data[key] = serialize(getattr(self, self.custom_mappings[key]))
+            else:
+                data[key] = serialize(getattr(self, key))
 
         return data
 

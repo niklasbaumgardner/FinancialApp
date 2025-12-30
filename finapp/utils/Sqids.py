@@ -10,4 +10,4 @@ class SqidsClass(BaseSqids):
         return seq[0]
 
 
-sqids = SqidsClass(min_length=4)
+sqids = SqidsClass(min_length=8)

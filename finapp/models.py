@@ -31,6 +31,16 @@ class AccountAccess(IntFlag):
     ALL = BALANCE | TRANSACTION
 
 
+class SqidSerializerMixin(SerializerMixin):
+    custom_mappings = {"id": "sqid_id", "user_id": "sqid_user_id"}
+
+    def sqid_id(self):
+        return sqids.encode_one(self.id)
+
+    def sqid_user_id(self):
+        return sqids.encode_one(self.user_id)
+
+
 @login_manager.user_loader
 def load_user(id):
     return db.session.get(User, int(id))
@@ -68,8 +78,13 @@ class User(db.Model, UserMixin, SerializerMixin):
             return None
         return db.session.get(User, user_id)
 
+    custom_mappings = {"id": "sqid_id"}
 
-class Theme(db.Model, SerializerMixin):
+    def sqid_id(self):
+        return sqids.encode_one(self.id)
+
+
+class Theme(db.Model, SqidSerializerMixin):
     __tablename__ = "theme"
 
     serialize_rules = (
@@ -87,7 +102,7 @@ class Theme(db.Model, SerializerMixin):
     color_palette: Mapped[Optional[str]]  # web-awesome values
 
 
-class UserSettings(db.Model, SerializerMixin):
+class UserSettings(db.Model, SqidSerializerMixin):
     __tablename__ = "user_settings"
 
     id: Mapped[int_pk]
@@ -97,7 +112,7 @@ class UserSettings(db.Model, SerializerMixin):
     )
 
 
-class Budget(db.Model, SerializerMixin):
+class Budget(db.Model, SqidSerializerMixin):
     __tablename__ = "budget"
 
     serialize_rules = (
@@ -166,7 +181,7 @@ class Budget(db.Model, SerializerMixin):
         return obj
 
 
-class SharedBudget(db.Model, SerializerMixin):
+class SharedBudget(db.Model, SqidSerializerMixin):
     __tablename__ = "shared_budget"
 
     id: Mapped[int_pk]
@@ -175,8 +190,17 @@ class SharedBudget(db.Model, SerializerMixin):
 
     budget: Mapped["Budget"] = relationship(lazy="joined", viewonly=True)
 
+    custom_mappings = {
+        "id": "sqid_id",
+        "user_id": "sqid_user_id",
+        "budget_id": "sqid_budget_id",
+    }
 
-class Transaction(db.Model, SerializerMixin):
+    def sqid_budget_id(self):
+        return sqids.encode_one(self.budget_id)
+
+
+class Transaction(db.Model, SqidSerializerMixin):
     __tablename__ = "transaction"
 
     serialize_rules = (
@@ -204,17 +228,29 @@ class Transaction(db.Model, SerializerMixin):
     user: Mapped["User"] = relationship(lazy="joined", viewonly=True)
     budget: Mapped["Budget"] = relationship(lazy="joined", viewonly=True)
 
+    def sqid_ids(self):
+        return sqids.encode([self.budget_id, self.id])
+
     def edit_url(self):
-        return url_for("transaction_bp.edit_transaction", sqid=self.sqid)
+        return url_for("transaction_bp.edit_transaction", sqid=self.sqid_ids())
 
     def move_transaction_url(self):
-        return url_for("transaction_bp.move_transaction", sqid=self.sqid)
+        return url_for("transaction_bp.move_transaction", sqid=self.sqid_ids())
 
     def delete_url(self):
-        return url_for("transaction_bp.delete_transaction", sqid=self.sqid)
+        return url_for("transaction_bp.delete_transaction", sqid=self.sqid_ids())
+
+    custom_mappings = {
+        "id": "sqid_id",
+        "user_id": "sqid_user_id",
+        "budget_id": "sqid_budget_id",
+    }
+
+    def sqid_budget_id(self):
+        return sqids.encode_one(self.budget_id)
 
 
-class Paycheck(db.Model, SerializerMixin):
+class Paycheck(db.Model, SqidSerializerMixin):
     __tablename__ = "paycheck"
 
     id: Mapped[int_pk]
@@ -227,7 +263,7 @@ class Paycheck(db.Model, SerializerMixin):
     )
 
 
-class Category(db.Model, SerializerMixin):
+class Category(db.Model, SqidSerializerMixin):
     __tablename__ = "category"
     __table_args__ = (UniqueConstraint("user_id", "name"),)
 
@@ -237,7 +273,7 @@ class Category(db.Model, SerializerMixin):
     color: Mapped[str]
 
 
-class TransactionCategory(db.Model, SerializerMixin):
+class TransactionCategory(db.Model, SqidSerializerMixin):
     __tablename__ = "transaction_category"
     __table_args__ = (UniqueConstraint("transaction_id", "category_id"),)
 
@@ -250,8 +286,21 @@ class TransactionCategory(db.Model, SerializerMixin):
 
     category: Mapped["Category"] = relationship(lazy="joined", viewonly=True)
 
+    custom_mappings = {
+        "id": "sqid_id",
+        "user_id": "sqid_user_id",
+        "transaction_id": "sqid_transaction_id",
+        "category_id": "sqid_category_id",
+    }
 
-class SimpleFINCredentials(db.Model, SerializerMixin):
+    def sqid_transaction_id(self):
+        return sqids.encode_one(self.transaction_id)
+
+    def sqid_category_id(self):
+        return sqids.encode_one(self.category_id)
+
+
+class SimpleFINCredentials(db.Model, SqidSerializerMixin):
     __tablename__ = "simplefin_credentials"
 
     serialize_only = (
@@ -355,7 +404,7 @@ class SimpleFINAccount(db.Model, SerializerMixin):
         return url_for("simplefin_bp.update_account_name", id=self.id)
 
 
-class PendingTransaction(db.Model, SerializerMixin):
+class PendingTransaction(db.Model, SqidSerializerMixin):
     __tablename__ = "pending_transaction"
 
     serialize_rules = (
@@ -413,7 +462,7 @@ class SimpleFINTransaction(db.Model, SerializerMixin):
     user_id: Mapped[user_fk]
 
 
-class AccountBalance(db.Model, SerializerMixin):
+class AccountBalance(db.Model, SqidSerializerMixin):
     __tablename__ = "simplefin_account_balance"
     __table_args__ = (UniqueConstraint("account_id", "date"),)
 
