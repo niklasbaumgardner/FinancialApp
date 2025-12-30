@@ -4,7 +4,7 @@ from itsdangerous import URLSafeTimedSerializer
 import os
 from finapp import db, login_manager
 from sqlalchemy.orm import relationship, mapped_column, Mapped
-from sqlalchemy import ForeignKey, UniqueConstraint
+from sqlalchemy import ForeignKey, UniqueConstraint, BigInteger, Identity
 from typing import List, Optional, Any
 from datetime import date as date_type, datetime as datetime_type
 from typing_extensions import Annotated
@@ -18,7 +18,9 @@ from finapp.utils.Sqids import sqids
 FERNET_KEY: bytes = os.environ.get("FERNET_KEY").encode()
 
 
-int_pk = Annotated[int, mapped_column(primary_key=True)]
+int_pk = Annotated[
+    int, mapped_column(BigInteger, Identity(always=True), primary_key=True)
+]
 str_pk = Annotated[str, mapped_column(primary_key=True)]
 user_fk = Annotated[int, mapped_column(ForeignKey("user.id"))]
 
@@ -131,7 +133,6 @@ class Budget(db.Model, SqidSerializerMixin):
     name: Mapped[str]
     is_active: Mapped[bool]
     is_shared: Mapped[bool]
-    sqid: Mapped[Optional[str]]
 
     user: Mapped["User"] = relationship(lazy="joined", viewonly=True)
 
@@ -220,7 +221,6 @@ class Transaction(db.Model, SqidSerializerMixin):
     date: Mapped[date_type]
     is_transfer: Mapped[Optional[bool]]
     paycheck_id: Mapped[Optional[int]] = mapped_column(ForeignKey("paycheck.id"))
-    sqid: Mapped[Optional[str]]
 
     categories: Mapped[List["TransactionCategory"]] = relationship(
         lazy="joined", passive_deletes=True
