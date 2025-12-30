@@ -419,7 +419,7 @@ export class TransactionsGrid extends BaseGrid {
           {
             colId: "actions",
             minWidth: 118,
-            maxWidth: 118,
+            maxWidth: 150,
           },
         ],
       },
