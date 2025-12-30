@@ -19,7 +19,6 @@ from sqlalchemy.orm import noload
 from sqlalchemy import delete, exists, extract, insert, update, select, cast, FLOAT
 from datetime import timedelta
 import os
-from finapp.utils.Sqids import sqids
 
 
 ## Helper functions
@@ -145,13 +144,6 @@ def create_transaction(
 
         budget_queries.update_budget_total(budget_id=budget_id, commit=False)
 
-        sqid_stmt = (
-            update(Transaction)
-            .where(Transaction.id == transaction_id)
-            .values(sqid=sqids.encode([budget_id, transaction_id]))
-        )
-        db.session.execute(sqid_stmt)
-
         if commit:
             db.session.commit()
 
@@ -166,13 +158,7 @@ def bulk_create_transactions(transactions, commit=True):
             .values(transactions)
             .returning(Transaction.budget_id, Transaction.id)
         )
-        result = db.session.execute(stmt)
-
-        # Updated sqid for every transaction
-        transaction_values = [
-            {"id": r.id, "sqid": sqids.encode([r.budget_id, r.id])} for r in result
-        ]
-        db.session.execute(update(Transaction), transaction_values)
+        db.session.execute(stmt)
 
         for budget_id in budget_ids:
             budget_queries.update_budget_total(budget_id=budget_id, commit=False)
@@ -388,7 +374,6 @@ def update_transaction(
             update_dict["budget_id"] = new_budget_id
             should_update_budget_total.add(new_budget_id)
             should_update_budget_total.add(budget_id)
-            update_dict["sqid"] = sqids.encode([new_budget_id, transaction_id])
         if user_id is not None:
             update_dict["user_id"] = user_id
         if name is not None:

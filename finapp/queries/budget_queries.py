@@ -5,7 +5,6 @@ from flask_login import current_user
 from sqlalchemy.sql import or_, and_
 from sqlalchemy.orm import joinedload
 from sqlalchemy import delete, func, insert, select, update
-from finapp.utils.Sqids import sqids
 
 
 ##
@@ -24,12 +23,6 @@ def create_budget(name):
     result = db.session.execute(stmt)
 
     budget_id = result.inserted_primary_key.id
-    sqid_stmt = (
-        update(Budget)
-        .where(Budget.id == budget_id)
-        .values(sqid=sqids.encode_one(budget_id))
-    )
-    db.session.execute(sqid_stmt)
 
     db.session.commit()
     return budget_id
