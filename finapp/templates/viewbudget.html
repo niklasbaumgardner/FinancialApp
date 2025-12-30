@@ -3,9 +3,9 @@
 {% block head %}
 <script>
   const GET_PAGE_URL =
-    "{{ url_for('viewbudget_bp.get_page', sqid=budget.sqid) }}";
+    "{{ url_for('viewbudget_bp.get_page', sqid=budget.id) }}";
   const SEARCH_PAGE_URL =
-    "{{ url_for('viewbudget_bp.search', sqid=budget.sqid) }}";
+    "{{ url_for('viewbudget_bp.search', sqid=budget.id) }}";
   const BUDGETS = {{ budgets|tojson }};
 </script>
 <script src="/static/js/nb-view-budget.mjs" type="module"></script>

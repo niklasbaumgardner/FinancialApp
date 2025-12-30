@@ -146,22 +146,30 @@ class Budget(db.Model, SqidSerializerMixin):
     )
 
     def url(self):
-        return url_for("viewbudget_bp.view_budget", sqid=self.sqid, name=self.name)
+        return url_for("viewbudget_bp.view_budget", sqid=self.sqid_id(), name=self.name)
 
     def edit_url(self):
-        return url_for("editbudget_bp.edit_budget", sqid=self.sqid, name=self.name)
+        return url_for("editbudget_bp.edit_budget", sqid=self.sqid_id(), name=self.name)
 
     def toggle_active_url(self):
-        return url_for("editbudget_bp.toggle_budget", sqid=self.sqid, name=self.name)
+        return url_for(
+            "editbudget_bp.toggle_budget", sqid=self.sqid_id(), name=self.name
+        )
 
     def add_transaction_url(self):
-        return url_for("transaction_bp.add_transaction", sqid=self.sqid, name=self.name)
+        return url_for(
+            "transaction_bp.add_transaction", sqid=self.sqid_id(), name=self.name
+        )
 
     def delete_url(self):
-        return url_for("editbudget_bp.delete_budget", sqid=self.sqid, name=self.name)
+        return url_for(
+            "editbudget_bp.delete_budget", sqid=self.sqid_id(), name=self.name
+        )
 
     def share_budget_url(self):
-        return url_for("sharebudget_bp.share_budget", sqid=self.sqid, name=self.name)
+        return url_for(
+            "sharebudget_bp.share_budget", sqid=self.sqid_id(), name=self.name
+        )
 
     # I don't think this will work because of the shared_budget model
     # transactions = relationship("Transaction", uselist=False)
