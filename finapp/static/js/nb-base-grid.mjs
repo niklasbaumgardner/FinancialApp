@@ -19,7 +19,7 @@ export class BaseGrid extends NikElement {
     const borderWidth = window.THEME.borderWidth;
     return agGrid.themeAlpine.withPart(this.currentColorScheme).withParams({
       spacing,
-      cellHorizontalPadding: "calc(var(--spacing) * 4)",
+      cellHorizontalPadding: "1rem",
       borderRadius: borderRadius,
       wrapperBorderRadius: borderRadius,
       borderWidth,
