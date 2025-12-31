@@ -7,7 +7,7 @@ from finapp.queries import (
 )
 from flask import Blueprint, render_template, request
 from flask_login import login_required
-from datetime import date
+from finapp.utils.Sqids import sqids
 from finapp.utils import helpers
 
 
@@ -55,7 +55,12 @@ def api_get_spending_by_budget():
 def api_get_spending_by_month():
     budgets, income, spending = dashboard_queries.get_spending_by_budget_and_month()
 
-    budgets = {b.id: b.to_dict() for b in budgets}
+    budgets = {b.sqid_id(): b.to_dict() for b in budgets}
+
+    for row in spending:
+        row["budget_id"] = sqids.encode_one(row["budget_id"])
+    for row in income:
+        row["budget_id"] = sqids.encode_one(row["budget_id"])
 
     return {"budgets": budgets, "spending": spending, "income": income}
 
@@ -69,6 +74,7 @@ def api_get_spending_by_category():
     data = helpers.spending_by_category(
         current_date_str=current_date, interval=interval
     )
-    categories = {c.id: c.to_dict() for c in category_queries.get_categories()}
+    categories = {c.sqid_id(): c.to_dict() for c in category_queries.get_categories()}
+    data = {sqids.encode_one(key): val for key, val in data.items()}
 
     return {"data": data, "categories": categories}
