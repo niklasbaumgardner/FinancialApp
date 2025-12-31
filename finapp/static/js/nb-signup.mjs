@@ -1,5 +1,6 @@
 import { NikElement } from "./nik-element.mjs";
 import { html } from "./lit.bundle.mjs";
+import { DeferredTask } from "./DeferredTask.mjs";
 
 const EMAUL_UNIQUE_HELP_TEXT =
   "Email taken. Please choose a different email or login.";
@@ -18,24 +19,6 @@ export class SignupCard extends NikElement {
     usernameInput: "#username",
     submitButton: "#submitButtn",
   };
-
-  usernameDebouncer(callback, wait) {
-    return (...args) => {
-      window.clearTimeout(this.emailTimeoutId);
-      this.emailTimeoutId = window.setTimeout(() => {
-        callback(...args);
-      }, wait);
-    };
-  }
-
-  emailDebouncer(callback, wait) {
-    return (...args) => {
-      window.clearTimeout(this.usernameTimeoutId);
-      this.usernameTimeoutId = window.setTimeout(() => {
-        callback(...args);
-      }, wait);
-    };
-  }
 
   async checkEmailUnique(email) {
     let response = await fetch(
@@ -62,35 +45,43 @@ export class SignupCard extends NikElement {
   }
 
   async handleEmailInput() {
-    this.emailDebouncer(async () => {
-      let email = this.emailInput.value;
-      let result = await this.checkEmailUnique(email);
-      console.log("email is unique", result.isUnique);
+    if (!this.emailTask) {
+      this.emailTask = new DeferredTask(async () => {
+        let email = this.emailInput.value;
+        let result = await this.checkEmailUnique(email);
+        console.log("email is unique", result.isUnique);
 
-      if (result.isUnique) {
-        this.emailInput.hint = "";
-        this.emailValid = true;
-      } else {
-        this.emailInput.hint = EMAUL_UNIQUE_HELP_TEXT;
-        this.emailValid = false;
-      }
-    }, 300)();
+        if (result.isUnique) {
+          this.emailInput.hint = "";
+          this.emailValid = true;
+        } else {
+          this.emailInput.hint = EMAUL_UNIQUE_HELP_TEXT;
+          this.emailValid = false;
+        }
+      }, 300);
+    }
+
+    this.emailTask.arm();
   }
 
   async handleUsernameInput() {
-    this.usernameDebouncer(async () => {
-      let username = this.usernameInput.value;
-      let result = await this.checkUsernameUnique(username);
-      console.log("username is unique", result.isUnique);
+    if (!this.usernameTask) {
+      this.usernameTask = new DeferredTask(async () => {
+        let username = this.usernameInput.value;
+        let result = await this.checkUsernameUnique(username);
+        console.log("username is unique", result.isUnique);
 
-      if (result.isUnique) {
-        this.usernameInput.hint = "";
-        this.usernameValid = true;
-      } else {
-        this.usernameInput.hint = USERNAME_UNIQUE_HELP_TEXT;
-        this.usernameValid = false;
-      }
-    }, 300)();
+        if (result.isUnique) {
+          this.usernameInput.hint = "";
+          this.usernameValid = true;
+        } else {
+          this.usernameInput.hint = USERNAME_UNIQUE_HELP_TEXT;
+          this.usernameValid = false;
+        }
+      }, 300);
+    }
+
+    this.usernameTask.arm();
   }
 
   render() {
