@@ -12,7 +12,7 @@ flask-bcrypt==1.0.1
 flask-login==0.6.3
 flask-mail==0.10.0
 flask-migrate==4.1.0
-flask-sqlalchemy==3.1.1
+flask-sqlalchemy-lite==0.2.1
 gevent==25.5.1
 greenlet==3.2.4
 gunicorn==23.0.0
@@ -33,6 +33,7 @@ setuptools==80.9.0
 six==1.17.0
 sqids==0.5.2
 sqlalchemy==2.0.43
+ty==0.0.1a20
 typing-extensions==4.14.1
 urllib3==2.5.0
 werkzeug==3.1.3

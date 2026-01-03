@@ -4,14 +4,14 @@ from finapp.config import Config
 from flask_migrate import Migrate
 from flask_mail import Mail
 from flask_login import LoginManager
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy_lite import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.pool import NullPool
 import sentry_sdk
 import os
 from werkzeug.middleware.proxy_fix import ProxyFix
 from scout_apm.flask import ScoutApm
-from scout_apm.flask.sqlalchemy import instrument_sqlalchemy
+from scout_apm.sqlalchemy import instrument_sqlalchemy
 
 # from flask_compress import Compress
 # from flask_caching import Cache
@@ -22,7 +22,7 @@ from scout_apm.flask.sqlalchemy import instrument_sqlalchemy
 # ruff: noqa: E402
 
 
-class Base(DeclarativeBase):
+class BaseModel(DeclarativeBase):
     pass
 
 
@@ -36,13 +36,13 @@ if not os.environ.get("FLASK_DEBUG"):
         dsn=os.environ.get("SENTRY_DSN"),
         traces_sample_rate=1.0,
         send_default_pii=True,
-        release="nb-budgets@2.1.8",
+        release="nb-budgets@2.1.9",
     )
 
 
 app.config.from_object(Config)
 
-db = SQLAlchemy(engine_options=dict(poolclass=NullPool, future=True), model_class=Base)
+db = SQLAlchemy(engine_options=dict(poolclass=NullPool, future=True))
 db.init_app(app)
 
 bcrypt = Bcrypt()
@@ -57,7 +57,8 @@ mail = Mail()
 mail.init_app(app)
 
 ScoutApm(app)
-instrument_sqlalchemy(db)
+with app.app_context():
+    instrument_sqlalchemy(db.engine)
 
 
 # cache = Cache(
@@ -139,7 +140,7 @@ app.register_blueprint(viewtransactions_bp)
 app.register_blueprint(context_processor_bp)
 
 with app.app_context():
-    db.create_all()
+    BaseModel.metadata.create_all(db.engine)
 
 migrate = Migrate()
 migrate.init_app(app, db)

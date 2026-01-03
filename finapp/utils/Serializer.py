@@ -7,18 +7,30 @@ class SerializerMixin:
     serialize_rules: Optional[tuple[str, ...]] = None
     custom_mappings: Optional[dict[str, str]] = None
 
-    def to_dict(self, rules=None, only=None) -> dict:
+    def get_serialize_only(self, only):
+        only = only or tuple()
+        only = self.serialize_only or tuple() + only
+        return only
+
+    def get_serialize_rules(self, rules):
+        rules = rules or tuple()
+        rules = self.serialize_rules or tuple() + rules
+        return rules
+
+    def get_custom_mappings(self, mappings):
+        mappings = mappings or {}
+        mappings = self.custom_mappings or {} | mappings
+        return mappings
+
+    def to_dict(self, rules=None, only=None, mappings=None) -> dict:
         inspector = sa_inspect(self)
         sa_keys = {a.key for a in inspector.mapper.attrs}
 
         include = set()
         exclude = set()
 
-        only = only or tuple()
-        rules = rules or tuple()
-
-        only = getattr(self, "serialize_only") or tuple() + only
-        rules = getattr(self, "serialize_rules") or tuple() + rules
+        only = self.get_serialize_only(only)
+        rules = self.get_serialize_rules(rules)
 
         keys = None
         if only is not None and len(only) > 0:
@@ -38,12 +50,14 @@ class SerializerMixin:
 
         data: dict[Any, Any] = {}
 
+        custom_mappings = self.get_custom_mappings(mappings)
+
         for key in keys:
             if key in exclude:
                 continue
 
-            if getattr(self, "custom_mappings") and key in self.custom_mappings:
-                data[key] = serialize(getattr(self, self.custom_mappings[key]))
+            if key in custom_mappings:
+                data[key] = serialize(getattr(self, custom_mappings[key]))
             else:
                 data[key] = serialize(getattr(self, key))
 

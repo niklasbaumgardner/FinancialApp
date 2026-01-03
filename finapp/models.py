@@ -2,12 +2,11 @@ from flask import url_for
 from flask_login import UserMixin
 from itsdangerous import URLSafeTimedSerializer
 import os
-from finapp import db, login_manager
+from finapp import db, login_manager, BaseModel
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 from sqlalchemy import ForeignKey, UniqueConstraint, BigInteger, Identity
-from typing import List, Optional, Any
+from typing import Any, Annotated, Optional, List
 from datetime import date as date_type, datetime as datetime_type
-from typing_extensions import Annotated
 from finapp.utils.Serializer import SerializerMixin
 from cryptography.fernet import Fernet
 from enum import IntFlag
@@ -48,7 +47,7 @@ def load_user(id):
     return db.session.get(User, int(id))
 
 
-class User(db.Model, UserMixin, SerializerMixin):
+class User(BaseModel, UserMixin, SerializerMixin):
     __tablename__ = "user"
 
     serialize_only = (
@@ -86,7 +85,7 @@ class User(db.Model, UserMixin, SerializerMixin):
         return sqids.encode_one(self.id)
 
 
-class Theme(db.Model, SqidSerializerMixin):
+class Theme(BaseModel, SqidSerializerMixin):
     __tablename__ = "theme"
 
     serialize_rules = (
@@ -104,7 +103,7 @@ class Theme(db.Model, SqidSerializerMixin):
     color_palette: Mapped[Optional[str]]  # web-awesome values
 
 
-class UserSettings(db.Model, SqidSerializerMixin):
+class UserSettings(BaseModel, SqidSerializerMixin):
     __tablename__ = "user_settings"
 
     id: Mapped[int_pk]
@@ -114,7 +113,7 @@ class UserSettings(db.Model, SqidSerializerMixin):
     )
 
 
-class Budget(db.Model, SqidSerializerMixin):
+class Budget(BaseModel, SqidSerializerMixin):
     __tablename__ = "budget"
 
     serialize_rules = (
@@ -190,7 +189,7 @@ class Budget(db.Model, SqidSerializerMixin):
         return obj
 
 
-class SharedBudget(db.Model, SqidSerializerMixin):
+class SharedBudget(BaseModel, SqidSerializerMixin):
     __tablename__ = "shared_budget"
 
     id: Mapped[int_pk]
@@ -209,7 +208,7 @@ class SharedBudget(db.Model, SqidSerializerMixin):
         return sqids.encode_one(self.budget_id)
 
 
-class Transaction(db.Model, SqidSerializerMixin):
+class Transaction(BaseModel, SqidSerializerMixin):
     __tablename__ = "transaction"
 
     serialize_rules = (
@@ -258,7 +257,7 @@ class Transaction(db.Model, SqidSerializerMixin):
         return sqids.encode_one(self.budget_id)
 
 
-class Paycheck(db.Model, SqidSerializerMixin):
+class Paycheck(BaseModel, SqidSerializerMixin):
     __tablename__ = "paycheck"
 
     id: Mapped[int_pk]
@@ -271,7 +270,7 @@ class Paycheck(db.Model, SqidSerializerMixin):
     )
 
 
-class Category(db.Model, SqidSerializerMixin):
+class Category(BaseModel, SqidSerializerMixin):
     __tablename__ = "category"
     __table_args__ = (UniqueConstraint("user_id", "name"),)
 
@@ -281,7 +280,7 @@ class Category(db.Model, SqidSerializerMixin):
     color: Mapped[str]
 
 
-class TransactionCategory(db.Model, SqidSerializerMixin):
+class TransactionCategory(BaseModel, SqidSerializerMixin):
     __tablename__ = "transaction_category"
     __table_args__ = (UniqueConstraint("transaction_id", "category_id"),)
 
@@ -308,7 +307,7 @@ class TransactionCategory(db.Model, SqidSerializerMixin):
         return sqids.encode_one(self.category_id)
 
 
-class SimpleFINCredentials(db.Model, SqidSerializerMixin):
+class SimpleFINCredentials(BaseModel, SqidSerializerMixin):
     __tablename__ = "simplefin_credentials"
 
     serialize_only = (
@@ -353,7 +352,7 @@ class SimpleFINCredentials(db.Model, SqidSerializerMixin):
         return username_decrypted.decode(), password_decrypted.decode()
 
 
-class SimpleFINOrganization(db.Model, SerializerMixin):
+class SimpleFINOrganization(BaseModel, SerializerMixin):
     __tablename__ = "simplefin_organization"
 
     id: Mapped[int_pk]
@@ -364,7 +363,7 @@ class SimpleFINOrganization(db.Model, SerializerMixin):
     url: Mapped[str]
 
 
-class SimpleFINAccount(db.Model, SerializerMixin):
+class SimpleFINAccount(BaseModel, SerializerMixin):
     __tablename__ = "simplefin_account"
 
     serialize_rules = (
@@ -412,7 +411,7 @@ class SimpleFINAccount(db.Model, SerializerMixin):
         return url_for("simplefin_bp.update_account_name", id=self.id)
 
 
-class PendingTransaction(db.Model, SqidSerializerMixin):
+class PendingTransaction(BaseModel, SqidSerializerMixin):
     __tablename__ = "pending_transaction"
 
     serialize_rules = (
@@ -437,7 +436,7 @@ class PendingTransaction(db.Model, SqidSerializerMixin):
         return url_for("simplefin_bp.delete_pending_transaction", id=self.id)
 
 
-class CompletedTransaction(db.Model, SerializerMixin):
+class CompletedTransaction(BaseModel, SerializerMixin):
     __tablename__ = "completed_transaction"
 
     id: Mapped[int_pk]
@@ -454,7 +453,7 @@ class CompletedTransaction(db.Model, SerializerMixin):
     date: Mapped[date_type]
 
 
-class SimpleFINTransaction(db.Model, SerializerMixin):
+class SimpleFINTransaction(BaseModel, SerializerMixin):
     __tablename__ = "simplefin_transaction"
 
     id: Mapped[str] = mapped_column(primary_key=True)
@@ -470,7 +469,7 @@ class SimpleFINTransaction(db.Model, SerializerMixin):
     user_id: Mapped[user_fk]
 
 
-class AccountBalance(db.Model, SqidSerializerMixin):
+class AccountBalance(BaseModel, SqidSerializerMixin):
     __tablename__ = "simplefin_account_balance"
     __table_args__ = (UniqueConstraint("account_id", "date"),)
 
