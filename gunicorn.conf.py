@@ -6,8 +6,8 @@ bind = f"[::]:{port}"
 # bind = "127.0.0.1:5000"
 
 
-workers = 33
-threads = 6
+workers = 5
+threads = 4
 
 timeout = 30
 keepalive = 2
