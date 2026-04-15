@@ -1,5 +1,5 @@
 import { BaseDialog } from "./nb-base-dialog.mjs";
-import { html } from "./lit.bundle.mjs";
+import { html } from "lit";
 
 export class DeletePendingTransactionModal extends BaseDialog {
   static properties = {
@@ -20,7 +20,7 @@ export class DeletePendingTransactionModal extends BaseDialog {
       this.pendingTransaction.delete_pending_transaction_url,
       {
         method: "POST",
-      }
+      },
     );
 
     let { pending_transactions } = await response.json();
@@ -30,7 +30,7 @@ export class DeletePendingTransactionModal extends BaseDialog {
         bubbles: true,
         composed: true,
         detail: { pendingTransactions: pending_transactions },
-      })
+      }),
     );
 
     this.remove();
@@ -88,5 +88,5 @@ export class DeletePendingTransactionModal extends BaseDialog {
 }
 customElements.define(
   "nb-delete-pending-transaction",
-  DeletePendingTransactionModal
+  DeletePendingTransactionModal,
 );

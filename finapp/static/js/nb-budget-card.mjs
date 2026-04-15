@@ -1,5 +1,5 @@
 import { NikElement } from "./nik-element.mjs";
-import { html } from "./lit.bundle.mjs";
+import { html } from "lit";
 import "./nb-delete-budget-modal.mjs";
 
 export class BudgetCard extends NikElement {
@@ -61,14 +61,14 @@ export class BudgetCard extends NikElement {
         active,
       };
       await fetch(
-        this.budget.toggle_active_url + "?" + new URLSearchParams(params)
+        this.budget.toggle_active_url + "?" + new URLSearchParams(params),
       );
 
       // send event to budget manager to move this to active/inactive
       this.dispatchEvent(
         new CustomEvent("Budget:ToggleActive", {
           bubbles: true,
-        })
+        }),
       );
     }
 
@@ -84,7 +84,7 @@ export class BudgetCard extends NikElement {
       } else {
         this.nameInput.setAttribute(
           "help-text",
-          "This budget name already exists. Please choose another."
+          "This budget name already exists. Please choose another.",
         );
         return;
       }
@@ -113,7 +113,7 @@ export class BudgetCard extends NikElement {
       if (this.nameInput.value === card.budget.name) {
         this.nameInput.setAttribute(
           "help-text",
-          "This budget name already exists. Please choose another."
+          "This budget name already exists. Please choose another.",
         );
         this.saveButton.disabled = true;
         break;

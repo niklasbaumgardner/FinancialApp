@@ -1,5 +1,5 @@
 import { NikElement } from "./nik-element.mjs";
-import { html } from "./lit.bundle.mjs";
+import { html } from "lit";
 import "./nb-categories-select.mjs";
 import "./nb-move-transaction.mjs";
 import "./nb-delete-transaction.mjs";
@@ -27,7 +27,7 @@ export class Transaction extends NikElement {
     super.connectedCallback();
 
     this.transaction.categories.sort((a, b) =>
-      a.category.name.localeCompare(b.category.name)
+      a.category.name.localeCompare(b.category.name),
     );
   }
 
@@ -36,10 +36,10 @@ export class Transaction extends NikElement {
     let newCategoriesSet = new Set(newCategories);
 
     let categoriesAdded = Array.from(
-      newCategoriesSet.difference(oldCategoriesSet)
+      newCategoriesSet.difference(oldCategoriesSet),
     );
     let categoriesDeleted = Array.from(
-      oldCategoriesSet.difference(newCategoriesSet)
+      oldCategoriesSet.difference(newCategoriesSet),
     );
 
     return { categoriesAdded, categoriesDeleted };
@@ -70,13 +70,13 @@ export class Transaction extends NikElement {
     let newAmount = Number(this.amountInput.value);
 
     let currentCategories = this.transaction.categories.map(
-      (c) => c.category_id
+      (c) => c.category_id,
     );
     let newCategories = this.categoriesSelect.value;
 
     const { categoriesAdded, categoriesDeleted } = this.categoriesChange(
       currentCategories,
-      newCategories
+      newCategories,
     );
 
     let { name, date, amount } = this.transaction;
@@ -116,7 +116,7 @@ export class Transaction extends NikElement {
 
     this.transaction = response.transaction;
     this.transaction.categories.sort((a, b) =>
-      a.category.name.localeCompare(b.category.name)
+      a.category.name.localeCompare(b.category.name),
     );
 
     options.changed = {
@@ -129,7 +129,7 @@ export class Transaction extends NikElement {
       new CustomEvent("RequestNewPages", {
         bubbles: true,
         detail: options,
-      })
+      }),
     );
 
     this.setViewingState();
@@ -281,7 +281,7 @@ export class Transaction extends NikElement {
             html`<nb-category
               name="${c.category.name}"
               color="${c.category.color}"
-            ></nb-category>`
+            ></nb-category>`,
         )}
       </div>
     </div>`;

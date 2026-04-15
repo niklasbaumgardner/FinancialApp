@@ -1,5 +1,5 @@
 import { BaseDialog } from "./nb-base-dialog.mjs";
-import { html } from "./lit.bundle.mjs";
+import { html } from "lit";
 
 export class DeleteTransactionModal extends BaseDialog {
   static properties = {
@@ -25,7 +25,7 @@ export class DeleteTransactionModal extends BaseDialog {
         bubbles: true,
         composed: true,
         detail: { greaterThanCurrentPage: true },
-      })
+      }),
     );
 
     document.dispatchEvent(
@@ -33,7 +33,7 @@ export class DeleteTransactionModal extends BaseDialog {
         bubbles: true,
         composed: true,
         detail: { transaction: this.transaction },
-      })
+      }),
     );
 
     this.remove();
@@ -81,7 +81,7 @@ export class DeleteTransactionModal extends BaseDialog {
                 html`<nb-category
                   name="${c.category.name}"
                   color="${c.category.color}"
-                ></nb-category>`
+                ></nb-category>`,
             )}
           </div>
         </div>

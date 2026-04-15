@@ -1,4 +1,4 @@
-import { WaCombobox } from "./main.bundle.mjs";
+import { WaCombobox } from "./main.mjs";
 
 export class Combobox extends WaCombobox {
   firstUpdated() {

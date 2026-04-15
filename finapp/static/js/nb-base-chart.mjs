@@ -1,5 +1,5 @@
 import { NikElement } from "./nik-element.mjs";
-import { AgCharts } from "./agCharts.bundle.mjs";
+import { AgCharts } from "./agCharts.mjs";
 
 export class BaseChart extends NikElement {
   static properties = {

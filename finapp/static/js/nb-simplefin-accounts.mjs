@@ -1,4 +1,4 @@
-import { html } from "./lit.bundle.mjs";
+import { html } from "lit";
 import { NikElement } from "./nik-element.mjs";
 import "./nb-simplefin-account.mjs";
 
@@ -50,7 +50,7 @@ export class SimpleFINAccounts extends NikElement {
         html`<h3>${o.name}</h3>`,
         o.accounts.map(
           (a) =>
-            html`<nb-simplefin-account .account=${a}></nb-simplefin-account>`
+            html`<nb-simplefin-account .account=${a}></nb-simplefin-account>`,
         ),
         html`<wa-divider></wa-divider>`,
       ])

@@ -1,5 +1,5 @@
 import { BaseDialog } from "./nb-base-dialog.mjs";
-import { html } from "./lit.bundle.mjs";
+import { html } from "lit";
 import "./nb-categories-select.mjs";
 import "./nb-pending-transaction.mjs";
 
@@ -91,7 +91,7 @@ export class AddTransactionModal extends BaseDialog {
         bubbles: true,
         composed: true,
         detail: { transaction },
-      })
+      }),
     );
 
     this.reset();
@@ -114,13 +114,14 @@ export class AddTransactionModal extends BaseDialog {
 
   budgetOptionsTemplate() {
     return this.budgets.map(
-      (b) => html`<wa-option value=${b.id}
-        ><span class="">${b.name}</span>:
-        ${new Intl.NumberFormat(undefined, {
-          style: "currency",
-          currency: "USD",
-        }).format(b.total)}</wa-option
-      >`
+      (b) =>
+        html`<wa-option value=${b.id}
+          ><span class="">${b.name}</span>:
+          ${new Intl.NumberFormat(undefined, {
+            style: "currency",
+            currency: "USD",
+          }).format(b.total)}</wa-option
+        >`,
     );
   }
 
@@ -143,7 +144,7 @@ export class AddTransactionModal extends BaseDialog {
       (u) =>
         html`<wa-option ?selected=${CURRENT_USER.id === u.id} value=${u.id}
           >${u.username}</wa-option
-        >`
+        >`,
     );
   }
 
@@ -184,7 +185,7 @@ export class AddTransactionModal extends BaseDialog {
         bubbles: true,
         composed: true,
         detail: { pendingTransactions: pending_transactions },
-      })
+      }),
     );
 
     this.refreshPendingButton.loading = false;
@@ -285,7 +286,7 @@ export class AddTransactionModal extends BaseDialog {
           .transaction=${t}
           .budgets=${this.budgets}
           .categories=${this.categories}
-        ></nb-pending-transaction>`
+        ></nb-pending-transaction>`,
     );
   }
 

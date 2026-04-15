@@ -1,7 +1,7 @@
-import { html } from "./lit.bundle.mjs";
+import { html } from "lit";
 import "./nb-transactions-grid.mjs";
 import "./nb-add-transaction.mjs";
-import * as agGrid from "./agGrid.bundle.mjs";
+import * as agGrid from "./agGrid.mjs";
 import { BaseGrid } from "./nb-base-grid.mjs";
 
 const MONTHS = {
@@ -87,7 +87,9 @@ class BudgetSpendingGrid extends BaseGrid {
 
   async getData() {
     let response = await fetch(
-      GET_BUDGET_SPENDING_URL + "?" + new URLSearchParams(this.currentSelection)
+      GET_BUDGET_SPENDING_URL +
+        "?" +
+        new URLSearchParams(this.currentSelection),
     );
     let data = await response.json();
 
@@ -201,14 +203,14 @@ class BudgetSpendingGrid extends BaseGrid {
         html`<wa-option
           value=${JSON.stringify({ month: null, year, ytd: true })}
           >${year === endYear ? "YTD" : `All of ${year}`}</wa-option
-        >`
+        >`,
       );
     }
     options.push(
       html`<wa-option
         value=${JSON.stringify({ month: null, year: null, ytd: false })}
         >All time</wa-option
-      >`
+      >`,
     );
     options = options.reverse();
     return options;

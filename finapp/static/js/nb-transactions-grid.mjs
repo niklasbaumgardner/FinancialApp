@@ -1,6 +1,6 @@
-import { html } from "./lit.bundle.mjs";
+import { html } from "lit";
 import { NikElement } from "./nik-element.mjs";
-import * as agGrid from "./agGrid.bundle.mjs";
+import * as agGrid from "./agGrid.mjs";
 import { BaseGrid } from "./nb-base-grid.mjs";
 import "./nb-category.mjs";
 import "./nb-delete-transaction.mjs";
@@ -28,7 +28,7 @@ class TransactionActions extends NikElement {
   handleDeleteClick() {
     if (!this.deleteTransactionModal) {
       this.deleteTransactionModal = document.createElement(
-        "nb-delete-transaction"
+        "nb-delete-transaction",
       );
       this.deleteTransactionModal.transaction = this.transaction;
       document.body.appendChild(this.deleteTransactionModal);
@@ -218,7 +218,7 @@ export class TransactionsGrid extends BaseGrid {
 
   requestNewData() {
     document.dispatchEvent(
-      new CustomEvent("RequestNewData", { detail: { includeBudgets: true } })
+      new CustomEvent("RequestNewData", { detail: { includeBudgets: true } }),
     );
   }
 
@@ -305,7 +305,7 @@ export class TransactionsGrid extends BaseGrid {
         cellRenderer: (param) => {
           let categories = param.data.categories;
           categories.sort((a, b) =>
-            a.category.name.localeCompare(b.category.name)
+            a.category.name.localeCompare(b.category.name),
           );
 
           let nbCategories = categories.map((c) => {
@@ -324,7 +324,7 @@ export class TransactionsGrid extends BaseGrid {
             "h-full",
             "gap-(--wa-space-2xs)!",
             "items-center",
-            "p-(--wa-space-2xs)"
+            "p-(--wa-space-2xs)",
           );
           div.append(...nbCategories);
 
@@ -369,7 +369,7 @@ export class TransactionsGrid extends BaseGrid {
             "w-full",
             "h-full",
             "py-(--wa-space-2xs)",
-            "block"
+            "block",
           );
 
           return actions;

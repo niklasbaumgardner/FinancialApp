@@ -1,4 +1,4 @@
-import { html } from "./lit.bundle.mjs";
+import { html } from "lit";
 import { BaseChart } from "./nb-base-chart.mjs";
 
 class NetWorthLineChart extends BaseChart {
@@ -36,8 +36,8 @@ class NetWorthLineChart extends BaseChart {
           // },
         },
       ],
-      axes: [
-        {
+      axes: {
+        x: {
           type: "time",
           position: "bottom",
           gridLine: {
@@ -45,7 +45,7 @@ class NetWorthLineChart extends BaseChart {
           },
           // label: { format: "%b %d, %Y" },
         },
-        {
+        y: {
           type: "number",
           position: "left",
           gridLine: {
@@ -55,7 +55,7 @@ class NetWorthLineChart extends BaseChart {
           nice: true,
           min: Math.min(0, ...this.data.map((o) => o.amount)),
         },
-      ],
+      },
       formatter: {
         y(params) {
           if (params.source === "axis-label") {

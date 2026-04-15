@@ -1,5 +1,5 @@
 import { NikElement } from "./nik-element.mjs";
-import { html } from "./lit.bundle.mjs";
+import { html } from "lit";
 import { BaseDialog } from "./nb-base-dialog.mjs";
 import "./nb-edit-simplefin-account.mjs";
 
@@ -32,7 +32,7 @@ class SimpleFINAccountAccessConfirmation extends BaseDialog {
         bubbles: true,
         composed: true,
         detail: { id: this.account.id, access_type },
-      })
+      }),
     );
 
     this.deleteButton.loading = false;
@@ -72,7 +72,7 @@ class SimpleFINAccountAccessConfirmation extends BaseDialog {
 
 customElements.define(
   "nb-simplefin-account-access-confirmation",
-  SimpleFINAccountAccessConfirmation
+  SimpleFINAccountAccessConfirmation,
 );
 
 export class SimpleFINAccount extends NikElement {
@@ -118,7 +118,7 @@ export class SimpleFINAccount extends NikElement {
   handleEditClick() {
     if (!this.editAccountModal) {
       this.editAccountModal = document.createElement(
-        "nb-edit-simplefin-account"
+        "nb-edit-simplefin-account",
       );
       this.editAccountModal.account = this.account;
       document.body.appendChild(this.editAccountModal);
@@ -130,7 +130,7 @@ export class SimpleFINAccount extends NikElement {
   showConfirmation() {
     if (!this.confirmationModal) {
       this.confirmationModal = document.createElement(
-        "nb-simplefin-account-access-confirmation"
+        "nb-simplefin-account-access-confirmation",
       );
       this.confirmationModal.account = this.account;
       document.body.appendChild(this.confirmationModal);
@@ -153,7 +153,7 @@ export class SimpleFINAccount extends NikElement {
       "sync_transactions",
       this.switch.checked
         ? this.account.access_type | 4
-        : 2 & this.account.access_type
+        : 2 & this.account.access_type,
     );
 
     let response = await fetch(this.account.update_account_access_type_url, {

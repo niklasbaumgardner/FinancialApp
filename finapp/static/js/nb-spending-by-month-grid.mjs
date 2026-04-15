@@ -1,7 +1,7 @@
-import { html } from "./lit.bundle.mjs";
+import { html } from "lit";
 import "./nb-transactions-grid.mjs";
 import "./nb-add-transaction.mjs";
-import * as agGrid from "./agGrid.bundle.mjs";
+import * as agGrid from "./agGrid.mjs";
 import { BaseGrid } from "./nb-base-grid.mjs";
 
 const MONTHS = {

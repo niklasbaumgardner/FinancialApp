@@ -18,7 +18,7 @@ export const THEME_LIST = [
 
 export const THEME_MODE_LIST = ["light", "dark"];
 
-export const PRIMARY_COLOR_LIST = [
+export const VARIANT_COLOR_LIST = [
   "red",
   "orange",
   "amber",
@@ -41,12 +41,18 @@ export const PRIMARY_COLOR_LIST = [
   "zinc",
   "neutral",
   "stone",
+  "taupe",
+  "mauve",
+  "mist",
+  "olive",
 ];
 
-export const BACKGROUND_COLOR_LIST = [
-  "niks-favorite",
+export const VARIANTS = ["brand", "danger", "neutral", "success", "warning"];
+
+export const NUMBERS = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950];
+
+export const COLORS = [
   "red",
-  "gray",
   "orange",
   "amber",
   "yellow",
@@ -63,7 +69,22 @@ export const BACKGROUND_COLOR_LIST = [
   "fuchsia",
   "pink",
   "rose",
+  "slate",
+  "gray",
+  "zinc",
+  "neutral",
+  "stone",
+  "taupe",
+  "mauve",
+  "mist",
+  "olive",
 ];
+
+export const TAILWIND_COLORS = COLORS.flatMap((color) =>
+  NUMBERS.map((number) => `--color-${color}-${number}`),
+);
+
+export const BACKGROUND_COLOR_LIST = ["niks-favorite", ...TAILWIND_COLORS];
 
 export const COLOR_PALETTE_LIST = [
   "default",
@@ -89,7 +110,6 @@ function round(num, digits = 2) {
 }
 
 export class Theme {
-  #domProperties;
   #theme;
   #mode;
   #primaryColor;
@@ -100,23 +120,30 @@ export class Theme {
   #borderWidth;
   #initing;
 
+  #brandColor;
+  #dangerColor;
+  #neutralColor;
+  #successColor;
+  #warningColor;
+
   constructor(theme) {
     this.#initing = true;
-    this.#domProperties = window.getComputedStyle(document.documentElement);
+    this.domProperties = window.getComputedStyle(document.documentElement);
     this.theme = theme.theme;
     this.mode = theme.mode;
-    this.primaryColor = theme.primary_color;
     this.backgroundColor = theme.background_color;
     this.colorPalette = theme.color_palette;
     this.rounding = theme.rounding;
     this.spacing = theme.spacing;
     this.borderWidth = theme.border_width;
 
-    this.#initing = false;
-
-    if (!this.theme) {
-      this.makeDefault();
+    for (let [variant, color] of Object.entries(theme).filter(([k, v]) =>
+      VARIANTS.includes(k),
+    )) {
+      this.setVariantColor(variant, color);
     }
+
+    this.#initing = false;
   }
 
   get theme() {
@@ -142,26 +169,27 @@ export class Theme {
   get rounding() {
     return (
       this.#rounding ??
-      this.#domProperties.getPropertyValue("--wa-border-radius-scale")
+      this.domProperties.getPropertyValue("--wa-border-radius-scale")
     );
   }
 
   get spacing() {
     return (
-      this.#spacing ?? this.#domProperties.getPropertyValue("--wa-space-scale")
+      this.#spacing ?? this.domProperties.getPropertyValue("--wa-space-scale")
     );
   }
 
   get borderWidth() {
     return (
       this.#borderWidth ??
-      this.#domProperties.getPropertyValue("--wa-border-width-scale")
+      this.domProperties.getPropertyValue("--wa-border-width-scale")
     );
   }
 
   get themeLinkEl() {
     return document.getElementById("theme");
   }
+
   get paletteLinkEl() {
     return document.getElementById("palette");
   }
@@ -182,7 +210,7 @@ export class Theme {
     themeStorage.setItem("theme", this.theme);
     document.documentElement.classList.add(`wa-theme-${this.theme}`);
 
-    this.themeLinkEl.href = `/static/css/${this.theme}.min.css`;
+    this.themeLinkEl.href = STATIC_FILE_MAP[this.theme] ?? "";
 
     if (!this.#initing) {
       this.updateSettings({ theme: this.theme });
@@ -190,6 +218,9 @@ export class Theme {
   }
 
   set mode(mode) {
+    if (!mode) {
+      mode = themeStorage.getItem("theme.mode");
+    }
     if (mode && mode === this.mode) {
       return;
     }
@@ -206,7 +237,7 @@ export class Theme {
     document.documentElement.classList.toggle("wa-dark", this.mode === "dark");
     document.documentElement.classList.toggle(
       "wa-light",
-      this.mode === "light"
+      this.mode === "light",
     );
 
     if (!this.#initing) {
@@ -224,7 +255,7 @@ export class Theme {
 
     document.documentElement.classList.remove(`${this.primaryColor}-brand`);
 
-    if (PRIMARY_COLOR_LIST.includes(primaryColor)) {
+    if (VARIANT_COLOR_LIST.includes(primaryColor)) {
       this.#primaryColor = primaryColor;
     } else {
       this.#primaryColor = null;
@@ -240,6 +271,99 @@ export class Theme {
     }
   }
 
+  setVariantColor(variant, value) {
+    if (!VARIANT_COLOR_LIST.includes(value)) {
+      value = null;
+    }
+
+    let removeColor = null;
+
+    switch (variant) {
+      case "brand": {
+        if (this.#brandColor === value) {
+          return;
+        }
+
+        removeColor = this.#brandColor;
+        this.#brandColor = value;
+        break;
+      }
+      case "danger": {
+        if (this.#dangerColor === value) {
+          return;
+        }
+
+        removeColor = this.#dangerColor;
+        this.#dangerColor = value;
+        break;
+      }
+      case "neutral": {
+        if (this.#neutralColor === value) {
+          return;
+        }
+
+        removeColor = this.#neutralColor;
+        this.#neutralColor = value;
+        break;
+      }
+      case "success": {
+        if (this.#successColor === value) {
+          return;
+        }
+
+        removeColor = this.#successColor;
+        this.#successColor = value;
+        break;
+      }
+      case "warning": {
+        if (this.#warningColor === value) {
+          return;
+        }
+
+        removeColor = this.#warningColor;
+        this.#warningColor = value;
+        break;
+      }
+      default: {
+        return;
+      }
+    }
+
+    themeStorage.setItem(`${variant}Color`, value);
+    document.documentElement.classList.remove(`${removeColor}-${variant}`);
+    if (value) {
+      document.documentElement.classList.add(`${value}-${variant}`);
+    }
+
+    if (!this.#initing) {
+      let settingsObject = {};
+      settingsObject[variant] = value;
+      this.updateSettings(settingsObject);
+    }
+  }
+
+  getVariantColor(variant) {
+    switch (variant) {
+      case "brand": {
+        return this.#brandColor;
+      }
+      case "danger": {
+        return this.#dangerColor;
+      }
+      case "neutral": {
+        return this.#neutralColor;
+      }
+      case "success": {
+        return this.#successColor;
+      }
+      case "warning": {
+        return this.#warningColor;
+      }
+    }
+
+    return null;
+  }
+
   /**
    * Sets the background color
    */
@@ -248,9 +372,6 @@ export class Theme {
       return;
     }
 
-    document
-      .querySelector("main")
-      .classList.remove(`${this.backgroundColor}-background`);
     document
       .querySelector("wa-page")
       .classList.remove(`${this.backgroundColor}-background`);
@@ -263,12 +384,18 @@ export class Theme {
 
     themeStorage.setItem("backgroundColor", this.backgroundColor);
     if (this.backgroundColor) {
-      document
-        .querySelector("main")
-        .classList.add(`${this.backgroundColor}-background`);
-      document
-        .querySelector("wa-page")
-        .classList.add(`${this.backgroundColor}-background`);
+      if (this.backgroundColor.startsWith("--")) {
+        document.documentElement.style.setProperty(
+          "--nb-background-color",
+          `var(${this.backgroundColor}`,
+        );
+      } else {
+        document
+          .querySelector("wa-page")
+          .classList.add(`${this.backgroundColor}-background`);
+      }
+    } else {
+      document.documentElement.style.removeProperty("--nb-background-color");
     }
 
     if (!this.#initing) {
@@ -285,7 +412,7 @@ export class Theme {
     }
 
     document.documentElement.classList.remove(
-      `wa-palette-${this.colorPalette}`
+      `wa-palette-${this.colorPalette}`,
     );
 
     if (COLOR_PALETTE_LIST.includes(colorPalette)) {
@@ -300,11 +427,8 @@ export class Theme {
       document.documentElement.classList.add(`wa-palette-${this.colorPalette}`);
     }
 
-    if (this.colorPalette) {
-      this.paletteLinkEl.href = `/static/css/${this.colorPalette}.palette.min.css`;
-    } else {
-      this.paletteLinkEl.href = "";
-    }
+    this.paletteLinkEl.href =
+      STATIC_FILE_MAP[this.colorPalette + ".palette"] ?? "";
 
     if (!this.#initing) {
       this.updateSettings({ color_palette: this.colorPalette });
@@ -329,7 +453,7 @@ export class Theme {
     if (this.#rounding !== null) {
       document.documentElement.style.setProperty(
         "--wa-border-radius-scale",
-        this.#rounding
+        this.#rounding,
       );
     }
 
@@ -356,7 +480,7 @@ export class Theme {
     if (this.#spacing !== null) {
       document.documentElement.style.setProperty(
         "--wa-space-scale",
-        this.#spacing
+        this.#spacing,
       );
     }
 
@@ -383,7 +507,7 @@ export class Theme {
     if (this.#borderWidth !== null) {
       document.documentElement.style.setProperty(
         "--wa-border-width-scale",
-        this.#borderWidth
+        this.#borderWidth,
       );
     }
 
@@ -393,31 +517,39 @@ export class Theme {
   }
 
   updateSettings(args) {
+    if (!CURRENT_USER?.id) {
+      return;
+    }
+
     if (!this.updateTask) {
       this.updateTask = new DeferredTask(
         (callbackArgs) => {
+          try {
+            Sentry.metrics.count("updateSettings", 1, {
+              attributes: callbackArgs,
+            });
+          } catch {}
           return fetch(UPDATE_USER_SETTINGS, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
             body: JSON.stringify(callbackArgs),
+            keepalive: true,
           });
         },
         1000,
-        { finalizeBeforeUnload: true }
+        { finalizeBeforeUnload: true },
       );
     }
     this.updateTask.arm(args);
   }
 
   makeDefault() {
-    this.theme = THEME_LIST[0];
     this.mode = "light";
   }
 
   migrateTheme(themeMode) {
-    this.theme = THEME_LIST[0];
     this.mode = themeMode;
   }
 }

@@ -1,5 +1,5 @@
 import { BaseDialog } from "./nb-base-dialog.mjs";
-import { html } from "./lit.bundle.mjs";
+import { html } from "lit";
 
 export class AddBudget extends BaseDialog {
   static properties = {
@@ -33,7 +33,7 @@ export class AddBudget extends BaseDialog {
       if (this.nameInput.value === card.budget.name) {
         this.nameInput.setAttribute(
           "help-text",
-          "This budget name already exists. Please choose another."
+          "This budget name already exists. Please choose another.",
         );
         this.saveButton.disabled = true;
         break;
@@ -64,7 +64,7 @@ export class AddBudget extends BaseDialog {
         new CustomEvent("Budget:AddBudget", {
           bubbles: true,
           detail: { budget: data.budget },
-        })
+        }),
       );
     } else {
       this.saveButton.disabled = false;
@@ -72,7 +72,7 @@ export class AddBudget extends BaseDialog {
 
       this.nameInput.setAttribute(
         "help-text",
-        "This budget name already exists. Please choose another."
+        "This budget name already exists. Please choose another.",
       );
     }
   }

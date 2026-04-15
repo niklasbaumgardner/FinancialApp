@@ -1,4 +1,4 @@
-import { html } from "./lit.bundle.mjs";
+import { html } from "lit";
 import { BaseDialog } from "./nb-base-dialog.mjs";
 
 export class EditSimpleFINAccount extends BaseDialog {
@@ -42,7 +42,7 @@ export class EditSimpleFINAccount extends BaseDialog {
         bubbles: true,
         composed: true,
         detail: { id: this.account.id, name },
-      })
+      }),
     );
 
     this.reset();

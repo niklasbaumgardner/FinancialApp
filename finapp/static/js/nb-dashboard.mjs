@@ -1,5 +1,5 @@
 import { NikElement } from "./nik-element.mjs";
-import { html } from "./lit.bundle.mjs";
+import { html } from "lit";
 import "./nb-net-worth-chart.mjs";
 import "./nb-budgets-line-chart.mjs";
 import "./nb-budget-spending-grid.mjs";
@@ -39,13 +39,13 @@ class Dashboard extends NikElement {
     });
 
     fetch(
-      GET_BUDGET_SPENDING_URL + `?month=${month}&year=${year}&ytd=${false}`
+      GET_BUDGET_SPENDING_URL + `?month=${month}&year=${year}&ytd=${false}`,
     ).then(async (response) => {
       this.budgetSpendingData = await response.json();
     });
 
     fetch(
-      GET_CATEGORY_SPENDING_URL + `?date=${CURRENT_DATE}&interval=monthly`
+      GET_CATEGORY_SPENDING_URL + `?date=${CURRENT_DATE}&interval=monthly`,
     ).then(async (response) => {
       this.categorySpendingData = await response.json();
     });

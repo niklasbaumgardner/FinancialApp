@@ -1,4 +1,4 @@
-import { html } from "./lit.bundle.mjs";
+import { html } from "lit";
 import "./nb-categories-select.mjs";
 import { NikElement } from "./nik-element.mjs";
 import "./nb-delete-pending-transaction.mjs";
@@ -80,7 +80,7 @@ export class PendingTransaction extends NikElement {
       {
         method: "POST",
         body: formData,
-      }
+      },
     );
 
     let { transaction, pending_transactions } = await response.json();
@@ -90,7 +90,7 @@ export class PendingTransaction extends NikElement {
         bubbles: true,
         composed: true,
         detail: { transaction },
-      })
+      }),
     );
 
     this.updatePendingTransactions(pending_transactions);
@@ -99,7 +99,7 @@ export class PendingTransaction extends NikElement {
   async handleTransactionDiscard() {
     if (!this.deletePendingTransactionModal) {
       this.deletePendingTransactionModal = document.createElement(
-        "nb-delete-pending-transaction"
+        "nb-delete-pending-transaction",
       );
       this.deletePendingTransactionModal.pendingTransaction = this.transaction;
       document.body.appendChild(this.deletePendingTransactionModal);
@@ -114,7 +114,7 @@ export class PendingTransaction extends NikElement {
         bubbles: true,
         composed: true,
         detail: { pendingTransactions },
-      })
+      }),
     );
   }
 
@@ -131,15 +131,16 @@ export class PendingTransaction extends NikElement {
 
   budgetOptionsTemplate() {
     return this.budgets.map(
-      (b) => html`<wa-option
-        value=${b.id}
-        ?selected=${b.id === this.transaction.budget_id}
-        ><span class="">${b.name}</span>:
-        ${new Intl.NumberFormat(undefined, {
-          style: "currency",
-          currency: "USD",
-        }).format(b.total)}</wa-option
-      >`
+      (b) =>
+        html`<wa-option
+          value=${b.id}
+          ?selected=${b.id === this.transaction.budget_id}
+          ><span class="">${b.name}</span>:
+          ${new Intl.NumberFormat(undefined, {
+            style: "currency",
+            currency: "USD",
+          }).format(b.total)}</wa-option
+        >`,
     );
   }
 
@@ -166,7 +167,7 @@ export class PendingTransaction extends NikElement {
           ?selected=${u.id === this.transaction.user_id}
           value=${u.id}
           >${u.username}</wa-option
-        >`
+        >`,
     );
   }
 

@@ -1,4 +1,4 @@
-import { html } from "./lit.bundle.mjs";
+import { html } from "lit";
 import { BaseDialog } from "./nb-base-dialog.mjs";
 
 class ShareBudgetDialog extends BaseDialog {
@@ -30,7 +30,7 @@ class ShareBudgetDialog extends BaseDialog {
     this.shareButton.loading = true;
 
     let response = await fetch(
-      this.url + "?" + new URLSearchParams({ email: this.emailInputEl.value })
+      this.url + "?" + new URLSearchParams({ email: this.emailInputEl.value }),
     );
 
     this.shareButton.loading = false;

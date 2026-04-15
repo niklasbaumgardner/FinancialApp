@@ -1,5 +1,5 @@
 import { NikElement } from "./nik-element.mjs";
-import { html } from "./lit.bundle.mjs";
+import { html } from "lit";
 import "./nb-share-budget-dialog.mjs";
 import "./nb-transaction.mjs";
 import "./nb-categories-select.mjs";
@@ -50,7 +50,7 @@ export class ViewBudget extends NikElement {
       this.numPages,
       GET_PAGE_URL,
       currentPageParams,
-      this
+      this,
     );
 
     this.search = new Search(
@@ -60,7 +60,7 @@ export class ViewBudget extends NikElement {
       1,
       SEARCH_PAGE_URL,
       currentPageParams,
-      this
+      this,
     );
 
     this.currentPagination = this.pagination;
@@ -148,13 +148,14 @@ export class ViewBudget extends NikElement {
     }
 
     return this.budget.shared_users.map(
-      (u) => html`<wa-tooltip for="shared-user-${u.id}"
-          >This budget is shared with ${u.username}</wa-tooltip
-        ><wa-icon
-          library="ion"
-          name="person-circle-outline"
-          id="shared-user-${u.id}"
-        ></wa-icon>`
+      (u) =>
+        html`<wa-tooltip for="shared-user-${u.id}"
+            >This budget is shared with ${u.username}</wa-tooltip
+          ><wa-icon
+            library="ion"
+            name="person-circle-outline"
+            id="shared-user-${u.id}"
+          ></wa-icon>`,
     );
   }
 
@@ -166,7 +167,7 @@ export class ViewBudget extends NikElement {
       (u) =>
         html`<wa-option ?selected=${CURRENT_USER.id === u.id} value=${u.id}
           >${u.username}</wa-option
-        >`
+        >`,
     );
   }
 
@@ -244,7 +245,7 @@ export class ViewBudget extends NikElement {
           variant=${n === this.currentPage ? "brand" : null}
           appearance=${n !== this.currentPage ? "filled-outlined" : null}
           >${n}</wa-button
-        >`
+        >`,
     );
   }
 
@@ -255,8 +256,8 @@ export class ViewBudget extends NikElement {
     } else {
       paginationResultsText = `Showing ${(this.currentPage - 1) * 10 + 1} to
           ${Math.min(this.numTransactions, this.currentPage * 10)} of ${
-        this.numTransactions
-      } Results`;
+            this.numTransactions
+          } Results`;
     }
 
     return html`<div class="wa-split">

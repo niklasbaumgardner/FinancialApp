@@ -1,7 +1,7 @@
-import { html } from "./lit.bundle.mjs";
+import { html } from "lit";
 import "./nb-transactions-grid.mjs";
 import "./nb-add-transaction.mjs";
-import * as agGrid from "./agGrid.bundle.mjs";
+import * as agGrid from "./agGrid.mjs";
 import { BaseGrid } from "./nb-base-grid.mjs";
 
 const MONTHS = {
@@ -94,7 +94,7 @@ class CategorySpendingGrid extends BaseGrid {
         new URLSearchParams({
           date: CURRENT_DATE,
           interval: this.interval,
-        })
+        }),
     );
 
     this.data = await response.json();
@@ -131,7 +131,7 @@ class CategorySpendingGrid extends BaseGrid {
       rows.push(row);
     }
     rows.sort((a, b) =>
-      this.categories[a.id].name.localeCompare(this.categories[b.id].name)
+      this.categories[a.id].name.localeCompare(this.categories[b.id].name),
     );
     this.dataCache[this.interval] = rows;
   }
@@ -178,7 +178,7 @@ class CategorySpendingGrid extends BaseGrid {
       for (let index of weekIndexes) {
         let dateString = this.spendingWeeks[index].toLocaleDateString(
           undefined,
-          { month: "short", day: "numeric", year: "numeric" }
+          { month: "short", day: "numeric", year: "numeric" },
         );
         columns.push({
           field: index,

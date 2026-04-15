@@ -1,5 +1,5 @@
 import { NikElement } from "./nik-element.mjs";
-import { html } from "./lit.bundle.mjs";
+import { html } from "lit";
 
 export class Category extends NikElement {
   static properties = {
@@ -21,7 +21,7 @@ export class Category extends NikElement {
         bubbles: true,
         cancelable: false,
         composed: true,
-      })
+      }),
     );
   }
 

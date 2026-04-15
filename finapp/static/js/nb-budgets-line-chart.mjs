@@ -1,4 +1,4 @@
-import { html } from "./lit.bundle.mjs";
+import { html } from "lit";
 import { BaseChart } from "./nb-base-chart.mjs";
 
 class BudgetsLineChart extends BaseChart {
@@ -72,8 +72,8 @@ class BudgetsLineChart extends BaseChart {
       legend: {
         enabled: true,
       },
-      axes: [
-        {
+      axes: {
+        x: {
           type: "unit-time",
           position: "bottom",
           gridLine: {
@@ -81,7 +81,7 @@ class BudgetsLineChart extends BaseChart {
           },
           label: { format: "%b %d, %Y" },
         },
-        {
+        y: {
           type: "number",
           position: "left",
           gridLine: {
@@ -91,7 +91,7 @@ class BudgetsLineChart extends BaseChart {
           nice: true,
           min: Math.min(0, ...currentData.flatMap((o) => Object.values(o))),
         },
-      ],
+      },
       formatter: {
         y(params) {
           if (params.source === "axis-label") {
@@ -142,7 +142,7 @@ class BudgetsLineChart extends BaseChart {
       startDate = new Date(this.#firstTransactionDate);
     } else {
       startDate = new Date(this.#lastTransactionDate).setMonth(
-        this.#lastTransactionDate.getMonth() - this.currentTimeSelection
+        this.#lastTransactionDate.getMonth() - this.currentTimeSelection,
       );
 
       startDate = new Date(Math.max(startDate, this.#firstTransactionDate));
@@ -218,7 +218,7 @@ class BudgetsLineChart extends BaseChart {
       (o) =>
         html`<wa-option value=${o.id} ?selected=${o.id === -1}
           >${o.name}</wa-option
-        >`
+        >`,
     );
   }
 

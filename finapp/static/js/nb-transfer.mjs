@@ -1,5 +1,5 @@
 import { NikElement } from "./nik-element.mjs";
-import { html } from "./lit.bundle.mjs";
+import { html } from "lit";
 
 export class Transfer extends NikElement {
   static properties = {
@@ -16,13 +16,13 @@ export class Transfer extends NikElement {
 
   get sourceBudgetOptions() {
     return Array.from(
-      this.budgets.filter((b) => b.id != this.destBudgetSelect?.value)
+      this.budgets.filter((b) => b.id != this.destBudgetSelect?.value),
     );
   }
 
   get destBudgetOptions() {
     return Array.from(
-      this.budgets.filter((b) => b.id != this.sourceBudgetSelect?.value)
+      this.budgets.filter((b) => b.id != this.sourceBudgetSelect?.value),
     );
   }
 
@@ -35,13 +35,14 @@ export class Transfer extends NikElement {
 
   sourceOptionsTemplate() {
     return this.sourceOptions.map(
-      (b) => html`<wa-option value=${b.id}
-        ><span class="">${b.name}</span>:
-        ${new Intl.NumberFormat(undefined, {
-          style: "currency",
-          currency: "USD",
-        }).format(b.total)}</wa-option
-      >`
+      (b) =>
+        html`<wa-option value=${b.id}
+          ><span class="">${b.name}</span>:
+          ${new Intl.NumberFormat(undefined, {
+            style: "currency",
+            currency: "USD",
+          }).format(b.total)}</wa-option
+        >`,
     );
   }
 
@@ -60,13 +61,14 @@ export class Transfer extends NikElement {
 
   destOptionsTemplate() {
     return this.destOptions.map(
-      (b) => html`<wa-option value=${b.id}
-        ><span class="">${b.name}</span>:
-        ${new Intl.NumberFormat(undefined, {
-          style: "currency",
-          currency: "USD",
-        }).format(b.total)}</wa-option
-      >`
+      (b) =>
+        html`<wa-option value=${b.id}
+          ><span class="">${b.name}</span>:
+          ${new Intl.NumberFormat(undefined, {
+            style: "currency",
+            currency: "USD",
+          }).format(b.total)}</wa-option
+        >`,
     );
   }
 

@@ -1,5 +1,5 @@
 import { NikElement } from "./nik-element.mjs";
-import { html } from "./lit.bundle.mjs";
+import { html } from "lit";
 
 export class SearchItem extends NikElement {
   static queries = {
@@ -20,7 +20,7 @@ export class SearchItem extends NikElement {
   handleClick(event) {
     if (event.target === this.removeButton) {
       this.dispatchEvent(
-        new CustomEvent("SearchItemRemoved", { bubbles: true, composed: true })
+        new CustomEvent("SearchItemRemoved", { bubbles: true, composed: true }),
       );
       this.remove();
     }

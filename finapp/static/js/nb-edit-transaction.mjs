@@ -1,4 +1,4 @@
-import { html } from "./lit.bundle.mjs";
+import { html } from "lit";
 import "./nb-categories-select.mjs";
 import { AddTransactionModal } from "./nb-add-transaction.mjs";
 
@@ -50,10 +50,10 @@ export class EditTransactionModal extends AddTransactionModal {
     let newCategoriesSet = new Set(newCategories);
 
     let categoriesAdded = Array.from(
-      newCategoriesSet.difference(oldCategoriesSet)
+      newCategoriesSet.difference(oldCategoriesSet),
     );
     let categoriesDeleted = Array.from(
-      oldCategoriesSet.difference(newCategoriesSet)
+      oldCategoriesSet.difference(newCategoriesSet),
     );
 
     return { categoriesAdded, categoriesDeleted };
@@ -68,13 +68,13 @@ export class EditTransactionModal extends AddTransactionModal {
     this.submitButton.disabled = true;
 
     let currentCategories = this.transaction.categories.map(
-      (c) => c.category_id
+      (c) => c.category_id,
     );
     let newCategories = this.categoriesSelect.value;
 
     const { categoriesAdded, categoriesDeleted } = this.categoriesChange(
       currentCategories,
-      newCategories
+      newCategories,
     );
 
     if (
@@ -112,7 +112,7 @@ export class EditTransactionModal extends AddTransactionModal {
         bubbles: true,
         composed: true,
         detail: { transaction },
-      })
+      }),
     );
 
     this.reset();
@@ -120,15 +120,16 @@ export class EditTransactionModal extends AddTransactionModal {
 
   budgetOptionsTemplate() {
     return this.budgets.map(
-      (b) => html`<wa-option
-        value=${b.id}
-        ?selected=${b.id === this.transaction.budget_id}
-        ><span class="">${b.name}</span>:
-        ${new Intl.NumberFormat(undefined, {
-          style: "currency",
-          currency: "USD",
-        }).format(b.total)}</wa-option
-      >`
+      (b) =>
+        html`<wa-option
+          value=${b.id}
+          ?selected=${b.id === this.transaction.budget_id}
+          ><span class="">${b.name}</span>:
+          ${new Intl.NumberFormat(undefined, {
+            style: "currency",
+            currency: "USD",
+          }).format(b.total)}</wa-option
+        >`,
     );
   }
 
@@ -154,7 +155,7 @@ export class EditTransactionModal extends AddTransactionModal {
           ?selected=${u.id === this.transaction.user_id}
           value=${u.id}
           >${u.username}</wa-option
-        >`
+        >`,
     );
   }
 

@@ -1,4 +1,4 @@
-import { html } from "./lit.bundle.mjs";
+import { html } from "lit";
 import { NikElement } from "./nik-element.mjs";
 import "./nb-search-item.mjs";
 import "./nb-categories-select.mjs";
@@ -25,7 +25,7 @@ export class SearchBudget extends NikElement {
     this.searchTotal = 0;
 
     document.addEventListener("SearchTotalChanged", (event) =>
-      this.handleSearchTotalChanged(event)
+      this.handleSearchTotalChanged(event),
     );
   }
 
@@ -72,7 +72,7 @@ export class SearchBudget extends NikElement {
   get searchItemValuesAsString() {
     return this.searchItems.reduce(
       (string, item) => string + item.input.value,
-      ""
+      "",
     );
   }
 
@@ -130,7 +130,7 @@ export class SearchBudget extends NikElement {
         detail: {
           searching: !!this.searching,
         },
-      })
+      }),
     );
   }
 
@@ -158,7 +158,7 @@ export class SearchBudget extends NikElement {
         detail: {
           sort: this.#sortingValues[this.currentSortValue],
         },
-      })
+      }),
     );
   }
 
@@ -201,7 +201,7 @@ export class SearchBudget extends NikElement {
         bubbles: true,
         composed: true,
         detail: this.searchValuesObject,
-      })
+      }),
     );
 
     this.lastSearchValues = JSON.stringify(this.searchValuesObject);

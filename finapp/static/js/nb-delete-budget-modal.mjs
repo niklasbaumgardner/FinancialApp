@@ -1,5 +1,5 @@
 import { BaseDialog } from "./nb-base-dialog.mjs";
-import { html } from "./lit.bundle.mjs";
+import { html } from "lit";
 
 export class DeleteBudget extends BaseDialog {
   static properties = {
@@ -15,7 +15,7 @@ export class DeleteBudget extends BaseDialog {
   transferBudgetsTemplate() {
     return this.transferBudgets.map(
       (b) =>
-        html`<wa-radio name="new_budget" value=${b.id}>${b.name}</wa-radio>`
+        html`<wa-radio name="new_budget" value=${b.id}>${b.name}</wa-radio>`,
     );
   }
 

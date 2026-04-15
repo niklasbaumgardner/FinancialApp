@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html
   lang="en"
   class="wa-{{ user_settings.settings.mode }} wa-cloak"
@@ -16,33 +16,15 @@
 
     <link rel="manifest" href="/static/manifest.webmanifest" />
 
-    <link
-      rel="stylesheet"
-      href="/static/css/bundle.min.css"
-      render="blocking"
-      fetchpriority="high"
-    />
-    <link
-      id="theme"
-      rel="stylesheet"
-      href=""
-      render="blocking"
-      fetchpriority="high"
-    />
-    <link
-      id="palette"
-      rel="stylesheet"
-      href=""
-      render="blocking"
-      fetchpriority="high"
-    />
-
     <link rel="icon" type="image/png" href="/static/images/logo.svg" />
 
     <link rel="preconnect" href="https://ka-f.fontawesome.com" />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
 
     <title>{% block title %}{% endblock title %}</title>
+
+    {% include "includes.html" %}
+
     <script>
         // URLs for setting the theme options
         const SET_THEME_URL = "{{ url_for('theme_bp.set_theme') }}";
@@ -95,48 +77,7 @@
       const CURRENT_DATE = `${year}-${month}-${day}`;
     </script>
 
-    <script type="module">
-      import {
-        Theme,
-        THEME_LIST,
-        COLOR_PALETTE_LIST,
-      } from "/static/js/theme.mjs";
-      window.THEME = new Theme({{ user_settings.settings|tojson }});
-
-      let storedTheme = window.localStorage.getItem("theme");
-      if (storedTheme === "dark" || storedTheme === "light") {
-        window.THEME.migrateTheme(storedTheme);
-      }
-      console.log(window.THEME);
-    </script>
-    <script src="/static/js/nb-back-button.mjs" type="module"></script>
-    <script src="/static/js/nb-alert.mjs" type="module"></script>
-    <script src="/static/js/nb-theme-selector.mjs" type="module"></script>
-    <script src="/static/js/nb-category-modal.mjs" type="module"></script>
-    <script src="/static/js/main.bundle.mjs" type="module"></script>
-    <script src="/static/js/nb-combobox.mjs" type="module"></script>
-
     {% block head %}{% endblock head %}
-
-    <script
-      src="https://js.sentry-cdn.com/85a281a7156d9e667f62a479c3277fce.min.js"
-      crossorigin="anonymous"
-      defer
-    >
-      if (window.Sentry) {
-        Sentry.onLoad(function () {
-          Sentry.init({
-            release: "nb-budgets@2.2.8",
-            environment: "production",
-            integrations: [
-              Sentry.browserTracingIntegration(),
-            ],
-            tracesSampleRate: 1.0,
-            sendDefaultPii: true,
-          });
-        });
-      }
-    </script>
   </head>
 
   <body class="@container">

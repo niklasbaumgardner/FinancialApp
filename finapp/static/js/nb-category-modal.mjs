@@ -1,8 +1,8 @@
 import { BaseDialog } from "./nb-base-dialog.mjs";
-import { html } from "./lit.bundle.mjs";
+import { html } from "lit";
 import "./nb-category.mjs";
 import "./nb-radio.mjs";
-import { PRIMARY_COLOR_LIST } from "./theme.mjs";
+import { VARIANT_COLOR_LIST } from "./theme.mjs";
 
 function toUpper(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -55,7 +55,7 @@ export class CreateCategoryModal extends BaseDialog {
         bubbles: true,
         composed: true,
         detail: { categories: this.existingCategories },
-      })
+      }),
     );
   }
 
@@ -105,13 +105,13 @@ export class CreateCategoryModal extends BaseDialog {
           <div class="wa-stack gap-(--wa-space-xs)!">
             <div>Select a color: *</div>
             <div class="wa-cluster">
-              ${PRIMARY_COLOR_LIST.map(
+              ${VARIANT_COLOR_LIST.map(
                 (color) =>
                   html`<nb-radio
                     name="color"
                     value=${color}
                     label=${toUpper(color)}
-                  ></nb-radio>`
+                  ></nb-radio>`,
               )}
             </div>
           </div>
@@ -123,7 +123,7 @@ export class CreateCategoryModal extends BaseDialog {
                   html`<nb-category
                     name="${c.name}"
                     color="${c.color}"
-                  ></nb-category>`
+                  ></nb-category>`,
               )}
             </div></wa-card
           >

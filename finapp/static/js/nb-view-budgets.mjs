@@ -1,5 +1,5 @@
 import { NikElement } from "./nik-element.mjs";
-import { html } from "./lit.bundle.mjs";
+import { html } from "lit";
 import "./nb-budget-card.mjs";
 import "./nb-add-budget.mjs";
 
@@ -84,14 +84,14 @@ export class ViewBudgets extends NikElement {
         html`<nb-budget-card
           .budget=${b}
           .transferBudgets=${active}
-        ></nb-budget-card>`
+        ></nb-budget-card>`,
     );
     let inactiveBudgets = inactive.map(
       (b) =>
         html`<nb-budget-card
           .budget=${b}
           .transferBudgets=${active}
-        ></nb-budget-card>`
+        ></nb-budget-card>`,
     );
 
     return html`<label for="active" class="wa-heading-m">Active Budgets:</label>

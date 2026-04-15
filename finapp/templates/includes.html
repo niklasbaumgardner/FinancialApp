@@ -1,0 +1,74 @@
+<link
+  id="theme"
+  rel="stylesheet"
+  href=""
+  render="blocking"
+  fetchpriority="high"
+/>
+<link
+  id="palette"
+  rel="stylesheet"
+  href=""
+  render="blocking"
+  fetchpriority="high"
+/>
+
+<script>
+  const STATIC_FILE_MAP = {
+    active: "/static/dist/esbuild/active.SBWLRJQM.css",
+    "anodized.palette": "/static/dist/esbuild/anodized.palette.N2MTE5BX.css",
+    awesome: "/static/dist/esbuild/awesome.FHBHZSAW.css",
+    "base.palette": "/static/dist/esbuild/base.palette.CU2AYW2R.css",
+    "bright.palette": "/static/dist/esbuild/bright.palette.4U3Z2VEM.css",
+    brutalist: "/static/dist/esbuild/brutalist.ZX6PRMQH.css",
+    "elegant.palette": "/static/dist/esbuild/elegant.palette.BESGV7HV.css",
+    glossy: "/static/dist/esbuild/glossy.X2EIXKKJ.css",
+    matter: "/static/dist/esbuild/matter.ZNVWT6KL.css",
+    mellow: "/static/dist/esbuild/mellow.6AMXEJVW.css",
+    "mild.palette": "/static/dist/esbuild/mild.palette.ESAXWICN.css",
+    "natural.palette": "/static/dist/esbuild/natural.palette.WGSI542K.css",
+    playful: "/static/dist/esbuild/playful.ASD3D2Y3.css",
+    premium: "/static/dist/esbuild/premium.RBLFI6LW.css",
+    "rudimentary.palette": "/static/dist/esbuild/rudimentary.palette.FM3GLSBJ.css",
+    shoelace: "/static/dist/esbuild/shoelace.3543JL5C.css",
+    "shoelace.palette": "/static/dist/esbuild/shoelace.palette.VIT5FZA2.css",
+    tailspin: "/static/dist/esbuild/tailspin.KVQJFRGS.css",
+    "vogue.palette": "/static/dist/esbuild/vogue.palette.FY32WZXZ.css",
+  };
+
+  const myTheme = "{{ user_settings.settings.theme }}";
+  if (myTheme.length) {
+    let themeLink = document.getElementById("theme");
+    themeLink.href = STATIC_FILE_MAP[myTheme] ?? "";
+  }
+
+  const myPalette = "{{ user_settings.settings.color_palette }}";
+  if (myPalette.length) {
+    let paletteLink = document.getElementById("palette");
+    paletteLink.href = STATIC_FILE_MAP[myPalette + ".palette"] ?? "";
+  }
+</script>
+
+<link
+  rel="stylesheet"
+  href="/static/dist/esbuild/bundle.CMEV3HW7.css"
+  render="blocking"
+  fetchpriority="high"
+/>
+
+<script type="module">
+  import {
+    Theme
+  } from "/static/dist/esbuild/theme.MW4GBW7M.mjs";
+  window.THEME = new Theme({{ user_settings.settings|tojson }});
+</script>
+<script src="/static/dist/esbuild/main.TWRRD3XJ.mjs" type="module" ></script>
+<script src="/static/dist/esbuild/agGrid.4O76IKNZ.mjs" type="module" ></script>
+<script src="/static/dist/esbuild/nb.7R7FVVUP.mjs" type="module" ></script>
+
+<script
+  src="https://js.sentry-cdn.com/d1913311367ec68822f82f8ced7bc88f.min.js"
+  crossorigin="anonymous"
+  defer
+></script>
+<script src="/static/dist/esbuild/sentry.AY3KDISN.mjs" type="module" defer></script>

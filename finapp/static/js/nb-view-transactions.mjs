@@ -1,5 +1,5 @@
 import { NikElement } from "./nik-element.mjs";
-import { html } from "./lit.bundle.mjs";
+import { html } from "lit";
 import "./nb-transactions-grid.mjs";
 import "./nb-add-transaction.mjs";
 
@@ -100,7 +100,7 @@ class ViewTransactions extends NikElement {
         bubbles: true,
         composed: true,
         detail: { transactions },
-      })
+      }),
     );
 
     if (includeBudgets) {

@@ -8,6 +8,10 @@
   }
 }
 
+*:not(:defined) {
+  outline: 4px solid red;
+}
+
 .main-card {
   display: flex;
   justify-content: center;

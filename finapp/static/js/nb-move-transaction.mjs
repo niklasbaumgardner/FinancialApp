@@ -1,5 +1,5 @@
 import { BaseDialog } from "./nb-base-dialog.mjs";
-import { html } from "./lit.bundle.mjs";
+import { html } from "lit";
 
 export class MoveTransactionModal extends BaseDialog {
   static properties = {
@@ -19,7 +19,7 @@ export class MoveTransactionModal extends BaseDialog {
         (b) =>
           b.id !== this.transaction.budget_id &&
           b.shared_users.length &&
-          b.shared_users.find((su) => su.id === this.transaction.user_id)
+          b.shared_users.find((su) => su.id === this.transaction.user_id),
       );
 
       return availableBudgets;
@@ -48,7 +48,7 @@ export class MoveTransactionModal extends BaseDialog {
         bubbles: true,
         composed: true,
         detail: { greaterThanCurrentPage: true },
-      })
+      }),
     );
 
     this.remove();
@@ -72,7 +72,7 @@ export class MoveTransactionModal extends BaseDialog {
                 style: "currency",
                 currency: "USD",
               }).format(budget.total)}</wa-option
-            >`
+            >`,
         )}
       </nb-combobox>`;
     }

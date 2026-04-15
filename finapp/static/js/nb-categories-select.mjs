@@ -1,4 +1,5 @@
-import { html, ifDefined } from "./lit.bundle.mjs";
+import { html } from "lit";
+import { ifDefined } from "lit/directives/if-defined.js";
 import { Combobox } from "./nb-combobox.mjs";
 import { NikElement } from "./nik-element.mjs";
 import "./nb-category.mjs";
@@ -48,10 +49,10 @@ export class BaseCombobox extends Combobox {
       // Emit after updating
       this.updateComplete.then(() => {
         this.dispatchEvent(
-          new InputEvent("input", { bubbles: true, composed: true })
+          new InputEvent("input", { bubbles: true, composed: true }),
         );
         this.dispatchEvent(
-          new Event("change", { bubbles: true, composed: true })
+          new Event("change", { bubbles: true, composed: true }),
         );
       });
     }
@@ -112,7 +113,7 @@ export class CategoriesSelect extends NikElement {
             value="${c.id}"
             ?selected=${this.selected?.includes(c.id)}
             ><nb-category name="${c.name}" color="${c.color}"></nb-category
-          ></wa-option>`
+          ></wa-option>`,
       )}</nb-base-combobox
     >`;
   }

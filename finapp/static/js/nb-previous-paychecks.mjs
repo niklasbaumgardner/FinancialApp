@@ -1,5 +1,5 @@
 import { NikElement } from "./nik-element.mjs";
-import { html } from "./lit.bundle.mjs";
+import { html } from "lit";
 import { BaseDialog } from "./nb-base-dialog.mjs";
 
 class Paycheck extends NikElement {
@@ -13,7 +13,7 @@ class Paycheck extends NikElement {
     document.dispatchEvent(
       new CustomEvent("CopyFromPaycheck", {
         detail: { paycheck: this.paycheck },
-      })
+      }),
     );
   }
 
@@ -45,17 +45,18 @@ class Paycheck extends NikElement {
           </thead>
           <tbody>
             ${this.paycheck.transactions.map(
-              (t) => html`<tr>
-                <td>${t.budget.name}</td>
-                <td id="${t.budget.id}">
-                  <wa-format-number
-                    type="currency"
-                    currency="USD"
-                    value="${t.amount}"
-                    lang="en-US"
-                  ></wa-format-number>
-                </td>
-              </tr>`
+              (t) =>
+                html`<tr>
+                  <td>${t.budget.name}</td>
+                  <td id="${t.budget.id}">
+                    <wa-format-number
+                      type="currency"
+                      currency="USD"
+                      value="${t.amount}"
+                      lang="en-US"
+                    ></wa-format-number>
+                  </td>
+                </tr>`,
             )}
           </tbody>
         </table>
@@ -83,7 +84,7 @@ export class PreviousPaychecks extends BaseDialog {
 
   paychecksTemplate() {
     return this.paychecks.map(
-      (p) => html`<nb-paycheck .paycheck=${p}></nb-paycheck>`
+      (p) => html`<nb-paycheck .paycheck=${p}></nb-paycheck>`,
     );
   }
 

@@ -8,7 +8,6 @@
     "{{ url_for('viewbudget_bp.search', sqid=budget.id) }}";
   const BUDGETS = {{ budgets|tojson }};
 </script>
-<script src="/static/js/nb-view-budget.mjs" type="module"></script>
 {% endblock head %} {% block content %}
 
 <nb-view-budget

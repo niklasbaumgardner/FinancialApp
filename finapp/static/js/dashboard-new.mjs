@@ -1,4 +1,4 @@
-import * as agGrid from "./agGrid.bundle.mjs";
+import * as agGrid from "./agGrid.mjs";
 
 const COLORS_OBJECT = {
   light: {
@@ -89,7 +89,7 @@ async function getPieData(date = "") {
         "?" +
         new URLSearchParams({
           date,
-        })
+        }),
     );
   } else {
     result = await fetch(GET_PIE_DATA_URL);
@@ -103,14 +103,14 @@ async function getAllBudgetsLineData(startDate = "") {
       "?" +
       new URLSearchParams({
         startDate,
-      })
+      }),
   );
   return result;
 }
 
 async function getNetSpending(object) {
   let result = await fetch(
-    GET_NET_SPENDING_URL + "?" + new URLSearchParams(object)
+    GET_NET_SPENDING_URL + "?" + new URLSearchParams(object),
   );
   return result;
 }
@@ -118,7 +118,7 @@ async function getNetSpending(object) {
 async function getMonthSpending(value) {
   let object = JSON.parse(value);
   let result = await fetch(
-    GET_SPENDING_FOR_MONTH_URL + "?" + new URLSearchParams(object)
+    GET_SPENDING_FOR_MONTH_URL + "?" + new URLSearchParams(object),
   );
   return result;
 }
@@ -181,12 +181,12 @@ class CategorySpendingManager {
     this.columnsCache = {};
 
     this.categorySpendingSelect = document.getElementById(
-      "categorySpendingSelect"
+      "categorySpendingSelect",
     );
     this.categorySpendingSelect.addEventListener("change", this);
 
     this.categorySpendingGridEl = document.getElementById(
-      "spending-by-category-grid"
+      "spending-by-category-grid",
     );
 
     await this.getData();
@@ -228,7 +228,7 @@ class CategorySpendingManager {
       for (let index of weekIndexes) {
         let dateString = this.spendingWeeks[index].toLocaleDateString(
           undefined,
-          { month: "short", day: "numeric", year: "numeric" }
+          { month: "short", day: "numeric", year: "numeric" },
         );
         columns.push({
           field: index,
@@ -294,7 +294,7 @@ class CategorySpendingManager {
         new URLSearchParams({
           date: this.currentDate,
           interval: this.interval,
-        })
+        }),
     );
 
     let data = await response.json();
@@ -331,7 +331,7 @@ class CategorySpendingManager {
       rows.push(row);
     }
     rows.sort((a, b) =>
-      this.categories[a.id].name.localeCompare(this.categories[b.id].name)
+      this.categories[a.id].name.localeCompare(this.categories[b.id].name),
     );
     this.dataCache[this.interval] = rows;
   }
@@ -343,7 +343,7 @@ class CategorySpendingManager {
 
   setupThemeWatcher() {
     this.mutationObserver = new MutationObserver(() =>
-      this.handleThemeChange()
+      this.handleThemeChange(),
     );
 
     this.mutationObserver.observe(document.documentElement, {
@@ -354,7 +354,7 @@ class CategorySpendingManager {
   handleThemeChange() {
     this.dataGrid.setGridOption(
       "theme",
-      agGrid.themeAlpine.withPart(this.currentColorScheme)
+      agGrid.themeAlpine.withPart(this.currentColorScheme),
     );
   }
 }
