@@ -10,18 +10,24 @@ export class LoginCard extends NikElement {
   connectedCallback() {
     super.connectedCallback();
 
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(location.search);
     const nextURL = params.get("next");
 
     if (nextURL) {
-      const localStorage = window.localStorage;
       localStorage.setItem("next", nextURL);
+    } else {
+      const storedNext = localStorage.getItem("next");
+      if (storedNext && !location.search.length) {
+        const url = new URL(location.href);
+        url.searchParams.set("next", storedNext);
+        history.replaceState(null, "", url);
+      }
     }
   }
 
   nativeTemplate() {
     return html`<wa-card>
-      <form id="login-form" action="${LOGIN_URL}" method="POST"></form>
+      <form id="login-form" method="POST"></form>
       <div class="wa-stack">
         <h2>Login</h2>
 
@@ -79,7 +85,7 @@ export class LoginCard extends NikElement {
 
   waTmeplate() {
     return html`<wa-card>
-      <form id="login-form" action="${LOGIN_URL}" method="POST"></form>
+      <form id="login-form" method="POST"></form>
       <div class="wa-stack">
         <h2>Login</h2>
 
@@ -124,10 +130,14 @@ export class LoginCard extends NikElement {
           >
         </div>
 
-        <p>
-          Don't have an account?
-          <a href="${SIGNUP_URL}">Sign Up</a>
-        </p>
+        <div>
+          <div>Don't have an account yet?</div>
+          <div class="">
+            <a href="${SIGNUP_URL}">Sign up here</a>
+            <span>or</span>
+            <span><a href="${EMAIL_LOGIN_URL}">Email me a login link</a></span>
+          </div>
+        </div>
       </div>
     </wa-card>`;
   }

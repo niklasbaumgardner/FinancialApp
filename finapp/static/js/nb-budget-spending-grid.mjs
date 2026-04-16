@@ -167,7 +167,7 @@ class BudgetSpendingGrid extends BaseGrid {
       },
     ];
     const gridOptions = {
-      ...this.defaultGridOptions,
+      ...this.baseGridOptions,
       columnDefs,
       rowData: this.data,
       autoSizeStrategy: {

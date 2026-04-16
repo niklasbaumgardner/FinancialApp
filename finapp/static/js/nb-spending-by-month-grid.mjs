@@ -162,7 +162,7 @@ class SpendingByMonth extends BaseGrid {
     }
 
     const gridOptions = {
-      ...this.defaultGridOptions,
+      ...this.baseGridOptions,
       columnDefs,
       rowData: this.dataArray,
       autoSizeStrategy: {

@@ -1,5 +1,5 @@
-@import url('../layers.css');
-@import url('../color/palettes/shoelace.css'); /* To use this palette, add class="wa-palette-shoelace" to the <html> element */
+@import url("../layers.css");
+@import url("../color/palettes/shoelace.css"); /* To use this palette, add class="wa-palette-shoelace" to the <html> element */
 
 @layer wa-theme {
   .wa-theme-shoelace,
@@ -23,8 +23,16 @@
     --wa-color-text-quiet: var(--wa-color-neutral-40);
     --wa-color-text-link: var(--wa-color-brand-40);
 
-    --wa-color-overlay-modal: color-mix(in oklab, var(--wa-color-neutral-05) 50%, transparent);
-    --wa-color-overlay-inline: color-mix(in oklab, var(--wa-color-neutral-80) 25%, transparent);
+    --wa-color-overlay-modal: color-mix(
+      in oklab,
+      var(--wa-color-neutral-05) 50%,
+      transparent
+    );
+    --wa-color-overlay-inline: color-mix(
+      in oklab,
+      var(--wa-color-neutral-80) 25%,
+      transparent
+    );
 
     --wa-color-shadow: color-mix(
       in oklab,
@@ -102,7 +110,11 @@
 
     --wa-color-surface-raised: var(--wa-color-neutral-10);
     --wa-color-surface-default: var(--wa-color-neutral-05);
-    --wa-color-surface-lowered: color-mix(in oklab, var(--wa-color-surface-default), black 20%);
+    --wa-color-surface-lowered: color-mix(
+      in oklab,
+      var(--wa-color-surface-default),
+      black 20%
+    );
     --wa-color-surface-border: var(--wa-color-neutral-20);
 
     --wa-color-text-normal: var(--wa-color-neutral-95);
@@ -110,11 +122,16 @@
     --wa-color-text-link: var(--wa-color-brand-70);
 
     --wa-color-overlay-modal: color-mix(in oklab, black 60%, transparent);
-    --wa-color-overlay-inline: color-mix(in oklab, var(--wa-color-neutral-50) 10%, transparent);
+    --wa-color-overlay-inline: color-mix(
+      in oklab,
+      var(--wa-color-neutral-50) 10%,
+      transparent
+    );
 
     --wa-color-shadow: color-mix(
       in oklab,
-      var(--wa-color-surface-lowered) calc(var(--wa-shadow-blur-scale) * 32% + 40%),
+      var(--wa-color-surface-lowered)
+        calc(var(--wa-shadow-blur-scale) * 32% + 40%),
       transparent
     );
 
@@ -194,17 +211,47 @@
      * For larger font sizes, each size is twice 1.125x larger to maximize impact.
      * Each value uses `rem` units and is rounded to the nearest whole pixel when rendered. */
     --wa-font-size-scale: 1;
-    --wa-font-size-3xs: round(calc(var(--wa-font-size-2xs) / 1.125), 1px); /* 10px */
-    --wa-font-size-2xs: round(calc(var(--wa-font-size-xs) / 1.125), 1px); /* 11px */
-    --wa-font-size-xs: round(calc(var(--wa-font-size-s) / 1.125), 1px); /* 12px */
-    --wa-font-size-s: round(calc(var(--wa-font-size-m) / 1.125), 1px); /* 14px */
+    --wa-font-size-3xs: round(
+      calc(var(--wa-font-size-2xs) / 1.125),
+      1px
+    ); /* 10px */
+    --wa-font-size-2xs: round(
+      calc(var(--wa-font-size-xs) / 1.125),
+      1px
+    ); /* 11px */
+    --wa-font-size-xs: round(
+      calc(var(--wa-font-size-s) / 1.125),
+      1px
+    ); /* 12px */
+    --wa-font-size-s: round(
+      calc(var(--wa-font-size-m) / 1.125),
+      1px
+    ); /* 14px */
     --wa-font-size-m: calc(1rem * var(--wa-font-size-scale)); /* 16px */
-    --wa-font-size-l: round(calc(var(--wa-font-size-m) * 1.125 * 1.125), 1px); /* 20px */
-    --wa-font-size-xl: round(calc(var(--wa-font-size-l) * 1.125 * 1.125), 1px); /* 25px */
-    --wa-font-size-2xl: round(calc(var(--wa-font-size-xl) * 1.125 * 1.125), 1px); /* 32px */
-    --wa-font-size-3xl: round(calc(var(--wa-font-size-2xl) * 1.125 * 1.125), 1px); /* 41px */
-    --wa-font-size-4xl: round(calc(var(--wa-font-size-3xl) * 1.125 * 1.125), 1px); /* 52px */
-    --wa-font-size-5xl: round(calc(var(--wa-font-size-4xl) * 1.125 * 1.125), 1px); /* 66px */
+    --wa-font-size-l: round(
+      calc(var(--wa-font-size-m) * 1.125 * 1.125),
+      1px
+    ); /* 20px */
+    --wa-font-size-xl: round(
+      calc(var(--wa-font-size-l) * 1.125 * 1.125),
+      1px
+    ); /* 25px */
+    --wa-font-size-2xl: round(
+      calc(var(--wa-font-size-xl) * 1.125 * 1.125),
+      1px
+    ); /* 32px */
+    --wa-font-size-3xl: round(
+      calc(var(--wa-font-size-2xl) * 1.125 * 1.125),
+      1px
+    ); /* 41px */
+    --wa-font-size-4xl: round(
+      calc(var(--wa-font-size-3xl) * 1.125 * 1.125),
+      1px
+    ); /* 52px */
+    --wa-font-size-5xl: round(
+      calc(var(--wa-font-size-4xl) * 1.125 * 1.125),
+      1px
+    ); /* 66px */
 
     --wa-font-size-smaller: round(calc(1em / 1.125), 1px);
     --wa-font-size-larger: round(calc(1em * 1.125 * 1.125), 1px);
@@ -268,7 +315,8 @@
     /* #region Focus ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
     --wa-focus-ring-style: solid;
     --wa-focus-ring-width: 0.1875rem; /* 3px */
-    --wa-focus-ring: var(--wa-focus-ring-style) var(--wa-focus-ring-width) var(--wa-color-focus);
+    --wa-focus-ring: var(--wa-focus-ring-style) var(--wa-focus-ring-width)
+      var(--wa-color-focus);
     --wa-focus-ring-offset: 0.0625rem; /* 1px */
     /* #endregion */
 
@@ -293,12 +341,12 @@
     --wa-shadow-spread-m: calc(var(--wa-shadow-spread-scale) * 0.25rem);
     --wa-shadow-spread-l: calc(var(--wa-shadow-spread-scale) * 0.5rem);
 
-    --wa-shadow-s: var(--wa-shadow-offset-x-s) var(--wa-shadow-offset-y-s) var(--wa-shadow-blur-s)
-      var(--wa-shadow-spread-s) var(--wa-color-shadow);
-    --wa-shadow-m: var(--wa-shadow-offset-x-m) var(--wa-shadow-offset-y-m) var(--wa-shadow-blur-m)
-      var(--wa-shadow-spread-m) var(--wa-color-shadow);
-    --wa-shadow-l: var(--wa-shadow-offset-x-l) var(--wa-shadow-offset-y-l) var(--wa-shadow-blur-l)
-      var(--wa-shadow-spread-l) var(--wa-color-shadow);
+    --wa-shadow-s: var(--wa-shadow-offset-x-s) var(--wa-shadow-offset-y-s)
+      var(--wa-shadow-blur-s) var(--wa-shadow-spread-s) var(--wa-color-shadow);
+    --wa-shadow-m: var(--wa-shadow-offset-x-m) var(--wa-shadow-offset-y-m)
+      var(--wa-shadow-blur-m) var(--wa-shadow-spread-m) var(--wa-color-shadow);
+    --wa-shadow-l: var(--wa-shadow-offset-x-l) var(--wa-shadow-offset-y-l)
+      var(--wa-shadow-blur-l) var(--wa-shadow-spread-l) var(--wa-color-shadow);
     /* #endregion */
 
     /* #region Transitions ~~~~~~~~~~~~~~~~~~~~~~ */
@@ -333,14 +381,17 @@
 
     --wa-form-control-placeholder-color: var(--wa-color-gray-50);
 
-    --wa-form-control-required-content: '*';
+    --wa-form-control-required-content: "*";
     --wa-form-control-required-content-color: inherit;
     --wa-form-control-required-content-offset: 0.1em;
 
     --wa-form-control-padding-block: 0.75em;
     --wa-form-control-padding-inline: 1em;
     --wa-form-control-height: round(
-      calc(2 * var(--wa-form-control-padding-block) + 1em * var(--wa-form-control-value-line-height)),
+      calc(
+        2 * var(--wa-form-control-padding-block) + 1em *
+          var(--wa-form-control-value-line-height)
+      ),
       1px
     );
     --wa-form-control-toggle-size: round(1.25em, 1px);
@@ -381,12 +432,12 @@
         font-size: var(--wa-font-size-s);
       }
 
-      &[size='small']::part(label),
+      &[size="small"]::part(label),
       &.wa-size-s::part(label) {
         font-size: var(--wa-font-size-xs);
       }
 
-      &[size='large']::part(label),
+      &[size="large"]::part(label),
       &.wa-size-l::part(label) {
         font-size: var(--wa-font-size-m);
       }
@@ -396,18 +447,18 @@
      * and button padding and height are em-based,
      * store the intended size in a private property for use in calculations */
     button,
-    input:is([type='button'], [type='reset'], [type='submit']),
+    input:is([type="button"], [type="reset"], [type="submit"]),
     a.wa-button {
       --_size: var(--wa-font-size-m);
       font-size: var(--wa-font-size-s);
 
-      &[size='small'],
+      &[size="small"],
       &.wa-size-s {
         --_size: var(--wa-font-size-s);
         font-size: var(--wa-font-size-xs);
       }
 
-      &[size='large'],
+      &[size="large"],
       &.wa-size-l {
         --_size: var(--wa-font-size-l);
         font-size: var(--wa-font-size-m);
@@ -419,24 +470,27 @@
       --wa-form-control-padding-block: calc(0.75 * var(--_size));
       --wa-form-control-padding-inline: var(--_size);
       --wa-form-control-height: round(
-        calc(2 * var(--wa-form-control-padding-block) + var(--_size) * var(--wa-form-control-value-line-height)),
+        calc(
+          2 * var(--wa-form-control-padding-block) + var(--_size) *
+            var(--wa-form-control-value-line-height)
+        ),
         1px
       );
     }
 
-    wa-radio[appearance='button'] {
+    wa-radio[appearance="button"] {
       font-weight: var(--wa-font-weight-action);
 
       &::part(label) {
         font-size: var(--wa-font-size-s);
       }
 
-      &[size='small']::part(label),
+      &[size="small"]::part(label),
       &.wa-size-s::part(label) {
         font-size: var(--wa-font-size-xs);
       }
 
-      &[size='large']::part(label),
+      &[size="large"]::part(label),
       &.wa-size-l::part(label) {
         font-size: var(--wa-font-size-m);
       }
@@ -449,13 +503,16 @@
 
     /* Propagate the font-size of wa-radio-group to its children */
     wa-radio-group {
-      &:is([size='small'], .wa-size-s) wa-radio[appearance='button']::part(label) {
+      &:is([size="small"], .wa-size-s)
+        wa-radio[appearance="button"]::part(label) {
         font-size: var(--wa-font-size-xs);
       }
-      &:is([size='medium'], .wa-size-m) wa-radio[appearance='button']::part(label) {
+      &:is([size="medium"], .wa-size-m)
+        wa-radio[appearance="button"]::part(label) {
         font-size: var(--wa-font-size-s);
       }
-      &:is([size='large'], .wa-size-l) wa-radio[appearance='button']::part(label) {
+      &:is([size="large"], .wa-size-l)
+        wa-radio[appearance="button"]::part(label) {
         font-size: var(--wa-font-size-m);
       }
     }
@@ -468,20 +525,20 @@
       padding: var(--wa-space-m);
       font-size: var(--wa-font-size-s);
 
-      &[size='small'],
+      &[size="small"],
       &.wa-size-s {
         padding: var(--wa-space-s);
         font-size: var(--wa-font-size-xs);
       }
 
-      &[size='large'],
+      &[size="large"],
       &.wa-size-l {
         padding: var(--wa-space-l);
         font-size: var(--wa-font-size-m);
       }
 
       /* Give outlined callouts a top accent border */
-      &[appearance='outlined'] {
+      &[appearance="outlined"] {
         border-color: var(--wa-color-surface-border);
         border-top-color: var(--wa-color-border-loud);
         border-top-width: var(--wa-border-width-l);
@@ -495,20 +552,20 @@
         wa-select,
         wa-combobox,
         input:not(
-            [type='button'],
-            [type='checkbox'],
-            [type='color'],
-            [type='file'],
-            [type='hidden'],
-            [type='image'],
-            [type='radio'],
-            [type='range'],
-            [type='reset'],
-            [type='submit']
+            [type="button"],
+            [type="checkbox"],
+            [type="color"],
+            [type="file"],
+            [type="hidden"],
+            [type="image"],
+            [type="radio"],
+            [type="range"],
+            [type="reset"],
+            [type="submit"]
           ),
         textarea,
         select
-      ):not([appearance='filled'], .wa-filled) {
+      ):not([appearance="filled"], .wa-filled) {
       --wa-focus-ring: var(--wa-focus-ring-style) var(--wa-focus-ring-width)
         color-mix(in oklab, var(--wa-color-focus), transparent 50%);
       --wa-focus-ring-offset: 0;
@@ -525,7 +582,7 @@
     }
 
     wa-radio,
-    input[type='radio'] {
+    input[type="radio"] {
       --checked-icon-color: var(--wa-color-surface-default);
       --checked-icon-scale: 0.4;
 
@@ -542,7 +599,7 @@
     /* Separate range thumb selectors into their own rules
      * so that Safari can process the ::-webkit- selector
      * before exiting on the ::-moz- selector */
-    input[type='range'] {
+    input[type="range"] {
       &::-webkit-slider-thumb {
         border: none;
       }
@@ -553,7 +610,10 @@
     }
 
     wa-switch {
-      --height: calc(1em * var(--wa-form-control-value-line-height) - var(--wa-form-control-border-width) * 2);
+      --height: calc(
+        1em * var(--wa-form-control-value-line-height) -
+          var(--wa-form-control-border-width) * 2
+      );
       --thumb-size: calc(var(--height) + 0.25em);
       --width: calc(var(--height) * 2);
 
@@ -564,7 +624,8 @@
 
       &::part(thumb) {
         background-color: var(--wa-color-surface-default);
-        border: var(--wa-border-width-s) var(--wa-border-style) var(--wa-color-gray-60);
+        border: var(--wa-border-width-s) var(--wa-border-style)
+          var(--wa-color-gray-60);
       }
 
       &:state(checked) {

@@ -129,14 +129,6 @@ export class PreferencesCard extends NikElement {
     this.theme.rounding = rounding;
   }
 
-  decrementRounding() {
-    this.theme.rounding = Number(this.roundingInput.value) - 0.1;
-  }
-
-  incrementRounding() {
-    this.theme.rounding = Number(this.roundingInput.value) + 0.1;
-  }
-
   resetRounding() {
     this.theme.rounding = null;
   }
@@ -145,14 +137,6 @@ export class PreferencesCard extends NikElement {
     let spacing = event.target.value;
     // console.log(spacing);
     this.theme.spacing = spacing;
-  }
-
-  decrementSpacing() {
-    this.theme.spacing = Number(this.spacingInput.value) - 0.0125;
-  }
-
-  incrementSpacing() {
-    this.theme.spacing = Number(this.spacingInput.value) + 0.0125;
   }
 
   resetSpacing() {
@@ -217,6 +201,38 @@ export class PreferencesCard extends NikElement {
         appearance="outlined"
         variant="danger"
         @click=${this.resetRounding}
+        >Reset</wa-button
+      >
+    </div>`;
+  }
+
+  spacingTemplate() {
+    return html`<div class="wa-split">
+      <div class="wa-stack grow">
+        <wa-slider
+          id="theme-spacing"
+          label="Spacing"
+          min="0.5"
+          max="2"
+          step="0.0125"
+          .value=${this.theme.spacing}
+          with-tooltip
+          @change=${this.handleSpacingChange}
+        ></wa-slider>
+
+        <wa-number-input
+          min="0.5"
+          max="2"
+          step="0.0125"
+          .value=${this.theme.spacing}
+          @input=${this.handleSpacingChange}
+        ></wa-number-input>
+      </div>
+
+      <wa-button
+        appearance="outlined"
+        variant="danger"
+        @click=${this.resetSpacing}
         >Reset</wa-button
       >
     </div>`;
@@ -355,7 +371,7 @@ export class PreferencesCard extends NikElement {
               </div>
 
               <div class="wa-stack gap-(--wa-space-l)">
-                ${this.roundingTemplate()}
+                ${this.roundingTemplate()} ${this.spacingTemplate()}
               </div>
             </div>
           </div>

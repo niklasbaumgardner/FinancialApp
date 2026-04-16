@@ -378,7 +378,7 @@ export class TransactionsGrid extends BaseGrid {
     ];
 
     const gridOptions = {
-      ...this.defaultGridOptions,
+      ...this.baseGridOptions,
       columnDefs,
       rowData: this.transactions,
       autoSizeStrategy: {

@@ -231,7 +231,7 @@ class CategorySpendingGrid extends BaseGrid {
     this.createGridColumns();
     const columnDefs = this.columnsCache[this.interval];
     const gridOptions = {
-      ...this.defaultGridOptions,
+      ...this.baseGridOptions,
       columnDefs,
       rowData: [],
       autoSizeStrategy: {

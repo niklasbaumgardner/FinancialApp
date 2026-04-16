@@ -14,29 +14,23 @@ export class BaseGrid extends NikElement {
   }
 
   get gridTheme() {
-    const spacing = 8 * window.THEME.spacing;
     const borderRadius = 4 * window.THEME.rounding;
-    const borderWidth = window.THEME.borderWidth;
+
     return agGrid.themeAlpine.withPart(this.currentColorScheme).withParams({
-      spacing,
-      cellHorizontalPadding: "1rem",
       borderRadius: borderRadius,
       wrapperBorderRadius: borderRadius,
-      borderWidth,
+      borderWidth: 1,
       headerRowBorder: true,
       rowBorder: true,
-
-      backgroundColor: "var(--wa-color-surface-raised)",
-      borderColor: "var(--wa-color-surface-border)",
+      backgroundColor: `var(--wa-color-surface-raised)`,
+      borderColor: "var(--wa-color-surface-border-raised)",
       cellTextColor: "var(--wa-color-text-normal)",
       headerTextColor: "var(--wa-color-text-normal)",
-      rowHoverColor:
-        "color-mix(in srgb, var(--wa-color-brand-fill-quiet), transparent)",
       fontFamily: "inherit",
     });
   }
 
-  get defaultGridOptions() {
+  get baseGridOptions() {
     return {
       defaultColDef: {
         resizable: false,
@@ -50,7 +44,7 @@ export class BaseGrid extends NikElement {
 
   setupThemeWatcher() {
     this.mutationObserver = new MutationObserver(() => {
-      this.dataGrid.setGridOption("theme", this.gridTheme);
+      this.dataGrid?.setGridOption("theme", this.gridTheme);
     });
 
     this.mutationObserver.observe(document.documentElement, {
