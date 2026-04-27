@@ -15,11 +15,7 @@
   }
 }
 
-*.niklasb.com {
-  tls {
-    dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-  }
-
+localhost {
   encode zstd
 
   handle /static* {

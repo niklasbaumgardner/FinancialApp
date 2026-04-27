@@ -60,8 +60,9 @@ export class BaseCombobox extends Combobox {
 
   render() {
     let template = super.render();
+
     return html`<link
-        href="/static/css/nb-category.min.css"
+        href=${STATIC_FILE_MAP["nb-category"]}
         rel="stylesheet"
       />${template}`;
   }

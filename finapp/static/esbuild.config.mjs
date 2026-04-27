@@ -43,6 +43,9 @@ const result = await buildFunction({
     "rudimentary.palette": "./finapp/static/css/src/color/rudimentary.css",
     "shoelace.palette": "./finapp/static/css/src/color/shoelace.css",
     "vogue.palette": "./finapp/static/css/src/color/vogue.css",
+
+    // NB Components
+    "nb-category": "./finapp/static/css/src/nb-components/nb-category.css",
   },
 
   bundle: true,
@@ -183,7 +186,7 @@ function buildTemplate(result) {
 ${staticFiles
   .sort((a, b) => a[0].localeCompare(b[0]))
   .map(([k, v]) => {
-    if (k.includes(".")) {
+    if (k.includes(".") || k.includes("-")) {
       return `    "${k}": "${v}",`;
     } else {
       return `    ${k}: "${v}",`;

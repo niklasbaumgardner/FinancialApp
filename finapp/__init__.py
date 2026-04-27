@@ -1,17 +1,17 @@
+import os
+
+import sentry_sdk
 from flask import Flask
 from flask_bcrypt import Bcrypt
-from finapp.config import Config
-from flask_migrate import Migrate
-from flask_mail import Mail
 from flask_login import LoginManager
+from flask_mail import Mail
+from flask_migrate import Migrate
 from flask_sqlalchemy_lite import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.pool import NullPool
-import sentry_sdk
-import os
 from werkzeug.middleware.proxy_fix import ProxyFix
-from scout_apm.flask import ScoutApm
-from scout_apm.sqlalchemy import instrument_sqlalchemy
+
+from finapp.config import Config
 
 # from flask_compress import Compress
 # from flask_caching import Cache
@@ -55,10 +55,6 @@ login_manager.login_message_category = "alert-primary"
 
 mail = Mail()
 mail.init_app(app)
-
-ScoutApm(app)
-with app.app_context():
-    instrument_sqlalchemy(db.engine)
 
 
 # cache = Cache(
@@ -139,8 +135,8 @@ app.register_blueprint(viewbudgets_bp)
 app.register_blueprint(viewtransactions_bp)
 app.register_blueprint(context_processor_bp)
 
-with app.app_context():
-    BaseModel.metadata.create_all(db.engine)
+# with app.app_context():
+#     BaseModel.metadata.create_all(db.engine)
 
-migrate = Migrate()
-migrate.init_app(app, db)
+# migrate = Migrate()
+# migrate.init_app(app, db)

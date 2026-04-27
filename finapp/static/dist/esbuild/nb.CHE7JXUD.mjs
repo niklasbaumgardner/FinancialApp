@@ -582,7 +582,7 @@ ${s}
       color=${s.color}
       removable
     ></nb-category>`}handleTagRemove(e,i){if(e.stopPropagation(),this.disabled)return;this.valueHasChanged=!0,this.hasInteracted=!0;let s=i;if(!s){let n=e.target.closest("nb-category");if(n){let a=this.shadowRoot?.querySelector('[part="tags"]');if(a){let o=Array.from(a.children).indexOf(n);o>=0&&o<this.selectedOptions.length&&(s=this.selectedOptions[o])}}}s&&(this.toggleOptionSelection(s,!1),this.updateComplete.then(()=>{this.dispatchEvent(new InputEvent("input",{bubbles:!0,composed:!0})),this.dispatchEvent(new Event("change",{bubbles:!0,composed:!0}))}))}render(){let e=super.render();return N`<link
-        href="/static/css/nb-category.min.css"
+        href=${STATIC_FILE_MAP["nb-category"]}
         rel="stylesheet"
       />${e}`}};customElements.define("nb-base-combobox",Kv);var qv=class extends ce{static properties={categories:{type:Array},value:{type:Array},selected:{type:Array},size:{type:String}};static get queries(){return{select:"nb-base-combobox"}}get value(){let e=this.select?.value;return e||[]}connectedCallback(){super.connectedCallback(),this.categories.sort((e,i)=>e.name.localeCompare(i.name))}render(){return N`<nb-base-combobox
       label="Select Categories"
@@ -2496,4 +2496,4 @@ ${s}
         </div>
       </form></wa-dialog
     >`}};customElements.define("nb-category-modal",kx);
-//# sourceMappingURL=nb.D4DRAU75.mjs.map
+//# sourceMappingURL=nb.CHE7JXUD.mjs.map
