@@ -1,6 +1,6 @@
 services:
   caddy:
-    container_name: budget-caddy
+    container_name: budget_caddy
     image: ghcr.io/niklasbaumgardner/budgets-caddy:latest
     build:
       context: .
@@ -8,18 +8,20 @@ services:
     environment:
       CLOUDFLARE_API_TOKEN: ${CLOUDFLARE_API_TOKEN}
     ports:
-      - "9443:443"
+      - "80:80"
+      - "443:443"
     depends_on:
       - web
     networks:
       - budget-network
     volumes:
+      - ./caddy/Caddyfile.local:/app/Caddyfile
       - caddy-data:/data
       - caddy-config:/config
     restart: unless-stopped
 
   web:
-    container_name: budget-web
+    container_name: budget_web
     image: ghcr.io/niklasbaumgardner/budgets:latest
     build:
       context: .
@@ -35,7 +37,7 @@ services:
       FERNET_KEY: ${FERNET_KEY}
       SESSION_COOKIE_NAME: ${SESSION_COOKIE_NAME}
       REMEMBER_COOKIE_NAME: ${REMEMBER_COOKIE_NAME}
-      SQLALCHEMY_DATABASE_URI: postgresql://${POSTGRESQL_USERNAME}:${POSTGRESQL_PASSWORD}@budget-pgbouncer:7432/${PGBOUNCER_DATABASE}
+      SQLALCHEMY_DATABASE_URI: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@budget_pgbouncer:6432/${POSTGRES_DB}
     depends_on:
       - pgbouncer
     networks:
@@ -43,19 +45,18 @@ services:
     restart: unless-stopped
 
   pgbouncer:
-    container_name: budget-pgbouncer
+    container_name: budget_pgbouncer
     image: railwayapp/pgbouncer
     ports:
       - "7432:6432"
     environment:
       POSTGRESQL_HOST: postgres
-      POSTGRESQL_PORT: 5432
-      POSTGRESQL_USERNAME: ${POSTGRESQL_USERNAME}
-      POSTGRESQL_PASSWORD: ${POSTGRESQL_PASSWORD}
-      POSTGRESQL_DATABASE: ${POSTGRESQL_DATABASE}
-      PGBOUNCER_POOL_MODE: ${PGBOUNCER_POOL_MODE:-transaction}
-      PGBOUNCER_MIN_POOL_SIZE: ${PGBOUNCER_MIN_POOL_SIZE:-5}
-      PGBOUNCER_DATABASE: ${PGBOUNCER_DATABASE}
+      POSTGRESQL_USERNAME: ${POSTGRES_USER}
+      POSTGRESQL_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRESQL_DATABASE: ${POSTGRES_DB}
+      PGBOUNCER_POOL_MODE: transaction
+      PGBOUNCER_MIN_POOL_SIZE: 1
+      PGBOUNCER_DATABASE: ${POSTGRES_DB}
       PGBOUNCER_LISTEN_ADDRESS: 0.0.0.0
     depends_on:
       - postgres
@@ -64,13 +65,12 @@ services:
     restart: unless-stopped
 
   postgres:
-    container_name: budget-postgres
+    container_name: budget_postgres
     image: postgres:18
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
-      PGPORT: 5432
     volumes:
       - postgres-data:/var/lib/postgresql
     networks:

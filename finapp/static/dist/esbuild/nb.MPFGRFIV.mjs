@@ -102,8 +102,6 @@ import{a as N,b as Zg,c as Lx,d as lh,e as Nx}from"./chunk-6X3WTI6K.mjs";import{
           <div>Don't have an account yet?</div>
           <div class="">
             <a href="${SIGNUP_URL}">Sign up here</a>
-            <span>or</span>
-            <span><a href="${EMAIL_LOGIN_URL}">Email me a login link</a></span>
           </div>
         </div>
       </div>
@@ -2496,4 +2494,4 @@ ${s}
         </div>
       </form></wa-dialog
     >`}};customElements.define("nb-category-modal",kx);
-//# sourceMappingURL=nb.CHE7JXUD.mjs.map
+//# sourceMappingURL=nb.MPFGRFIV.mjs.map

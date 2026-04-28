@@ -134,8 +134,6 @@ export class LoginCard extends NikElement {
           <div>Don't have an account yet?</div>
           <div class="">
             <a href="${SIGNUP_URL}">Sign up here</a>
-            <span>or</span>
-            <span><a href="${EMAIL_LOGIN_URL}">Email me a login link</a></span>
           </div>
         </div>
       </div>

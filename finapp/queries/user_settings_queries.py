@@ -1,39 +1,41 @@
-from finapp.models import UserSettings
 from flask_login import current_user
-from finapp import db
-from sqlalchemy import func, insert, select, update, cast, literal
+from sqlalchemy import cast, select
 from sqlalchemy.dialects.postgresql import JSONB
-import json
+from sqlalchemy.dialects.postgresql import insert as pg_insert
 
+from finapp import db
+from finapp.models import UserSettings
 
 ##
 ## UserSettings queries
 ##
 
 
-VALID_USER_SETTINGS_ARGS = set(
-    [
-        "theme",
-        "mode",
-        "primary_color",
-        "background_color",
-        "color_contrast",
-        "color_palette",
-        "rounding",
-        "spacing",
-        "border_width",
-    ]
+VALID_VARIANTS = set(["brand", "danger", "neutral", "success", "warning"])
+
+VALID_USER_SETTINGS_ARGS = (
+    set(
+        [
+            "theme",
+            "mode",
+            "background_color",
+            "color_contrast",
+            "color_palette",
+            "rounding",
+        ]
+    )
+    | VALID_VARIANTS
 )
-ARGS_ALLOW_NULL = set(
-    [
-        "primary_color",
-        "background_color",
-        "color_contrast",
-        "color_palette",
-        "rounding",
-        "spacing",
-        "border_width",
-    ]
+ARGS_ALLOW_NULL = (
+    set(
+        [
+            "background_color",
+            "color_contrast",
+            "color_palette",
+            "rounding",
+        ]
+    )
+    | VALID_VARIANTS
 )
 
 VALID_THEMES = set(
@@ -54,55 +56,44 @@ VALID_THEMES = set(
 
 VALID_THEME_MODES = set({"light", "dark"})
 
-VALID_PRIMARY_COLORS = set(
-    [
-        "red",
-        "orange",
-        "amber",
-        "yellow",
-        "lime",
-        "green",
-        "emerald",
-        "teal",
-        "cyan",
-        "sky",
-        "blue",
-        "indigo",
-        "violet",
-        "purple",
-        "fuchsia",
-        "pink",
-        "rose",
-        "slate",
-        "gray",
-        "zinc",
-        "neutral",
-        "stone",
-    ]
-)
+
+NUMBERS = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950]
+
+COLORS = [
+    "red",
+    "orange",
+    "amber",
+    "yellow",
+    "lime",
+    "green",
+    "emerald",
+    "teal",
+    "cyan",
+    "sky",
+    "blue",
+    "indigo",
+    "violet",
+    "purple",
+    "fuchsia",
+    "pink",
+    "rose",
+    "slate",
+    "gray",
+    "zinc",
+    "neutral",
+    "stone",
+    "taupe",
+    "mauve",
+    "mist",
+    "olive",
+]
+
 
 VALID_BACKGROUND_COLORS = set(
     [
         "niks-favorite",
-        "red",
-        "gray",
-        "orange",
-        "amber",
-        "yellow",
-        "lime",
-        "green",
-        "emerald",
-        "teal",
-        "cyan",
-        "sky",
-        "blue",
-        "indigo",
-        "violet",
-        "purple",
-        "fuchsia",
-        "pink",
-        "rose",
     ]
+    + [f"--color-{color}-{number}" for color in COLORS for number in NUMBERS]
 )
 
 VALID_COLOR_PALETTES = set(
@@ -130,21 +121,9 @@ def is_valid_user_setting_arg(arg, val):
     if arg in VALID_USER_SETTINGS_ARGS:
         if val is None:
             return arg in ARGS_ALLOW_NULL
-        return True
+        return validate_arg(arg, val)
 
     return False
-
-
-def create_user_settings(**kwargs):
-    settings_data = {}
-
-    for arg, val in kwargs.items():
-        if is_valid_user_setting_arg(arg, val):
-            settings_data[arg] = val
-
-    stmt = insert(UserSettings).values(user_id=current_user.id, settings=settings_data)
-    db.session.execute(stmt)
-    db.session.commit()
 
 
 def get_user_settings():
@@ -153,23 +132,27 @@ def get_user_settings():
     ).first()
 
 
-def migrate_theme_to_settings(theme):
-    if not get_user_settings():
-        create_user_settings(**theme)
-
-
 def update_user_settings(**kwargs):
     settings_data = {}
     for arg, val in kwargs.items():
         if is_valid_user_setting_arg(arg, val):
             settings_data[arg] = val
 
-    stmt = (
-        update(UserSettings)
-        .where(UserSettings.user_id == current_user.id)
-        .values(settings=UserSettings.settings + cast(settings_data, JSONB))
+    values = [
+        {
+            "user_id": current_user.id,
+            "settings": cast(settings_data, JSONB),
+        }
+    ]
+
+    stmt = pg_insert(UserSettings).values(values)
+    upsert_stmt = stmt.on_conflict_do_update(
+        constraint="user_settings_user_id_unique",
+        set_={
+            "settings": UserSettings.settings + stmt.excluded.settings,
+        },
     )
-    db.session.execute(stmt)
+    db.session.execute(upsert_stmt)
     db.session.commit()
 
 
@@ -179,8 +162,6 @@ def validate_arg(arg, value):
             return validate_theme(value)
         case "mode":
             return validate_mode(value)
-        case "primary_color":
-            return validate_primary_color(value)
         case "background_color":
             return validate_background_color(value)
         case "color_palette":
@@ -191,6 +172,9 @@ def validate_arg(arg, value):
             return validate_spacing(value)
         case "border_width":
             return validate_border_width(value)
+
+    if arg in VALID_VARIANTS:
+        return validate_variant_color(value)
 
     return False
 
@@ -203,8 +187,8 @@ def validate_mode(mode):
     return mode in VALID_THEME_MODES
 
 
-def validate_primary_color(primary_color):
-    return primary_color in VALID_PRIMARY_COLORS
+def validate_variant_color(variant_color):
+    return variant_color in COLORS
 
 
 def validate_background_color(background_color):

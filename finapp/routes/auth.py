@@ -1,8 +1,9 @@
-from flask import Blueprint, render_template, flash, request, redirect, url_for
-from flask_login import login_user, current_user, logout_user, login_required
-from finapp.queries import user_queries
-from finapp.models import User
+from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask_login import current_user, login_required, login_user, logout_user
+
 from finapp import bcrypt
+from finapp.models import User
+from finapp.queries import user_queries
 from finapp.utils.send_email import send_reset_email
 
 auth_bp = Blueprint("auth_bp", __name__)
