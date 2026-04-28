@@ -1,7 +1,7 @@
 <!doctype html>
 <html
   lang="en"
-  class="wa-{{ user_settings.settings.mode }}"
+  class="wa-cloak wa-{{ user_settings.settings.mode }} wa-palette-{{ user_settings.settings.color_palette }}"
   style="{% if user_settings.settings.rounding %}--wa-border-radius-scale:{{user_settings.settings.rounding}};{% endif %}{% if user_settings.settings.spacing %}--wa-space-scale:{{user_settings.settings.spacing}};{% endif %}{% if user_settings.settings.border_width %}--wa-border-width-scale:{{user_settings.settings.border_width}};{% endif %}"
 >
   <head>
@@ -62,6 +62,10 @@
         .split("/");
 
       const CURRENT_DATE = `${year}-${month}-${day}`;
+      
+      customElements.whenDefined("wa-page").then(() => {
+        document.documentElement.classList.remove("wa-cloak");
+      });
     </script>
 
     {% block head %}{% endblock head %}

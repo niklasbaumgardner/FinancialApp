@@ -8,9 +8,9 @@
   }
 }
 
-*:not(:defined) {
+/* *:not(:defined) {
   outline: 4px solid red;
-}
+} */
 
 .main-card {
   display: flex;
@@ -152,4 +152,17 @@ wa-page {
 
 nb-transaction-actions {
   display: flex;
+}
+
+.wa-cloak:has(:not(:defined)) {
+  animation: 0.8s step-end wa-fouce-cloak;
+}
+
+@keyframes wa-fouce-cloak {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
