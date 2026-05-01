@@ -491,17 +491,17 @@
     wa-select::part(combobox),
     wa-combobox::part(combobox),
     input:not(
-        [type="button"],
-        [type="checkbox"],
-        [type="color"],
-        [type="file"],
-        [type="hidden"],
-        [type="image"],
-        [type="radio"],
-        [type="range"],
-        [type="reset"],
-        [type="submit"]
-      ),
+      [type="button"],
+      [type="checkbox"],
+      [type="color"],
+      [type="file"],
+      [type="hidden"],
+      [type="image"],
+      [type="radio"],
+      [type="range"],
+      [type="reset"],
+      [type="submit"]
+    ),
     textarea,
     select {
       border-width: 0 0 var(--wa-form-control-border-width)

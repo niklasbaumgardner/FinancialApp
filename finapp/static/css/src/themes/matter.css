@@ -458,7 +458,8 @@
           transparent 0
         );
         box-shadow: 0 0 transparent;
-        transition: var(--wa-transition-fast),
+        transition:
+          var(--wa-transition-fast),
           --ripple-progress var(--ripple-duration);
       }
 
@@ -513,17 +514,17 @@
     wa-select,
     wa-combobox,
     input:not(
-        [type="button"],
-        [type="checkbox"],
-        [type="color"],
-        [type="file"],
-        [type="hidden"],
-        [type="image"],
-        [type="radio"],
-        [type="range"],
-        [type="reset"],
-        [type="submit"]
-      ),
+      [type="button"],
+      [type="checkbox"],
+      [type="color"],
+      [type="file"],
+      [type="hidden"],
+      [type="image"],
+      [type="radio"],
+      [type="range"],
+      [type="reset"],
+      [type="submit"]
+    ),
     textarea,
     select {
       /* Inputs are taller than buttons to accommodate floating labels */
@@ -673,11 +674,11 @@
               );
           }
           &:is(
-              :checked,
-              :indeterminate,
-              :state(checked),
-              :state(indeterminate)
-            ) {
+            :checked,
+            :indeterminate,
+            :state(checked),
+            :state(indeterminate)
+          ) {
             &:where(input),
             &:where(wa-checkbox)::part(control),
             &:where(wa-tree-item)::part(checkbox__control),

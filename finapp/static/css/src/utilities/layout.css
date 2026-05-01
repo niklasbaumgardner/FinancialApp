@@ -13,13 +13,13 @@
   }
 
   :where(
-      [class*="wa-cluster"],
-      [class*="wa-flank"],
-      [class*="wa-frame"],
-      [class*="wa-grid"],
-      [class*="wa-stack"],
-      [class*="wa-split"]
-    ) {
+    [class*="wa-cluster"],
+    [class*="wa-flank"],
+    [class*="wa-frame"],
+    [class*="wa-grid"],
+    [class*="wa-stack"],
+    [class*="wa-split"]
+  ) {
     gap: var(--wa-space-m);
   }
 

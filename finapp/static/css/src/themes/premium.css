@@ -422,16 +422,123 @@
       --symbol-color-active: var(--wa-color-text-quiet);
     }
 
-    wa-button::part(label),
+    /* Give button labels a font-size one step smaller
+     * than their size class or attribute */
+    wa-button {
+      &::part(label) {
+        font-size: var(--wa-font-size-s);
+        text-transform: uppercase;
+      }
+
+      &[size="xs"]::part(label),
+      &.wa-size-xs::part(label) {
+        font-size: var(--wa-font-size-2xs);
+      }
+
+      &[size='s']::part(label),
+      &[size='small']::part(label) /* deprecated */,
+      &.wa-size-s::part(label) {
+        font-size: var(--wa-font-size-xs);
+      }
+
+      &[size='l']::part(label),
+      &[size='large']::part(label) /* deprecated */,
+      &.wa-size-l::part(label) {
+        font-size: var(--wa-font-size-m);
+      }
+
+      &[size="xl"]::part(label),
+      &.wa-size-xl::part(label) {
+        font-size: var(--wa-font-size-l);
+      }
+    }
+
+    /* Because we can't set the font-size of just the label text
+     * and button padding and height are em-based,
+     * store the intended size in a private property for use in calculations */
     button,
-    input:where([type="button"], [type="reset"], [type="submit"]),
+    input:is([type="button"], [type="reset"], [type="submit"]),
     a.wa-button {
-      font-size: var(--wa-font-size-smaller);
+      --_size: var(--wa-font-size-m);
+      font-size: var(--wa-font-size-s);
       text-transform: uppercase;
+
+      &[size="xs"],
+      &.wa-size-xs {
+        --_size: var(--wa-font-size-xs);
+        font-size: var(--wa-font-size-2xs);
+      }
+
+      &[size='s'],
+      &[size='small'] /* deprecated */,
+      &.wa-size-s {
+        --_size: var(--wa-font-size-s);
+        font-size: var(--wa-font-size-xs);
+      }
+
+      &[size='l'],
+      &[size='large'] /* deprecated */,
+      &.wa-size-l {
+        --_size: var(--wa-font-size-l);
+        font-size: var(--wa-font-size-m);
+      }
+
+      &[size="xl"],
+      &.wa-size-xl {
+        --_size: var(--wa-font-size-xl);
+        font-size: var(--wa-font-size-l);
+      }
+
+      /* Override em-based properties to use the intended size
+       * so that height and padding match inputs at the same size,
+       * even though the button's font-size is one step smaller */
+      --wa-form-control-padding-block: calc(0.75 * var(--_size));
+      --wa-form-control-padding-inline: var(--_size);
+      --wa-form-control-height: round(
+        calc(
+          2 * var(--wa-form-control-padding-block) + var(--_size) *
+            var(--wa-form-control-value-line-height)
+        ),
+        1px
+      );
     }
 
     wa-callout {
-      font-size: var(--wa-font-size-smaller);
+      padding: var(--wa-space-m);
+      font-size: var(--wa-font-size-s);
+
+      &[size="xs"],
+      &.wa-size-xs {
+        padding: var(--wa-space-xs);
+        font-size: var(--wa-font-size-2xs);
+      }
+
+      &[size='s'],
+      &[size='small'] /* deprecated */,
+      &.wa-size-s {
+        padding: var(--wa-space-s);
+        font-size: var(--wa-font-size-xs);
+      }
+
+      &[size='l'],
+      &[size='large'] /* deprecated */,
+      &.wa-size-l {
+        padding: var(--wa-space-l);
+        font-size: var(--wa-font-size-m);
+      }
+
+      &[size="xl"],
+      &.wa-size-xl {
+        padding: var(--wa-space-xl);
+        font-size: var(--wa-font-size-l);
+      }
+
+      /* Give outlined callouts a top accent border */
+      &[appearance="outlined"] {
+        border-color: var(--wa-color-surface-border);
+        border-top-color: var(--wa-color-border-loud);
+        border-top-width: var(--wa-border-width-l);
+      }
     }
 
     input[type="checkbox"],

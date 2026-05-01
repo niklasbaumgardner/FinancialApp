@@ -419,22 +419,23 @@
 @layer wa-theme-dimension {
   .wa-theme-active {
     /* Define "pop-out" or extrusion effect */
-    --shadow-pop-out: inset 0 0.0625rem 0 0.0625rem rgb(255 255 255 / 0.15)
-        /* shine */,
+    --shadow-pop-out:
+      inset 0 0.0625rem 0 0.0625rem rgb(255 255 255 / 0.15) /* shine */,
       inset 0 0.0625rem 0.125rem 0 rgb(255 255 255 / 0.2) /* inner highlight */,
       inset 0 -0.125rem 0.0625rem 0 rgb(0 0 0 / 0.2) /* inner shadow */;
 
     /* Define "punch-in" or impression effect */
-    --shadow-punch-in: inset 0 0 0 0 transparent /* shine */,
+    --shadow-punch-in:
+      inset 0 0 0 0 transparent /* shine */,
       inset 0 0.125rem 0.125rem 0 rgb(0 0 0 / 0.15) /* inner highlight */,
       inset 0 -0.0625rem 0.25rem 0 rgb(0 0 0 / 0.15) /* inner shadow */;
 
     :is(
-        wa-button,
-        button,
-        input:is([type="button"], [type="reset"], [type="submit"]),
-        a.wa-button
-      ):not([appearance~="plain"], .wa-plain) {
+      wa-button,
+      button,
+      input:is([type="button"], [type="reset"], [type="submit"]),
+      a.wa-button
+    ):not([appearance~="plain"], .wa-plain) {
       /* To prevent inset shadows from being pushed inward by border width,
         * replace the border with an equivalent box-shadow
         * that mimics the intended border */
@@ -461,7 +462,8 @@
       &:where(:not(wa-button)),
       &::part(base) {
         border-width: 0px;
-        box-shadow: var(--shadow-pop-out) /* extrude */,
+        box-shadow:
+          var(--shadow-pop-out) /* extrude */,
           inset 0 0 0 var(--wa-form-control-border-width)
             var(--border-color, transparent) /* mimic border */;
         /* Add padding to accommodate the mimicked border */
@@ -474,7 +476,8 @@
       &:not([disabled], [loading]):active {
         &:where(:not(wa-button)),
         &::part(base) {
-          box-shadow: var(--shadow-punch-in) /* impress */,
+          box-shadow:
+            var(--shadow-punch-in) /* impress */,
             inset 0 0 0 var(--wa-form-control-border-width)
               var(--border-color, transparent) /* mimic border */;
         }

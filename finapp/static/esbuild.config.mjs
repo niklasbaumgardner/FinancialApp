@@ -34,15 +34,16 @@ const result = await buildFunction({
     tailspin: "./finapp/static/css/src/themes/tailspin.css",
 
     // Palettes
-    "anodized.palette": "./finapp/static/css/src/color/anodized.css",
-    "base.palette": "./finapp/static/css/src/color/base.css",
-    "bright.palette": "./finapp/static/css/src/color/bright.css",
-    "elegant.palette": "./finapp/static/css/src/color/elegant.css",
-    "mild.palette": "./finapp/static/css/src/color/mild.css",
-    "natural.palette": "./finapp/static/css/src/color/natural.css",
-    "rudimentary.palette": "./finapp/static/css/src/color/rudimentary.css",
-    "shoelace.palette": "./finapp/static/css/src/color/shoelace.css",
-    "vogue.palette": "./finapp/static/css/src/color/vogue.css",
+    "anodized.palette": "./finapp/static/css/src/color/palettes/anodized.css",
+    "base.palette": "./finapp/static/css/src/color/palettes/base.css",
+    "bright.palette": "./finapp/static/css/src/color/palettes/bright.css",
+    "elegant.palette": "./finapp/static/css/src/color/palettes/elegant.css",
+    "mild.palette": "./finapp/static/css/src/color/palettes/mild.css",
+    "natural.palette": "./finapp/static/css/src/color/palettes/natural.css",
+    "rudimentary.palette":
+      "./finapp/static/css/src/color/palettes/rudimentary.css",
+    "shoelace.palette": "./finapp/static/css/src/color/palettes/shoelace.css",
+    "vogue.palette": "./finapp/static/css/src/color/palettes/vogue.css",
 
     // NB Components
     "nb-category": "./finapp/static/css/src/nb-components/nb-category.css",
