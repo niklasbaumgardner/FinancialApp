@@ -239,7 +239,7 @@ ${themeImportScript}
 ${scriptFiles.join("\n")}
 
 <script
-  src="https://js.sentry-cdn.com/d1913311367ec68822f82f8ced7bc88f.min.js"
+  src="https://js.sentry-cdn.com/85a281a7156d9e667f62a479c3277fce.min.js"
   crossorigin="anonymous"
   defer
 ></script>
