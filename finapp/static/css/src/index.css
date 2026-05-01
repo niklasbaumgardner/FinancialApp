@@ -200,7 +200,7 @@ html {
   );
 }
 
-wa-page,
-main {
+wa-page:not(.niks-favorite-background),
+wa-page:not(.niks-favorite-background) > main {
   background-color: var(--nb-background-color);
 }
