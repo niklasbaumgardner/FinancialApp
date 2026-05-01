@@ -204,3 +204,9 @@ wa-page:not(.niks-favorite-background),
 wa-page:not(.niks-favorite-background) > main {
   background-color: var(--nb-background-color);
 }
+
+wa-combobox::part(combobox),
+nb-base-combobox::part(combobox) {
+  padding: var(--wa-form-control-padding-block)
+    var(--wa-form-control-padding-inline);
+}
