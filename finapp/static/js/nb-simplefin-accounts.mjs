@@ -101,7 +101,7 @@ export class SimpleFINAccounts extends NikElement {
           <h2 class="flex">
             External Accounts
             <wa-button
-              size="large"
+              size="l"
               appearance="plain"
               href="${SIMPLEFIN_CREDENTIALS_URL}?force=true"
               ><wa-icon

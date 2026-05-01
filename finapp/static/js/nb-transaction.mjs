@@ -158,7 +158,7 @@ export class Transaction extends NikElement {
 
   transferTemplate() {
     if (this.transaction.is_transfer) {
-      return html`<wa-tag class="w-fit" variant="primary" size="small" pill
+      return html`<wa-tag class="w-fit" variant="primary" size="s" pill
         >Transfer</wa-tag
       >`;
     }
@@ -222,7 +222,7 @@ export class Transaction extends NikElement {
 
   viewButtonsTemplate() {
     return html`${CURRENT_USER.id !== this.transaction.user_id
-        ? html`<wa-tag variant="primary" size="small"
+        ? html`<wa-tag variant="primary" size="s"
             >${this.transaction.user.username}</wa-tag
           >`
         : null}
@@ -307,7 +307,7 @@ export class Transaction extends NikElement {
               type="date"
               label="Date"
               value=${this.transaction.date}
-              size="small"
+              size="s"
               required
             ></wa-input>
           </div>

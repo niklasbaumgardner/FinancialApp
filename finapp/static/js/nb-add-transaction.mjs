@@ -271,7 +271,7 @@ export class AddTransactionModal extends BaseDialog {
         <wa-button
           appearance="plain"
           variant="brand"
-          size="small"
+          size="s"
           @click=${this.openCategoriesModal}
           >Create more categories</wa-button
         >

@@ -646,7 +646,7 @@ ${s}
           ><span class="">${e.name}</span>:
           ${new Intl.NumberFormat(void 0,{style:"currency",currency:"USD"}).format(e.total)}</wa-option
         >`)}budgetsTemplate(){return N`<nb-combobox
-      size="small"
+      size="s"
       label="Select Budget"
       id="budgets-select"
       name="budget"
@@ -658,7 +658,7 @@ ${s}
           value=${e.id}
           >${e.username}</wa-option
         >`)}sharedUsersSelectTemplate(){return N`<nb-combobox
-      size="small"
+      size="s"
       id="user-select"
       label="Select user for this transaction"
       name="user"
@@ -694,7 +694,7 @@ ${s}
         <wa-button
           id="discard-button"
           class="w-fit"
-          size="small"
+          size="s"
           variant="danger"
           appearance="outlined"
           @click=${this.handleTransactionDiscard}
@@ -712,7 +712,7 @@ ${s}
           />
           <div class="wa-stack">
             <wa-input
-              size="small"
+              size="s"
               label="Name"
               class="grow"
               type="text"
@@ -725,7 +725,7 @@ ${s}
             ></wa-input>
             <div class="wa-cluster flex-nowrap!">
               <wa-input
-                size="small"
+                size="s"
                 label="Amount"
                 class="grow min-w-[0]"
                 type="number"
@@ -738,7 +738,7 @@ ${s}
                 required
               ></wa-input>
               <wa-input
-                size="small"
+                size="s"
                 label="Date"
                 class="grow min-w-min"
                 type="date"
@@ -751,14 +751,14 @@ ${s}
           </div>
           ${this.budgetsTemplate()} ${this.sharedUsersSelectTemplate()}
           <nb-categories-select
-            size="small"
+            size="s"
             .selected=${this.getPotentialCategories()}
             .categories=${this.categories}
           ></nb-categories-select>
         </form>
         <div class="wa-cluster w-full">
           <wa-button
-            size="small"
+            size="s"
             id="submit-button"
             class="grow"
             variant="brand"
@@ -855,7 +855,7 @@ ${s}
         <wa-button
           appearance="plain"
           variant="brand"
-          size="small"
+          size="s"
           @click=${this.openCategoriesModal}
           >Create more categories</wa-button
         >
@@ -966,7 +966,7 @@ ${s}
           <wa-button
             appearance="plain"
             variant="brand"
-            size="small"
+            size="s"
             @click=${this.openCategoriesModal}
             >Create more categories</wa-button
           >
@@ -1367,7 +1367,7 @@ ${s}
           <h2 class="flex">
             External Accounts
             <wa-button
-              size="large"
+              size="l"
               appearance="plain"
               href="${SIMPLEFIN_CREDENTIALS_URL}?force=true"
               ><wa-icon
@@ -1622,7 +1622,7 @@ ${s}
           >Move</wa-button
         >
       </div>
-    </wa-dialog>`}};customElements.define("nb-move-transaction",fx);var mx=class extends ce{static properties={editing:{type:Boolean,reflect:!0},transaction:{type:Object},categories:{type:Array}};static get queries(){return{nameInput:"#name",dateInput:"#date",amountInput:"#amount",saveButton:"#save-button",categoriesSelect:"nb-categories-select",form:"form",buttons:{all:"wa-button"}}}connectedCallback(){super.connectedCallback(),this.transaction.categories.sort((e,i)=>e.category.name.localeCompare(i.category.name))}categoriesChange(e,i){let s=new Set(e),n=new Set(i),a=Array.from(n.difference(s)),r=Array.from(s.difference(n));return{categoriesAdded:a,categoriesDeleted:r}}setEditingState(){this.editing=!0}setViewingState(){for(let e of this.buttons)e.disabled=!1;this.saveButton.loading=!1,this.editing=!1}async handleSaveClick(){this.saveButton.loading=!0;for(let g of this.buttons)g.disabled=!0;let e=this.nameInput.value,i=this.dateInput.value,s=Number(this.amountInput.value),n=this.transaction.categories.map(g=>g.category_id),a=this.categoriesSelect.value,{categoriesAdded:r,categoriesDeleted:o}=this.categoriesChange(n,a),{name:l,date:c,amount:h}=this.transaction;if(l===e&&c===i&&h===s&&!r.length&&!o.length){this.setViewingState();return}let u={};c>i?u.greaterThanCurrentPage=!0:u.lessThanCurrentPage=!0;let d=new FormData(this.form);for(let g of r)d.append("categoriesAdded",g);for(let g of o)d.append("categoriesDeleted",g);let p=await fetch(this.transaction.edit_url,{method:"POST",body:d});p=await p.json(),this.transaction=p.transaction,this.transaction.categories.sort((g,f)=>g.category.name.localeCompare(f.category.name)),u.changed={name:e!==l,date:i!==c,amount:s!==h},this.dispatchEvent(new CustomEvent("RequestNewPages",{bubbles:!0,detail:u})),this.setViewingState()}handleMoveTransactionClick(){this.moveModal||(this.moveModal=document.createElement("nb-move-transaction"),this.moveModal.transaction=this.transaction,this.moveModal.budgets=BUDGETS,document.body.appendChild(this.moveModal)),this.moveModal.show()}handleDeleteClick(){this.deleteModal||(this.deleteModal=document.createElement("nb-delete-transaction"),this.deleteModal.transaction=this.transaction,document.body.appendChild(this.deleteModal)),this.deleteModal.show()}transferTemplate(){if(this.transaction.is_transfer)return N`<wa-tag class="w-fit" variant="primary" size="small" pill
+    </wa-dialog>`}};customElements.define("nb-move-transaction",fx);var mx=class extends ce{static properties={editing:{type:Boolean,reflect:!0},transaction:{type:Object},categories:{type:Array}};static get queries(){return{nameInput:"#name",dateInput:"#date",amountInput:"#amount",saveButton:"#save-button",categoriesSelect:"nb-categories-select",form:"form",buttons:{all:"wa-button"}}}connectedCallback(){super.connectedCallback(),this.transaction.categories.sort((e,i)=>e.category.name.localeCompare(i.category.name))}categoriesChange(e,i){let s=new Set(e),n=new Set(i),a=Array.from(n.difference(s)),r=Array.from(s.difference(n));return{categoriesAdded:a,categoriesDeleted:r}}setEditingState(){this.editing=!0}setViewingState(){for(let e of this.buttons)e.disabled=!1;this.saveButton.loading=!1,this.editing=!1}async handleSaveClick(){this.saveButton.loading=!0;for(let g of this.buttons)g.disabled=!0;let e=this.nameInput.value,i=this.dateInput.value,s=Number(this.amountInput.value),n=this.transaction.categories.map(g=>g.category_id),a=this.categoriesSelect.value,{categoriesAdded:r,categoriesDeleted:o}=this.categoriesChange(n,a),{name:l,date:c,amount:h}=this.transaction;if(l===e&&c===i&&h===s&&!r.length&&!o.length){this.setViewingState();return}let u={};c>i?u.greaterThanCurrentPage=!0:u.lessThanCurrentPage=!0;let d=new FormData(this.form);for(let g of r)d.append("categoriesAdded",g);for(let g of o)d.append("categoriesDeleted",g);let p=await fetch(this.transaction.edit_url,{method:"POST",body:d});p=await p.json(),this.transaction=p.transaction,this.transaction.categories.sort((g,f)=>g.category.name.localeCompare(f.category.name)),u.changed={name:e!==l,date:i!==c,amount:s!==h},this.dispatchEvent(new CustomEvent("RequestNewPages",{bubbles:!0,detail:u})),this.setViewingState()}handleMoveTransactionClick(){this.moveModal||(this.moveModal=document.createElement("nb-move-transaction"),this.moveModal.transaction=this.transaction,this.moveModal.budgets=BUDGETS,document.body.appendChild(this.moveModal)),this.moveModal.show()}handleDeleteClick(){this.deleteModal||(this.deleteModal=document.createElement("nb-delete-transaction"),this.deleteModal.transaction=this.transaction,document.body.appendChild(this.deleteModal)),this.deleteModal.show()}transferTemplate(){if(this.transaction.is_transfer)return N`<wa-tag class="w-fit" variant="primary" size="s" pill
         >Transfer</wa-tag
       >`}editButtonsTempate(){return N`<wa-tooltip for="delete-transaction-${this.transaction.id}"
         >Delete</wa-tooltip
@@ -1676,7 +1676,7 @@ ${s}
           name="system/close-large-line"
           class="text-(length:--wa-font-size-l)"
         ></wa-icon
-      ></wa-button>`}viewButtonsTemplate(){return N`${CURRENT_USER.id!==this.transaction.user_id?N`<wa-tag variant="primary" size="small"
+      ></wa-button>`}viewButtonsTemplate(){return N`${CURRENT_USER.id!==this.transaction.user_id?N`<wa-tag variant="primary" size="s"
             >${this.transaction.user.username}</wa-tag
           >`:null}
       <wa-tooltip for="edit-transaction-${this.transaction.id}"
@@ -1749,7 +1749,7 @@ ${s}
               type="date"
               label="Date"
               value=${this.transaction.date}
-              size="small"
+              size="s"
               required
             ></wa-input>
           </div>
@@ -2080,7 +2080,7 @@ ${s}
                 id="share-budget-button"
                 class="icon-button"
                 appearance="plain"
-                size="small"
+                size="s"
                 @click=${this.handleShareButtonClick}
                 ><wa-icon
                   name="share-social-outline"
@@ -2141,7 +2141,7 @@ ${s}
             <wa-button
               appearance="plain"
               variant="brand"
-              size="small"
+              size="s"
               @click=${this.openCategoriesModal}
               >Create more categories</wa-button
             >
@@ -2208,7 +2208,7 @@ ${s}
             label="Name"
             value="${this.budget.name}"
             autocomplete="niklas"
-            size="small"
+            size="s"
             required
           ></wa-input>
           <div>
@@ -2243,14 +2243,14 @@ ${s}
             variant="danger"
             id="delete-button"
             appearance="outlined"
-            size="small"
+            size="s"
             @click=${this.handleDeleteClick}
             >Delete</wa-button
           ><wa-button
             id="save-button"
             class="grow"
             variant="brand"
-            size="small"
+            size="s"
             @click=${this.handleSaveClick}
             disabled
             >Save</wa-button
@@ -2494,4 +2494,4 @@ ${s}
         </div>
       </form></wa-dialog
     >`}};customElements.define("nb-category-modal",kx);
-//# sourceMappingURL=nb.RUCKRL6E.mjs.map
+//# sourceMappingURL=nb.FDBAFWLS.mjs.map

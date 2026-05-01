@@ -146,7 +146,7 @@ export class PendingTransaction extends NikElement {
 
   budgetsTemplate() {
     return html`<nb-combobox
-      size="small"
+      size="s"
       label="Select Budget"
       id="budgets-select"
       name="budget"
@@ -173,7 +173,7 @@ export class PendingTransaction extends NikElement {
 
   sharedUsersSelectTemplate() {
     return html`<nb-combobox
-      size="small"
+      size="s"
       id="user-select"
       label="Select user for this transaction"
       name="user"
@@ -217,7 +217,7 @@ export class PendingTransaction extends NikElement {
         <wa-button
           id="discard-button"
           class="w-fit"
-          size="small"
+          size="s"
           variant="danger"
           appearance="outlined"
           @click=${this.handleTransactionDiscard}
@@ -235,7 +235,7 @@ export class PendingTransaction extends NikElement {
           />
           <div class="wa-stack">
             <wa-input
-              size="small"
+              size="s"
               label="Name"
               class="grow"
               type="text"
@@ -248,7 +248,7 @@ export class PendingTransaction extends NikElement {
             ></wa-input>
             <div class="wa-cluster flex-nowrap!">
               <wa-input
-                size="small"
+                size="s"
                 label="Amount"
                 class="grow min-w-[0]"
                 type="number"
@@ -261,7 +261,7 @@ export class PendingTransaction extends NikElement {
                 required
               ></wa-input>
               <wa-input
-                size="small"
+                size="s"
                 label="Date"
                 class="grow min-w-min"
                 type="date"
@@ -274,14 +274,14 @@ export class PendingTransaction extends NikElement {
           </div>
           ${this.budgetsTemplate()} ${this.sharedUsersSelectTemplate()}
           <nb-categories-select
-            size="small"
+            size="s"
             .selected=${this.getPotentialCategories()}
             .categories=${this.categories}
           ></nb-categories-select>
         </form>
         <div class="wa-cluster w-full">
           <wa-button
-            size="small"
+            size="s"
             id="submit-button"
             class="grow"
             variant="brand"

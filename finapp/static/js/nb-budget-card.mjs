@@ -155,7 +155,7 @@ export class BudgetCard extends NikElement {
             label="Name"
             value="${this.budget.name}"
             autocomplete="niklas"
-            size="small"
+            size="s"
             required
           ></wa-input>
           <div>
@@ -190,14 +190,14 @@ export class BudgetCard extends NikElement {
             variant="danger"
             id="delete-button"
             appearance="outlined"
-            size="small"
+            size="s"
             @click=${this.handleDeleteClick}
             >Delete</wa-button
           ><wa-button
             id="save-button"
             class="grow"
             variant="brand"
-            size="small"
+            size="s"
             @click=${this.handleSaveClick}
             disabled
             >Save</wa-button

@@ -343,7 +343,7 @@ export class ViewBudget extends NikElement {
                 id="share-budget-button"
                 class="icon-button"
                 appearance="plain"
-                size="small"
+                size="s"
                 @click=${this.handleShareButtonClick}
                 ><wa-icon
                   name="share-social-outline"
@@ -404,7 +404,7 @@ export class ViewBudget extends NikElement {
             <wa-button
               appearance="plain"
               variant="brand"
-              size="small"
+              size="s"
               @click=${this.openCategoriesModal}
               >Create more categories</wa-button
             >
