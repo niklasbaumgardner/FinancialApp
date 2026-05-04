@@ -51,5 +51,6 @@
     }
   }
 
+  # TODO: retry failed when server restarting?
   reverse_proxy web:9090
 }
