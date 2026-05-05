@@ -33,21 +33,10 @@
     zone update_settings {
       match {
         method POST
-        path /update_settings*
       }
       key {remote_host}
       events 1
       window 1s
-    }
-
-    zone post_requests {
-      match {
-        method POST
-        not path /update_settings*
-      }
-      key {remote_host}
-      events 1
-      window 5s
     }
   }
 
