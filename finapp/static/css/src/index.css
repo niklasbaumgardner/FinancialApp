@@ -119,12 +119,6 @@ nb-view-budgets {
   align-items: center;
 }
 
-:root,
-:host,
-html {
-  --wa-form-control-padding-block: 0.65em;
-}
-
 .nb-tab-group-dialog {
   wa-tab-group::part(nav),
   wa-tab-panel::part(base) {
@@ -207,6 +201,5 @@ wa-page:not(.niks-favorite-background) > main {
 
 wa-combobox::part(combobox),
 nb-base-combobox::part(combobox) {
-  padding: var(--wa-form-control-padding-block)
-    var(--wa-form-control-padding-inline);
+  padding: var(--wa-space-xs) var(--wa-space-s);
 }
