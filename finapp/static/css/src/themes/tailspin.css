@@ -39,8 +39,8 @@
 
     --wa-color-focus: var(--wa-color-brand-50);
 
-    --wa-color-mix-hover: var(--wa-color-neutral-80) 20%;
-    --wa-color-mix-active: var(--wa-color-neutral-80) 10%;
+    --wa-color-mix-hover: oklch(from currentColor calc(l - 0.1) c h) 15%;
+    --wa-color-mix-active: var(--wa-color-mix-hover);
 
     --wa-color-brand-fill-quiet: color-mix(
       in oklab,
@@ -209,8 +209,8 @@
 
     --wa-color-focus: var(--wa-color-brand-60);
 
-    --wa-color-mix-hover: var(--wa-color-neutral-70) 20%;
-    --wa-color-mix-active: var(--wa-color-neutral-70) 10%;
+    --wa-color-mix-hover: oklch(from currentColor calc(l - 0.1) c h) 15%;
+    --wa-color-mix-active: var(--wa-color-mix-hover);
 
     --wa-color-brand-fill-quiet: color-mix(
       in oklab,
@@ -550,6 +550,10 @@
       1px
     );
     --wa-form-control-toggle-size: round(1.25em, 1px);
+
+    /* Buttons */
+    --wa-button-transform-hover: none;
+    --wa-button-transform-active: none;
 
     /* Panels */
     --wa-panel-border-style: var(--wa-border-style);

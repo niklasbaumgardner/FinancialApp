@@ -43,8 +43,8 @@
 
     --wa-color-focus: var(--wa-color-brand-60);
 
-    --wa-color-mix-hover: black 10%;
-    --wa-color-mix-active: black 20%;
+    --wa-color-mix-hover: oklch(from currentColor calc(1 - l) c h) 10%;
+    --wa-color-mix-active: oklch(from currentColor 0.1 c h) 10%;
 
     --wa-color-brand-fill-quiet: var(--wa-color-brand-90);
     --wa-color-brand-fill-normal: var(--wa-color-brand-80);
@@ -134,8 +134,8 @@
 
     --wa-color-focus: var(--wa-color-brand-60);
 
-    --wa-color-mix-hover: white 10%;
-    --wa-color-mix-active: black 16%;
+    --wa-color-mix-hover: oklch(from currentColor calc(1 - l) c h) 20%;
+    --wa-color-mix-active: oklch(from currentColor 0.1 c h) 10%;
 
     --wa-color-brand-fill-quiet: var(--wa-color-brand-10);
     --wa-color-brand-fill-normal: var(--wa-color-brand-20);
@@ -397,6 +397,10 @@
     );
     --wa-form-control-toggle-size: round(1.25em, 1px);
 
+    /* Buttons */
+    --wa-button-transform-hover: scale(1.02);
+    --wa-button-transform-active: scale(0.98);
+
     /* Panels */
     --wa-panel-border-style: var(--wa-border-style);
     --wa-panel-border-width: var(--wa-border-width-s);
@@ -422,28 +426,15 @@
 @layer wa-theme-dimension {
   .wa-theme-playful {
     button,
-    input:where([type="button"], [type="reset"], [type="submit"]),
+    input:is([type="button"], [type="reset"], [type="submit"]),
     wa-button,
     a.wa-button {
-      &:not([disabled]) {
-        transition-property: all;
-
-        /* Doesn't apply transform to buttons in dropdowns or button groups.
-       * For dropdowns, this prevents the dropdown panel from shifting. */
-        &:not(:where(wa-button-group &, wa-dropdown &, wa-radio-group &)) {
-          @media (hover: hover) {
-            &:hover {
-              transform: scale(1.02);
-            }
-          }
-
-          &:active {
-            transform: scale(0.98);
-          }
-        }
-      }
-
-      &:not([appearance="outlined"], [appearance~="plain"]) {
+      &:not(
+        [appearance="outlined"],
+        [appearance="plain"],
+        .wa-outlined:not(.wa-filled),
+        .wa-plain
+      ) {
         --gradient-top: oklab(from var(--wa-color-fill-loud) calc(l - 0.1) a b);
         --gradient-middle: var(--wa-color-fill-loud);
         --gradient-bottom: oklab(
@@ -474,7 +465,11 @@
             oklab(from var(--wa-color-fill-loud) calc(l - 0.1) a b);
         }
 
-        &:is([appearance~="filled"]) {
+        &:is(
+          [appearance="filled"],
+          [appearance="filled-outlined"],
+          .wa-filled
+        ) {
           --gradient-top: oklab(
             from var(--wa-color-fill-normal) calc(l - 0.05) a b
           );
@@ -500,7 +495,11 @@
           }
         }
 
-        &:not([appearance~="outlined"]) {
+        &:not(
+          [appearance="outlined"],
+          [appearance="filled-outlined"],
+          .wa-outlined
+        ) {
           &:where(:not(wa-button)),
           &::part(base) {
             padding-inline: calc(

@@ -393,6 +393,10 @@
     );
     --wa-form-control-toggle-size: round(1.25em, 1px);
 
+    /* Buttons */
+    --wa-button-transform-hover: none;
+    --wa-button-transform-active: none;
+
     /* Panels */
     --wa-panel-border-style: var(--wa-border-style);
     --wa-panel-border-width: var(--wa-border-width-s);

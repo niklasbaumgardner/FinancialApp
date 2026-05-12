@@ -44,8 +44,8 @@
 
     --wa-color-focus: var(--wa-color-brand-60);
 
-    --wa-color-mix-hover: black 10%;
-    --wa-color-mix-active: black 20%;
+    --wa-color-mix-hover: oklch(from currentColor calc(1 - l) c h) 10%;
+    --wa-color-mix-active: oklch(from currentColor 0.1 c h) 10%;
 
     --wa-color-brand-fill-quiet: var(--wa-color-brand-95);
     --wa-color-brand-fill-normal: var(--wa-color-brand-90);
@@ -139,8 +139,8 @@
 
     --wa-color-focus: var(--wa-color-brand-60);
 
-    --wa-color-mix-hover: black 8%;
-    --wa-color-mix-active: black 16%;
+    --wa-color-mix-hover: oklch(from currentColor calc(1 - l) c h) 15%;
+    --wa-color-mix-active: oklch(from currentColor 0.1 c h) 10%;
 
     --wa-color-brand-fill-quiet: var(--wa-color-brand-10);
     --wa-color-brand-fill-normal: var(--wa-color-brand-20);
@@ -399,6 +399,10 @@
     );
     --wa-form-control-toggle-size: round(1.25em, 1px);
 
+    /* Buttons */
+    --wa-button-transform-hover: none;
+    --wa-button-transform-active: scale(0.98);
+
     /* Panels */
     --wa-panel-border-style: var(--wa-border-style);
     --wa-panel-border-width: var(--wa-border-width-s);
@@ -461,7 +465,6 @@
             var(--inner-shine-active), var(--top-highlight-active),
             var(--upper-tint-active), var(--lower-shade-active),
             var(--bottom-shadow-active);
-          transform: scale(0.98);
         }
       }
     }
