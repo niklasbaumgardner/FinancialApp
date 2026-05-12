@@ -16,7 +16,9 @@
   width: 100%;
   height: var(--sl-input-height-medium);
 
-  transition: var(--sl-transition-fast) color, var(--sl-transition-fast) border,
+  transition:
+    var(--sl-transition-fast) color,
+    var(--sl-transition-fast) border,
     var(--sl-transition-fast) box-shadow,
     var(--sl-transition-fast) background-color;
 }

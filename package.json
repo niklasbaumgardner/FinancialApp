@@ -8,12 +8,14 @@
     "wp-watch": "webpack --progress --config ./finapp/static/webpack.config.js --watch --mode=development",
     "build-all": "npm run tw-build && npm run wp-build",
     "es-build": "node ./finapp/static/esbuild.config.mjs",
-    "es-watch": "node ./finapp/static/esbuild.config.mjs --watch"
+    "es-watch": "node ./finapp/static/esbuild.config.mjs --watch",
+    "copy-wa-styles": "shx cp -r node_modules/@awesome.me/webawesome-pro/dist/styles/* finapp/static/css/src && shx rm -r finapp/static/css/src/component/ && npx prettier --write finapp/static/css/src/"
   },
   "author": "Niklas Baumgardner",
   "devDependencies": {
     "esbuild": "^0.28.0",
-    "esbuild-clean-plugin": "^2.0.0"
+    "esbuild-clean-plugin": "^2.0.0",
+    "shx": "^0.4.0"
   },
   "dependencies": {
     "@awesome.me/webawesome-pro": "^3.7.0",
