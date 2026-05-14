@@ -326,7 +326,7 @@ function brandOverrides() {
   }
 
   fs.writeFileSync(
-    "./finapp/static/css/src/wa-overrides.css",
+    "./finapp/static/css/src/wa-color-overrides.css",
     contents.join("\n\n"),
   );
 }

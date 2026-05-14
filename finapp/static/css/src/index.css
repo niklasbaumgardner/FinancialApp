@@ -140,66 +140,6 @@ wa-tab-panel[name="new"]::part(base) {
   }
 }
 
-wa-page {
-  transition: all 0.001ms step-start;
-}
-
 nb-transaction-actions {
   display: flex;
-}
-
-.wa-cloak:has(:not(:defined)) {
-  animation: 0.8s step-end wa-fouce-cloak;
-}
-
-@keyframes wa-fouce-cloak {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-html {
-  --nb-background-color: var(--wa-color-surface-default);
-  wa-scroller {
-    --shadow-color: var(--nb-background-color);
-  }
-
-  /* Card colors */
-  --wa-color-surface-lowered: light-dark(var(--wa-color-neutral-95), black);
-  --wa-color-surface-default: light-dark(white, var(--wa-color-neutral-05));
-  --wa-color-surface-raised: light-dark(
-    var(--wa-color-neutral-95),
-    var(--wa-color-neutral-10)
-  );
-  --wa-color-surface-super-raised: light-dark(
-    var(--wa-color-neutral-90),
-    var(--wa-color-neutral-20)
-  );
-
-  /* Borders */
-  --wa-color-surface-border: light-dark(
-    var(--wa-color-neutral-95),
-    var(--wa-color-neutral-10)
-  );
-  --wa-color-surface-border-raised: light-dark(
-    var(--wa-color-neutral-90),
-    var(--wa-color-neutral-20)
-  );
-  --wa-color-surface-border-super-raised: light-dark(
-    var(--wa-color-neutral-80),
-    var(--wa-color-neutral-30)
-  );
-}
-
-wa-page:not(.niks-favorite-background),
-wa-page:not(.niks-favorite-background) > main {
-  background-color: var(--nb-background-color);
-}
-
-wa-combobox::part(combobox),
-nb-base-combobox::part(combobox) {
-  padding: var(--wa-space-xs) var(--wa-space-s);
 }

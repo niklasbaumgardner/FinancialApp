@@ -5,6 +5,7 @@ input.box-radio {
   border-radius: var(--wa-border-radius-s);
 
   width: 3rem;
+  height: 3rem;
   aspect-ratio: 1;
 
   outline-offset: 2px;

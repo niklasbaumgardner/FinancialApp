@@ -244,7 +244,7 @@ import{a as E,b as sg,c as _v,d as uc,e as Fv}from"./chunk-J34NQEH2.mjs";import{
               >${dc(t)}
             </wa-option>`)}</wa-select
       >
-      <div class="wa-cluster wa-nativ">${this.bgNumberRadioTemplate()}</div>
+      <div class="wa-cluster native-reset">${this.bgNumberRadioTemplate()}</div>
     </div>`}variantsTemplate(){return zv.map(t=>E`<wa-select
           with-clear
           id="${t}-color"
@@ -2494,4 +2494,4 @@ ${s}
         </div>
       </form></wa-dialog
     >`}};customElements.define("nb-category-modal",Pv);
-//# sourceMappingURL=nb.LIVHJEL7.mjs.map
+//# sourceMappingURL=nb.AZSLXBII.mjs.map

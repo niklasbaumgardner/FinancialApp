@@ -279,7 +279,7 @@ export class PreferencesCard extends NikElement {
             </wa-option>`,
         )}</wa-select
       >
-      <div class="wa-cluster wa-nativ">${this.bgNumberRadioTemplate()}</div>
+      <div class="wa-cluster native-reset">${this.bgNumberRadioTemplate()}</div>
     </div>`;
   }
 

@@ -1,12 +1,12 @@
+from flask import Blueprint, redirect, request, url_for
+from flask_login import current_user, login_required
+
 from finapp.queries import (
     budget_queries,
     transaction_queries,
 )
-from flask import Blueprint, redirect, url_for, request
-from flask_login import login_required, current_user
 from finapp.utils import helpers
 from finapp.utils.Sqids import sqids
-
 
 transaction_bp = Blueprint("transaction_bp", __name__)
 
@@ -118,7 +118,7 @@ def edit_transaction(sqid=None):
 def move_transaction(sqid=None):
     source_budget_id, transaction_id = sqids.decode(sqid)
 
-    new_budget_id = sqids.decode_one(request.form.get("budget"))
+    new_budget_id = sqids.decode_one(request.form.get("new_budget"))
 
     transaction_queries.update_transaction(
         budget_id=source_budget_id,
