@@ -18,7 +18,7 @@ def add_transaction(sqid=None, name=None):
     budget_id = sqids.decode_one(sqid)
 
     user_id = sqids.decode_one(request.form.get("user")) or current_user.id
-    name = request.form.get("name")
+    transaction_name = request.form.get("name")
     amount = request.form.get("amount", type=float, default=0.0)
     str_date = request.form.get("date")
     date = helpers.get_date_from_string(str_date)
@@ -32,7 +32,7 @@ def add_transaction(sqid=None, name=None):
 
     transaction_id = transaction_queries.create_transaction(
         user_id=user_id,
-        name=name,
+        name=transaction_name,
         amount=amount,
         date=date,
         budget_id=budget_id,
@@ -53,7 +53,7 @@ def add_transaction(sqid=None, name=None):
             budgets=budgets,
         )
 
-    return redirect(url_for("viewbudget_bp.view_budget", id=budget_id))
+    return redirect(url_for("viewbudget_bp.view_budget", sqid=sqid, name=name))
 
 
 @transaction_bp.post("/edit_transaction/<string:sqid>")

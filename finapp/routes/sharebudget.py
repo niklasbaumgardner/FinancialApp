@@ -1,8 +1,9 @@
-from finapp.queries import budget_queries, shared_budget_queries, user_queries
-from flask import Blueprint, redirect, url_for, request, abort
-from flask_login import login_required, current_user
-from finapp.utils.send_email import send_share_budget_email
+from flask import Blueprint, abort, redirect, request, url_for
+from flask_login import current_user, login_required
+
 from finapp.models import Budget
+from finapp.queries import budget_queries, shared_budget_queries, user_queries
+from finapp.utils.send_email import send_share_budget_email
 from finapp.utils.Sqids import sqids
 
 sharebudget_bp = Blueprint("sharebudget_bp", __name__)
@@ -58,6 +59,10 @@ def accept_budget():
 
     if budget:
         shared_budget_queries.create_shared_budget(budget=budget)
-        return redirect(url_for("viewbudget_bp.view_budget", id=budget.id))
+        return redirect(
+            url_for(
+                "viewbudget_bp.view_budget", sqid=budget.sqid_id(), name=budget.name
+            )
+        )
 
     return redirect(url_for("viewbudgets_bp.viewbudgets"))
