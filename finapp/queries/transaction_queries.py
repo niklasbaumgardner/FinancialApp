@@ -1,25 +1,24 @@
+import os
+from datetime import timedelta
+
+from flask_login import current_user
+from sqlalchemy import FLOAT, cast, delete, extract, insert, select, update
+from sqlalchemy.orm import noload
+from sqlalchemy.sql import and_, func, or_
+
+from finapp import db
 from finapp.models import (
-    Budget,
+    CompletedTransaction,
     PendingTransaction,
-    SharedBudget,
+    SimpleFINTransaction,
     Transaction,
     TransactionCategory,
-    CompletedTransaction,
-    SimpleFINTransaction,
 )
 from finapp.queries import (
     budget_queries,
     category_queries,
     user_queries,
 )
-from finapp import db
-from flask_login import current_user
-from sqlalchemy.sql import func, or_, and_
-from sqlalchemy.orm import noload
-from sqlalchemy import delete, exists, extract, insert, update, select, cast, FLOAT
-from datetime import timedelta
-import os
-
 
 ## Helper functions
 ##
@@ -614,6 +613,7 @@ def find_transactions_v2():
                     + timedelta(days=DAY_RANGE),
                 ),
                 Transaction.amount == cast(SimpleFINTransaction.amount, FLOAT),
+                Transaction.paycheck_id.is_(None),
             ),
             isouter=True,
         )
@@ -667,6 +667,7 @@ def find_transactions_for_user_v2(key, user_id):
                     + timedelta(days=DAY_RANGE),
                 ),
                 Transaction.amount == cast(SimpleFINTransaction.amount, FLOAT),
+                Transaction.paycheck_id.is_(None),
             ),
             isouter=True,
         )

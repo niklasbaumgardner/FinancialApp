@@ -32,11 +32,7 @@ def check_matching_transactions(result):
 
     for sft, t in result:
         if sft.id not in seen_SFTs and (
-            t is None
-            or (
-                t is not None
-                and (t.id in seen_transactions or t.paycheck_id is not None)
-            )
+            t is None or (t is not None and t.id in seen_transactions)
         ):
             missing_SFTs.append(sft)
             seen_SFTs.add(sft.id)
