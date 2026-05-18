@@ -1,10 +1,12 @@
-import requests
 import base64
-from finapp.queries import transaction_queries, simplefin_queries
-from flask_login import current_user
-from datetime import datetime
 import os
+from datetime import datetime
+
+import requests
+from flask_login import current_user
+
 from finapp.models import AccountAccess
+from finapp.queries import simplefin_queries, transaction_queries
 
 
 def claim_simplefin_token(setup_token):
@@ -21,9 +23,7 @@ def claim_simplefin_token(setup_token):
     return username, password
 
 
-def find_missing_transactions():
-    result = transaction_queries.find_transactions_v2()
-
+def check_matching_transactions(result):
     # TODO: Make sure this works with -19.60 bathing suit example
     # Meaning: two SFTs in the db with same amount and only 1 transaction in T
     missing_SFTs = []
@@ -32,7 +32,11 @@ def find_missing_transactions():
 
     for sft, t in result:
         if sft.id not in seen_SFTs and (
-            t is None or (t is not None and t.id in seen_transactions)
+            t is None
+            or (
+                t is not None
+                and (t.id in seen_transactions or t.paycheck_id is not None)
+            )
         ):
             missing_SFTs.append(sft)
             seen_SFTs.add(sft.id)
@@ -43,6 +47,12 @@ def find_missing_transactions():
     print(f"found {len(missing_SFTs)} missing transactions")
 
     return missing_SFTs
+
+
+def find_missing_transactions():
+    result = transaction_queries.find_transactions_v2()
+
+    return check_matching_transactions(result)
 
 
 def find_missing_transactions_for_user(key, user_id):
@@ -51,25 +61,7 @@ def find_missing_transactions_for_user(key, user_id):
 
     result = transaction_queries.find_transactions_for_user_v2(key=key, user_id=user_id)
 
-    # TODO: Make sure this works with -19.60 bathing suit example
-    # Meaning: two SFTs in the db with same amount and only 1 transaction in T
-    missing_SFTs = []
-    seen_transactions = set()
-    seen_SFTs = set()
-
-    for sft, t in result:
-        if sft.id not in seen_SFTs and (
-            t is None or (t is not None and t.id in seen_transactions)
-        ):
-            missing_SFTs.append(sft)
-            seen_SFTs.add(sft.id)
-
-            if t is not None:
-                seen_transactions.add(t.id)
-
-    print(f"found {len(missing_SFTs)} missing transactions")
-
-    return missing_SFTs
+    return check_matching_transactions(result)
 
 
 def request_simplefin_transactions(credentials, account_ids):
