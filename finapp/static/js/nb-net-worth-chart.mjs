@@ -76,14 +76,21 @@ class NetWorthLineChart extends BaseChart {
   }
 
   maybeCleanData() {
-    let a = this.data.at(-1).amount;
-    let b = this.data.at(-2).amount;
+    // Sometimes the simplefin records can be inaccurate so this is the attempt to clean it
+    let cleanData = [this.data.at(0)];
 
-    let percentChange = (100 * Math.abs(a - b)) / ((a + b) / 2);
+    for (let i = 1; i < this.data.length; i++) {
+      let a = this.data.at(i).amount;
+      let b = this.data.at(i - 1).amount;
 
-    if (percentChange > 100) {
-      this.data.pop();
+      let percentChange = (100 * Math.abs(a - b)) / ((a + b) / 2);
+
+      if (percentChange < 100) {
+        cleanData.push(this.data.at(i));
+      }
     }
+
+    this.data = cleanData;
   }
 
   async init() {

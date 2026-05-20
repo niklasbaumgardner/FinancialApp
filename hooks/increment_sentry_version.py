@@ -1,0 +1,58 @@
+import io
+import re
+from pathlib import Path
+
+"""
+.git/hooks/pre-commit
+#!/bin/sh
+
+python hooks/increment_sentry_version.py
+
+python -c "import time; time.sleep(5)"
+
+git add .
+"""
+
+base_dir = Path(__file__).resolve().parent.parent
+
+
+init_file = io.open(base_dir / "finapp" / "__init__.py", "r+", newline="\n")
+init_file_contents = str(init_file.read())
+init_match = re.search(r"nbbudget@(\d+\.\d+\.\d+)", init_file_contents)
+
+if init_match:
+    current_version = init_match.group(1)
+    version_parts = list(map(int, current_version.split(".")))
+    new_version = f"{version_parts[0]}.{version_parts[1]}.{version_parts[2] + 1}"
+    new_file_contents = init_file_contents.replace(
+        f"nbbudget@{current_version}", f"nbbudget@{new_version}"
+    )
+
+    init_file.seek(0)
+    init_file.truncate()
+    init_file.write(new_file_contents)
+
+
+init_file.close()
+
+sentry_file = io.open(
+    base_dir / "finapp" / "static" / "js" / "sentry.mjs", "r+", newline="\n"
+)
+sentry_file_contents = str(sentry_file.read())
+sentry_match = re.search(r"nbbudgetfront@(\d+\.\d+\.\d+)", sentry_file_contents)
+
+if sentry_match:
+    current_version = sentry_match.group(1)
+    version_parts = list(map(int, current_version.split(".")))
+    new_version = f"{version_parts[0]}.{version_parts[1]}.{version_parts[2] + 1}"
+    new_file_contents = sentry_file_contents.replace(
+        f"nbbudgetfront@{current_version}",
+        f"nbbudgetfront@{new_version}",
+    )
+
+    sentry_file.seek(0)
+    sentry_file.truncate()
+    sentry_file.write(new_file_contents)
+
+
+sentry_file.close()
