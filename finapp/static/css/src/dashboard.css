@@ -9,9 +9,9 @@
 }
 
 .text-greater-than-zero {
-  color: var(--color-green-50);
+  color: var(--wa-color-success-fill-loud);
 }
 
 .text-less-than-zero {
-  color: var(--color-red-60);
+  color: var(--wa-color-danger-fill-loud);
 }
