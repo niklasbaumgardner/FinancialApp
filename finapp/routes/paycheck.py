@@ -1,10 +1,11 @@
-from flask import Blueprint, render_template, redirect, url_for, request
-from flask_login import login_required, current_user
-from finapp.utils import helpers
+from flask import Blueprint, redirect, render_template, request, url_for
+from flask_login import current_user, login_required
+
 from finapp.queries import (
     budget_queries,
     paycheck_queries,
 )
+from finapp.utils import helpers
 from finapp.utils.Sqids import sqids
 
 paycheck_bp = Blueprint("paycheck_bp", __name__)
@@ -40,7 +41,10 @@ def paycheck():
             if key == "name" or key == "amount" or key == "date":
                 continue
             else:
-                t_amount = request.form.get(key, type=float)
+                t_amount = request.form.get(key, type=float, default=None)
+                if t_amount is None:
+                    continue
+
                 budget_id = sqids.decode_one(key)
 
                 transactions.append(
