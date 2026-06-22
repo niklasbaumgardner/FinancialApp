@@ -130,7 +130,7 @@ export class TransactionsGrid extends BaseGrid {
   }
 
   handleKeyDown(event) {
-    let tagName = event.explicitOriginalTarget.localName;
+    let tagName = event.target.localName;
     if (
       tagName === "input" ||
       tagName === "wa-input" ||

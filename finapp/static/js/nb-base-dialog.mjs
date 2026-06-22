@@ -37,7 +37,7 @@ export class BaseDialog extends NikElement {
       return;
     }
 
-    if (event.explicitOriginalTarget.localName === "wa-option") {
+    if (event.target.localName === "wa-option") {
       event.preventDefault();
     }
   }

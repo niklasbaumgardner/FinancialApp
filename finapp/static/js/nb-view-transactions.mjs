@@ -139,7 +139,7 @@ class ViewTransactions extends NikElement {
   }
 
   handleKeyDown(event) {
-    if (event.explicitOriginalTarget instanceof HTMLInputElement) {
+    if (event.target instanceof HTMLInputElement) {
       return;
     }
 
