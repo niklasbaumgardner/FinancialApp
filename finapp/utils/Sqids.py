@@ -16,6 +16,9 @@ class SqidsClass(BaseSqids):
         return seq[0]
 
     def decode_list(self, sqids):
+        if len(sqids) == 0:
+            return []
+
         ret = []
         for sqid in sqids:
             ret.append(self.decode_one(sqid))
