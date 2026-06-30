@@ -9,7 +9,7 @@ class SqidsClass(BaseSqids):
         return self.encode([id])
 
     def decode_one(self, sqid):
-        if sqid is None:
+        if sqid is None or sqid == "":
             return None
 
         seq = self.decode(sqid)
@@ -21,7 +21,9 @@ class SqidsClass(BaseSqids):
 
         ret = []
         for sqid in sqids:
-            ret.append(self.decode_one(sqid))
+            id = self.decode_one(sqid)
+            if id is not None:
+                ret.append(id)
 
         return ret
 
