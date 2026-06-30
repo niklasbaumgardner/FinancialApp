@@ -143,3 +143,7 @@ wa-tab-panel[name="new"]::part(base) {
 nb-transaction-actions {
   display: flex;
 }
+
+wa-dialog::part(dialog) {
+  overflow: hidden;
+}
