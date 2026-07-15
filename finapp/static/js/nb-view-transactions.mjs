@@ -139,7 +139,12 @@ class ViewTransactions extends NikElement {
   }
 
   handleKeyDown(event) {
-    if (event.target instanceof HTMLInputElement) {
+    let tagName = event.target.localName;
+    if (
+      tagName === "input" ||
+      tagName === "wa-input" ||
+      tagName === "wa-option"
+    ) {
       return;
     }
 

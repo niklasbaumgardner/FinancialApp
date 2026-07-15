@@ -13,8 +13,13 @@
   },
   "author": "Niklas Baumgardner",
   "devDependencies": {
+    "@awesome.me/webawesome-pro": "^3.10.0",
+    "@tailwindcss/cli": "^4.3.2",
+    "ag-charts-community": "^13.3.1",
+    "ag-grid-community": "^35.3.1",
     "esbuild": "^0.28.1",
     "esbuild-clean-plugin": "^2.0.0",
+    "lit": "^3.3.3",
     "shx": "^0.4.0"
   },
   "dependencies": {
