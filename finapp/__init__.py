@@ -5,7 +5,6 @@ from flask import Flask
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_mail import Mail
-from flask_migrate import Migrate
 from flask_sqlalchemy_lite import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.pool import NullPool
@@ -36,7 +35,7 @@ if not os.environ.get("FLASK_DEBUG"):
         dsn=os.environ.get("SENTRY_DSN"),
         traces_sample_rate=1.0,
         send_default_pii=True,
-        release="nbbudget@3.0.12",
+        release="nbbudget@3.0.13",
     )
 
 
@@ -99,6 +98,7 @@ mail.init_app(app)
 #     logger.debug("Total Time: %f", total)
 
 
+from finapp.routes.alerts import alerts_bp
 from finapp.routes.auth import auth_bp
 from finapp.routes.category import category_bp
 from finapp.routes.dashboard import dashboard_bp
@@ -117,6 +117,7 @@ from finapp.routes.viewbudgets import viewbudgets_bp
 from finapp.routes.viewtransactions import viewtransactions_bp
 from finapp.utils.context_processor import context_processor_bp
 
+app.register_blueprint(alerts_bp)
 app.register_blueprint(auth_bp)
 app.register_blueprint(category_bp)
 app.register_blueprint(dashboard_bp)
@@ -137,6 +138,3 @@ app.register_blueprint(context_processor_bp)
 
 # with app.app_context():
 #     BaseModel.metadata.create_all(db.engine)
-
-# migrate = Migrate()
-# migrate.init_app(app, db)

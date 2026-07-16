@@ -1,5 +1,6 @@
 from flask import Blueprint, request
-from flask_login import current_user, login_required
+from flask_login import login_required
+
 from finapp.queries import category_queries
 
 category_bp = Blueprint("category_bp", __name__)

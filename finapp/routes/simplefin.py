@@ -211,12 +211,12 @@ def update_account_name(id):
     return dict(name=account.name)
 
 
-@simplefin_bp.get("/api/update_all_accounts_and_transactions")
+@simplefin_bp.cli.command("update_all_accounts_and_transactions")
 def update_all_accounts_and_transactions():
-    key = request.args.get("key")
-    if key != os.environ.get("SIMPLEFIN_KEY"):
-        return dict(success=False)
-
-    simplefin_helpers.update_all_accounts_and_transactions(key=key)
-
-    return dict(success=True)
+    try:
+        # this is called from docker scheduled task
+        key = os.environ.get("SIMPLEFIN_KEY")
+        simplefin_helpers.update_all_accounts_and_transactions(key=key)
+        print("Simplefin sync succeeded")
+    except:
+        print("Simplefin sync failed")
