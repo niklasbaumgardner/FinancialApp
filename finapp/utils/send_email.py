@@ -87,9 +87,6 @@ def send_weekly_report(user_id, report_content):
             + "</div><br>"
         )
 
-    print(body)
-    # print(html)
-
     msg.body = body.strip()
     msg.html = html
     send_async_email(msg)
