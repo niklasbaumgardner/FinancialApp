@@ -1,3 +1,12 @@
+import os
+from datetime import date
+
+from flask_login import current_user
+from sqlalchemy import delete, func, insert, select, update
+from sqlalchemy.dialects.postgresql import insert as pg_insert
+from sqlalchemy.sql import and_, or_
+
+from finapp import db
 from finapp.models import (
     AccountAccess,
     AccountBalance,
@@ -8,14 +17,7 @@ from finapp.models import (
     SimpleFINOrganization,
     SimpleFINTransaction,
 )
-from flask_login import current_user
-from finapp import db
-from sqlalchemy.sql import or_, and_
-from sqlalchemy import delete, insert, select, update, func
-from datetime import date
 from finapp.queries import transaction_queries, user_queries
-from sqlalchemy.dialects.postgresql import insert as pg_insert
-import os
 
 
 # TODO: make upsert

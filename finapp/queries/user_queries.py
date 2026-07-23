@@ -1,10 +1,11 @@
-from finapp.models import Budget, SharedBudget, User
-from sqlalchemy.sql import or_
-from flask_login import current_user
-from finapp import bcrypt, db
-from sqlalchemy import func, insert, select, update
 import os
 
+from flask_login import current_user
+from sqlalchemy import func, insert, select, update
+from sqlalchemy.sql import or_
+
+from finapp import bcrypt, db
+from finapp.models import Budget, SharedBudget, User
 
 ##
 ## User queries

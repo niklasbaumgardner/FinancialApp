@@ -1,11 +1,11 @@
+from flask_login import current_user
+from sqlalchemy import delete, func, insert, select, update
+from sqlalchemy.orm import joinedload
+from sqlalchemy.sql import and_, or_
+
+from finapp import db
 from finapp.models import Budget, SharedBudget
 from finapp.queries import transaction_queries
-from finapp import db
-from flask_login import current_user
-from sqlalchemy.sql import or_, and_
-from sqlalchemy.orm import joinedload
-from sqlalchemy import delete, func, insert, select, update
-
 
 ##
 ## Budget queries
@@ -163,6 +163,23 @@ def get_budgets(separate=False, active_only=False, inactive_only=False):
             db.session.scalars(query.order_by(func.lower(Budget.name))).unique().all()
         )
         return budgets
+
+
+def get_budgets_for_user(user_id):
+    stmt = (
+        select(Budget)
+        .where(Budget.is_active.is_(True))
+        .outerjoin(SharedBudget, Budget.id == SharedBudget.budget_id)
+        .where(
+            or_(
+                Budget.user_id == user_id,
+                SharedBudget.user_id == user_id,
+            ),
+        )
+        .order_by(func.lower(Budget.name))
+    )
+
+    return db.session.scalars(stmt).unique().all()
 
 
 def get_duplicate_budget_by_name(name):

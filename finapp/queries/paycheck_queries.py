@@ -1,10 +1,10 @@
-from finapp.models import Paycheck, Transaction
 from flask_login import current_user
-from finapp import db
-from finapp.queries import transaction_queries
-from sqlalchemy.sql import and_
 from sqlalchemy import insert, select
+from sqlalchemy.sql import and_
 
+from finapp import db
+from finapp.models import Paycheck, Transaction
+from finapp.queries import transaction_queries
 
 ##
 ## Paycheck queries

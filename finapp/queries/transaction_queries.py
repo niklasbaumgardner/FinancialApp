@@ -1,5 +1,5 @@
 import os
-from datetime import timedelta
+from datetime import date, timedelta
 
 from flask_login import current_user
 from sqlalchemy import FLOAT, cast, delete, extract, insert, select, update
@@ -835,3 +835,33 @@ def get_paycheck_transactions():
         Transaction.paycheck_id.isnot(None)
     )
     return db.session.scalars(stmt).unique().all()
+
+
+def get_spending_for_budget(budget_id, days):
+    start_date = date.today() - timedelta(days=days)
+
+    spending_stmt = select(
+        func.coalesce(func.sum(Transaction.amount), 0), func.count()
+    ).where(
+        Transaction.amount < 0,
+        Transaction.budget_id == budget_id,
+        Transaction.date > start_date,
+    )
+
+    income_stmt = select(
+        func.coalesce(func.sum(Transaction.amount), 0), func.count()
+    ).where(
+        Transaction.amount > 0,
+        Transaction.budget_id == budget_id,
+        Transaction.date > start_date,
+    )
+
+    spent, spent_count = db.session.execute(spending_stmt.limit(1)).first()
+    income, income_count = db.session.execute(income_stmt.limit(1)).first()
+
+    return {
+        "spend": round(spent, 2),
+        "income": round(income, 2),
+        "spend_count": spent_count,
+        "income_count": income_count,
+    }

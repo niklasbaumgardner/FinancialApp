@@ -1,8 +1,8 @@
-from finapp.models import Theme
 from flask_login import current_user
-from finapp import db
 from sqlalchemy import select
 
+from finapp import db
+from finapp.models import Theme
 
 ##
 ## Theme queries

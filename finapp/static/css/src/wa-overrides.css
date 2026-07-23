@@ -31,6 +31,16 @@ wa-page {
   }
 }
 
+wa-dropdown-item:has(a) {
+  padding: 0;
+
+  a {
+    display: inline-block;
+    width: 100%;
+    padding: 0.5rem 1rem;
+  }
+}
+
 html {
   --nb-background-color: var(--wa-color-surface-default);
   wa-scroller {

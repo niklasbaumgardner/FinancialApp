@@ -1,18 +1,20 @@
+import os
+from datetime import date as date_type
+from datetime import datetime as datetime_type
+from enum import IntFlag
+from typing import Annotated, Any, List, Optional
+
+from cryptography.fernet import Fernet
 from flask import url_for
 from flask_login import UserMixin
 from itsdangerous import URLSafeTimedSerializer
-import os
-from finapp import db, login_manager, BaseModel
-from sqlalchemy.orm import relationship, mapped_column, Mapped
-from sqlalchemy import ForeignKey, UniqueConstraint, BigInteger, Identity
-from typing import Any, Annotated, Optional, List
-from datetime import date as date_type, datetime as datetime_type
-from finapp.utils.Serializer import SerializerMixin
-from cryptography.fernet import Fernet
-from enum import IntFlag
+from sqlalchemy import BigInteger, ForeignKey, Identity, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSONB
-from finapp.utils.Sqids import sqids
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from finapp import BaseModel, db, login_manager
+from finapp.utils.Serializer import SerializerMixin
+from finapp.utils.Sqids import sqids
 
 FERNET_KEY: bytes = os.environ.get("FERNET_KEY").encode()
 
@@ -30,6 +32,14 @@ class AccountAccess(IntFlag):
     BALANCE = 2
     TRANSACTION = 4
     ALL = BALANCE | TRANSACTION
+
+
+class AlertType(IntFlag):
+    NOT_SET = -1
+    NONE = 1
+    WEEKLY_SPENDING = 2
+    YEAR_END_REPORT = 4
+    ALL = WEEKLY_SPENDING | YEAR_END_REPORT
 
 
 class SqidSerializerMixin(SerializerMixin):
@@ -387,7 +397,7 @@ class SimpleFINAccount(BaseModel, SerializerMixin):
     ]  # this is for me to define the account. CC, checking, savings, etc.
     access_type: Mapped[
         Optional[int]
-    ]  # this is for me to maybe include transactions or only balance data, etc.
+    ]  # AccountAccess. this is for me to maybe include transactions or only balance data, etc.
 
     last_synced_account: Mapped[Optional[datetime_type]]
     last_synced_transactions: Mapped[Optional[datetime_type]]
@@ -478,3 +488,16 @@ class AccountBalance(BaseModel, SqidSerializerMixin):
     user_id: Mapped[user_fk]
     balance: Mapped[float]
     date: Mapped[date_type]
+
+
+class Alert(BaseModel, SqidSerializerMixin):
+    __tablename__ = "alert"
+
+    id: Mapped[int_pk]
+    user_id: Mapped[user_fk]
+
+    alert_type: Mapped[Optional[int]]  # AlertType
+
+    @property
+    def alert(self):
+        return AlertType(self.alert_type)

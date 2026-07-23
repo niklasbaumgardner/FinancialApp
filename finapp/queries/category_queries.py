@@ -1,10 +1,10 @@
+from flask_login import current_user
+from sqlalchemy import delete, insert, select
+from sqlalchemy.sql import and_
+
+from finapp import db
 from finapp.models import Category, TransactionCategory
 from finapp.queries import user_queries
-from flask_login import current_user
-from finapp import db
-from sqlalchemy.sql import and_
-from sqlalchemy import delete, insert, select
-
 
 ##
 ## Category queries

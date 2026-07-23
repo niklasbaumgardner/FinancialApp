@@ -1,10 +1,10 @@
-from finapp.models import SharedBudget
-from finapp import db
 from flask_login import current_user
-from sqlalchemy.sql import and_
 from sqlalchemy import insert, select
-from finapp.utils.cache import TIMED_CACHE
+from sqlalchemy.sql import and_
 
+from finapp import db
+from finapp.models import SharedBudget
+from finapp.utils.cache import TIMED_CACHE
 
 ##
 ## SharedBudget queries
