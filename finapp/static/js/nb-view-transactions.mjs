@@ -3,6 +3,26 @@ import { html } from "lit";
 import "./nb-transactions-grid.mjs";
 import "./nb-add-transaction.mjs";
 
+const ABORT_ERROR = "AbortError";
+class RequestController {
+  #abortController = null;
+
+  async doRequest(url) {
+    this.abort();
+
+    this.#abortController = new AbortController();
+    const response = await fetch(url, { signal: this.#abortController.signal });
+
+    return await response.json();
+  }
+
+  abort() {
+    this.#abortController?.abort(
+      new DOMException("Request cancelled", ABORT_ERROR),
+    );
+  }
+}
+
 class ViewTransactions extends NikElement {
   static properties = {
     transactions: { type: Array },
@@ -25,6 +45,7 @@ class ViewTransactions extends NikElement {
     this.canSetDownloadLink = false;
     this.gotTransactions = false;
     this.pendingTransactions = [];
+    this.requestController = new RequestController();
   }
 
   connectedCallback() {
@@ -88,8 +109,17 @@ class ViewTransactions extends NikElement {
     if (includeBudgets) {
       url += "?includeBudgets=True";
     }
-    let response = await fetch(url);
-    let data = await response.json();
+
+    let data;
+    try {
+      data = await this.requestController.doRequest(url);
+    } catch (e) {
+      if (e.name === ABORT_ERROR) {
+        return;
+      }
+
+      throw e;
+    }
 
     let { transactions } = data;
     this.transactions = transactions;
