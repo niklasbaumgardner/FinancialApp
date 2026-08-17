@@ -1,6 +1,6 @@
 @import url("../layers.css");
 @import url("../color/palettes/rudimentary.css"); /* To use this palette, add class="wa-palette-rudimentary" to the <html> element */
-@import url("https://fonts.bunny.net/css2?family=Azeret+Mono:ital,wght@0,100..900;1,100..900&family=BioRhyme:wght@200..800&family=Fredoka:wght@300..700&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap");
+@import url("https://fonts.bunny.net/css?family=azeret-mono:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i|biorhyme:200,300,400,500,600,700,800|fredoka:300,400,500,600,700|nunito:200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i&display=swap");
 
 @layer wa-theme {
   .wa-theme-playful,

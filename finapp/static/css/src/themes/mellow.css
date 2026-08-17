@@ -1,6 +1,6 @@
 @import url("../layers.css");
 @import url("../color/palettes/natural.css"); /* To use this palette, add class="wa-palette-natural" to the <html> element */
-@import url("https://fonts.bunny.net/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap");
+@import url("https://fonts.bunny.net/css?family=lora:400,400i,500,500i,600,600i,700,700i|mulish:200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i&display=swap");
 
 @layer wa-theme {
   .wa-theme-mellow,

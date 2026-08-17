@@ -1,6 +1,6 @@
 @import url("../layers.css");
 @import url("../color/palettes/vogue.css"); /* To use this palette, add class="wa-palette-vogue" to the <html> element */
-@import url("https://fonts.bunny.net/css2?family=Inter:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://fonts.bunny.net/css?family=inter:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i&display=swap");
 
 @layer wa-theme {
   .wa-theme-tailspin,

@@ -13,12 +13,12 @@
   },
   "author": "Niklas Baumgardner",
   "devDependencies": {
-    "@awesome.me/webawesome-pro": "^3.10.0",
-    "@tailwindcss/cli": "^4.3.2",
+    "@awesome.me/webawesome-pro": "^3.11.0",
+    "@tailwindcss/cli": "^4.3.3",
     "ag-charts-community": "^13.3.1",
     "ag-grid-community": "^35.3.1",
-    "esbuild": "^0.28.1",
-    "esbuild-clean-plugin": "^2.0.0",
+    "esbuild": "^0.28.2",
+    "esbuild-clean-plugin": "^2.1.4",
     "lit": "^3.3.3",
     "shx": "^0.4.0"
   },
@@ -29,5 +29,9 @@
     "ag-grid-community": "^35.3.1",
     "lit": "^3.3.3",
     "tailwindcss": "^4.2.2"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "@parcel/watcher@2.5.1": true
   }
 }
