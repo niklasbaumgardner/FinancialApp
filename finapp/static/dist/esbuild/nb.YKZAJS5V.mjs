@@ -1,4 +1,4 @@
-import{a as E,b as sg,c as Fv,d as uc,e as Bv}from"./chunk-XPDN2JDZ.mjs";import{a as Vv,b as $v,c as Gv,d as Ca}from"./chunk-CL5ECXPO.mjs";import{a as hc,b as zv,d as Ah,e as Uv,f as jv,g as ng,j as Hv}from"./chunk-5K2RSI3Y.mjs";import{a as Ow}from"./chunk-HZWWJL43.mjs";function Rw(i,t){return()=>i.querySelector(t)}function Pw(i,t){return()=>i.querySelectorAll(t)}var ce=class extends Fv{constructor(){super();let{queries:t}=this.constructor;if(t)for(let[e,s]of Object.entries(t))s.all?Object.defineProperty(this,e,{get:Pw(this,s.all)}):Object.defineProperty(this,e,{get:Rw(this,s)})}createRenderRoot(){return this}};var ag=class extends ce{static properties={email:{type:String}};connectedCallback(){super.connectedCallback();let e=new URLSearchParams(location.search).get("next");if(e)localStorage.setItem("next",e);else{let s=localStorage.getItem("next");if(s&&!location.search.length){let n=new URL(location.href);n.searchParams.set("next",s),history.replaceState(null,"",n)}}}nativeTemplate(){return E`<wa-card>
+import{a as E,b as sg,c as Fv,d as uc,e as Bv}from"./chunk-D7WVDTN4.mjs";import{a as Vv,b as $v,c as Gv,d as Ca}from"./chunk-CL5ECXPO.mjs";import{a as hc,b as zv,d as Ah,e as Uv,f as jv,g as ng,j as Hv}from"./chunk-5K2RSI3Y.mjs";import{a as Ow}from"./chunk-HZWWJL43.mjs";function Rw(i,t){return()=>i.querySelector(t)}function Pw(i,t){return()=>i.querySelectorAll(t)}var ce=class extends Fv{constructor(){super();let{queries:t}=this.constructor;if(t)for(let[e,s]of Object.entries(t))s.all?Object.defineProperty(this,e,{get:Pw(this,s.all)}):Object.defineProperty(this,e,{get:Rw(this,s)})}createRenderRoot(){return this}};var ag=class extends ce{static properties={email:{type:String}};connectedCallback(){super.connectedCallback();let e=new URLSearchParams(location.search).get("next");if(e)localStorage.setItem("next",e);else{let s=localStorage.getItem("next");if(s&&!location.search.length){let n=new URL(location.href);n.searchParams.set("next",s),history.replaceState(null,"",n)}}}nativeTemplate(){return E`<wa-card>
       <form id="login-form" method="POST"></form>
       <div class="wa-stack">
         <h2>Login</h2>
@@ -2494,4 +2494,4 @@ ${s}
         </div>
       </form></wa-dialog
     >`}};customElements.define("nb-category-modal",_v);
-//# sourceMappingURL=nb.OIQ7KJJN.mjs.map
+//# sourceMappingURL=nb.YKZAJS5V.mjs.map
