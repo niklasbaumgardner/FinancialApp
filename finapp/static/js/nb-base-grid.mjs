@@ -1,6 +1,9 @@
-import { html } from "lit";
+import { html, isServer, nothing, css } from "lit";
+import { styleMap } from "lit/directives/style-map.js";
 import { NikElement } from "./nik-element.mjs";
 import * as agGrid from "./agGrid.mjs";
+import { WaDataGrid } from "./main.mjs";
+var EXPAND_COL = "__expand__";
 
 export class BaseGrid extends NikElement {
   get currentColorScheme() {
@@ -56,3 +59,52 @@ export class BaseGrid extends NikElement {
     return html`<div id="grid" style="--ag-grid-size: 4px;"></div>`;
   }
 }
+
+const autoRowHeight = css`
+  /* --row-height becomes a floor, not the height. */
+  [part~="body"] .row,
+  .row-main {
+    height: auto;
+    min-height: var(--row-height);
+  }
+
+  /* Plain-string cells ellipse on one line by default. */
+  .cell-content-text {
+    overflow: visible;
+    white-space: normal;
+    text-overflow: clip;
+    overflow-wrap: anywhere;
+  }
+`;
+export class WaBaseGrid extends WaDataGrid {
+  static css = [...WaDataGrid.css, autoRowHeight];
+
+  firstUpdated(changed) {
+    super.firstUpdated(changed);
+
+    // The size cache is keyed by getItemKey, which defaults to the index — so a sort or
+    // filter would leave each measured height attached to the slot rather than the row.
+    // Key it to the row id. configure() spreads existing options, so this survives.
+    const v = this.virtualizer.virtualizer;
+    v?.setOptions({
+      ...v.options,
+      getItemKey: (index) => this.previousRows?.[index]?.id ?? index,
+    });
+    this.virtualizer.clearMeasurements();
+  }
+
+  updated(changed) {
+    super.updated(changed);
+
+    // Re-measure every rendered row each pass rather than using lit's ref(): repeat() is
+    // keyed by row id, so ref() wouldn't re-fire on reused elements, and the component
+    // calls clearMeasurements() on sort/expand/resize — which wipes the cache. resizeItem
+    // no-ops when the height is unchanged, so this can't loop.
+    for (const row of this.shadowRoot.querySelectorAll(
+      '[part~="body"] .row[data-index]',
+    )) {
+      this.virtualizer.measureElement(row);
+    }
+  }
+}
+customElements.define("nb-data-grid", WaBaseGrid);

@@ -73,3 +73,20 @@ html {
     var(--wa-color-neutral-30)
   );
 }
+
+wa-data-grid,
+nb-data-grid {
+  --max-height: 1000rem;
+  --header-background: var(--wa-color-surface-raised);
+  --background-color: var(--wa-color-surface-default);
+  --border-color: var(--wa-color-surface-border-raised);
+  --row-hover-background: light-dark(
+    var(--wa-color-brand-90),
+    var(--wa-color-brand-10)
+  );
+  --header-row-height: 3rem;
+}
+
+nb-data-grid::part(header-cell) {
+  padding: var(--wa-space-s);
+}

@@ -72,7 +72,14 @@ export class TransactionsGrid extends BaseGrid {
   static queries = {
     transactionsGridEl: "#grid",
     paginationButtons: { all: ".ag-paging-page-summary-panel > .ag-button" },
+    waGrid: "nb-data-grid",
   };
+
+  constructor() {
+    super();
+
+    this.waGridEnabled = !!USER_SETTINGS.wa_data_grid;
+  }
 
   firstUpdated() {
     this.init();
@@ -82,7 +89,12 @@ export class TransactionsGrid extends BaseGrid {
     this.requestUpdate();
     await this.updateComplete;
 
-    this.createDataGrid();
+    if (this.waGridEnabled) {
+      this.createWaDataGrid();
+    } else {
+      this.createDataGrid();
+    }
+
     this.setupThemeWatcher();
   }
 
@@ -93,7 +105,9 @@ export class TransactionsGrid extends BaseGrid {
     document.addEventListener("UpdateTransaction", this);
     document.addEventListener("AddTransaction", this);
     document.addEventListener("DeleteTransaction", this);
-    document.addEventListener("keydown", this);
+    if (!this.waGridEnabled) {
+      document.addEventListener("keydown", this);
+    }
   }
 
   handleEvent(event) {
@@ -179,14 +193,22 @@ export class TransactionsGrid extends BaseGrid {
 
   updateTransactions(transactions) {
     this.transactions = transactions;
-    this.dataGrid.setGridOption("rowData", transactions);
 
+    if (this.waGridEnabled) {
+      this.waGrid.data = transactions;
+    } else {
+      this.dataGrid.setGridOption("rowData", transactions);
+    }
     // this.enablePaginationPanel();
     // this.doQueue();
   }
 
   updateTransaction(transaction) {
-    this.dataGrid.applyTransaction({ update: [transaction] });
+    if (this.waGridEnabled) {
+      this.waGrid.data = this.transactions;
+    } else {
+      this.dataGrid.applyTransaction({ update: [transaction] });
+    }
 
     this.requestNewData();
   }
@@ -220,6 +242,189 @@ export class TransactionsGrid extends BaseGrid {
     document.dispatchEvent(
       new CustomEvent("RequestNewData", { detail: { includeBudgets: true } }),
     );
+  }
+
+  async createWaDataGrid() {
+    await customElements.whenDefined("wa-data-grid");
+
+    const allRulesText = Array.from(document.styleSheets)
+      .map((sheet) => {
+        return Array.from(sheet.cssRules)
+          .map((rule) => rule.cssText)
+          .join("\n");
+      })
+      .join("\n");
+
+    const globalSheet = new CSSStyleSheet();
+    globalSheet.replaceSync(allRulesText);
+
+    this.waGrid.shadowRoot.adoptedStyleSheets = [
+      globalSheet,
+      ...this.waGrid.shadowRoot.adoptedStyleSheets,
+    ];
+
+    this.waGrid.data = this.transactions;
+
+    this.waGrid.pageSizeOptions = [];
+
+    const columns = [
+      {
+        field: "name",
+        label: "Name",
+        sortable: true,
+        sortFn: "alphanumeric",
+        filterable: true,
+        flex: 1,
+        minWidth: 200,
+      },
+      {
+        field: "amount",
+        label: "Amount",
+        sortable: true,
+        filterable: true,
+        filterType: "number-range",
+        minWidth: 125,
+        formatter: (amount) => {
+          return html`<wa-format-number
+            type="currency"
+            currency="USD"
+            value="${amount}"
+            lang="en-US"
+          ></wa-format-number>`;
+        },
+      },
+      {
+        field: "budget",
+        label: "Budget",
+        sortable: true,
+        sortFn: "alphanumeric",
+        filterable: true,
+        filterType: "set",
+        flex: 1,
+        minWidth: 175,
+        value: (row) => {
+          return row.budget?.name;
+        },
+        formatter: (_, row) => {
+          if (!row?.budget?.name) {
+            return null;
+          }
+
+          let budget = row.budget;
+          let transaction = row;
+          let id = `transaction-${transaction.id}-budget-info`;
+          return html`<wa-tooltip for="${id}" trigger="click"
+              >Budget total is
+              <wa-format-number
+                type="currency"
+                currency="USD"
+                value="${budget.total}"
+                lang="en-US"
+              ></wa-format-number>
+            </wa-tooltip>
+            <a href="${budget.url}">${budget.name}</a>
+            <wa-button
+              id="${id}"
+              class="icon-button no-border"
+              appearance="plain"
+              ><wa-icon
+                library="ion"
+                name="information-circle-outline"
+                label="Info"
+              ></wa-icon
+            ></wa-button>`;
+        },
+      },
+      {
+        field: "user",
+        label: "User",
+        sortable: true,
+        sortFn: "alphanumeric",
+        filterable: true,
+        filterType: "set",
+        flex: 1,
+        minWidth: 175,
+        value: (row) => {
+          return row.user.username;
+        },
+      },
+      {
+        field: "categories",
+        label: "Categories",
+        sortable: true,
+        sortFn: "alphanumeric",
+        filterable: true,
+        filterType: "set",
+        filterOptions: this.categories
+          .map((c) => ({
+            value: c.name,
+          }))
+          .sort((a, b) => a.value.localeCompare(b.value)),
+        value: (row) => {
+          let categories = row.categories;
+
+          return categories.map((c) => c.category.name).join(" ");
+        },
+        formatter: (_, row) => {
+          let categories = row.categories;
+          categories.sort((a, b) =>
+            a.category.name.localeCompare(b.category.name),
+          );
+
+          return html`<div
+            class="wa-cluster w-full h-full gap-(--wa-space-2xs)! items-center p-(--wa-space-2xs)"
+          >
+            ${categories.map(
+              (c) =>
+                html`<nb-category
+                  name=${c.category.name}
+                  color=${c.category.color}
+                ></nb-category>`,
+            )}
+          </div>`;
+        },
+        minWidth: 200,
+      },
+      {
+        field: "date",
+        label: "Date",
+        sortable: true,
+        sortFn: "datetime",
+        filterable: true,
+        filterType: "date-range",
+        formatter: (_, row) => {
+          let date = row.date;
+
+          return html`<wa-format-date month="short" day="numeric" year="numeric" date="${
+            date + "T00:00:00"
+          }"></sl-format-date>`;
+        },
+        width: 150,
+      },
+      {
+        field: "actions",
+        label: "Actions",
+        sortable: false,
+        filterable: false,
+        // align: "end",
+        formatter: (_, row) => {
+          if (!row.name) {
+            return null;
+          }
+
+          return html`<nb-transaction-actions
+            .transaction=${row}
+            .budgets=${this.budgets}
+            .categories=${this.categories}
+          ></nb-transaction-actions>`;
+        },
+        flex: 1,
+        minWidth: 96,
+        maxWidth: 150,
+      },
+    ];
+
+    this.waGrid.columns = columns;
   }
 
   createDataGrid() {
@@ -481,6 +686,16 @@ export class TransactionsGrid extends BaseGrid {
   render() {
     if (!this.transactions.length) {
       return null;
+    }
+
+    if (this.waGridEnabled) {
+      return html`<nb-data-grid
+        child-rows="children"
+        row-key="id"
+        paginate
+        page-size="20"
+        size="s"
+      ></nb-data-grid>`;
     }
 
     return super.render();

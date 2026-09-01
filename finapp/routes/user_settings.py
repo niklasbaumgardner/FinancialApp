@@ -1,7 +1,7 @@
 from flask import Blueprint, request
 from flask_login import current_user
-from finapp.queries import user_settings_queries
 
+from finapp.queries import user_settings_queries
 
 user_settings_bp = Blueprint("user_settings_bp", __name__)
 

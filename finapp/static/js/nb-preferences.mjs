@@ -8,10 +8,33 @@ import {
   NUMBERS,
   VARIANTS,
 } from "./theme.mjs";
+import { DeferredTask } from "./DeferredTask.mjs";
 
 function toUpper(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
+
+const EXPERIMENTAL_SETTINGS = [
+  {
+    validValues: [true, false],
+    template: () => {
+      return html`<wa-checkbox
+        id="wa_data_grid"
+        hint="The transactions page will use WaDataGrid"
+        ?checked=${USER_SETTINGS.wa_data_grid}
+        @change=${(e) => {
+          document.dispatchEvent(
+            new CustomEvent("updatesettings", {
+              detail: { wa_data_grid: e.target.checked },
+              bubbles: true,
+            }),
+          );
+        }}
+        >Use WaDataGrid instead of AgGrid</wa-checkbox
+      >`;
+    },
+  },
+];
 
 export class PreferencesCard extends NikElement {
   static properties = {
@@ -60,6 +83,10 @@ export class PreferencesCard extends NikElement {
     for (let select of selects) {
       select.hasInteracted = true;
     }
+
+    document.addEventListener("updatesettings", (e) =>
+      this.handleExperimentalSettingChange(e),
+    );
   }
 
   handleThemeChange() {
@@ -172,6 +199,34 @@ export class PreferencesCard extends NikElement {
 
   handleCSSChange() {
     this.requestUpdate();
+  }
+
+  updateSettings(args) {
+    if (!CURRENT_USER?.id) {
+      return;
+    }
+
+    if (!this.updateTask) {
+      this.updateTask = new DeferredTask(
+        (callbackArgs) => {
+          return fetch(UPDATE_USER_SETTINGS, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(callbackArgs),
+            keepalive: true,
+          });
+        },
+        1000,
+        { finalizeBeforeUnload: true },
+      );
+    }
+    this.updateTask.arm(args);
+  }
+
+  handleExperimentalSettingChange(event) {
+    this.updateSettings(event.detail);
   }
 
   roundingTemplate() {
@@ -309,6 +364,12 @@ export class PreferencesCard extends NikElement {
     );
   }
 
+  experimentalSettingsTemplate() {
+    return html`<div class="wa-stack">
+      ${EXPERIMENTAL_SETTINGS.map((es) => es.template())}
+    </div>`;
+  }
+
   render() {
     if (!this.theme) {
       return null;
@@ -319,62 +380,79 @@ export class PreferencesCard extends NikElement {
         <div class="wa-stack">
           <h2>Preferences</h2>
 
-          <wa-select
-            id="themes"
-            label="Builtin Themes"
-            @input=${this.handleThemeChange}
-            >${THEME_LIST.map(
-              (theme) =>
-                html`<wa-option
-                  ?selected=${this.theme.theme === theme}
-                  value=${theme}
-                  >${toUpper(theme)}</wa-option
-                >`,
-            )}</wa-select
-          >
-
-          <wa-select
-            with-clear
-            id="color-palette"
-            label="Color Palette"
-            @input=${this.handleColorPaletteChange}
-            >${COLOR_PALETTE_LIST.map(
-              (color) =>
-                html`<wa-option
-                  ?selected=${this.theme.colorPalette === color}
-                  value=${color}
-                  >${toUpper(color)}</wa-option
-                >`,
-            )}</wa-select
-          >
-
-          <wa-select id="mode" label="Mode" @input=${this.handleModeChange}
-            ><wa-option value="light" ?selected=${this.theme.mode === "light"}
-              >Light</wa-option
-            ><wa-option value="dark" ?selected=${this.theme.mode === "dark"}
-              >Dark</wa-option
-            ></wa-select
-          >
-
-          <wa-divider></wa-divider>
-
-          <div class="wa-stack">
-            <h4>Advanced Theming Options</h4>
-
-            <div class="wa-grid" style="--min-column-size: 20rem;">
+          <wa-accordion>
+            <wa-accordion-item label="Theme preferences" expanded>
               <div class="wa-stack">
-                ${this.backgroundColorTemplate()}
+                <wa-select
+                  id="themes"
+                  label="Builtin Themes"
+                  @input=${this.handleThemeChange}
+                  >${THEME_LIST.map(
+                    (theme) =>
+                      html`<wa-option
+                        ?selected=${this.theme.theme === theme}
+                        value=${theme}
+                        >${toUpper(theme)}</wa-option
+                      >`,
+                  )}</wa-select
+                >
+
+                <wa-select
+                  with-clear
+                  id="color-palette"
+                  label="Color Palette"
+                  @input=${this.handleColorPaletteChange}
+                  >${COLOR_PALETTE_LIST.map(
+                    (color) =>
+                      html`<wa-option
+                        ?selected=${this.theme.colorPalette === color}
+                        value=${color}
+                        >${toUpper(color)}</wa-option
+                      >`,
+                  )}</wa-select
+                >
+
+                <wa-select
+                  id="mode"
+                  label="Mode"
+                  @input=${this.handleModeChange}
+                  ><wa-option
+                    value="light"
+                    ?selected=${this.theme.mode === "light"}
+                    >Light</wa-option
+                  ><wa-option
+                    value="dark"
+                    ?selected=${this.theme.mode === "dark"}
+                    >Dark</wa-option
+                  ></wa-select
+                >
 
                 <wa-divider></wa-divider>
 
-                ${this.variantsTemplate()}
-              </div>
+                <div class="wa-stack">
+                  <h4>Advanced Theming Options</h4>
 
-              <div class="wa-stack gap-(--wa-space-l)">
-                ${this.roundingTemplate()} ${this.spacingTemplate()}
+                  <div class="wa-grid" style="--min-column-size: 20rem;">
+                    <div class="wa-stack">
+                      ${this.backgroundColorTemplate()}
+
+                      <wa-divider></wa-divider>
+
+                      ${this.variantsTemplate()}
+                    </div>
+
+                    <div class="wa-stack gap-(--wa-space-l)">
+                      ${this.roundingTemplate()} ${this.spacingTemplate()}
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            </wa-accordion-item>
+
+            <wa-accordion-item label="Experimental settings"
+              >${this.experimentalSettingsTemplate()}</wa-accordion-item
+            >
+          </wa-accordion>
         </div>
       </div>
     </wa-card>`;

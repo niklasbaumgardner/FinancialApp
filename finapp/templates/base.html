@@ -45,8 +45,10 @@
 
       {% if current_user.is_authenticated %}
         const CURRENT_USER = {{ current_user.to_dict()|tojson }};
+        const USER_SETTINGS = {{ user_settings.settings|tojson }};
       {% else %}
         const CURRENT_USER = {};
+        const USER_SETTINGS = {};
       {% endif %}
 
       const [month, day, year] = new Date()

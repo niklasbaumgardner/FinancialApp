@@ -52,6 +52,11 @@ import "@awesome.me/webawesome-pro/dist/components/textarea/textarea.js";
 
 import "@awesome.me/webawesome-pro/dist/components/slider/slider.js";
 
+import WaDataGrid from "@awesome.me/webawesome-pro/dist/components/data-grid/data-grid.js";
+
+import "@awesome.me/webawesome-pro/dist/components/accordion/accordion.js";
+import "@awesome.me/webawesome-pro/dist/components/accordion-item/accordion-item.js";
+
 // // Option 2: the setBasePath()
 // import { setBasePath } from "@awesome.me/webawesome-pro/dist/webawesome.js";
 // setBasePath("");
@@ -82,4 +87,4 @@ registerIconLibrary("remix", {
   mutator: (svg) => svg.setAttribute("fill", "currentColor"),
 });
 
-export { WaCombobox };
+export { WaCombobox, WaDataGrid };

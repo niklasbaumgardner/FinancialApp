@@ -4,7 +4,7 @@ from flask_login import login_required
 preferences_bp = Blueprint("preferences_bp", __name__)
 
 
-@preferences_bp.route("/preferences", methods=["GET"])
+@preferences_bp.get("/preferences")
 @login_required
 def preferences():
     return render_template("preferences.html")
