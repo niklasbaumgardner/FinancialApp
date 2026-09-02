@@ -419,7 +419,7 @@ export class TransactionsGrid extends BaseGrid {
           ></nb-transaction-actions>`;
         },
         flex: 1,
-        minWidth: 96,
+        minWidth: 104,
         maxWidth: 150,
       },
     ];

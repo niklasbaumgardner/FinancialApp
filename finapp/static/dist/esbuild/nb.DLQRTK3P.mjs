@@ -1079,7 +1079,7 @@ ${s}
             .transaction=${a}
             .budgets=${this.budgets}
             .categories=${this.categories}
-          ></nb-transaction-actions>`:null,flex:1,minWidth:96,maxWidth:150}];this.waGrid.columns=s}createDataGrid(){if(!this.transactions.length)return;let t=[{field:"name",filter:"agTextColumnFilter",autoHeight:!0,cellRenderer:s=>s.data.name?`<span class="text-wrap">${s.data.name}</span>`:"<wa-spinner></wa-spinner>",cellClass:["leading-(--wa-line-height-normal)!","p-(--wa-space-2xs)"],spanRows:({valueA:s,valueB:n})=>s!=null&&s===n},{field:"amount",filter:"agNumberColumnFilter",cellRenderer:s=>s.data.name?`<wa-format-number
+          ></nb-transaction-actions>`:null,flex:1,minWidth:104,maxWidth:150}];this.waGrid.columns=s}createDataGrid(){if(!this.transactions.length)return;let t=[{field:"name",filter:"agTextColumnFilter",autoHeight:!0,cellRenderer:s=>s.data.name?`<span class="text-wrap">${s.data.name}</span>`:"<wa-spinner></wa-spinner>",cellClass:["leading-(--wa-line-height-normal)!","p-(--wa-space-2xs)"],spanRows:({valueA:s,valueB:n})=>s!=null&&s===n},{field:"amount",filter:"agNumberColumnFilter",cellRenderer:s=>s.data.name?`<wa-format-number
             type="currency"
             currency="USD"
             value="${s.data.amount}"
@@ -2577,4 +2577,4 @@ ${s}
         </div>
       </form></wa-dialog
     >`}};customElements.define("nb-category-modal",Bv);
-//# sourceMappingURL=nb.J2VBFFQW.mjs.map
+//# sourceMappingURL=nb.DLQRTK3P.mjs.map
