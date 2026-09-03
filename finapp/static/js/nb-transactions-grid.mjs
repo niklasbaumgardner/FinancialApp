@@ -358,8 +358,8 @@ export class TransactionsGrid extends BaseGrid {
       {
         field: "categories",
         label: "Categories",
-        sortable: true,
-        sortFn: "alphanumeric",
+        sortable: false,
+        // sortFn: "alphanumeric",
         filterable: true,
         filterType: "set",
         filterOptions: this.categories

@@ -1068,7 +1068,7 @@ ${s}
                 name="information-circle-outline"
                 label="Info"
               ></wa-icon
-            ></wa-button>`}},{field:"user",label:"User",sortable:!0,sortFn:"alphanumeric",filterable:!0,filterType:"set",flex:1,minWidth:175,value:n=>n.user.username},{field:"categories",label:"Categories",sortable:!0,sortFn:"alphanumeric",filterable:!0,filterType:"set",filterOptions:this.categories.map(n=>({value:n.id,label:n.name})).sort((n,a)=>n.label.localeCompare(a.label)),value:n=>n.categories.map(r=>r.category.name).join(" "),formatter:(n,a)=>{let r=a.categories;return r.sort((o,l)=>o.category.name.localeCompare(l.category.name)),E`<div
+            ></wa-button>`}},{field:"user",label:"User",sortable:!0,sortFn:"alphanumeric",filterable:!0,filterType:"set",flex:1,minWidth:175,value:n=>n.user.username},{field:"categories",label:"Categories",sortable:!1,filterable:!0,filterType:"set",filterOptions:this.categories.map(n=>({value:n.id,label:n.name})).sort((n,a)=>n.label.localeCompare(a.label)),value:n=>n.categories.map(r=>r.category.name).join(" "),formatter:(n,a)=>{let r=a.categories;return r.sort((o,l)=>o.category.name.localeCompare(l.category.name)),E`<div
             class="wa-cluster w-full h-full gap-(--wa-space-2xs)! items-center p-(--wa-space-2xs)"
           >
             ${r.map(o=>E`<nb-category
@@ -2577,4 +2577,4 @@ ${s}
         </div>
       </form></wa-dialog
     >`}};customElements.define("nb-category-modal",Bv);
-//# sourceMappingURL=nb.L4VV5TGO.mjs.map
+//# sourceMappingURL=nb.4LIDHOC2.mjs.map

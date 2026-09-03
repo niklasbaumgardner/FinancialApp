@@ -580,15 +580,40 @@ def search(
 
 
 def data_grid(sort, filters, search, page, page_size):
-    stmt = get_transactions_query(include_budget=True).order_by(
-        Transaction.date.desc(), Transaction.id.desc()
-    )
+    stmt = get_transactions_query(include_budget=True)
 
-    for o in sort:
-        if o["desc"]:
-            stmt = stmt.order_by(getattr(Transaction, o["id"]).desc())
-        else:
-            stmt = stmt.order_by(getattr(Transaction, o["id"]).asc())
+    if len(sort) > 0:
+        for o in sort:
+            # TODO: sort by categgory names
+            if o["id"] == "budget":
+                if o["desc"]:
+                    stmt = stmt.join(
+                        Budget,
+                        Transaction.budget_id == Budget.id,
+                    ).order_by(Budget.name.desc())
+                else:
+                    stmt = stmt.join(
+                        Budget,
+                        Transaction.budget_id == Budget.id,
+                    ).order_by(Budget.name.asc())
+            elif o["id"] == "user":
+                if o["desc"]:
+                    stmt = stmt.join(
+                        User,
+                        Transaction.user_id == User.id,
+                    ).order_by(User.username.desc())
+                else:
+                    stmt = stmt.join(
+                        User,
+                        Transaction.user_id == User.id,
+                    ).order_by(User.username.asc())
+            else:
+                if o["desc"]:
+                    stmt = stmt.order_by(getattr(Transaction, o["id"]).desc())
+                else:
+                    stmt = stmt.order_by(getattr(Transaction, o["id"]).asc())
+    else:
+        stmt = stmt.order_by(Transaction.date.desc(), Transaction.id.desc())
 
     for o in filters:
         value = o["value"]
