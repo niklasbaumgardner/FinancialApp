@@ -77,8 +77,8 @@ html {
 wa-data-grid,
 nb-data-grid {
   --max-height: 1000rem;
-  --header-background: var(--wa-color-surface-raised);
-  --background-color: var(--wa-color-surface-default);
+  --header-background: var(--wa-color-surface-super-raised);
+  --background-color: var(--wa-color-surface-raised);
   --border-color: var(--wa-color-surface-border-raised);
   --row-hover-background: light-dark(
     var(--wa-color-brand-90),
