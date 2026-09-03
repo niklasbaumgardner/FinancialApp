@@ -8,29 +8,32 @@ from sqlalchemy.sql import and_, func, or_
 
 from finapp import db
 from finapp.models import (
+    Budget,
     CompletedTransaction,
     PendingTransaction,
     SimpleFINTransaction,
     Transaction,
     TransactionCategory,
+    User,
 )
 from finapp.queries import (
     budget_queries,
     category_queries,
     user_queries,
 )
+from finapp.utils.Sqids import sqids
 
 ## Helper functions
 ##
 
 
-def paginate_query(stmt, page):
+def paginate_query(stmt, page, page_size=10):
     # transactions = transactions.paginate(page=page, per_page=10)
     total = db.session.execute(
         select(func.count()).select_from(stmt.subquery())
     ).scalar_one()
-    num_pages = max(1, ((total - 1) // 10) + 1)
-    stmt = stmt.limit(10).offset((page - 1) * 10)
+    num_pages = max(1, ((total - 1) // page_size) + 1)
+    stmt = stmt.limit(page_size).offset((page - 1) * page_size)
     transactions = db.session.scalars(stmt).unique().all()
     return (
         transactions,
@@ -574,6 +577,55 @@ def search(
 
     # I want to return the number of pages as 1
     return ([], 0, 1, 1, 0)
+
+
+def data_grid(sort, filters, search, page, page_size):
+    stmt = get_transactions_query(include_budget=True).order_by(
+        Transaction.date.desc(), Transaction.id.desc()
+    )
+
+    for o in sort:
+        if o["desc"]:
+            stmt = stmt.order_by(getattr(Transaction, o["id"]).desc())
+        else:
+            stmt = stmt.order_by(getattr(Transaction, o["id"]).asc())
+
+    for o in filters:
+        value = o["value"]
+        if type(value) == str:
+            if o["id"] == "budget":
+                stmt = stmt.join(
+                    Budget,
+                    Transaction.budget_id == Budget.id,
+                ).where(Budget.name.ilike(f"%{value}%"))
+
+            elif o["id"] == "user":
+                stmt = stmt.join(
+                    User,
+                    Transaction.user_id == User.id,
+                ).where(User.username.ilike(f"%{value}%"))
+
+            else:
+                stmt = stmt.where(getattr(Transaction, o["id"]).ilike(f"%{value}%"))
+        elif o["id"] == "date" or o["id"] == "amount":
+            first, second = value
+            if first is not None:
+                stmt = stmt.where(getattr(Transaction, o["id"]) >= first)
+            if second is not None:
+                stmt = stmt.where(getattr(Transaction, o["id"]) <= second)
+
+        elif o["id"] == "categories":
+            stmt = stmt.join(
+                TransactionCategory,
+                Transaction.id == TransactionCategory.transaction_id,
+            ).where(
+                and_(
+                    Transaction.id == TransactionCategory.transaction_id,
+                    TransactionCategory.category_id.in_(sqids.decode_list(value)),
+                )
+            )
+
+    return paginate_query(stmt=stmt, page=page + 1, page_size=page_size)
 
 
 def find_transactions_v2():

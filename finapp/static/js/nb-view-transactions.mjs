@@ -46,20 +46,26 @@ class ViewTransactions extends NikElement {
     this.gotTransactions = false;
     this.pendingTransactions = [];
     this.requestController = new RequestController();
+
+    this.waGridEnabled = !!USER_SETTINGS.wa_data_grid;
   }
 
   connectedCallback() {
-    let dummyArray = new Array(this.total - this.transactions.length).fill({
-      budget: { name: "" },
-      user: { username: "" },
-      categories: [],
-    });
+    if (!this.waGridEnabled) {
+      let dummyArray = new Array(this.total - this.transactions.length).fill({
+        budget: { name: "" },
+        user: { username: "" },
+        categories: [],
+      });
 
-    this.transactions = this.transactions.concat(dummyArray);
+      this.transactions = this.transactions.concat(dummyArray);
+    }
 
     super.connectedCallback();
 
-    this.requestData();
+    if (!this.waGridEnabled) {
+      this.requestData();
+    }
     this.requestPendingTransactions();
 
     document.addEventListener("RequestNewData", this);
@@ -225,7 +231,11 @@ class ViewTransactions extends NikElement {
   }
 
   transactionsTemplate() {
-    if (!this.transactions || !this.budgets || !this.categories) {
+    if (
+      !this.budgets ||
+      !this.categories ||
+      (!this.transactions && !this.waGridEnabled)
+    ) {
       return html`<div class="flex items-center justify-center">
         <wa-spinner class="text-9xl"></wa-spinner>
       </div>`;

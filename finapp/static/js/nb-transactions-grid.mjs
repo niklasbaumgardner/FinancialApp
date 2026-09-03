@@ -195,6 +195,7 @@ export class TransactionsGrid extends BaseGrid {
     this.transactions = transactions;
 
     if (this.waGridEnabled) {
+      return;
       this.waGrid.data = transactions;
     } else {
       this.dataGrid.setGridOption("rowData", transactions);
@@ -204,9 +205,7 @@ export class TransactionsGrid extends BaseGrid {
   }
 
   updateTransaction(transaction) {
-    if (this.waGridEnabled) {
-      this.waGrid.data = this.transactions;
-    } else {
+    if (!this.waGridEnabled) {
       this.dataGrid.applyTransaction({ update: [transaction] });
     }
 
@@ -227,21 +226,29 @@ export class TransactionsGrid extends BaseGrid {
       return;
     }
 
-    this.dataGrid.applyTransaction({ addIndex: index, add: [transaction] });
+    if (!this.waGridEnabled) {
+      this.dataGrid.applyTransaction({ addIndex: index, add: [transaction] });
+    }
 
     this.requestNewData();
   }
 
   deleteTransaction(transaction) {
-    this.dataGrid.applyTransaction({ remove: [transaction] });
+    if (!this.waGridEnabled) {
+      this.dataGrid.applyTransaction({ remove: [transaction] });
+    }
 
     this.requestNewData();
   }
 
   requestNewData() {
-    document.dispatchEvent(
-      new CustomEvent("RequestNewData", { detail: { includeBudgets: true } }),
-    );
+    if (!this.waGridEnabled) {
+      document.dispatchEvent(
+        new CustomEvent("RequestNewData", { detail: { includeBudgets: true } }),
+      );
+    } else {
+      this.waGrid.reload();
+    }
   }
 
   async createWaDataGrid() {
@@ -301,7 +308,7 @@ export class TransactionsGrid extends BaseGrid {
         filterable: true,
         filterType: "set",
         flex: 1,
-        minWidth: 175,
+        minWidth: 200,
         value: (row) => {
           return row.budget?.name;
         },
@@ -357,9 +364,10 @@ export class TransactionsGrid extends BaseGrid {
         filterType: "set",
         filterOptions: this.categories
           .map((c) => ({
-            value: c.name,
+            value: c.id,
+            label: c.name,
           }))
-          .sort((a, b) => a.value.localeCompare(b.value)),
+          .sort((a, b) => a.label.localeCompare(b.label)),
         value: (row) => {
           let categories = row.categories;
 
@@ -425,6 +433,30 @@ export class TransactionsGrid extends BaseGrid {
     ];
 
     this.waGrid.columns = columns;
+
+    this.waGrid.dataSource = async ({
+      sort,
+      filters,
+      search,
+      page,
+      pageSize,
+      signal,
+    }) => {
+      const params = new URLSearchParams({
+        sort: JSON.stringify(sort),
+        filters: JSON.stringify(filters),
+        search,
+        page,
+        pageSize,
+      });
+
+      let response = await fetch(
+        "/api/data_grid_transactions?" + params.toString(),
+        { signal },
+      );
+      let { transactions, total } = await response.json();
+      return { rows: transactions, total };
+    };
   }
 
   createDataGrid() {
@@ -684,10 +716,6 @@ export class TransactionsGrid extends BaseGrid {
   }
 
   render() {
-    if (!this.transactions.length) {
-      return null;
-    }
-
     if (this.waGridEnabled) {
       return html`<nb-data-grid
         child-rows="children"
@@ -696,6 +724,10 @@ export class TransactionsGrid extends BaseGrid {
         page-size="20"
         size="s"
       ></nb-data-grid>`;
+    }
+
+    if (!this.transactions.length) {
+      return null;
     }
 
     return super.render();

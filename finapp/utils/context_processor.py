@@ -1,6 +1,7 @@
-from flask_login import current_user
-from finapp.queries import theme_queries, user_settings_queries
 from flask import Blueprint
+from flask_login import current_user
+
+from finapp.queries import theme_queries, user_settings_queries
 
 context_processor_bp = Blueprint("context_processor_bp", __name__)
 
@@ -23,7 +24,7 @@ def utility_processor():
 
     user_settings = get_user_settings()
     if user_settings:
-        return dict(user_settings=user_settings.to_dict())
+        return {"user_settings": user_settings.to_dict()}
 
     theme = get_theme()
 
@@ -31,6 +32,6 @@ def utility_processor():
         user_settings_queries.migrate_theme_to_settings(theme.to_dict())
         user_settings = get_user_settings()
 
-        return dict(user_settings=user_settings.to_dict())
+        return {"user_settings": user_settings.to_dict()}
 
-    return dict(user_settings={"settings": {"theme": "classic"}})
+    return {"user_settings": {"settings": {"theme": "classic"}}}

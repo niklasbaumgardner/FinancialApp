@@ -7,14 +7,23 @@ head %}
     "{{ url_for('simplefin_bp.api_get_pending_transaction') }}";
   const API_SYNC_SIMPLEFIN_TRANSACTIONS_URL =
     "{{ url_for('simplefin_bp.api_sync_simplefin_transactions') }}";
+
+  if (!USER_SETTINGS.wa_data_grid) {
+    let link = document.createElement("link");
+    link.rel = "preload";
+    link.href = VIEW_TRANSACTIONS_CONTENT_URL;
+    link.as = "fetch";
+    link.crossOrigin = "anonymous";
+    document.body.append(link);
+  }
 </script>
 
-<link
+<!-- <link
   rel="preload"
   href="{{ url_for('viewtransactions_bp.api_get_transactions_stream') }}"
   as="fetch"
   crossorigin="anonymous"
-/>
+/> -->
 <link
   rel="preload"
   href="{{ url_for('simplefin_bp.api_get_pending_transaction') }}"
