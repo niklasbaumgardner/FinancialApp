@@ -105,9 +105,7 @@ export class TransactionsGrid extends BaseGrid {
     document.addEventListener("UpdateTransaction", this);
     document.addEventListener("AddTransaction", this);
     document.addEventListener("DeleteTransaction", this);
-    if (!this.waGridEnabled) {
-      document.addEventListener("keydown", this);
-    }
+    document.addEventListener("keydown", this);
   }
 
   handleEvent(event) {
@@ -187,7 +185,13 @@ export class TransactionsGrid extends BaseGrid {
 
     event.stopImmediatePropagation();
     event.preventDefault();
-    let filters = document.querySelectorAll(".ag-icon-filter");
+
+    let filters = [];
+    if (this.waGridEnabled) {
+      filters = this.waGrid.shadowRoot.querySelectorAll(".filter-trigger");
+    } else {
+      filters = document.querySelectorAll(".ag-icon-filter");
+    }
     filters[index].click();
   }
 
@@ -196,7 +200,6 @@ export class TransactionsGrid extends BaseGrid {
 
     if (this.waGridEnabled) {
       return;
-      this.waGrid.data = transactions;
     } else {
       this.dataGrid.setGridOption("rowData", transactions);
     }
@@ -269,8 +272,6 @@ export class TransactionsGrid extends BaseGrid {
       globalSheet,
       ...this.waGrid.shadowRoot.adoptedStyleSheets,
     ];
-
-    this.waGrid.data = this.transactions;
 
     this.waGrid.pageSizeOptions = [];
 
