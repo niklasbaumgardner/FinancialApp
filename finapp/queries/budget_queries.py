@@ -1,7 +1,13 @@
+from sqlalchemy.sql.elements import ColumnElement
+from sqlalchemy.orm.attributes import InstrumentedAttribute
+from finapp.models import SharedBudget
+from collections.abc import Sequence
+
 from flask_login import current_user
 from sqlalchemy import delete, func, insert, select, update
 from sqlalchemy.orm import joinedload
 from sqlalchemy.sql import and_, or_
+from sqlalchemy.sql.selectable import Select
 
 from finapp import db
 from finapp.models import Budget, SharedBudget
@@ -12,7 +18,7 @@ from finapp.queries import transaction_queries
 ##
 
 
-def create_budget(name):
+def create_budget(name: ColumnElement[bool]):
     stmt = insert(Budget).values(
         name=name.strip(),
         total=0,
@@ -28,12 +34,14 @@ def create_budget(name):
     return budget_id
 
 
-def get_budget_for_id(id):
+def get_budget_for_id(id) -> Budget | None:
     # do not call this method unless absolutely needed
     return db.session.scalars(select(Budget).where(Budget.id == id).limit(1)).first()
 
 
-def get_budget_query(budget_id, join_shared_users=True):
+def get_budget_query(
+    budget_id, join_shared_users: bool = True
+) -> Select[tuple[Budget]]:
     budget_query = (
         select(Budget)
         .outerjoin(SharedBudget, Budget.id == SharedBudget.budget_id)
@@ -54,7 +62,7 @@ def get_budget_query(budget_id, join_shared_users=True):
     return budget_query
 
 
-def get_budgets_query():
+def get_budgets_query() -> Select[tuple[Budget]]:
     return (
         select(Budget)
         .outerjoin(SharedBudget, Budget.id == SharedBudget.budget_id)
@@ -67,7 +75,9 @@ def get_budgets_query():
     )
 
 
-def get_budget(budget_id, shared=True, query=False, first_or_404=True):
+def get_budget(
+    budget_id: type[SharedBudget], shared: bool = True, query: bool = False, first_or_404: bool = True
+) -> Budget | Select[tuple[Budget]] | None:
     stmt = get_budget_query(budget_id=budget_id)
 
     if query:
@@ -76,7 +86,7 @@ def get_budget(budget_id, shared=True, query=False, first_or_404=True):
     return db.session.scalars(stmt.limit(1)).first()
 
 
-def can_user_modify_budgets(budget_ids, user_id):
+def can_user_modify_budgets(budget_ids, user_id) -> bool:
     if type(budget_ids) is not set:
         budget_ids = set(budget_ids)
 
@@ -98,19 +108,21 @@ def can_user_modify_budgets(budget_ids, user_id):
     return budget_count == len(budget_ids)
 
 
-def can_modify_budgets(budget_ids):
+def can_modify_budgets(budget_ids: InstrumentedAttribute[str]) -> bool:
     return can_user_modify_budgets(budget_ids=budget_ids, user_id=current_user.id)
 
 
-def can_user_modify_budget(budget_id, user_id):
+def can_user_modify_budget(budget_id, user_id) -> bool:
     return can_user_modify_budgets(budget_ids=[budget_id], user_id=user_id)
 
 
-def can_modify_budget(budget_id):
+def can_modify_budget(budget_id) -> bool:
     return can_user_modify_budget(budget_id=budget_id, user_id=current_user.id)
 
 
-def get_budgets(separate=False, active_only=False, inactive_only=False):
+def get_budgets(
+    separate: bool = False, active_only: bool = False, inactive_only: bool = False
+) -> Sequence[Budget] | tuple[Sequence[Budget], Sequence[Budget]]:
     query = get_budgets_query()
 
     if active_only:
@@ -165,7 +177,7 @@ def get_budgets(separate=False, active_only=False, inactive_only=False):
         return budgets
 
 
-def get_budgets_for_user(user_id):
+def get_budgets_for_user(user_id) -> Sequence[Budget]:
     stmt = (
         select(Budget)
         .where(Budget.is_active.is_(True))
@@ -182,15 +194,15 @@ def get_budgets_for_user(user_id):
     return db.session.scalars(stmt).unique().all()
 
 
-def get_duplicate_budget_by_name(name):
+def get_duplicate_budget_by_name(name) -> Budget | None:
     return db.session.scalars(
         get_budgets_query().where(Budget.name == name.strip()).limit(1)
     ).first()
 
 
-def update_budget(budget_id, name=None, is_active=None):
+def update_budget(budget_id, name=None, is_active=None) -> None:
     if can_modify_budget(budget_id=budget_id):
-        update_dict = dict()
+        update_dict = {}
         if name is not None:
             update_dict["name"] = name.strip()
         if is_active is not None:
@@ -202,7 +214,7 @@ def update_budget(budget_id, name=None, is_active=None):
         db.session.commit()
 
 
-def update_budget_total(budget_id, budget=None, commit=True):
+def update_budget_total(budget_id: InstrumentedAttribute[str], budget=None, commit: bool = True) -> None:
     if can_modify_budget(budget_id=budget_id):
         total = transaction_queries.get_transactions_sum(budget_id=budget_id)
         stmt = (
@@ -214,7 +226,7 @@ def update_budget_total(budget_id, budget=None, commit=True):
             db.session.commit()
 
 
-def set_budget_shared(budget_id):
+def set_budget_shared(budget_id) -> None:
     if can_modify_budget(budget_id=budget_id):
         stmt = update(Budget).where(Budget.id == budget_id).values(is_shared=True)
 
@@ -222,7 +234,7 @@ def set_budget_shared(budget_id):
         db.session.commit()
 
 
-def delete_budget(budget_id):
+def delete_budget(budget_id) -> None:
     stmt = delete(Budget).where(Budget.id == budget_id)
     db.session.execute(stmt)
     db.session.commit()

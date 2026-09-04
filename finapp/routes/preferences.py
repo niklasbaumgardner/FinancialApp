@@ -6,5 +6,5 @@ preferences_bp = Blueprint("preferences_bp", __name__)
 
 @preferences_bp.get("/preferences")
 @login_required
-def preferences():
+def preferences() -> str:
     return render_template("preferences.html")

@@ -1,4 +1,4 @@
-from flask import Blueprint, abort, redirect, request, url_for
+from flask import Blueprint, Response, abort, redirect, request, url_for
 from flask_login import current_user, login_required
 
 from finapp.models import Budget
@@ -12,7 +12,7 @@ sharebudget_bp = Blueprint("sharebudget_bp", __name__)
 @sharebudget_bp.get("/share_budget/<string:sqid>/")
 @sharebudget_bp.get("/share_budget/<string:sqid>/<string:name>")
 @login_required
-def share_budget(sqid=None, name=None):
+def share_budget(sqid=None, name=None) -> dict[str, bool]:
     email = request.args.get("email", "", type=str)
     if email == current_user.email:
         abort(400)
@@ -42,7 +42,7 @@ def share_budget(sqid=None, name=None):
 
 @sharebudget_bp.route("/accept_budget/", methods=["GET"])
 @login_required
-def accept_budget():
+def accept_budget() -> Response:
     token = request.args.get("token")
 
     try:

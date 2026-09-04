@@ -17,7 +17,7 @@ viewbudget_bp = Blueprint("viewbudget_bp", __name__)
 @viewbudget_bp.get("/view_budget/<string:sqid>/")
 @viewbudget_bp.get("/view_budget/<string:sqid>/<string:name>")
 @login_required
-def view_budget(sqid, name=None):
+def view_budget(sqid, name=None) -> str:
     budget_id = sqids.decode_one(sqid)
 
     page = request.args.get("page", 1, type=int)
@@ -78,7 +78,7 @@ def get_page(sqid, name=None):
     month = request.args.get("month", 0, type=int)
     year = request.args.get("year", 0, type=int)
     ytd = request.args.get("ytd") == "true"
-    sort_by = request.args.get("sort")
+    sort_by = request.args.get("sort", "")
     try:
         sort_by = json.loads(sort_by)
     except:

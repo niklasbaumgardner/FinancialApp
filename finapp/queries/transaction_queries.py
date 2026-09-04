@@ -1,3 +1,4 @@
+from sqlalchemy.sql.elements import ColumnElement
 import os
 from datetime import date, timedelta
 
@@ -5,6 +6,7 @@ from flask_login import current_user
 from sqlalchemy import FLOAT, cast, delete, extract, insert, select, update
 from sqlalchemy.orm import noload
 from sqlalchemy.sql import and_, func, or_
+from sqlalchemy.sql.selectable import Select
 
 from finapp import db
 from finapp.models import (
@@ -27,7 +29,7 @@ from finapp.utils.Sqids import sqids
 ##
 
 
-def paginate_query(stmt, page, page_size=10):
+def paginate_query(stmt, page, page_size: int = 10):
     # transactions = transactions.paginate(page=page, per_page=10)
     total = db.session.execute(
         select(func.count()).select_from(stmt.subquery())
@@ -49,7 +51,10 @@ def paginate_query(stmt, page, page_size=10):
 
 
 def get_transaction_query(
-    transaction_id, selection=None, skip_no_load=False, include_budget=False
+    transaction_id,
+    selection=None,
+    skip_no_load: bool = False,
+    include_budget: bool = False,
 ):
     if selection is None:
         selection = [Transaction]
@@ -73,7 +78,7 @@ def get_transaction_query(
 
 
 def get_transactions_query(
-    include_budget=False, selection=None, skip_no_load=False, stmt=None
+    include_budget: bool = False, selection=None, skip_no_load: bool = False, stmt=None
 ):
     if selection is None:
         selection = [Transaction]
@@ -104,12 +109,12 @@ def create_transaction(
     amount,
     date,
     budget_id,
-    is_transfer=False,
+    is_transfer: bool = False,
     categories=None,
     paycheck_id=None,
-    commit=True,
+    commit: bool = True,
 ):
-    user_ids = [id for id in set([user_id, current_user.id]) if id is not None]
+    user_ids = [id for id in {user_id, current_user.id} if id is not None]
 
     can_add_transaction = True
     for u_id in user_ids:
@@ -152,8 +157,8 @@ def create_transaction(
     return transaction_id
 
 
-def bulk_create_transactions(transactions, commit=True):
-    budget_ids = set([t["budget_id"] for t in transactions])
+def bulk_create_transactions(transactions, commit: bool = True) -> None:
+    budget_ids = {t["budget_id"] for t in transactions}
     if budget_queries.can_modify_budgets(budget_ids=budget_ids):
         stmt = (
             insert(Transaction)
@@ -169,7 +174,7 @@ def bulk_create_transactions(transactions, commit=True):
             db.session.commit()
 
 
-def get_transaction(transaction_id, include_budget=False):
+def get_transaction(transaction_id, include_budget: bool = False):
     return db.session.scalars(
         get_transaction_query(
             transaction_id=transaction_id, include_budget=include_budget
@@ -230,7 +235,7 @@ def sort_transactions(sort_by, transactions_query):
     return transactions_query
 
 
-def get_recent_transactions(limit=None, include_total=False):
+def get_recent_transactions(limit=None, include_total: bool = False):
     stmt = get_transactions_query(include_budget=True).order_by(
         Transaction.date.desc(), Transaction.id.desc()
     )
@@ -252,11 +257,11 @@ def get_transactions(
     budget_id,
     start_date=None,
     end_date=None,
-    include_transfers=True,
-    page=1,
+    include_transfers: bool = True,
+    page: int = 1,
     sort_by=None,
-    paginate=False,
-    query=False,
+    paginate: bool = False,
+    query: bool = False,
 ):
     stmt = get_transactions_for_budget_query(budget_id=budget_id)
 
@@ -285,11 +290,11 @@ def get_transactions_for_month(
     budget_id,
     month,
     year,
-    include_transfers=True,
-    page=1,
+    include_transfers: bool = True,
+    page: int = 1,
     sort_by=None,
-    paginate=False,
-    query=False,
+    paginate: bool = False,
+    query: bool = False,
 ):
     stmt = get_transactions(
         budget_id=budget_id,
@@ -317,11 +322,11 @@ def get_transactions_for_month(
 def get_transactions_for_year(
     budget_id,
     year,
-    include_transfers=True,
-    page=1,
+    include_transfers: bool = True,
+    page: int = 1,
     sort_by=None,
-    paginate=False,
-    query=False,
+    paginate: bool = False,
+    query: bool = False,
     transactions=None,
 ):
     stmt = get_transactions(
@@ -355,9 +360,9 @@ def update_transaction(
     is_transfer=None,
     categories_added=None,
     categories_deleted=None,
-):
-    user_ids = [id for id in set([user_id, current_user.id]) if id is not None]
-    budget_ids = [id for id in set([budget_id, new_budget_id]) if id is not None]
+) -> None:
+    user_ids = [id for id in {user_id, current_user.id} if id is not None]
+    budget_ids = [id for id in {budget_id, new_budget_id} if id is not None]
 
     can_add_transaction = True
     for u_id in user_ids:
@@ -370,7 +375,7 @@ def update_transaction(
         should_update_budget_total = set()
         # update_paycheck = False
 
-        update_dict = dict()
+        update_dict = {}
 
         if new_budget_id is not None and new_budget_id != budget_id:
             update_dict["budget_id"] = new_budget_id
@@ -421,7 +426,7 @@ def update_transaction(
         db.session.commit()
 
 
-def bulk_update_transactions_budget(old_budget_id, new_budget_id):
+def bulk_update_transactions_budget(old_budget_id, new_budget_id) -> None:
     if budget_queries.can_modify_budget(
         budget_id=old_budget_id
     ) and budget_queries.can_modify_budget(budget_id=new_budget_id):
@@ -434,7 +439,7 @@ def bulk_update_transactions_budget(old_budget_id, new_budget_id):
         db.session.commit()
 
 
-def delete_transaction(transaction_id, budget_id):
+def delete_transaction(transaction_id, budget_id) -> None:
     if can_modify_transaction(transaction_id=transaction_id):
         stmt = delete(Transaction).where(Transaction.id == transaction_id)
         db.session.execute(stmt)
@@ -443,14 +448,14 @@ def delete_transaction(transaction_id, budget_id):
         db.session.commit()
 
 
-def bulk_delete_transactions_for_budget(budget_id):
+def bulk_delete_transactions_for_budget(budget_id) -> None:
     if budget_queries.can_modify_budget(budget_id=budget_id):
         stmt = delete(Transaction).where(Transaction.budget_id == budget_id)
         db.session.execute(stmt)
         db.session.commit()
 
 
-def transaction_category_query(category_id):
+def transaction_category_query(category_id) -> Select[tuple[TransactionCategory]]:
     return select(TransactionCategory).where(
         Transaction.id == TransactionCategory.transaction_id,
         category_id == TransactionCategory.category_id,
@@ -829,7 +834,7 @@ def get_transactions_sum_query():
     return stmt
 
 
-def get_transactions_for_paycheck_id(paycheck_id, query=False):
+def get_transactions_for_paycheck_id(paycheck_id, query: bool = False):
     stmt = get_transactions_query().where(Transaction.paycheck_id == paycheck_id)
 
     if query:
@@ -902,7 +907,7 @@ def get_total_spent(year, month):
     return __get_net_spending__(condition=condition, year=year, month=month)
 
 
-def get_total_income(year, month):
+def get_total_income(year: ColumnElement[bool], month):
     condition = Transaction.amount > 0
     return __get_net_spending__(condition=condition, year=year, month=month)
 

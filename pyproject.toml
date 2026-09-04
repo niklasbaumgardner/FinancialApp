@@ -14,8 +14,15 @@ dependencies = [
     "flask-sqlalchemy-lite>=0.2.1",
     "gunicorn>=25.3.0",
     "psycopg2>=2.9.12",
+    "pyrefly>=1.2.0",
     "python-dateutil>=2.9.0.post0",
     "requests>=2.33.1",
     "sentry-sdk>=2.58.0",
     "sqids>=0.5.2",
+]
+
+[tool.pyrefly]
+project-includes = [
+    "**/*.py*",
+    "**/*.ipynb",
 ]

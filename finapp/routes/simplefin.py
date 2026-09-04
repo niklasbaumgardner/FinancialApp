@@ -1,6 +1,14 @@
 import os
 
-from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask import (
+    Blueprint,
+    Response,
+    flash,
+    redirect,
+    render_template,
+    request,
+    url_for,
+)
 from flask_login import current_user, login_required
 
 from finapp.queries import simplefin_queries, transaction_queries
@@ -13,7 +21,7 @@ simplefin_bp = Blueprint("simplefin_bp", __name__)
 
 @simplefin_bp.get("/simplefin")
 @login_required
-def simplefin():
+def simplefin() -> Response | str:
     force = request.args.get("force", type=bool, default=False)
 
     credentials = simplefin_queries.get_simplefin_credentials()
@@ -33,7 +41,7 @@ def simplefin():
 
 @simplefin_bp.get("/simplefin_accounts")
 @login_required
-def simplefin_accounts():
+def simplefin_accounts() -> str:
     accounts = simplefin_queries.get_simplefin_accounts()
     credentials = simplefin_queries.get_simplefin_credentials()
 
@@ -51,7 +59,7 @@ def api_get_pending_transaction():
         pt.to_dict() for pt in simplefin_queries.get_pending_transactions()
     ]
 
-    return dict(pending_transactions=pending_transactions)
+    return {"pending_transactions": pending_transactions}
 
 
 @simplefin_bp.post("/delete_pending_transaction/<int:id>")
@@ -63,7 +71,7 @@ def delete_pending_transaction(id):
         pt.to_dict() for pt in simplefin_queries.get_pending_transactions()
     ]
 
-    return dict(pending_transactions=pending_transactions)
+    return {"pending_transactions": pending_transactions}
 
 
 @simplefin_bp.post("/convert_pending_transtion/<int:id>")
@@ -100,14 +108,15 @@ def convert_pending_transaction(id):
         pt.to_dict() for pt in simplefin_queries.get_pending_transactions()
     ]
 
-    return dict(
-        transaction=transaction.to_dict(), pending_transactions=pending_transactions
-    )
+    return {
+        "transaction": transaction.to_dict(),
+        "pending_transactions": pending_transactions,
+    }
 
 
 @simplefin_bp.post("/claim_simplefin_token")
 @login_required
-def claim_simplefin_token():
+def claim_simplefin_token() -> Response:
     setup_token = request.form.get("setup_token")
 
     username, password = simplefin_helpers.claim_simplefin_token(setup_token)
@@ -122,7 +131,7 @@ def claim_simplefin_token():
 
 @simplefin_bp.post("/delete_simplefin_credentials")
 @login_required
-def delete_simplefin_credentials():
+def delete_simplefin_credentials() -> Response:
     simplefin_queries.delete_simplefin_credentials()
 
     return redirect(url_for("simplefin_bp.simplefin"))
@@ -130,7 +139,7 @@ def delete_simplefin_credentials():
 
 @simplefin_bp.get("/sync_simplefin_transactions")
 @login_required
-def sync_simplefin_transactions():
+def sync_simplefin_transactions() -> Response:
     credentials = simplefin_queries.get_simplefin_credentials()
     if not credentials:
         flash("No SimpleFIN Credentials", "danger")
@@ -143,7 +152,7 @@ def sync_simplefin_transactions():
 
 @simplefin_bp.get("/sync_simplefin_account_balances")
 @login_required
-def sync_simplefin_account_balances():
+def sync_simplefin_account_balances() -> Response:
     credentials = simplefin_queries.get_simplefin_credentials()
     if not credentials:
         flash("No SimpleFIN Credentials", "danger")
@@ -156,7 +165,7 @@ def sync_simplefin_account_balances():
 
 @simplefin_bp.get("/sync_simplefin")
 @login_required
-def sync_simplefin():
+def sync_simplefin() -> Response:
     credentials = simplefin_queries.get_simplefin_credentials()
     if not credentials:
         flash("No SimpleFIN Credentials", "danger")
@@ -180,7 +189,7 @@ def api_sync_simplefin_transactions():
         pt.to_dict() for pt in simplefin_queries.get_pending_transactions()
     ]
 
-    return dict(pending_transactions=pending_transactions)
+    return {"pending_transactions": pending_transactions}
 
 
 @simplefin_bp.post("/update_account_access_type/<string:id>")
@@ -196,7 +205,7 @@ def update_account_access_type(id):
 
     account = simplefin_queries.get_simplefin_account(id=id)
 
-    return dict(access_type=account.access_type)
+    return {"access_type": account.access_type}
 
 
 @simplefin_bp.post("/update_account_name/<string:id>")
@@ -208,11 +217,11 @@ def update_account_name(id):
 
     account = simplefin_queries.get_simplefin_account(id=id)
 
-    return dict(name=account.name)
+    return {"name": account.name}
 
 
 @simplefin_bp.cli.command("update_all_accounts_and_transactions")
-def update_all_accounts_and_transactions():
+def update_all_accounts_and_transactions() -> None:
     try:
         # this is called from docker scheduled task
         key = os.environ.get("SIMPLEFIN_KEY")

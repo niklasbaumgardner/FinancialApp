@@ -43,15 +43,15 @@ def add_transaction(sqid=None, name=None):
         transaction = transaction_queries.get_transaction(
             transaction_id=transaction_id, include_budget=True
         )
-        return dict(transaction=transaction.to_dict())
+        return {"transaction": transaction.to_dict()}
 
     if return_transactions:
         transactions, _ = transaction_queries.get_recent_transactions()
         budgets = [budget_queries.get_budget(budget_id=budget_id).to_dict()]
-        return dict(
-            transactions=[t.to_dict() for t in transactions],
-            budgets=budgets,
-        )
+        return {
+            "transactions": [t.to_dict() for t in transactions],
+            "budgets": budgets,
+        }
 
     return redirect(url_for("viewbudget_bp.view_budget", sqid=sqid, name=name))
 
@@ -97,13 +97,13 @@ def edit_transaction(sqid=None):
         transaction = transaction_queries.get_transaction(
             transaction_id=transaction_id, include_budget=True
         )
-        return dict(transaction=transaction.to_dict())
+        return {"transaction": transaction.to_dict()}
 
     if return_transactions:
         transactions, _ = transaction_queries.get_recent_transactions()
         budgets = [budget_queries.get_budget(budget_id=budget_id).to_dict()]
 
-        return dict(transactions=[t.to_dict() for t in transactions], budgets=budgets)
+        return {"transactions": [t.to_dict() for t in transactions], "budgets": budgets}
 
     return {
         "success": True,
@@ -115,7 +115,7 @@ def edit_transaction(sqid=None):
 
 @transaction_bp.post("/move_transaction/<string:sqid>")
 @login_required
-def move_transaction(sqid=None):
+def move_transaction(sqid=None) -> dict[str, bool]:
     source_budget_id, transaction_id = sqids.decode(sqid)
 
     new_budget_id = sqids.decode_one(request.form.get("new_budget"))
@@ -131,7 +131,7 @@ def move_transaction(sqid=None):
 
 @transaction_bp.delete("/delete_transaction/<string:sqid>")
 @login_required
-def delete_transaction(sqid=None):
+def delete_transaction(sqid=None) -> dict[str, bool]:
     budget_id, transaction_id = sqids.decode(sqid)
 
     page = request.form.get("page")

@@ -1,4 +1,5 @@
 import os
+from collections.abc import Sequence
 from datetime import date
 
 from flask_login import current_user
@@ -37,18 +38,20 @@ def create_simplefin_credentials(username, password):
     return credentials_id
 
 
-def get_simplefin_credentials():
+def get_simplefin_credentials() -> SimpleFINCredentials | None:
     stmt = select(SimpleFINCredentials).where(
         SimpleFINCredentials.user_id == current_user.id
     )
     return db.session.scalars(stmt.limit(1)).first()
 
 
-def update_simplefin_credentials_last_synced(accounts=False, transactions=False):
+def update_simplefin_credentials_last_synced(
+    accounts: bool = False, transactions: bool = False
+) -> None:
     if not accounts and not transactions:
         return
 
-    values_dict = dict()
+    values_dict = {}
 
     stmt = (
         update(SimpleFINCredentials)
@@ -59,7 +62,7 @@ def update_simplefin_credentials_last_synced(accounts=False, transactions=False)
     db.session.commit()
 
 
-def delete_simplefin_credentials():
+def delete_simplefin_credentials() -> None:
     stmt = delete(SimpleFINCredentials).where(
         SimpleFINCredentials.user_id == current_user.id
     )
@@ -82,7 +85,9 @@ def create_simplefin_organization(simplefin_id, name, domain, sfin_url, url):
     return organization_id
 
 
-def get_simplefin_organization(simplefin_id, domain, name):
+def get_simplefin_organization(
+    simplefin_id, domain, name
+) -> SimpleFINOrganization | None:
     stmt = select(SimpleFINOrganization).where(
         or_(
             SimpleFINOrganization.simplefin_id == simplefin_id,
@@ -93,7 +98,7 @@ def get_simplefin_organization(simplefin_id, domain, name):
     return db.session.scalars(stmt.limit(1)).first()
 
 
-def get_or_create_simplefin_organization(org):
+def get_or_create_simplefin_organization(org) -> SimpleFINOrganization | None:
     sf_org = get_simplefin_organization(
         simplefin_id=org.get("id"), domain=org.get("domain"), name=org.get("name")
     )
@@ -143,7 +148,7 @@ def upsert_simplefin_account(account, organization_id):
     return account_id
 
 
-def upsert_account_balances(accounts: list[dict]):
+def upsert_account_balances(accounts: list[dict]) -> None:
     if not accounts:
         return
 
@@ -176,7 +181,7 @@ def upsert_account_balances(accounts: list[dict]):
     db.session.commit()
 
 
-def upsert_account_balances_for_user(accounts: list[dict], user_id):
+def upsert_account_balances_for_user(accounts: list[dict], user_id) -> None:
     if not accounts:
         return
 
@@ -209,7 +214,7 @@ def upsert_account_balances_for_user(accounts: list[dict], user_id):
     db.session.commit()
 
 
-def update_simeplefin_accounts(accounts: list[dict]):
+def update_simeplefin_accounts(accounts: list[dict]) -> None:
     if not accounts:
         return
 
@@ -229,7 +234,7 @@ def update_simeplefin_accounts(accounts: list[dict]):
     upsert_account_balances(accounts=accounts)
 
 
-def update_simeplefin_accounts_for_user(accounts: list[dict], user_id):
+def update_simeplefin_accounts_for_user(accounts: list[dict], user_id) -> None:
     if not accounts:
         return
 
@@ -249,7 +254,7 @@ def update_simeplefin_accounts_for_user(accounts: list[dict], user_id):
     upsert_account_balances_for_user(accounts=accounts, user_id=user_id)
 
 
-def get_simplefin_account(id):
+def get_simplefin_account(id) -> SimpleFINAccount | None:
     shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
 
     stmt = select(SimpleFINAccount).where(
@@ -258,7 +263,7 @@ def get_simplefin_account(id):
     return db.session.scalars(stmt.limit(1)).first()
 
 
-def get_simplefin_accounts(access_type=None):
+def get_simplefin_accounts(access_type=None) -> Sequence[SimpleFINAccount]:
     shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
 
     stmt = select(SimpleFINAccount).where(SimpleFINAccount.user_id.in_(shared_user_ids))
@@ -306,7 +311,7 @@ def get_all_accounts_for_user_with_timestamp(key, user_id, access_type=None):
     return db.session.execute(stmt).unique().all()
 
 
-def update_account_access_type(id, access_type=2):
+def update_account_access_type(id, access_type: int = 2) -> None:
     shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
 
     new_access = AccountAccess(access_type)
@@ -328,7 +333,7 @@ def update_account_access_type(id, access_type=2):
     db.session.commit()
 
 
-def update_account_name(id, name):
+def update_account_name(id, name) -> None:
     if not name:
         return
 
@@ -348,7 +353,9 @@ def update_account_name(id, name):
     db.session.commit()
 
 
-def update_last_synced_for_accounts(account_ids, account=False, transactions=False):
+def update_last_synced_for_accounts(
+    account_ids, account: bool = False, transactions: bool = False
+) -> None:
     if not account and not transactions:
         return
 
@@ -367,7 +374,7 @@ def update_last_synced_for_accounts(account_ids, account=False, transactions=Fal
     db.session.commit()
 
 
-def get_all_credentials(key):
+def get_all_credentials(key) -> Sequence[SimpleFINCredentials] | None:
     if key != os.environ.get("SIMPLEFIN_KEY"):
         return
 
@@ -376,7 +383,7 @@ def get_all_credentials(key):
     return db.session.scalars(stmt).unique().all()
 
 
-def delete_pending_transactions(account_ids=None):
+def delete_pending_transactions(account_ids=None) -> None:
     shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
     stmt = delete(PendingTransaction).where(
         PendingTransaction.user_id.in_(shared_user_ids)
@@ -389,14 +396,14 @@ def delete_pending_transactions(account_ids=None):
     db.session.commit()
 
 
-def delete_pending_transactions_for_user(user_id):
+def delete_pending_transactions_for_user(user_id) -> None:
     stmt = delete(PendingTransaction).where(PendingTransaction.user_id == user_id)
 
     db.session.execute(stmt)
     db.session.commit()
 
 
-def create_pending_transactions(transactions):
+def create_pending_transactions(transactions) -> None:
     delete_pending_transactions()
 
     if len(transactions) < 1:
@@ -404,14 +411,14 @@ def create_pending_transactions(transactions):
 
     pending_transactions = []
     for t in transactions:
-        pt = dict(
-            simplefin_id=t.id,
-            account_id=t.account_id,
-            user_id=current_user.id,
-            name=t.description,
-            amount=round(float(t.amount), 2),
-            date=date.fromtimestamp(t.transacted_at or t.posted),
-        )
+        pt = {
+            "simplefin_id": t.id,
+            "account_id": t.account_id,
+            "user_id": current_user.id,
+            "name": t.description,
+            "amount": round(float(t.amount), 2),
+            "date": date.fromtimestamp(t.transacted_at or t.posted),
+        }
         pending_transactions.append(pt)
 
     stmt = pg_insert(PendingTransaction).values(pending_transactions)
@@ -420,7 +427,7 @@ def create_pending_transactions(transactions):
     db.session.commit()
 
 
-def create_pending_transactions_for_user(transactions, user_id):
+def create_pending_transactions_for_user(transactions, user_id) -> None:
     delete_pending_transactions_for_user(user_id=user_id)
 
     if len(transactions) < 1:
@@ -428,14 +435,14 @@ def create_pending_transactions_for_user(transactions, user_id):
 
     pending_transactions = []
     for t in transactions:
-        pt = dict(
-            simplefin_id=t.id,
-            account_id=t.account_id,
-            user_id=user_id,
-            name=t.description,
-            amount=round(float(t.amount), 2),
-            date=date.fromtimestamp(t.transacted_at or t.posted),
-        )
+        pt = {
+            "simplefin_id": t.id,
+            "account_id": t.account_id,
+            "user_id": user_id,
+            "name": t.description,
+            "amount": round(float(t.amount), 2),
+            "date": date.fromtimestamp(t.transacted_at or t.posted),
+        }
         pending_transactions.append(pt)
 
     stmt = pg_insert(PendingTransaction).values(pending_transactions)
@@ -444,7 +451,7 @@ def create_pending_transactions_for_user(transactions, user_id):
     db.session.commit()
 
 
-def get_pending_transactions():
+def get_pending_transactions() -> Sequence[PendingTransaction]:
     shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
 
     stmt = (
@@ -456,7 +463,7 @@ def get_pending_transactions():
     return db.session.scalars(stmt).unique().all()
 
 
-def get_pending_transaction_by_id(id):
+def get_pending_transaction_by_id(id) -> PendingTransaction | None:
     shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
 
     stmt = select(PendingTransaction).where(
@@ -468,7 +475,7 @@ def get_pending_transaction_by_id(id):
     return db.session.scalars(stmt.limit(1)).first()
 
 
-def delete_pending_transaction(id, create_completed=True):
+def delete_pending_transaction(id, create_completed: bool = True) -> None:
     p_transaction: PendingTransaction = get_pending_transaction_by_id(id=id)
 
     if create_completed:
@@ -495,15 +502,15 @@ def delete_pending_transaction(id, create_completed=True):
 
 def create_completed_transaction(
     simplefin_id, user_id, account_id, name, amount, t_date, transaction_id=None
-):
-    t_dict = dict(
-        simplefin_id=simplefin_id,
-        user_id=user_id,
-        account_id=account_id,
-        name=name,
-        amount=amount,
-        date=t_date,
-    )
+) -> None:
+    t_dict = {
+        "simplefin_id": simplefin_id,
+        "user_id": user_id,
+        "account_id": account_id,
+        "name": name,
+        "amount": amount,
+        "date": t_date,
+    }
 
     if transaction_id is not None:
         t_dict["transaction_id"] = transaction_id
@@ -514,7 +521,7 @@ def create_completed_transaction(
     db.session.commit()
 
 
-def get_completed_transactions():
+def get_completed_transactions() -> Sequence[CompletedTransaction]:
     shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
 
     stmt = (
@@ -554,7 +561,7 @@ def convert_pending_transaction(
     return transaction_id
 
 
-def delete_transactions_for_account_id(account_id):
+def delete_transactions_for_account_id(account_id) -> None:
     stmt = delete(SimpleFINTransaction).where(
         SimpleFINTransaction.account_id == account_id
     )
@@ -563,7 +570,7 @@ def delete_transactions_for_account_id(account_id):
     db.session.commit()
 
 
-def update_transactions_for_account(account_id, transactions):
+def update_transactions_for_account(account_id, transactions) -> None:
     # TODO: Add an option to keep or delete old transactions
     # if credentials.delete_old_transactions:
     #     delete_transactions_for_account_id(account_id=account_id)
@@ -577,7 +584,9 @@ def update_transactions_for_account(account_id, transactions):
     db.session.commit()
 
 
-def get_simplefin_transactions_for_accounts(account_ids):
+def get_simplefin_transactions_for_accounts(
+    account_ids,
+) -> Sequence[SimpleFINTransaction]:
     shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
 
     stmt = select(SimpleFINTransaction).where()

@@ -1,21 +1,14 @@
-from finapp.queries import (
-    category_queries,
-    budget_queries,
-    shared_budget_queries,
-    transaction_queries,
-    user_queries,
-)
-from flask import Blueprint, render_template, request, abort, redirect, url_for
+from flask import Blueprint, render_template
 from flask_login import login_required
-from finapp.utils import helpers
 
+from finapp.queries import budget_queries
 
 viewbudgets_bp = Blueprint("viewbudgets_bp", __name__)
 
 
 @viewbudgets_bp.get("/budgets")
 @login_required
-def viewbudgets():
+def viewbudgets() -> str:
     active, inactive = budget_queries.get_budgets(separate=True)
 
     total = round(sum([x.total for x in active + inactive]), 2)

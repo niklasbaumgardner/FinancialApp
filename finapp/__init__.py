@@ -18,7 +18,6 @@ from finapp.config import Config
 # from sqlalchemy.engine import Engine
 # import time
 # import logging
-# ruff: noqa: E402
 
 
 class BaseModel(DeclarativeBase):
@@ -35,13 +34,13 @@ if not os.environ.get("FLASK_DEBUG"):
         dsn=os.environ.get("SENTRY_DSN"),
         traces_sample_rate=1.0,
         send_default_pii=True,
-        release="nbbudget@3.0.24",
+        release="nbbudget@3.0.25",
     )
 
 
 app.config.from_object(Config)
 
-db = SQLAlchemy(engine_options=dict(poolclass=NullPool, future=True))
+db = SQLAlchemy(engine_options={"poolclass": NullPool, "future": True})
 db.init_app(app)
 
 bcrypt = Bcrypt()
@@ -108,7 +107,6 @@ from finapp.routes.preferences import preferences_bp
 from finapp.routes.profile import profile_bp
 from finapp.routes.sharebudget import sharebudget_bp
 from finapp.routes.simplefin import simplefin_bp
-from finapp.routes.theme import theme_bp
 from finapp.routes.transaction import transaction_bp
 from finapp.routes.transfer import transfer_bp
 from finapp.routes.user_settings import user_settings_bp
@@ -127,7 +125,6 @@ app.register_blueprint(preferences_bp)
 app.register_blueprint(profile_bp)
 app.register_blueprint(sharebudget_bp)
 app.register_blueprint(simplefin_bp)
-app.register_blueprint(theme_bp)
 app.register_blueprint(transaction_bp)
 app.register_blueprint(transfer_bp)
 app.register_blueprint(user_settings_bp)

@@ -125,20 +125,20 @@ VALID_USER_SETTINGS_DICT = {
 }
 
 
-def is_valid_user_setting(arg, value):
+def is_valid_user_setting(arg: str, value):
     return arg in VALID_USER_SETTINGS_DICT and (
         (value is None and VALID_USER_SETTINGS_DICT[arg]["nullable"])
         or value in VALID_USER_SETTINGS_DICT[arg]["valid_values"]
     )
 
 
-def get_user_settings():
+def get_user_settings() -> UserSettings | None:
     return db.session.scalars(
         select(UserSettings).where(UserSettings.user_id == current_user.id).limit(1)
     ).first()
 
 
-def update_user_settings(**kwargs):
+def update_user_settings(**kwargs) -> None:
     settings_data = {}
     for arg, val in kwargs.items():
         if is_valid_user_setting(arg, val):

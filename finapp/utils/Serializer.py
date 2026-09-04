@@ -1,20 +1,22 @@
+from typing import Self
+from typing import Any
+
 from sqlalchemy.inspection import inspect as sa_inspect
-from typing import Any, Optional
 
 
 class SerializerMixin:
-    serialize_only: Optional[tuple[str, ...]] = None
-    serialize_rules: Optional[tuple[str, ...]] = None
-    custom_mappings: Optional[dict[str, str]] = None
+    serialize_only: tuple[str, ...] | None = None
+    serialize_rules: tuple[str, ...] | None = None
+    custom_mappings: dict[str, str] | None = None
 
     def get_serialize_only(self, only):
-        only = only or tuple()
-        only = self.serialize_only or tuple() + only
+        only = only or ()
+        only = self.serialize_only or () + only
         return only
 
     def get_serialize_rules(self, rules):
-        rules = rules or tuple()
-        rules = self.serialize_rules or tuple() + rules
+        rules = rules or ()
+        rules = self.serialize_rules or () + rules
         return rules
 
     def get_custom_mappings(self, mappings):
@@ -22,7 +24,7 @@ class SerializerMixin:
         mappings = self.custom_mappings or {} | mappings
         return mappings
 
-    def to_dict(self, rules=None, only=None, mappings=None) -> dict:
+    def to_dict(self, rules: object | Self | None=None, only=None, mappings=None) -> dict:
         inspector = sa_inspect(self)
         sa_keys = {a.key for a in inspector.mapper.attrs}
 
@@ -46,7 +48,7 @@ class SerializerMixin:
 
             keys += tuple(include)
 
-        keys = tuple(sorted(list(keys)))
+        keys = tuple(sorted(keys))
 
         data: dict[Any, Any] = {}
 
@@ -64,7 +66,7 @@ class SerializerMixin:
         return data
 
 
-def serialize(value):
+def serialize(value: object):
     KEEP_DEFAULT_TYPES = [int, float, str, bool]
     value_type = type(value)
     if value is None:

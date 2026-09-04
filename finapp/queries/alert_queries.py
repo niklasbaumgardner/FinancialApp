@@ -1,11 +1,11 @@
+from collections.abc import Sequence
+
 from flask_login import current_user
-from sqlalchemy import delete, func, insert, select, update
+from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert as pg_insert
-from sqlalchemy.orm import joinedload
-from sqlalchemy.sql import and_, or_
 
 from finapp import db
-from finapp.models import Alert, AlertType, Budget, SharedBudget
+from finapp.models import Alert, AlertType
 from finapp.queries import budget_queries, transaction_queries
 
 ##
@@ -13,13 +13,13 @@ from finapp.queries import budget_queries, transaction_queries
 ##
 
 
-def get_alert():
+def get_alert() -> Alert | None:
     return db.session.scalars(
         select(Alert).where(Alert.user_id == current_user.id).limit(1)
     ).first()
 
 
-def upsert_alert(alert_type):
+def upsert_alert(alert_type) -> None:
     stmt = pg_insert(Alert).values(
         {"user_id": current_user.id, "alert_type": alert_type}
     )
@@ -33,12 +33,12 @@ def upsert_alert(alert_type):
     db.session.commit()
 
 
-def get_all_users_with_alerts():
+def get_all_users_with_alerts() -> Sequence[Alert]:
     stmt = select(Alert).where(Alert.alert_type > AlertType.NONE)
     return db.session.scalars(stmt).unique().all()
 
 
-def get_users_with_weekly_alerts():
+def get_users_with_weekly_alerts() -> Sequence[int]:
     alert_type_int = int(AlertType.WEEKLY_SPENDING)
     stmt = select(Alert.user_id).where(
         alert_type_int == Alert.alert_type.op("&")(alert_type_int)
@@ -46,7 +46,7 @@ def get_users_with_weekly_alerts():
     return db.session.scalars(stmt).unique().all()
 
 
-def get_users_with_year_end_alerts():
+def get_users_with_year_end_alerts() -> Sequence[Alert]:
     alert_type_int = int(AlertType.YEAR_END_REPORT)
     stmt = select(Alert).where(
         alert_type_int == Alert.alert_type.op("&")(alert_type_int)
@@ -54,7 +54,7 @@ def get_users_with_year_end_alerts():
     return db.session.scalars(stmt).unique().all()
 
 
-def get_week_spend_report(user_id):
+def get_week_spend_report(user_id) -> list[dict[str, float | str]]:
     budgets = budget_queries.get_budgets_for_user(user_id)
 
     spending_data = []

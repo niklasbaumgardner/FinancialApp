@@ -1,25 +1,16 @@
-import os
 from datetime import date, timedelta
 
-from flask_login import current_user
-from sqlalchemy import FLOAT, cast, delete, exists, extract, insert, select, update
-from sqlalchemy.orm import aliased, noload
-from sqlalchemy.sql import and_, func, or_
+from sqlalchemy import extract, select
+from sqlalchemy.orm import aliased
+from sqlalchemy.sql import func
 
 from finapp import db
 from finapp.models import (
     AccountBalance,
-    Budget,
-    CompletedTransaction,
-    PendingTransaction,
-    SharedBudget,
-    SimpleFINTransaction,
     Transaction,
-    TransactionCategory,
 )
 from finapp.queries import (
     budget_queries,
-    category_queries,
     user_queries,
 )
 
@@ -137,13 +128,13 @@ def get_spending_by_budget_and_month():
 
     spending_results = db.session.execute(spending_stmt).all()
     spending_results = [
-        dict(amount=s[0], budget_id=s[1], month=int(s[2]), year=int(s[3]))
+        {"amount": s[0], "budget_id": s[1], "month": int(s[2]), "year": int(s[3])}
         for s in spending_results
     ]
 
     income_results = db.session.execute(income_stmt).all()
     income_results = [
-        dict(amount=i[0], budget_id=i[1], month=int(i[2]), year=int(i[3]))
+        {"amount": i[0], "budget_id": i[1], "month": int(i[2]), "year": int(i[3])}
         for i in income_results
     ]
 

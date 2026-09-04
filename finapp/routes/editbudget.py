@@ -1,13 +1,13 @@
+from flask import Blueprint, Response, abort, redirect, request, url_for
+from flask_login import current_user, login_required
+
 from finapp.queries import (
     budget_queries,
     shared_budget_queries,
     transaction_queries,
 )
-from flask import Blueprint, request, abort, redirect, url_for
-from flask_login import login_required, current_user
 from finapp.utils import helpers
 from finapp.utils.Sqids import sqids
-
 
 editbudget_bp = Blueprint("editbudget_bp", __name__)
 
@@ -15,12 +15,12 @@ editbudget_bp = Blueprint("editbudget_bp", __name__)
 @editbudget_bp.get("/toggle_budget/<string:sqid>/")
 @editbudget_bp.get("/toggle_budget/<string:sqid>/<string:name>")
 @login_required
-def toggle_budget(sqid=None, name=None):
+def toggle_budget(sqid=None, name=None) -> dict[str, bool]:
     budget_id = sqids.decode_one(sqid)
 
     active = request.args.get("active")
 
-    active = False if active == "false" else True
+    active = active != "false"
     budget_queries.update_budget(budget_id=budget_id, is_active=active)
 
     return {"success": True}
@@ -30,10 +30,7 @@ def toggle_budget(sqid=None, name=None):
 @login_required
 def add_budget():
     name = request.form.get("name")
-    try:
-        amount = float(request.form.get("amount"))
-    except:
-        amount = 0
+    amount = request.form.get("amount", default=0, type=float)
 
     if name:
         duplicate = budget_queries.get_duplicate_budget_by_name(name)
@@ -60,7 +57,7 @@ def add_budget():
 @editbudget_bp.post("/edit_budget/<string:sqid>/")
 @editbudget_bp.post("/edit_budget/<string:sqid>/<string:name>")
 @login_required
-def edit_budget(sqid=None, name=None):
+def edit_budget(sqid=None, name=None) -> dict[str, bool]:
     budget_id = sqids.decode_one(sqid)
 
     new_name = request.form.get("name")
@@ -75,7 +72,7 @@ def edit_budget(sqid=None, name=None):
 @editbudget_bp.post("/delete_budget/<string:sqid>/")
 @editbudget_bp.post("/delete_budget/<string:sqid>/<string:name>")
 @login_required
-def delete_budget(sqid=None, name=None):
+def delete_budget(sqid=None, name=None) -> Response:
     budget_id = sqids.decode_one(sqid)
 
     budget = budget_queries.get_budget(budget_id=budget_id)

@@ -16,7 +16,7 @@ viewtransactions_bp = Blueprint("viewtransactions_bp", __name__)
 @viewtransactions_bp.get("/")
 @viewtransactions_bp.get("/view_transactions")
 @login_required
-def view_transactions():
+def view_transactions() -> str:
     transactions = []
     total = 0
     user_settings = user_settings_queries.get_user_settings()
@@ -61,7 +61,7 @@ def api_get_transactions():
 
 @viewtransactions_bp.get("/api/get_transactions_stream")
 @login_required
-def api_get_transactions_stream():
+def api_get_transactions_stream() -> Response:
     include_budgets = request.args.get("includeBudgets")
     include_budgets = include_budgets and include_budgets == "True"
 
@@ -102,8 +102,8 @@ def api_get_transactions_stream():
 @viewtransactions_bp.get("/api/data_grid_transactions")
 @login_required
 def data_grid_transactions():
-    sort = json.loads(request.args.get("sort"))
-    filters = json.loads(request.args.get("filters"))
+    sort = json.loads(request.args.get("sort", ""))
+    filters = json.loads(request.args.get("filters", ""))
     search = request.args.get("search")
     page = request.args.get("page", default=0, type=int)
     page_size = request.args.get("pageSize", default=20, type=int)

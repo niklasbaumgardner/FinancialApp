@@ -1,3 +1,5 @@
+from collections.abc import Sequence
+
 from flask_login import current_user
 from sqlalchemy import insert, select
 from sqlalchemy.sql import and_
@@ -29,13 +31,13 @@ def create_paycheck(date, total, transactions):
     return paycheck_id
 
 
-def get_paycheck_by_id(id):
+def get_paycheck_by_id(id) -> Paycheck | None:
     stmt = select(Paycheck).where(and_(Paycheck.id == id))
 
     return db.session.scalars(stmt.limit(1)).first()
 
 
-def get_paychecks(sort=False):
+def get_paychecks(sort: bool = False) -> Sequence[Paycheck]:
     stmt = select(Paycheck).where(Paycheck.user_id == current_user.id)
 
     if sort:
@@ -44,9 +46,9 @@ def get_paychecks(sort=False):
     return db.session.scalars(stmt).unique().all()
 
 
-def get_shared_paychecks():
+def get_shared_paychecks() -> Sequence[Paycheck]:
     transactions = transaction_queries.get_paycheck_transactions()
-    paycheck_ids = set([t.paycheck_id for t in transactions])
+    paycheck_ids = {t.paycheck_id for t in transactions}
 
     stmt = (
         select(Paycheck)
@@ -58,7 +60,7 @@ def get_shared_paychecks():
     return db.session.scalars(stmt).unique().all()
 
 
-def get_paychecks_by_distinct_amount():
+def get_paychecks_by_distinct_amount() -> list[Paycheck]:
     paychecks = get_shared_paychecks()
 
     lst = []
@@ -86,7 +88,7 @@ def get_distinct_paychecks():
     return paychecks
 
 
-def update_paycheck(paycheck_id, commit=True):
+def update_paycheck(paycheck_id, commit: bool = True) -> None:
     paycheck = get_paycheck_by_id(id=paycheck_id)
     if not paycheck:
         return

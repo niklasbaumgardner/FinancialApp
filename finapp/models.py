@@ -2,7 +2,7 @@ import os
 from datetime import date as date_type
 from datetime import datetime as datetime_type
 from enum import IntFlag
-from typing import Annotated, Any, List, Optional
+from typing import Annotated, Any
 
 from cryptography.fernet import Fernet
 from flask import url_for
@@ -16,7 +16,7 @@ from finapp import BaseModel, db, login_manager
 from finapp.utils.Serializer import SerializerMixin
 from finapp.utils.Sqids import sqids
 
-FERNET_KEY: bytes = os.environ.get("FERNET_KEY").encode()
+FERNET_KEY: bytes = os.environ.get("FERNET_KEY", "").encode()
 
 
 int_pk = Annotated[
@@ -45,16 +45,11 @@ class AlertType(IntFlag):
 class SqidSerializerMixin(SerializerMixin):
     custom_mappings = {"id": "sqid_id", "user_id": "sqid_user_id"}
 
-    def sqid_id(self):
-        return sqids.encode_one(self.id)
+    def sqid_id(self) -> str | None:
+        return sqids.encode_one(self.id)  # type: ignore
 
-    def sqid_user_id(self):
-        return sqids.encode_one(self.user_id)
-
-
-@login_manager.user_loader
-def load_user(id):
-    return db.session.get(User, int(id))
+    def sqid_user_id(self) -> str | None:
+        return sqids.encode_one(self.user_id)  # type: ignore
 
 
 class User(BaseModel, UserMixin, SerializerMixin):
@@ -76,13 +71,13 @@ class User(BaseModel, UserMixin, SerializerMixin):
         lazy="joined", viewonly=True
     )
 
-    def get_reset_token(self):
-        s = URLSafeTimedSerializer(os.environ.get("SECRET_KEY"))
+    def get_reset_token(self) -> str:
+        s = URLSafeTimedSerializer(os.environ.get("SECRET_KEY", ""))
         return s.dumps({"user_id": self.id})
 
     @staticmethod
-    def verify_reset_token(token, expire_sec=600):
-        s = URLSafeTimedSerializer(os.environ.get("SECRET_KEY"))
+    def verify_reset_token(token, expire_sec: int = 600) -> "User | None":
+        s = URLSafeTimedSerializer(os.environ.get("SECRET_KEY", ""))
         try:
             user_id = s.loads(token, max_age=expire_sec).get("user_id")
         except:
@@ -91,8 +86,13 @@ class User(BaseModel, UserMixin, SerializerMixin):
 
     custom_mappings = {"id": "sqid_id"}
 
-    def sqid_id(self):
+    def sqid_id(self) -> str | None:
         return sqids.encode_one(self.id)
+
+
+@login_manager.user_loader
+def load_user(id) -> User | None:
+    return db.session.get(User, int(id))
 
 
 class Theme(BaseModel, SqidSerializerMixin):
@@ -105,12 +105,12 @@ class Theme(BaseModel, SqidSerializerMixin):
 
     id: Mapped[int_pk]
     user_id: Mapped[user_fk]
-    theme: Mapped[Optional[str]]  # default, classic, custom, etc...
-    mode: Mapped[Optional[str]]  # light, dark
-    primary_color: Mapped[Optional[str]]  # red, blue, green, etc...
-    background_color: Mapped[Optional[str]]
-    color_contrast: Mapped[Optional[str]]  # web-awesome values
-    color_palette: Mapped[Optional[str]]  # web-awesome values
+    theme: Mapped[str | None]  # default, classic, custom, etc...
+    mode: Mapped[str | None]  # light, dark
+    primary_color: Mapped[str | None]  # red, blue, green, etc...
+    background_color: Mapped[str | None]
+    color_contrast: Mapped[str | None]  # web-awesome values
+    color_palette: Mapped[str | None]  # web-awesome values
 
 
 class UserSettings(BaseModel, SqidSerializerMixin):
@@ -145,7 +145,7 @@ class Budget(BaseModel, SqidSerializerMixin):
 
     user: Mapped["User"] = relationship(lazy="joined", viewonly=True)
 
-    shared_users: Mapped[List["User"]] = relationship(
+    shared_users: Mapped[list["User"]] = relationship(
         lazy="joined",
         secondary="shared_budget",
         primaryjoin="SharedBudget.budget_id == Budget.id",
@@ -154,28 +154,28 @@ class Budget(BaseModel, SqidSerializerMixin):
         viewonly=True,
     )
 
-    def url(self):
+    def url(self) -> str:
         return url_for("viewbudget_bp.view_budget", sqid=self.sqid_id(), name=self.name)
 
-    def edit_url(self):
+    def edit_url(self) -> str:
         return url_for("editbudget_bp.edit_budget", sqid=self.sqid_id(), name=self.name)
 
-    def toggle_active_url(self):
+    def toggle_active_url(self) -> str:
         return url_for(
             "editbudget_bp.toggle_budget", sqid=self.sqid_id(), name=self.name
         )
 
-    def add_transaction_url(self):
+    def add_transaction_url(self) -> str:
         return url_for(
             "transaction_bp.add_transaction", sqid=self.sqid_id(), name=self.name
         )
 
-    def delete_url(self):
+    def delete_url(self) -> str:
         return url_for(
             "editbudget_bp.delete_budget", sqid=self.sqid_id(), name=self.name
         )
 
-    def share_budget_url(self):
+    def share_budget_url(self) -> str:
         return url_for(
             "sharebudget_bp.share_budget", sqid=self.sqid_id(), name=self.name
         )
@@ -183,16 +183,16 @@ class Budget(BaseModel, SqidSerializerMixin):
     # I don't think this will work because of the shared_budget model
     # transactions = relationship("Transaction", uselist=False)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.name: <30s}|{self.total: >10.2f}"
 
-    def get_share_token(self, recipient_id):
-        s = URLSafeTimedSerializer(os.environ.get("SECRET_KEY"))
+    def get_share_token(self, recipient_id) -> str:
+        s = URLSafeTimedSerializer(os.environ.get("SECRET_KEY", ""))
         return s.dumps({"budget_id": self.id, "recipient_id": recipient_id})
 
     @staticmethod
-    def verify_share_token(token, expire_sec=3600 * 24):
-        s = URLSafeTimedSerializer(os.environ.get("SECRET_KEY"))
+    def verify_share_token(token, expire_sec: int = 3600 * 24):
+        s = URLSafeTimedSerializer(os.environ.get("SECRET_KEY", ""))
 
         obj = s.loads(token, max_age=expire_sec)
 
@@ -214,7 +214,7 @@ class SharedBudget(BaseModel, SqidSerializerMixin):
         "budget_id": "sqid_budget_id",
     }
 
-    def sqid_budget_id(self):
+    def sqid_budget_id(self) -> str | None:
         return sqids.encode_one(self.budget_id)
 
 
@@ -236,25 +236,25 @@ class Transaction(BaseModel, SqidSerializerMixin):
     name: Mapped[str]
     amount: Mapped[float]
     date: Mapped[date_type]
-    is_transfer: Mapped[Optional[bool]]
-    paycheck_id: Mapped[Optional[int]] = mapped_column(ForeignKey("paycheck.id"))
+    is_transfer: Mapped[bool | None]
+    paycheck_id: Mapped[int | None] = mapped_column(ForeignKey("paycheck.id"))
 
-    categories: Mapped[List["TransactionCategory"]] = relationship(
+    categories: Mapped[list["TransactionCategory"]] = relationship(
         lazy="joined", passive_deletes=True
     )
     user: Mapped["User"] = relationship(lazy="joined", viewonly=True)
     budget: Mapped["Budget"] = relationship(lazy="joined", viewonly=True)
 
-    def sqid_ids(self):
+    def sqid_ids(self) -> str:
         return sqids.encode([self.budget_id, self.id])
 
-    def edit_url(self):
+    def edit_url(self) -> str:
         return url_for("transaction_bp.edit_transaction", sqid=self.sqid_ids())
 
-    def move_transaction_url(self):
+    def move_transaction_url(self) -> str:
         return url_for("transaction_bp.move_transaction", sqid=self.sqid_ids())
 
-    def delete_url(self):
+    def delete_url(self) -> str:
         return url_for("transaction_bp.delete_transaction", sqid=self.sqid_ids())
 
     custom_mappings = {
@@ -263,7 +263,7 @@ class Transaction(BaseModel, SqidSerializerMixin):
         "budget_id": "sqid_budget_id",
     }
 
-    def sqid_budget_id(self):
+    def sqid_budget_id(self) -> str | None:
         return sqids.encode_one(self.budget_id)
 
 
@@ -275,7 +275,7 @@ class Paycheck(BaseModel, SqidSerializerMixin):
     total: Mapped[float]
     date: Mapped[date_type]
 
-    transactions: Mapped[List["Transaction"]] = relationship(
+    transactions: Mapped[list["Transaction"]] = relationship(
         lazy="joined", viewonly=True
     )
 
@@ -310,10 +310,10 @@ class TransactionCategory(BaseModel, SqidSerializerMixin):
         "category_id": "sqid_category_id",
     }
 
-    def sqid_transaction_id(self):
+    def sqid_transaction_id(self) -> str | None:
         return sqids.encode_one(self.transaction_id)
 
-    def sqid_category_id(self):
+    def sqid_category_id(self) -> str | None:
         return sqids.encode_one(self.category_id)
 
 
@@ -338,7 +338,7 @@ class SimpleFINCredentials(BaseModel, SqidSerializerMixin):
     #     return not self.keep_old_transactions
 
     @property
-    def exists(self):
+    def exists(self) -> bool:
         return len(self.username) > 0 and len(self.password) > 0
 
     @staticmethod
@@ -389,35 +389,35 @@ class SimpleFINAccount(BaseModel, SerializerMixin):
     name: Mapped[str]
     currency: Mapped[str]
     balance: Mapped[float]
-    available_balance: Mapped[Optional[float]]
+    available_balance: Mapped[float | None]
     balance_date: Mapped[date_type]
 
     type: Mapped[
-        Optional[int]
+        int | None
     ]  # this is for me to define the account. CC, checking, savings, etc.
     access_type: Mapped[
-        Optional[int]
+        int | None
     ]  # AccountAccess. this is for me to maybe include transactions or only balance data, etc.
 
-    last_synced_account: Mapped[Optional[datetime_type]]
-    last_synced_transactions: Mapped[Optional[datetime_type]]
+    last_synced_account: Mapped[datetime_type | None]
+    last_synced_transactions: Mapped[datetime_type | None]
 
     organization: Mapped["SimpleFINOrganization"] = relationship(
         lazy="joined", viewonly=True
     )
 
     @property
-    def access(self):
+    def access(self) -> AccountAccess:
         return AccountAccess(self.access_type)
 
     @access.setter
-    def access(self, value):
+    def access(self, value) -> None:
         self.access_type = int(value)
 
-    def update_account_access_type_url(self):
+    def update_account_access_type_url(self) -> str:
         return url_for("simplefin_bp.update_account_access_type", id=self.id)
 
-    def update_account_name(self):
+    def update_account_name(self) -> str:
         return url_for("simplefin_bp.update_account_name", id=self.id)
 
 
@@ -439,10 +439,10 @@ class PendingTransaction(BaseModel, SqidSerializerMixin):
 
     account: Mapped["SimpleFINAccount"] = relationship(lazy="joined", viewonly=True)
 
-    def convert_pending_transaction_url(self):
+    def convert_pending_transaction_url(self) -> str:
         return url_for("simplefin_bp.convert_pending_transaction", id=self.id)
 
-    def delete_pending_transaction_url(self):
+    def delete_pending_transaction_url(self) -> str:
         return url_for("simplefin_bp.delete_pending_transaction", id=self.id)
 
 
@@ -452,7 +452,7 @@ class CompletedTransaction(BaseModel, SerializerMixin):
     id: Mapped[int_pk]
 
     simplefin_id: Mapped[str] = mapped_column(unique=True, index=True)
-    transaction_id: Mapped[Optional[int]] = mapped_column(
+    transaction_id: Mapped[int | None] = mapped_column(
         ForeignKey("transaction.id")
     )  # do i need this?
 
@@ -472,8 +472,8 @@ class SimpleFINTransaction(BaseModel, SerializerMixin):
     amount: Mapped[str]  # numeric string
     description: Mapped[str]
 
-    transacted_at: Mapped[Optional[int]]  # UNIX epoch timestamp
-    pending: Mapped[Optional[bool]]
+    transacted_at: Mapped[int | None]  # UNIX epoch timestamp
+    pending: Mapped[bool | None]
 
     account_id: Mapped[str] = mapped_column(ForeignKey("simplefin_account.id"))
     user_id: Mapped[user_fk]
@@ -496,8 +496,8 @@ class Alert(BaseModel, SqidSerializerMixin):
     id: Mapped[int_pk]
     user_id: Mapped[user_fk]
 
-    alert_type: Mapped[Optional[int]]  # AlertType
+    alert_type: Mapped[int | None]  # AlertType
 
     @property
-    def alert(self):
+    def alert(self) -> AlertType:
         return AlertType(self.alert_type)

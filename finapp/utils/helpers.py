@@ -1,10 +1,12 @@
-from datetime import date, timedelta
-from dateutil.relativedelta import relativedelta
-from finapp.queries import budget_queries, transaction_queries
 import json
+from datetime import date, timedelta
+
+from dateutil.relativedelta import relativedelta
+
+from finapp.queries import budget_queries, transaction_queries
 
 
-def get_date_from_string(str_date):
+def get_date_from_string(str_date) -> date | None:
     if not str_date:
         return None
 
@@ -50,7 +52,7 @@ def get_data_dict(all_trans):
     return data
 
 
-def net_spending(month, year, ytd):
+def net_spending(month, year, ytd) -> list[dict[str, int | str]]:
     data = []
     total_in = 0
     total_out = 0

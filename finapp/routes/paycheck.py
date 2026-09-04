@@ -1,4 +1,4 @@
-from flask import Blueprint, redirect, render_template, request, url_for
+from flask import Blueprint, Response, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
 from finapp.queries import (
@@ -13,7 +13,7 @@ paycheck_bp = Blueprint("paycheck_bp", __name__)
 
 @paycheck_bp.get("/paycheck")
 @login_required
-def add_paycheck():
+def add_paycheck() -> str:
     budgets = budget_queries.get_budgets(active_only=True)
     paychecks = paycheck_queries.get_distinct_paychecks()
 
@@ -28,7 +28,7 @@ def add_paycheck():
 
 @paycheck_bp.post("/paycheck")
 @login_required
-def paycheck():
+def paycheck() -> Response:
     name = request.form.get("name")
     amount = request.form.get("amount", type=float)
     date = helpers.get_date_from_string(request.form.get("date"))
@@ -48,13 +48,13 @@ def paycheck():
                 budget_id = sqids.decode_one(key)
 
                 transactions.append(
-                    dict(
-                        user_id=current_user.id,
-                        name=name,
-                        amount=t_amount,
-                        date=date,
-                        budget_id=budget_id,
-                    )
+                    {
+                        "user_id": current_user.id,
+                        "name": name,
+                        "amount": t_amount,
+                        "date": date,
+                        "budget_id": budget_id,
+                    }
                 )
 
         paycheck_queries.create_paycheck(

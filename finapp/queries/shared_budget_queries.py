@@ -1,17 +1,18 @@
+from collections.abc import Sequence
+
 from flask_login import current_user
 from sqlalchemy import insert, select
 from sqlalchemy.sql import and_
 
 from finapp import db
 from finapp.models import SharedBudget
-from finapp.utils.cache import TIMED_CACHE
 
 ##
 ## SharedBudget queries
 ##
 
 
-def create_shared_budget(budget):
+def create_shared_budget(budget) -> None:
     maybe = get_shared_budget(budget_id=budget.id)
     if maybe:
         return maybe
@@ -22,12 +23,8 @@ def create_shared_budget(budget):
     budget.is_shared = True
     db.session.commit()
 
-    cache = TIMED_CACHE.get("get_shared_users_for_all_budgets")
-    if cache:
-        cache.invalidate()
 
-
-def get_shared_budget(budget_id):
+def get_shared_budget(budget_id) -> None:
     stmt = select(SharedBudget).where(
         and_(
             SharedBudget.user_id == current_user.id, SharedBudget.budget_id == budget_id
@@ -37,13 +34,13 @@ def get_shared_budget(budget_id):
     db.session.scalars(stmt.limit(1)).first()
 
 
-def get_shared_budgets_by_budget_id(budget_id):
+def get_shared_budgets_by_budget_id(budget_id) -> Sequence[SharedBudget]:
     stmt = select(SharedBudget).where(SharedBudget.budget_id == budget_id)
 
     return db.session.scalars(stmt).all()
 
 
-def get_shared_budget_for_user_id(budget_id, user_id):
+def get_shared_budget_for_user_id(budget_id: type[SharedBudget], user_id) -> SharedBudget | None:
     stmt = (
         select(SharedBudget)
         .where(
@@ -56,7 +53,7 @@ def get_shared_budget_for_user_id(budget_id, user_id):
 
 
 # TODO: Refactor to bulk update
-def update_shared_budgets(shared_budgets, new_budget_id):
+def update_shared_budgets(shared_budgets, new_budget_id) -> None:
     for sb in shared_budgets:
         sb.budget_id = new_budget_id
 
@@ -64,7 +61,7 @@ def update_shared_budgets(shared_budgets, new_budget_id):
 
 
 # TODO: Refactor to bulk delete
-def delete_shared_budgets(shared_budgets):
+def delete_shared_budgets(shared_budgets) -> None:
     for sb in shared_budgets:
         db.session.delete(sb)
 

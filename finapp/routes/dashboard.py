@@ -1,28 +1,26 @@
-from unicodedata import category
+from flask import Blueprint, render_template, request
+from flask_login import login_required
+
 from finapp.queries import (
-    budget_queries,
     category_queries,
     dashboard_queries,
     transaction_queries,
 )
-from flask import Blueprint, render_template, request
-from flask_login import login_required
-from finapp.utils.Sqids import sqids
 from finapp.utils import helpers
-
+from finapp.utils.Sqids import sqids
 
 dashboard_bp = Blueprint("dashboard_bp", __name__)
 
 
-@dashboard_bp.route("/dashboard", methods=["GET"])
+@dashboard_bp.get("/dashboard")
 @login_required
-def dashboard():
+def dashboard() -> str:
     dashboard_queries.get_spending_by_budget_and_month()
     start_date = transaction_queries.get_first_transaction_date()
     return render_template("dashboard.newest.html", startDate=start_date)
 
 
-@dashboard_bp.route("/api/get_net_worth_data", methods=["GET"])
+@dashboard_bp.get("/api/get_net_worth_data")
 @login_required
 def api_get_net_worth_data():
     data = dashboard_queries.get_net_worth_data()
@@ -30,7 +28,7 @@ def api_get_net_worth_data():
     return {"data": data}
 
 
-@dashboard_bp.route("/api/get_budget_totals_by_date", methods=["GET"])
+@dashboard_bp.get("/api/get_budget_totals_by_date")
 @login_required
 def api_get_budget_totals_by_date():
     lc_data, start_date_, end_date = dashboard_queries.get_line_chart_data()
@@ -38,9 +36,9 @@ def api_get_budget_totals_by_date():
     return {"data": lc_data, "start_date": start_date_, "end_date": end_date}
 
 
-@dashboard_bp.route("/api/get_spending_by_budget", methods=["GET"])
+@dashboard_bp.get("/api/get_spending_by_budget")
 @login_required
-def api_get_spending_by_budget():
+def api_get_spending_by_budget() -> list[dict[str, int | str]]:
     month = request.args.get("month", 0, type=int)
     year = request.args.get("year", 0, type=int)
     ytd = request.args.get("ytd") == "true"

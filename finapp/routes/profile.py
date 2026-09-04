@@ -1,5 +1,6 @@
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, Response, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
+
 from finapp.queries import user_queries
 
 profile_bp = Blueprint("profile_bp", __name__)
@@ -7,7 +8,7 @@ profile_bp = Blueprint("profile_bp", __name__)
 
 @profile_bp.route("/profile", methods=["GET", "POST"])
 @login_required
-def profile():
+def profile() -> Response | str:
     if request.method == "POST":
         username = request.form.get("username")
         email = request.form.get("email")

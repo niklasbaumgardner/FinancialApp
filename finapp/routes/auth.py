@@ -1,4 +1,12 @@
-from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask import (
+    Blueprint,
+    Response,
+    flash,
+    redirect,
+    render_template,
+    request,
+    url_for,
+)
 from flask_login import current_user, login_required, login_user, logout_user
 
 from finapp import bcrypt
@@ -10,7 +18,7 @@ auth_bp = Blueprint("auth_bp", __name__)
 
 
 @auth_bp.route("/login", methods=["GET", "POST"])
-def login():
+def login() -> Response | str:
     if current_user.is_authenticated:
         return redirect(url_for("viewbudgets_bp.viewbudgets"))
 
@@ -26,7 +34,7 @@ def login():
         user = user_queries.get_user_by_email(email=email)
 
         if user and bcrypt.check_password_hash(user.password, password):
-            remember = True if remember == "True" else False
+            remember = remember == "True"
             login_user(user, remember=remember)
 
             next_url = request.args.get("next")
@@ -45,11 +53,11 @@ def login():
 
 
 @auth_bp.route("/signup", methods=["GET", "POST"])
-def signup():
+def signup() -> Response | str:
     if request.method == "POST":
-        email = request.form.get("email")
-        username = request.form.get("username")
-        password1 = request.form.get("password1")
+        email = request.form.get("email", "")
+        username = request.form.get("username", "")
+        password1 = request.form.get("password1", "")
 
         if not user_queries.is_email_unique(email):
             flash("Email already exists. Please log in", "primary")
@@ -75,7 +83,7 @@ def signup():
 
 
 @auth_bp.route("/password_request", methods=["GET", "POST"])
-def password_request():
+def password_request() -> Response | str:
     if current_user.is_authenticated:
         user = user_queries.get_user_by_id(id=current_user.id)
         token = user.get_reset_token()
@@ -95,7 +103,7 @@ def password_request():
 
 
 @auth_bp.route("/password_reset", methods=["GET", "POST"])
-def password_reset():
+def password_reset() -> Response | str:
     token = request.args.get("token")
     if request.method == "POST":
         user = User.verify_reset_token(token)
@@ -125,20 +133,20 @@ def password_reset():
 
 @auth_bp.route("/logout")
 @login_required
-def logout():
+def logout() -> Response:
     logout_user()
     return redirect(url_for("auth_bp.login"))
 
 
 @auth_bp.route("/username_unique", methods=["GET"])
-def username_unique():
+def username_unique() -> dict[str, bool]:
     username = request.args.get("username")
 
     return {"isUnique": user_queries.is_username_unique(username)}
 
 
 @auth_bp.route("/email_unique", methods=["GET"])
-def email_unique():
+def email_unique() -> dict[str, bool]:
     email = request.args.get("email")
 
     return {"isUnique": user_queries.is_email_unique(email)}

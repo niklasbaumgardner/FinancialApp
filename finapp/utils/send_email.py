@@ -7,16 +7,16 @@ from finapp import app, mail
 from finapp.queries import user_queries
 
 
-def async_email_sender(a_app, msg):
+def async_email_sender(a_app, msg) -> None:
     with a_app.app_context():
         mail.send(msg)
 
 
-def send_async_email(msg):
+def send_async_email(msg: Message) -> None:
     Thread(target=async_email_sender, args=(app, msg)).start()
 
 
-def send_reset_email(user):
+def send_reset_email(user) -> None:
     if not user:
         return
 
@@ -29,7 +29,7 @@ If you did not make this request then please ignore this email and no changes wi
     send_async_email(msg)
 
 
-def send_share_budget_email(sender_username, token, recipient):
+def send_share_budget_email(sender_username, token, recipient) -> None:
     if not recipient:
         return
 
@@ -44,7 +44,7 @@ If you do not want this or this was not intened for you then please ignore this 
     send_async_email(msg)
 
 
-def send_weekly_report(user_id, report_content):
+def send_weekly_report(user_id, report_content) -> None:
     user = user_queries.get_user_by_id(user_id)
 
     # Sorted by most change
@@ -52,10 +52,10 @@ def send_weekly_report(user_id, report_content):
 
     msg = Message("Weekly spending report", recipients=[user.email])
 
-    def money_string(number):
+    def money_string(number) -> str:
         return f"{'-' if number < 0 else ''}${abs(round(number, 2))}"
 
-    def difference_string(number):
+    def difference_string(number) -> str:
         return f"{'+' if number >= 0 else ''}{round(number, 2)}"
 
     title = "Below is the amount spent for each budget in the last week."

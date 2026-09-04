@@ -1,22 +1,19 @@
-from flask import Blueprint, request, redirect, render_template, url_for
-from flask_login import login_required, current_user
-from finapp.utils import helpers
-from finapp.queries import budget_queries, transaction_queries
-from finapp.utils.Sqids import sqids
+from flask import Blueprint, Response, redirect, render_template, request, url_for
+from flask_login import current_user, login_required
 
+from finapp.queries import budget_queries, transaction_queries
+from finapp.utils import helpers
+from finapp.utils.Sqids import sqids
 
 transfer_bp = Blueprint("transfer_bp", __name__)
 
 
 @transfer_bp.route("/transfer", methods=["GET", "POST"])
 @login_required
-def transfer():
+def transfer() -> Response | str:
     if request.method == "POST":
         name = request.form.get("name")
-        try:
-            amount = float(request.form.get("amount"))
-        except:
-            amount = None
+        amount = request.form.get("amount", type=float)
 
         str_date = request.form.get("date")
         date = helpers.get_date_from_string(str_date)

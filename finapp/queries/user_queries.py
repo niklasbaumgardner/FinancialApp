@@ -1,4 +1,6 @@
+from sqlalchemy.sql.dml import Update
 import os
+from collections.abc import Sequence
 
 from flask_login import current_user
 from sqlalchemy import func, insert, select, update
@@ -12,25 +14,25 @@ from finapp.models import Budget, SharedBudget, User
 ##
 
 
-def create_user(email, username, password):
+def create_user(email, username, password) -> None:
     hash_ = hash_password(password=password)
     stmt = insert(User).values(email=email, username=username, password=hash_)
     db.session.execute(stmt)
     db.session.commit()
 
 
-def get_user_by_id(id):
+def get_user_by_id(id: Update) -> User | None:
     stmt = select(User).where(User.id == id)
     return db.session.scalars(stmt.limit(1)).first()
 
 
-def get_user_by_email(email):
+def get_user_by_email(email) -> User | None:
     stmt = select(User).where(User.email == email)
     return db.session.scalars(stmt.limit(1)).first()
 
 
-def update_user(username, email):
-    update_dict = dict()
+def update_user(username, email) -> None:
+    update_dict = {}
     if username is not None:
         update_dict["username"] = username.strip()
     if email is not None:
@@ -42,7 +44,7 @@ def update_user(username, email):
     db.session.commit()
 
 
-def update_user_password(id, password):
+def update_user_password(id, password) -> None:
     if not password or not id:
         return
 
@@ -57,23 +59,23 @@ def update_user_password(id, password):
     db.session.commit()
 
 
-def hash_password(password):
+def hash_password(password) -> str:
     return bcrypt.generate_password_hash(password=password).decode("utf-8")
 
 
-def is_email_unique(email):
+def is_email_unique(email) -> bool:
     stmt = select(func.count()).where(User.email == email)
     count = db.session.execute(stmt).scalar_one()
     return count == 0
 
 
-def is_username_unique(username):
+def is_username_unique(username) -> bool:
     stmt = select(func.count()).where(User.username == username)
     count = db.session.execute(stmt).scalar_one()
     return count == 0
 
 
-def get_shared_users_for_all_budgets():
+def get_shared_users_for_all_budgets() -> Sequence[User]:
     stmt = (
         select(User)
         .outerjoin(Budget, User.id == Budget.user_id)
@@ -91,7 +93,7 @@ def get_shared_users_for_all_budgets():
     return shared_users
 
 
-def get_shared_users_for_user(key, user_id):
+def get_shared_users_for_user(key, user_id) -> Sequence[User] | None:
     if key != os.environ.get("SIMPLEFIN_KEY"):
         return
 

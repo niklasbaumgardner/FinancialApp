@@ -9,7 +9,7 @@ from finapp.models import AccountAccess
 from finapp.queries import simplefin_queries, transaction_queries
 
 
-def claim_simplefin_token(setup_token):
+def claim_simplefin_token(setup_token) -> tuple[str, str]:
     claim_url = base64.b64decode(setup_token)
 
     response = requests.post(claim_url)
@@ -122,7 +122,7 @@ def request_simplefin(credentials):
     return data
 
 
-def update_account_transactions(data):
+def update_account_transactions(data) -> None:
     __update_account_transactions_for_user(data=data, user_id=current_user.id)
 
     if data:
@@ -130,7 +130,7 @@ def update_account_transactions(data):
         simplefin_queries.update_simeplefin_accounts(accounts=accounts)
 
 
-def __update_account_transactions_for_user(data, user_id):
+def __update_account_transactions_for_user(data, user_id) -> None:
     if data:
         errors = data.get("errors")
         for error in errors:
@@ -161,7 +161,7 @@ def __update_account_transactions_for_user(data, user_id):
             )
 
 
-def sync_simplefin_transactions(credentials):
+def sync_simplefin_transactions(credentials) -> None:
     if credentials:
         accounts = simplefin_queries.get_simplefin_accounts_with_timestamp(
             access_type=AccountAccess.TRANSACTION
@@ -186,7 +186,7 @@ def sync_simplefin_transactions(credentials):
     simplefin_queries.create_pending_transactions(transactions=missing_SFTs)
 
 
-def sync_simplefin_account_balances(credentials):
+def sync_simplefin_account_balances(credentials) -> None:
     accounts = simplefin_queries.get_simplefin_accounts_with_timestamp(
         access_type=AccountAccess.BALANCE
     )
@@ -209,7 +209,7 @@ def sync_simplefin_account_balances(credentials):
         simplefin_queries.update_simeplefin_accounts(accounts=accounts)
 
 
-def sync_simplefin(credentials):
+def sync_simplefin(credentials) -> None:
     data = request_simplefin(credentials=credentials)
 
     if data:
@@ -228,7 +228,7 @@ def sync_simplefin(credentials):
         simplefin_queries.upsert_account_balances(accounts=accounts)
 
 
-def update_all_accounts_and_transactions(key):
+def update_all_accounts_and_transactions(key) -> None:
     if key != os.environ.get("SIMPLEFIN_KEY"):
         return
 

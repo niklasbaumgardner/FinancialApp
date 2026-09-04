@@ -1,3 +1,5 @@
+from collections.abc import Sequence
+
 from flask_login import current_user
 from sqlalchemy import delete, insert, select
 from sqlalchemy.sql import and_
@@ -11,7 +13,7 @@ from finapp.queries import user_queries
 ##
 
 
-def create_category(name, color):
+def create_category(name, color) -> None:
     stmt = insert(Category).values(
         user_id=current_user.id, name=name.strip(), color=color
     )
@@ -19,13 +21,13 @@ def create_category(name, color):
     db.session.commit()
 
 
-def get_shared_categories(user_ids):
+def get_shared_categories(user_ids: list[int]) -> Sequence[Category]:
     return db.session.scalars(
         select(Category).where(Category.user_id.in_(user_ids))
     ).all()
 
 
-def get_categories():
+def get_categories() -> Sequence[Category]:
     users = user_queries.get_shared_users_for_all_budgets()
 
     return get_shared_categories([u.id for u in users])
@@ -36,9 +38,11 @@ def get_categories():
 ##
 
 
-def bulk_add_transaction_categories(user_id, transaction_id, category_ids, commit=True):
+def bulk_add_transaction_categories(
+    user_id, transaction_id, category_ids, commit: bool = True
+) -> None:
     t_categories = [
-        dict(user_id=user_id, transaction_id=transaction_id, category_id=c_id)
+        {"user_id": user_id, "transaction_id": transaction_id, "category_id": c_id}
         for c_id in category_ids
     ]
 
@@ -49,7 +53,9 @@ def bulk_add_transaction_categories(user_id, transaction_id, category_ids, commi
         db.session.commit()
 
 
-def bulk_delete_transaction_categories(transaction_id, category_ids, commit=True):
+def bulk_delete_transaction_categories(
+    transaction_id, category_ids, commit: bool = True
+) -> None:
     stmt = delete(TransactionCategory).where(
         and_(
             TransactionCategory.transaction_id == transaction_id,
