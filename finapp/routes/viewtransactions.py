@@ -45,8 +45,7 @@ def view_transactions() -> str:
 @viewtransactions_bp.get("/api/get_transactions")
 @login_required
 def api_get_transactions():
-    include_budgets = request.args.get("includeBudgets")
-    include_budgets = include_budgets and include_budgets == "True"
+    include_budgets = request.args.get("includeBudgets", "") == "True"
 
     transactions, _ = transaction_queries.get_recent_transactions()
     transactions = [t.to_dict() for t in transactions]
@@ -57,6 +56,14 @@ def api_get_transactions():
         return {"transactions": transactions, "budgets": budgets}
 
     return {"transactions": transactions}
+
+
+@viewtransactions_bp.get("/api/get_budgets")
+@login_required
+def api_get_budgets():
+    budgets = [b.to_dict() for b in budget_queries.get_budgets()]
+
+    return {"budgets": budgets}
 
 
 @viewtransactions_bp.get("/api/get_transactions_stream")

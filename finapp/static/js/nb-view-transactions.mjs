@@ -2,6 +2,7 @@ import { NikElement } from "./nik-element.mjs";
 import { html } from "lit";
 import "./nb-transactions-grid.mjs";
 import "./nb-add-transaction.mjs";
+import "./budgets.mjs";
 
 const ABORT_ERROR = "AbortError";
 class RequestController {
@@ -71,6 +72,7 @@ class ViewTransactions extends NikElement {
     document.addEventListener("RequestNewData", this);
     document.addEventListener("keydown", this);
     document.addEventListener("UpdatePendingTransactions", this);
+    document.addEventListener("BudgetsUpdated", this);
   }
 
   handleEvent(event) {
@@ -89,6 +91,10 @@ class ViewTransactions extends NikElement {
         this.updatePendingTransactions(pendingTransactions);
         break;
       }
+      case "BudgetsUpdated": {
+        const { budgets } = event.detail;
+        this.updateBudgets(budgets);
+      }
     }
   }
 
@@ -100,48 +106,47 @@ class ViewTransactions extends NikElement {
       }
       this.budgets[budgetIndex] = budget;
     }
-
-    if (this.addTransactionModal) {
-      this.addTransactionModal.updateBudgets(this.budgets);
-    }
-    for (let el of document.querySelectorAll("nb-edit-transaction")) {
-      el.updateBudgets(this.budgets);
-    }
   }
 
   async requestData(includeBudgets = false) {
-    this.gotTransactions = false;
-    let url = VIEW_TRANSACTIONS_CONTENT_URL;
-    if (includeBudgets) {
-      url += "?includeBudgets=True";
-    }
-
-    let data;
-    try {
-      data = await this.requestController.doRequest(url);
-    } catch (e) {
-      if (e.name === ABORT_ERROR) {
-        return;
+    if (!this.waGridEnabled) {
+      this.gotTransactions = false;
+      let url = VIEW_TRANSACTIONS_CONTENT_URL;
+      if (includeBudgets) {
+        url += "?includeBudgets=True";
       }
 
-      throw e;
-    }
+      let data;
+      try {
+        data = await this.requestController.doRequest(url);
+      } catch (e) {
+        if (e.name === ABORT_ERROR) {
+          return;
+        }
 
-    let { transactions } = data;
-    this.transactions = transactions;
-    this.gotTransactions = true;
-    this.setDownloadLink();
-    document.dispatchEvent(
-      new CustomEvent("UpdateTransactions", {
-        bubbles: true,
-        composed: true,
-        detail: { transactions },
-      }),
-    );
+        throw e;
+      }
 
-    if (includeBudgets) {
-      let { budgets } = data;
-      this.updateBudgets(budgets);
+      let { transactions } = data;
+      this.transactions = transactions;
+      this.gotTransactions = true;
+      this.setDownloadLink();
+      document.dispatchEvent(
+        new CustomEvent("UpdateTransactions", {
+          bubbles: true,
+          composed: true,
+          detail: { transactions },
+        }),
+      );
+
+      if (includeBudgets) {
+        let { budgets } = data;
+        this.updateBudgets(budgets);
+      }
+    } else if (includeBudgets) {
+      document.dispatchEvent(
+        new CustomEvent("UpdateBudgets", { bubbles: true }),
+      );
     }
   }
 

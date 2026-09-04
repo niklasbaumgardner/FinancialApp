@@ -1,8 +1,8 @@
 from typing import Any
 
 from flask import Blueprint, redirect, request, url_for
-from flask.typing import ResponseReturnValue
 from flask_login import current_user, login_required
+from werkzeug.wrappers.response import Response
 
 from finapp.queries import user_settings_queries
 
@@ -22,7 +22,7 @@ def update_settings() -> dict[str, bool]:
 
 @user_settings_bp.get("/update_settings")
 @login_required
-def update_settings_get() -> ResponseReturnValue:
+def update_settings_get() -> Response:
     settings_data: dict[str, Any] = request.args.to_dict()
 
     for k, v in settings_data.items():

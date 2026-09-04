@@ -2,6 +2,7 @@ import { BaseDialog } from "./nb-base-dialog.mjs";
 import { html } from "lit";
 import "./nb-categories-select.mjs";
 import "./nb-pending-transaction.mjs";
+import "./budgets.mjs";
 
 export class AddTransactionModal extends BaseDialog {
   static properties = {
@@ -48,11 +49,25 @@ export class AddTransactionModal extends BaseDialog {
     super.connectedCallback();
 
     this.budgets.sort((a, b) => a.name.localeCompare(b.name));
+
+    document.addEventListener("BudgetsUpdated", this);
+  }
+
+  handleEvent(event) {
+    switch (event.type) {
+      case "BudgetsUpdated": {
+        const { budgets } = event.detail;
+
+        this.updateBudgets(budgets);
+      }
+    }
   }
 
   updateBudgets(budgets) {
+    budgets.sort((a, b) => a.name.localeCompare(b.name));
+
+    this.budgets = [];
     this.budgets = budgets;
-    this.budgets.sort((a, b) => a.name.localeCompare(b.name));
     this.requestUpdate();
     this.updateComplete.then(() => {
       if (this.budgetsSelect.selectedOptions[0]?.updateDefaultLabel()) {
@@ -91,6 +106,11 @@ export class AddTransactionModal extends BaseDialog {
         bubbles: true,
         composed: true,
         detail: { transaction },
+      }),
+    );
+    document.dispatchEvent(
+      new CustomEvent("UpdateBudgets", {
+        bubbles: true,
       }),
     );
 

@@ -1,6 +1,7 @@
 import { html } from "lit";
 import "./nb-categories-select.mjs";
 import { AddTransactionModal } from "./nb-add-transaction.mjs";
+import "./budgets.mjs";
 
 export class EditTransactionModal extends AddTransactionModal {
   static properties = {
@@ -36,6 +37,31 @@ export class EditTransactionModal extends AddTransactionModal {
     users.push(...this.selectedBudget.shared_users);
     users.sort((a, b) => a.username.localeCompare(b.username));
     this.sharedUsers = users;
+
+    document.addEventListener("BudgetsUpdated", this);
+  }
+
+  handleEvent(event) {
+    switch (event.type) {
+      case "BudgetsUpdated": {
+        const { budgets } = event.detail;
+
+        this.updateBudgets(budgets);
+      }
+    }
+  }
+
+  updateBudgets(budgets) {
+    budgets.sort((a, b) => a.name.localeCompare(b.name));
+
+    this.budgets = [];
+    this.budgets = budgets;
+    this.requestUpdate();
+    this.updateComplete.then(() => {
+      if (this.budgetsSelect.selectedOptions[0]?.updateDefaultLabel()) {
+        this.budgetsSelect.selectionChanged();
+      }
+    });
   }
 
   reset() {
@@ -112,6 +138,12 @@ export class EditTransactionModal extends AddTransactionModal {
         bubbles: true,
         composed: true,
         detail: { transaction },
+      }),
+    );
+
+    document.dispatchEvent(
+      new CustomEvent("UpdateBudgets", {
+        bubbles: true,
       }),
     );
 

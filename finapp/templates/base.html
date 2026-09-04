@@ -43,6 +43,8 @@
       // URL for adding new budget
       const ADD_NEW_BUDGET_URL = "{{ url_for('editbudget_bp.add_budget') }}";
 
+      const GET_BUDGETS_URL = "{{ url_for('viewtransactions_bp.api_get_budgets') }}";
+
       {% if current_user.is_authenticated %}
         const CURRENT_USER = {{ current_user.to_dict()|tojson }};
         const USER_SETTINGS = {{ user_settings.settings|tojson }};
