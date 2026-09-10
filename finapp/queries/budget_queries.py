@@ -1,6 +1,3 @@
-from sqlalchemy.sql.elements import ColumnElement
-from sqlalchemy.orm.attributes import InstrumentedAttribute
-from finapp.models import SharedBudget
 from collections.abc import Sequence
 
 from flask_login import current_user
@@ -18,7 +15,7 @@ from finapp.queries import transaction_queries
 ##
 
 
-def create_budget(name: ColumnElement[bool]):
+def create_budget(name: str):
     stmt = insert(Budget).values(
         name=name.strip(),
         total=0,
@@ -34,7 +31,7 @@ def create_budget(name: ColumnElement[bool]):
     return budget_id
 
 
-def get_budget_for_id(id) -> Budget | None:
+def get_budget_for_id(id: int) -> Budget | None:
     # do not call this method unless absolutely needed
     return db.session.scalars(select(Budget).where(Budget.id == id).limit(1)).first()
 
@@ -76,7 +73,10 @@ def get_budgets_query() -> Select[tuple[Budget]]:
 
 
 def get_budget(
-    budget_id: type[SharedBudget], shared: bool = True, query: bool = False, first_or_404: bool = True
+    budget_id: type[SharedBudget],
+    shared: bool = True,
+    query: bool = False,
+    first_or_404: bool = True,
 ) -> Budget | Select[tuple[Budget]] | None:
     stmt = get_budget_query(budget_id=budget_id)
 
@@ -108,7 +108,7 @@ def can_user_modify_budgets(budget_ids, user_id) -> bool:
     return budget_count == len(budget_ids)
 
 
-def can_modify_budgets(budget_ids: InstrumentedAttribute[str]) -> bool:
+def can_modify_budgets(budget_ids: set[int]) -> bool:
     return can_user_modify_budgets(budget_ids=budget_ids, user_id=current_user.id)
 
 
@@ -214,7 +214,7 @@ def update_budget(budget_id, name=None, is_active=None) -> None:
         db.session.commit()
 
 
-def update_budget_total(budget_id: InstrumentedAttribute[str], budget=None, commit: bool = True) -> None:
+def update_budget_total(budget_id: int, budget=None, commit: bool = True) -> None:
     if can_modify_budget(budget_id=budget_id):
         total = transaction_queries.get_transactions_sum(budget_id=budget_id)
         stmt = (

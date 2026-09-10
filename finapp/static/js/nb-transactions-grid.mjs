@@ -146,7 +146,8 @@ export class TransactionsGrid extends BaseGrid {
     if (
       tagName === "input" ||
       tagName === "wa-input" ||
-      tagName === "wa-option"
+      tagName === "wa-option" ||
+      tagName === "nb-data-grid"
     ) {
       return;
     }

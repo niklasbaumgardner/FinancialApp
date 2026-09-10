@@ -1,4 +1,3 @@
-from sqlalchemy.sql.elements import ColumnElement
 import os
 from datetime import date, timedelta
 
@@ -6,6 +5,7 @@ from flask_login import current_user
 from sqlalchemy import FLOAT, cast, delete, extract, insert, select, update
 from sqlalchemy.orm import noload
 from sqlalchemy.sql import and_, func, or_
+from sqlalchemy.sql.elements import ColumnElement
 from sqlalchemy.sql.selectable import Select
 
 from finapp import db
@@ -158,7 +158,7 @@ def create_transaction(
 
 
 def bulk_create_transactions(transactions, commit: bool = True) -> None:
-    budget_ids = {t["budget_id"] for t in transactions}
+    budget_ids: set[int] = {t["budget_id"] for t in transactions}
     if budget_queries.can_modify_budgets(budget_ids=budget_ids):
         stmt = (
             insert(Transaction)
@@ -287,7 +287,7 @@ def get_transactions(
 
 
 def get_transactions_for_month(
-    budget_id,
+    budget_id: int,
     month,
     year,
     include_transfers: bool = True,
@@ -320,8 +320,8 @@ def get_transactions_for_month(
 
 
 def get_transactions_for_year(
-    budget_id,
-    year,
+    budget_id: int,
+    year: int,
     include_transfers: bool = True,
     page: int = 1,
     sort_by=None,
@@ -350,8 +350,8 @@ def get_transactions_for_year(
 
 
 def update_transaction(
-    budget_id,
-    transaction_id,
+    budget_id: int,
+    transaction_id: int,
     new_budget_id=None,
     user_id=None,
     name=None,
@@ -439,7 +439,7 @@ def bulk_update_transactions_budget(old_budget_id, new_budget_id) -> None:
         db.session.commit()
 
 
-def delete_transaction(transaction_id, budget_id) -> None:
+def delete_transaction(transaction_id: int, budget_id) -> None:
     if can_modify_transaction(transaction_id=transaction_id):
         stmt = delete(Transaction).where(Transaction.id == transaction_id)
         db.session.execute(stmt)
@@ -587,31 +587,42 @@ def search(
 def data_grid(sort, filters, search, page, page_size):
     stmt = get_transactions_query(include_budget=True)
 
+    joined = set()
+
+    def join_once(
+        stmt,
+        model: type[Budget] | type[TransactionCategory] | type[User],
+        join_condition: ColumnElement[bool],
+    ):
+        if model in joined:
+            return stmt
+        joined.add(model)
+
+        return stmt.join(model, join_condition)
+
     if len(sort) > 0:
         for o in sort:
             # TODO: sort by categgory names
             if o["id"] == "budget":
+                stmt = join_once(
+                    stmt,
+                    Budget,
+                    Transaction.budget_id == Budget.id,
+                )
                 if o["desc"]:
-                    stmt = stmt.join(
-                        Budget,
-                        Transaction.budget_id == Budget.id,
-                    ).order_by(Budget.name.desc())
+                    stmt = stmt.order_by(Budget.name.desc())
                 else:
-                    stmt = stmt.join(
-                        Budget,
-                        Transaction.budget_id == Budget.id,
-                    ).order_by(Budget.name.asc())
+                    stmt = stmt.order_by(Budget.name.asc())
             elif o["id"] == "user":
+                stmt = join_once(
+                    stmt,
+                    User,
+                    Transaction.user_id == User.id,
+                )
                 if o["desc"]:
-                    stmt = stmt.join(
-                        User,
-                        Transaction.user_id == User.id,
-                    ).order_by(User.username.desc())
+                    stmt = stmt.order_by(User.username.desc())
                 else:
-                    stmt = stmt.join(
-                        User,
-                        Transaction.user_id == User.id,
-                    ).order_by(User.username.asc())
+                    stmt = stmt.order_by(User.username.asc())
             else:
                 if o["desc"]:
                     stmt = stmt.order_by(getattr(Transaction, o["id"]).desc())
@@ -624,13 +635,15 @@ def data_grid(sort, filters, search, page, page_size):
         value = o["value"]
         if type(value) == str:
             if o["id"] == "budget":
-                stmt = stmt.join(
+                stmt = join_once(
+                    stmt,
                     Budget,
                     Transaction.budget_id == Budget.id,
                 ).where(Budget.name.ilike(f"%{value}%"))
 
             elif o["id"] == "user":
-                stmt = stmt.join(
+                stmt = join_once(
+                    stmt,
                     User,
                     Transaction.user_id == User.id,
                 ).where(User.username.ilike(f"%{value}%"))
@@ -645,7 +658,8 @@ def data_grid(sort, filters, search, page, page_size):
                 stmt = stmt.where(getattr(Transaction, o["id"]) <= second)
 
         elif o["id"] == "categories":
-            stmt = stmt.join(
+            stmt = join_once(
+                stmt,
                 TransactionCategory,
                 Transaction.id == TransactionCategory.transaction_id,
             ).where(
@@ -814,7 +828,7 @@ def find_transaction_for_pending_transaction(
     return len(transactions) > 0, [(t, True) for t in transactions]
 
 
-def get_transactions_sum(budget_id):
+def get_transactions_sum(budget_id: int):
     stmt = get_transactions_query(
         selection=[func.sum(Transaction.amount)], skip_no_load=True
     ).where(Transaction.budget_id == budget_id)
@@ -907,7 +921,7 @@ def get_total_spent(year, month):
     return __get_net_spending__(condition=condition, year=year, month=month)
 
 
-def get_total_income(year: ColumnElement[bool], month):
+def get_total_income(year: int, month):
     condition = Transaction.amount > 0
     return __get_net_spending__(condition=condition, year=year, month=month)
 

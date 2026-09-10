@@ -1,9 +1,7 @@
-import { html, isServer, nothing, css } from "lit";
-import { styleMap } from "lit/directives/style-map.js";
+import { html, css } from "lit";
 import { NikElement } from "./nik-element.mjs";
 import * as agGrid from "./agGrid.mjs";
 import { WaDataGrid } from "./main.mjs";
-var EXPAND_COL = "__expand__";
 
 export class BaseGrid extends NikElement {
   get currentColorScheme() {

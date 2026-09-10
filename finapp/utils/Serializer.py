@@ -14,7 +14,7 @@ class SerializerMixin:
         only = self.serialize_only or () + only
         return only
 
-    def get_serialize_rules(self, rules):
+    def get_serialize_rules(self, rules: object | Self | None):
         rules = rules or ()
         rules = self.serialize_rules or () + rules
         return rules

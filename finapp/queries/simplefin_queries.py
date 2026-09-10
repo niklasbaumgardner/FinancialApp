@@ -98,7 +98,7 @@ def get_simplefin_organization(
     return db.session.scalars(stmt.limit(1)).first()
 
 
-def get_or_create_simplefin_organization(org) -> SimpleFINOrganization | None:
+def get_or_create_simplefin_organization(org: dict) -> SimpleFINOrganization | None:
     sf_org = get_simplefin_organization(
         simplefin_id=org.get("id"), domain=org.get("domain"), name=org.get("name")
     )
@@ -294,7 +294,7 @@ def get_simplefin_accounts_with_timestamp(access_type=None):
     return db.session.execute(stmt).unique().all()
 
 
-def get_all_accounts_for_user_with_timestamp(key, user_id, access_type=None):
+def get_all_accounts_for_user_with_timestamp(key: str, user_id: int, access_type=None):
     if key != os.environ.get("SIMPLEFIN_KEY"):
         return
 

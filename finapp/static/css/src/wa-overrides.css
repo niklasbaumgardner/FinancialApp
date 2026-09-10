@@ -85,6 +85,7 @@ nb-data-grid {
     var(--wa-color-brand-10)
   );
   --header-row-height: 3rem;
+  /* --border-radius: var(--wa-border-radius-s); */
 }
 
 nb-data-grid::part(header-cell) {
