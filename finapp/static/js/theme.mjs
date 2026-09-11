@@ -14,6 +14,7 @@ export const THEME_LIST = [
   "playful",
   "premium",
   "tailspin",
+  "ledger",
 ];
 
 export const THEME_MODE_LIST = ["light", "dark"];

@@ -45,6 +45,7 @@ VALID_THEMES = {
     "playful",
     "premium",
     "tailspin",
+    "ledger",
 }
 
 VALID_THEME_MODES = {"light", "dark"}

@@ -32,6 +32,7 @@ const result = await buildFunction({
     premium: "./finapp/static/css/src/themes/premium.css",
     shoelace: "./finapp/static/css/src/themes/shoelace.css",
     tailspin: "./finapp/static/css/src/themes/tailspin.css",
+    ledger: "./finapp/static/css/src/themes/ledger.css",
 
     // Palettes
     "anodized.palette": "./finapp/static/css/src/color/palettes/anodized.css",
