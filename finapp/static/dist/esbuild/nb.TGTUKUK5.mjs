@@ -546,7 +546,7 @@ ${s}
   }
 `,tv=class extends ng{static css=[...ng.css,BV];async connectedCallback(){super.connectedCallback(),await customElements.whenDefined("wa-data-grid");let t=Array.from(document.styleSheets).map(s=>Array.from(s.cssRules).map(n=>n.cssText).join(`
 `)).join(`
-`),e=new CSSStyleSheet;e.replaceSync(t),this.shadowRoot.adoptedStyleSheets=[e,...this.shadowRoot.adoptedStyleSheets]}firstUpdated(t){super.firstUpdated(t);let e=this.virtualizer.virtualizer;e?.setOptions({...e.options,getItemKey:s=>this.previousRows?.[s]?.id??s}),this.virtualizer.clearMeasurements()}updated(t){super.updated(t);for(let e of this.shadowRoot.querySelectorAll('[part~="body"] .row[data-index]'))this.virtualizer.measureElement(e)}};customElements.define("nb-data-grid",tv);var iv=class extends ce{static properties={name:{type:String},color:{type:String},size:{type:String},removable:{type:Boolean}};constructor(){super(),this.removable=!1}handleRemoveClick(){this.dispatchEvent(new CustomEvent("wa-remove",{bubbles:!0,cancelable:!1,composed:!0}))}render(){return E`<span class="tag ${this.color}" part="base"
+`),e=new CSSStyleSheet;e.replaceSync(t),this.shadowRoot.adoptedStyleSheets=[e,...this.shadowRoot.adoptedStyleSheets]}firstUpdated(t){super.firstUpdated(t);let e=this.virtualizer.virtualizer;e?.setOptions({...e.options,getItemKey:s=>this.previousRows?.[s]?.id??s}),this.virtualizer.clearMeasurements()}updated(t){super.updated(t);for(let e of this.shadowRoot.querySelectorAll('[part~="body"] .row[data-index]'))this.virtualizer.measureElement(e)}columnStyle(t,e){let s=this.columnSizingState[t],n=this.columnById(t),a=s??(e&&e!==150?n?.width??e:n?.width);if(s==null&&a!=null){let o=this.headerMinWidths[t];o!=null&&o>a&&(a=o)}let r;return n?.width?r={flex:`0 0 ${a}px`,width:`${a}px`}:n?.flex!=null?r={flex:`${n.flex} 1 0`,minWidth:`${n.minWidth??0}px`,...n.maxWidth!=null?{maxWidth:`${n.maxWidth}px`}:{}}:r={flex:"1 1 0",minWidth:"0"},{...r,...this.pinnedStyle(t)}}};customElements.define("nb-data-grid",tv);var iv=class extends ce{static properties={name:{type:String},color:{type:String},size:{type:String},removable:{type:Boolean}};constructor(){super(),this.removable=!1}handleRemoveClick(){this.dispatchEvent(new CustomEvent("wa-remove",{bubbles:!0,cancelable:!1,composed:!0}))}render(){return E`<span class="tag ${this.color}" part="base"
       ><span>${this.name}</span>${this.removable?E`
             <wa-button
               class="tag__remove"
@@ -2345,13 +2345,13 @@ ${s}
         @click=${this.handleDeleteClick}
         ><wa-icon library="ion" name="trash-outline" label="Delete"></wa-icon
       ></wa-button>
-    </div>`}};customElements.define("nb-budget-actions",Rv);var Pv=class extends ce{static properties={budgets:{type:Array},total:{type:String}};static queries={active:"#active",inactive:"#inactive",waDataGrid:"nb-data-grid"};connectedCallback(){super.connectedCallback(),this.sortBudgets(),document.addEventListener("BudgetsUpdated",this),this.addEventListener("wa-cell-click",this),this.createDataGrid()}sortBudgets(){this.budgets[0].sort((t,e)=>t.name.localeCompare(e.name)),this.budgets[1].sort((t,e)=>t.name.localeCompare(e.name))}async createDataGrid(){await customElements.whenDefined("wa-data-grid");let t=[{field:"name",label:"Name",sortable:!0,filterable:!0,formatter:(e,s)=>s.url?E`<a href=${s.url}>${s.name}</a>`:e},{field:"total",label:"Balance",sortable:!0,filterable:!0,formatter:e=>{let s="";return e>0?s="text-greater-than-zero":e<0&&(s="text-less-than-zero"),E`<wa-format-number
+    </div>`}};customElements.define("nb-budget-actions",Rv);var Pv=class extends ce{static properties={budgets:{type:Array},total:{type:String}};static queries={active:"#active",inactive:"#inactive",waDataGrid:"nb-data-grid"};connectedCallback(){super.connectedCallback(),this.sortBudgets(),document.addEventListener("BudgetsUpdated",this),this.addEventListener("wa-cell-click",this),this.createDataGrid()}sortBudgets(){this.budgets[0].sort((t,e)=>t.name.localeCompare(e.name)),this.budgets[1].sort((t,e)=>t.name.localeCompare(e.name))}async createDataGrid(){await customElements.whenDefined("wa-data-grid");let t=[{field:"name",label:"Name",sortable:!0,filterable:!0,formatter:(e,s)=>s.url?E`<a href=${s.url}>${s.name}</a>`:e,flex:2,minWidth:200},{field:"total",label:"Balance",sortable:!0,filterable:!0,formatter:e=>{let s="";return e>0?s="text-greater-than-zero":e<0&&(s="text-less-than-zero"),E`<wa-format-number
             class=${s}
             type="currency"
             currency="USD"
             value=${e}
             lang="en-US"
-          ></wa-format-number>`}},{field:"user",label:"Owner",sortable:!0,sortFn:"alphanumeric",filterable:!0,filterType:"set",value:e=>e.user.username,formatter:(e,s)=>s.shared_users?.length?E`${e}
+          ></wa-format-number>`},flex:1,minWidth:200},{field:"user",label:"Owner",sortable:!0,sortFn:"alphanumeric",filterable:!0,filterType:"set",value:e=>e.user.username,formatter:(e,s)=>s.shared_users?.length?E`${e}
               <wa-tooltip for="shared-users-${s.id}"
                 >This budget is shared with
                 ${s.shared_users.map(n=>n.username).join(", ")}</wa-tooltip
@@ -2359,7 +2359,7 @@ ${s}
                 library="ion"
                 name="person-circle-outline"
                 id="shared-users-${s.id}"
-              ></wa-icon>`:E`${e}`},{id:"actions",label:"Actions",sortable:!1,filterable:!1,formatter:(e,s)=>{if(s.children?.length)return null;let[n,a]=this.budgets;return E`<nb-budget-actions
+              ></wa-icon>`:E`${e}`,flex:1,minWidth:200},{id:"actions",label:"Actions",sortable:!1,filterable:!1,formatter:(e,s)=>{if(s.children?.length)return null;let[n,a]=this.budgets;return E`<nb-budget-actions
             .budget=${s}
             .activeBudgets=${n}
             .inactiveBudgets=${a}
@@ -2519,4 +2519,4 @@ ${s}
         </div>
       </form></wa-dialog
     >`}};customElements.define("nb-category-modal",$v);
-//# sourceMappingURL=nb.MNFMT6GF.mjs.map
+//# sourceMappingURL=nb.TGTUKUK5.mjs.map

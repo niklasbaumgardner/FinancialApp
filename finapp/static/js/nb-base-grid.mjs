@@ -126,5 +126,34 @@ export class WaBaseGrid extends WaDataGrid {
       this.virtualizer.measureElement(row);
     }
   }
+
+  columnStyle(columnId, size) {
+    const resized = this.columnSizingState[columnId];
+    const col = this.columnById(columnId);
+
+    let explicit =
+      resized ?? (size && size !== 150 ? (col?.width ?? size) : col?.width);
+
+    if (resized == null && explicit != null) {
+      const floor = this.headerMinWidths[columnId];
+      if (floor != null && floor > explicit) explicit = floor;
+    }
+
+    let base;
+    // The if statement below is changed. It was checking explicit before but
+    // explicit was truthy so min width was never being set like I wanted.
+    if (col?.width) {
+      base = { flex: `0 0 ${explicit}px`, width: `${explicit}px` };
+    } else if (col?.flex != null) {
+      base = {
+        flex: `${col.flex} 1 0`,
+        minWidth: `${col.minWidth ?? 0}px`,
+        ...(col.maxWidth != null ? { maxWidth: `${col.maxWidth}px` } : {}),
+      };
+    } else {
+      base = { flex: "1 1 0", minWidth: "0" };
+    }
+    return { ...base, ...this.pinnedStyle(columnId) };
+  }
 }
 customElements.define("nb-data-grid", WaBaseGrid);

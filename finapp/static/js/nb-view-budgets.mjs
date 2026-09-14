@@ -105,6 +105,8 @@ export class ViewBudgets extends NikElement {
 
           return value;
         },
+        flex: 2,
+        minWidth: 200,
       },
       {
         field: "total",
@@ -126,6 +128,8 @@ export class ViewBudgets extends NikElement {
             lang="en-US"
           ></wa-format-number>`;
         },
+        flex: 1,
+        minWidth: 200,
       },
       {
         field: "user",
@@ -154,6 +158,8 @@ export class ViewBudgets extends NikElement {
 
           return html`${value}`;
         },
+        flex: 1,
+        minWidth: 200,
       },
       {
         id: "actions",
