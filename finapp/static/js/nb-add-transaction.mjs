@@ -312,13 +312,7 @@ export class AddTransactionModal extends BaseDialog {
 
   footerTemplate() {
     return html`<div class="wa-cluster w-full" slot="footer">
-      <wa-button
-        class="grow"
-        variant="neutral"
-        appearance="outlined"
-        data-dialog="close"
-        >Cancel</wa-button
-      ><wa-button
+      ${this.cancelButtonTemplate()}<wa-button
         id="add-transaction-button"
         class="grow"
         variant="brand"

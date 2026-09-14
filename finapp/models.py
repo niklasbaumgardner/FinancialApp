@@ -129,7 +129,6 @@ class Budget(BaseModel, SqidSerializerMixin):
     serialize_rules = (
         "url",
         "edit_url",
-        "toggle_active_url",
         "add_transaction_url",
         "shared_users",
         "delete_url",
@@ -159,11 +158,6 @@ class Budget(BaseModel, SqidSerializerMixin):
 
     def edit_url(self) -> str:
         return url_for("editbudget_bp.edit_budget", sqid=self.sqid_id(), name=self.name)
-
-    def toggle_active_url(self) -> str:
-        return url_for(
-            "editbudget_bp.toggle_budget", sqid=self.sqid_id(), name=self.name
-        )
 
     def add_transaction_url(self) -> str:
         return url_for(

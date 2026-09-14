@@ -52,7 +52,7 @@ export class BaseDialog extends NikElement {
     this.submitButton.loading = true;
   }
 
-  lableTemplate() {
+  labelTemplate() {
     return null;
   }
 
@@ -79,7 +79,7 @@ export class BaseDialog extends NikElement {
       @input=${this.inputEvent ? this.handleInput : nothing}
       @submit=${this.submitEvent ? this.handleSubmit : nothing}
     >
-      <div slot="label">${this.lableTemplate()}</div>
+      <div slot="label">${this.labelTemplate()}</div>
       ${this.contentTemplate()}
       <div class="wa-cluster w-full" slot="footer">
         ${this.footerTemplate()}

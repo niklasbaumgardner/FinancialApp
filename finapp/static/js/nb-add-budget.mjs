@@ -1,43 +1,66 @@
 import { BaseDialog } from "./nb-base-dialog.mjs";
 import { html } from "lit";
 
+const DUPLICATE_NAME_MESSAGE = "A budget with that name already exists";
+
 export class AddBudget extends BaseDialog {
+  inputEvent = true;
+  submitEvent = false;
+
   static properties = {
     budget: { type: Object },
+    budgets: { type: Array },
   };
 
   static queries = {
-    dialog: "wa-dialog",
+    ...BaseDialog.queries,
     form: "form",
-    saveButton: "#submit-button",
+    submitButton: "#submit-button",
     nameInput: "#budget-name",
     amountInput: "#starting-budget-amount",
   };
 
+  connectedCallback() {
+    super.connectedCallback();
+
+    document.addEventListener("BudgetsUpdated", this);
+  }
+
+  handleEvent(event) {
+    switch (event.type) {
+      case "BudgetsUpdated": {
+        const { budgets } = event.detail;
+
+        this.budgets = budgets;
+        break;
+      }
+    }
+  }
+
   reset() {
-    this.saveButton.disabled = false;
-    this.saveButton.loading = false;
+    this.submitButton.disabled = false;
+    this.submitButton.loading = false;
     this.form.reset();
     this.hide();
   }
 
-  handleInput() {
-    if (this.nameInput.value === "") {
-      this.saveButton.disabled = false;
+  async handleInput() {
+    await this.updateComplete;
+
+    let newName = this.nameInput.value.trim();
+    if (newName.length === 0) {
+      this.submitButton.disabled = true;
+      this.nameInput.hint = "";
       return;
     }
 
-    this.nameInput.setAttribute("help-text", "");
-    this.saveButton.disabled = false;
-    for (let card of document.querySelectorAll("nb-budget-card")) {
-      if (this.nameInput.value === card.budget.name) {
-        this.nameInput.setAttribute(
-          "help-text",
-          "This budget name already exists. Please choose another.",
-        );
-        this.saveButton.disabled = true;
-        break;
-      }
+    let duplicates = this.budgets.filter((b) => b.name === newName);
+    if (duplicates.length === 0) {
+      this.submitButton.disabled = false;
+      this.nameInput.hint = "";
+    } else if (duplicates.length > 0) {
+      this.submitButton.disabled = true;
+      this.nameInput.hint = DUPLICATE_NAME_MESSAGE;
     }
   }
 
@@ -46,8 +69,8 @@ export class AddBudget extends BaseDialog {
       return;
     }
 
-    this.saveButton.disabled = true;
-    this.saveButton.loading = true;
+    this.submitButton.disabled = true;
+    this.submitButton.loading = true;
 
     let formData = new FormData(this.form);
 
@@ -57,40 +80,41 @@ export class AddBudget extends BaseDialog {
     });
 
     if (response.ok) {
-      let data = await response.json();
+      let { budget_id } = await response.json();
       this.reset();
 
       document.dispatchEvent(
-        new CustomEvent("Budget:AddBudget", {
+        new CustomEvent("UpdateBudgets", {
           bubbles: true,
-          detail: { budget: data.budget },
         }),
       );
     } else {
-      this.saveButton.disabled = false;
-      this.saveButton.loading = false;
+      document
+        .querySelector("nb-alert-manager")
+        .pushAlert("Something went wrong", "danger");
 
-      this.nameInput.setAttribute(
-        "help-text",
-        "This budget name already exists. Please choose another.",
-      );
+      this.submitButton.disabled = false;
+      this.submitButton.loading = false;
+
+      this.nameInput.hint = DUPLICATE_NAME_MESSAGE;
     }
   }
 
-  render() {
-    return html`<wa-dialog
-      label="Add New Budget"
-      @wa-after-show=${this.handleDialogShow}
-    >
-      <form class="wa-stack">
+  labelTemplate() {
+    return "Add New Budget";
+  }
+
+  contentTemplate() {
+    return html`<form>
+      <div class="wa-stack">
         <input hidden class="hidden" name="date" value=${CURRENT_DATE} />
         <wa-input
+          autofocus
           id="budget-name"
           name="name"
           label="Budget name"
           placeholder="Hello world"
           autocomplete="niklas"
-          @input=${this.handleInput}
           required
         ></wa-input>
         <wa-input
@@ -101,25 +125,22 @@ export class AddBudget extends BaseDialog {
           placeholder="$0.00"
           autocomplete="niklas"
         ></wa-input>
-      </form>
-
-      <div class="wa-cluster w-full" slot="footer">
-        <wa-button
-          class="grow"
-          variant="neutral"
-          appearance="outlined"
-          data-dialog="close"
-          >Cancel</wa-button
-        >
-        <wa-button
-          id="submit-button"
-          class="grow"
-          variant="brand"
-          @click=${this.handleSaveClick}
-          >Add Budget</wa-button
-        >
       </div>
-    </wa-dialog>`;
+    </form>`;
+  }
+
+  footerTemplate() {
+    return html`<div class="wa-cluster w-full" slot="footer">
+      ${this.cancelButtonTemplate()}
+      <wa-button
+        id="submit-button"
+        class="grow"
+        variant="brand"
+        disabled
+        @click=${this.handleSaveClick}
+        >Add Budget</wa-button
+      >
+    </div>`;
   }
 }
 customElements.define("nb-add-budget", AddBudget);

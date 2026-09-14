@@ -1,7 +1,7 @@
 // import "./nb-add-team.mjs";
 // import "./nb-admin.mjs";
 // import "./nb-archive-years.mjs";
-// import "./nb-alert-manager.mjs";
+import "./nb-alert-manager.mjs";
 // import "./nb-theme-selector.mjs";
 // import "./nb-countdown.mjs";
 // import "./nb-default-bracket.mjs";

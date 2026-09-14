@@ -1,4 +1,4 @@
-from flask import Blueprint, Response, abort, redirect, request, url_for
+from flask import Blueprint, Response, abort, request
 from flask_login import current_user, login_required
 
 from finapp.queries import (
@@ -10,20 +10,6 @@ from finapp.utils import helpers
 from finapp.utils.Sqids import sqids
 
 editbudget_bp = Blueprint("editbudget_bp", __name__)
-
-
-@editbudget_bp.get("/toggle_budget/<string:sqid>/")
-@editbudget_bp.get("/toggle_budget/<string:sqid>/<string:name>")
-@login_required
-def toggle_budget(sqid=None, name=None) -> dict[str, bool]:
-    budget_id = sqids.decode_one(sqid)
-
-    active = request.args.get("active")
-
-    active = active != "false"
-    budget_queries.update_budget(budget_id=budget_id, is_active=active)
-
-    return {"success": True}
 
 
 @editbudget_bp.post("/add_budget")
@@ -48,7 +34,7 @@ def add_budget():
                     budget_id=budget_id,
                 )
 
-            return {"budget": budget_queries.get_budget(budget_id=budget_id).to_dict()}
+            return {"budget_id": budget_id}
 
         abort(409)
     abort(400)
@@ -60,11 +46,14 @@ def add_budget():
 def edit_budget(sqid=None, name=None) -> dict[str, bool]:
     budget_id = sqids.decode_one(sqid)
 
-    new_name = request.form.get("name")
+    new_name = request.form.get("name", "")
+    active = request.form.get("active", "") == "on"
     duplicate = budget_queries.get_duplicate_budget_by_name(new_name)
-    if not duplicate:
-        budget_queries.update_budget(budget_id=budget_id, name=new_name)
-        return {"sucess": True}
+    if not duplicate or duplicate.id == budget_id:
+        budget_queries.update_budget(
+            budget_id=budget_id, name=new_name, is_active=active
+        )
+        return {"success": True}
 
     abort(409)
 
@@ -77,7 +66,7 @@ def delete_budget(sqid=None, name=None) -> Response:
 
     budget = budget_queries.get_budget(budget_id=budget_id)
 
-    new_budget_id = sqids.decode_one(request.form.get("new_budget"))
+    new_budget_id = sqids.decode_one(request.form.get("new_budget"), validate=True)
 
     # move or delete the transactions
     new_budget = (
@@ -107,4 +96,4 @@ def delete_budget(sqid=None, name=None) -> Response:
     # finally delete the budget
     budget_queries.delete_budget(budget_id)
 
-    return redirect(url_for("viewbudgets_bp.viewbudgets"))
+    return {"success": True}

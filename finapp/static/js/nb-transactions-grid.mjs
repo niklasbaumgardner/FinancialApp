@@ -258,22 +258,6 @@ export class TransactionsGrid extends BaseGrid {
   async createWaDataGrid() {
     await customElements.whenDefined("wa-data-grid");
 
-    const allRulesText = Array.from(document.styleSheets)
-      .map((sheet) => {
-        return Array.from(sheet.cssRules)
-          .map((rule) => rule.cssText)
-          .join("\n");
-      })
-      .join("\n");
-
-    const globalSheet = new CSSStyleSheet();
-    globalSheet.replaceSync(allRulesText);
-
-    this.waGrid.shadowRoot.adoptedStyleSheets = [
-      globalSheet,
-      ...this.waGrid.shadowRoot.adoptedStyleSheets,
-    ];
-
     this.waGrid.pageSizeOptions = [];
 
     const columns = [
@@ -428,9 +412,7 @@ export class TransactionsGrid extends BaseGrid {
             .categories=${this.categories}
           ></nb-transaction-actions>`;
         },
-        flex: 1,
-        minWidth: 104,
-        maxWidth: 150,
+        width: 116,
       },
     ];
 

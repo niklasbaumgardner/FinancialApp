@@ -77,6 +77,28 @@ const autoRowHeight = css`
 export class WaBaseGrid extends WaDataGrid {
   static css = [...WaDataGrid.css, autoRowHeight];
 
+  async connectedCallback() {
+    super.connectedCallback();
+
+    await customElements.whenDefined("wa-data-grid");
+
+    const allRulesText = Array.from(document.styleSheets)
+      .map((sheet) => {
+        return Array.from(sheet.cssRules)
+          .map((rule) => rule.cssText)
+          .join("\n");
+      })
+      .join("\n");
+
+    const globalSheet = new CSSStyleSheet();
+    globalSheet.replaceSync(allRulesText);
+
+    this.shadowRoot.adoptedStyleSheets = [
+      globalSheet,
+      ...this.shadowRoot.adoptedStyleSheets,
+    ];
+  }
+
   firstUpdated(changed) {
     super.firstUpdated(changed);
 

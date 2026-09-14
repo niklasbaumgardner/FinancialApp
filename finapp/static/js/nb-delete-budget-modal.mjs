@@ -8,58 +8,93 @@ export class DeleteBudget extends BaseDialog {
   };
 
   static queries = {
+    ...BaseDialog.queries,
+    form: "form",
     deleteButton: "#delete-button",
-    dialog: "wa-dialog",
   };
+
+  reset() {
+    this.deleteButton.loading = false;
+    this.deleteButton.disabled = false;
+    this.form.reset();
+    this.hide();
+  }
+
+  async handleDeleteClick() {
+    if (!this.form.reportValidity()) {
+      return;
+    }
+
+    this.deleteButton.loading = true;
+    this.deleteButton.disabled = true;
+
+    let formData = new FormData(this.form);
+
+    try {
+      let response = await fetch(this.budget.delete_url, {
+        method: "POST",
+        body: formData,
+      });
+
+      await response.json();
+
+      this.remove();
+    } catch (e) {
+      console.error(e);
+      document
+        .querySelector("nb-alert-manager")
+        .pushAlert("Something went wrong", "danger");
+
+      this.deleteButton.loading = false;
+      this.deleteButton.disabled = false;
+      this.reset();
+    }
+
+    document.dispatchEvent(
+      new CustomEvent("UpdateBudgets", {
+        bubbles: true,
+      }),
+    );
+  }
 
   transferBudgetsTemplate() {
     return this.transferBudgets.map(
       (b) =>
-        html`<wa-radio name="new_budget" value=${b.id}>${b.name}</wa-radio>`,
+        html`<wa-option name="new_budget" value=${b.id}>${b.name}</wa-option>`,
     );
   }
 
-  handleDeleteClick() {
-    this.deleteButton.disabled = true;
-    this.deleteButton.loading = true;
+  labelTemplate() {
+    return `Are you sure you want to delete this budget named "${
+      this.budget.name
+    }" ?`;
   }
 
-  render() {
-    return html`<wa-dialog
-      label='Are you sure you want to delete this budget named "${this.budget
-        .name}" ?'
-    >
-      <form method="POST" id="delete-budget" action=${this.budget.delete_url}>
-        <wa-radio-group
-          label="Select a budget to transfer the transactions to"
-          name="new_budget"
-          required
+  contentTemplate() {
+    return html`<form>
+      <wa-select
+        label="Select a budget to transfer the transactions to"
+        name="new_budget"
+        required
+      >
+        <wa-option name="new_budget" value="null"
+          >Delete this budget's transaction</wa-option
         >
-          <wa-radio name="new_budget" value="-1"
-            >Delete transactions along with this budget</wa-radio
-          >
-          ${this.transferBudgetsTemplate()}
-        </wa-radio-group>
-      </form>
-      <div class="wa-cluster w-full" slot="footer">
-        <wa-button
-          class="grow"
-          variant="neutral"
-          appearance="filled-outlined"
-          data-dialog="close"
-          >Cancel</wa-button
-        >
-        <wa-button
-          @click=${this.handleDeleteClick}
-          id="delete-button"
-          class="grow"
-          variant="danger"
-          type="submit"
-          form="delete-budget"
-          >Delete</wa-button
-        >
-      </div>
-    </wa-dialog>`;
+        ${this.transferBudgetsTemplate()}
+      </wa-select>
+    </form>`;
+  }
+
+  footerTemplate() {
+    return html`<div class="wa-cluster w-full" slot="footer">
+      ${this.cancelButtonTemplate()}<wa-button
+        id="delete-button"
+        class="grow"
+        variant="danger"
+        @click=${this.handleDeleteClick}
+        >Delete</wa-button
+      >
+    </div>`;
   }
 }
 customElements.define("nb-delete-budget-modal", DeleteBudget);

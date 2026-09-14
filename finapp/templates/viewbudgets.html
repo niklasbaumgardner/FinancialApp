@@ -4,6 +4,7 @@ head %}
 {% endblock head %} {% block content %}
 
 <nb-view-budgets
+  class="large-card"
   total="{{ total }}"
   budgets='{{ budgets|tojson }}'
 ></nb-view-budgets>

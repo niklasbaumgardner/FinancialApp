@@ -22,17 +22,38 @@
   }
 }
 
-wa-page > main {
-  padding: var(--wa-space-2xl) var(--wa-space-m) var(--wa-space-4xl);
-}
-
-nb-budget-card {
+.small-card {
   display: flex;
-  width: 100%;
+  justify-content: center;
 
   > wa-card {
+    max-width: 100%;
+    width: 27rem;
+  }
+}
+
+.medium-card {
+  display: flex;
+  justify-content: center;
+
+  > wa-card {
+    max-width: 100%;
+    width: 60rem;
+  }
+}
+
+.large-card {
+  display: flex;
+  justify-content: center;
+
+  > wa-card {
+    max-width: 100%;
     width: 100%;
   }
+}
+
+wa-page > main {
+  padding: var(--wa-space-2xl) var(--wa-space-m) var(--wa-space-4xl);
 }
 
 wa-card.wa-card-p-0::part(body) {
@@ -110,7 +131,7 @@ nb-view-budgets {
 }
 
 #alerts {
-  position: absolute;
+  position: fixed;
   width: 100%;
   top: var(--wa-space-4xl);
   z-index: 999999999;

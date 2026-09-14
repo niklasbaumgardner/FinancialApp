@@ -21,3 +21,14 @@ def viewbudgets() -> str:
         budgets=[active, inactive],
         total=total,
     )
+
+
+@viewbudgets_bp.get("/api/get_budgets")
+@login_required
+def api_get_budgets():
+    budgets = [b.to_dict() for b in budget_queries.get_budgets()]
+
+    active = [b for b in budgets if b["is_active"]]
+    inactive = [b for b in budgets if not b["is_active"]]
+
+    return {"budgets": budgets, "active": active, "inactive": inactive}

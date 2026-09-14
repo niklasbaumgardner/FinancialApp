@@ -58,14 +58,6 @@ def api_get_transactions():
     return {"transactions": transactions}
 
 
-@viewtransactions_bp.get("/api/get_budgets")
-@login_required
-def api_get_budgets():
-    budgets = [b.to_dict() for b in budget_queries.get_budgets()]
-
-    return {"budgets": budgets}
-
-
 @viewtransactions_bp.get("/api/get_transactions_stream")
 @login_required
 def api_get_transactions_stream() -> Response:

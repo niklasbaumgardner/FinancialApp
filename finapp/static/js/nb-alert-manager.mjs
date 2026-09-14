@@ -18,6 +18,11 @@ export class AlertManager extends NikElement {
     },
   };
 
+  pushAlert(message, category = "") {
+    this.messages.push([category, message]);
+    this.requestUpdate();
+  }
+
   render() {
     if (!this.messages.length) {
       return null;
