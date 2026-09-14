@@ -103,7 +103,7 @@ export class ViewBudgets extends NikElement {
             return html`<a href=${row.url}>${row.name}</a>`;
           }
 
-          return value;
+          return html`<span class="wa-color-text-quiet">${value}</span>`;
         },
         flex: 2,
         minWidth: 200,

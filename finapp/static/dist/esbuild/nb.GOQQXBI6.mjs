@@ -2345,7 +2345,7 @@ ${s}
         @click=${this.handleDeleteClick}
         ><wa-icon library="ion" name="trash-outline" label="Delete"></wa-icon
       ></wa-button>
-    </div>`}};customElements.define("nb-budget-actions",Rv);var Pv=class extends ce{static properties={budgets:{type:Array},total:{type:String}};static queries={active:"#active",inactive:"#inactive",waDataGrid:"nb-data-grid"};connectedCallback(){super.connectedCallback(),this.sortBudgets(),document.addEventListener("BudgetsUpdated",this),this.addEventListener("wa-cell-click",this),this.createDataGrid()}sortBudgets(){this.budgets[0].sort((t,e)=>t.name.localeCompare(e.name)),this.budgets[1].sort((t,e)=>t.name.localeCompare(e.name))}async createDataGrid(){await customElements.whenDefined("wa-data-grid");let t=[{field:"name",label:"Name",sortable:!0,filterable:!0,formatter:(e,s)=>s.url?E`<a href=${s.url}>${s.name}</a>`:e,flex:2,minWidth:200},{field:"total",label:"Balance",sortable:!0,filterable:!0,formatter:e=>{let s="";return e>0?s="text-greater-than-zero":e<0&&(s="text-less-than-zero"),E`<wa-format-number
+    </div>`}};customElements.define("nb-budget-actions",Rv);var Pv=class extends ce{static properties={budgets:{type:Array},total:{type:String}};static queries={active:"#active",inactive:"#inactive",waDataGrid:"nb-data-grid"};connectedCallback(){super.connectedCallback(),this.sortBudgets(),document.addEventListener("BudgetsUpdated",this),this.addEventListener("wa-cell-click",this),this.createDataGrid()}sortBudgets(){this.budgets[0].sort((t,e)=>t.name.localeCompare(e.name)),this.budgets[1].sort((t,e)=>t.name.localeCompare(e.name))}async createDataGrid(){await customElements.whenDefined("wa-data-grid");let t=[{field:"name",label:"Name",sortable:!0,filterable:!0,formatter:(e,s)=>s.url?E`<a href=${s.url}>${s.name}</a>`:E`<span class="wa-color-text-quiet">${e}</span>`,flex:2,minWidth:200},{field:"total",label:"Balance",sortable:!0,filterable:!0,formatter:e=>{let s="";return e>0?s="text-greater-than-zero":e<0&&(s="text-less-than-zero"),E`<wa-format-number
             class=${s}
             type="currency"
             currency="USD"
@@ -2519,4 +2519,4 @@ ${s}
         </div>
       </form></wa-dialog
     >`}};customElements.define("nb-category-modal",$v);
-//# sourceMappingURL=nb.TGTUKUK5.mjs.map
+//# sourceMappingURL=nb.GOQQXBI6.mjs.map
