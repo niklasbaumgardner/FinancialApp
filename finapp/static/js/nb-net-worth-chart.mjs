@@ -101,7 +101,32 @@ class NetWorthLineChart extends BaseChart {
     this.setupThemeWatcher();
   }
 
+  // createChart() {
+  //   this.chartEl.config = {
+  //     type: "line",
+  //     data: {
+  //       labels: this.data.map((o) => o.date.toDateString()),
+  //       datasets: [
+  //         {
+  //           label: "Net worth",
+  //           data: this.data.map((o) => o.amount),
+  //         },
+  //       ],
+  //     },
+  //   };
+  // }
+
   render() {
+    // <wa-chart
+    // return html`<wa-details
+    //   summary="Net worth"
+    //   appearance="filled-outlined"
+    //   open
+    // >
+    //   <div class="wa-stack">
+    //     <wa-chart id="chart"></wa-chart>
+    //   </div>
+    // </wa-details>`;
     return html`<wa-details
       summary="Net worth"
       appearance="filled-outlined"

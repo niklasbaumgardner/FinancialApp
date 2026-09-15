@@ -81,7 +81,12 @@ html {
 wa-data-grid,
 nb-data-grid {
   --max-height: 1000rem;
-  --header-background: var(--wa-color-surface-super-raised);
+  /* --header-background: var(--wa-color-surface-super-raised); */
+  --header-background: color-mix(
+    in oklab,
+    var(--wa-color-surface-raised),
+    var(--wa-color-surface-super-raised) 60%
+  );
   --background-color: var(--wa-color-surface-raised);
   --border-color: var(--wa-color-surface-border-raised);
   --row-hover-background: light-dark(

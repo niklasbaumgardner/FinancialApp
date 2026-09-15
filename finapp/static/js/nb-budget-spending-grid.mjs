@@ -73,7 +73,7 @@ class BudgetSpendingGrid extends BaseGrid {
     this.dataCache = {};
     this.dataCache[this.key] = this.data;
 
-    this.createDataGrid();
+    this.createWaDataGrid();
     this.setupThemeWatcher();
   }
 
@@ -97,7 +97,9 @@ class BudgetSpendingGrid extends BaseGrid {
   }
 
   updateSpendingGrid() {
-    this.dataGrid.setGridOption("rowData", this.dataCache[this.key]);
+    this.spendingGridEl.data = this.dataCache[this.key];
+
+    // this.dataGrid.setGridOption("rowData", this.dataCache[this.key]);
   }
 
   createDataGrid() {
@@ -216,6 +218,84 @@ class BudgetSpendingGrid extends BaseGrid {
     return options;
   }
 
+  getCellClass(value) {
+    if (value > 0) {
+      return "text-greater-than-zero";
+    } else if (value < 0) {
+      return "text-less-than-zero";
+    } else {
+      return "";
+    }
+  }
+
+  moneyFormatter(value) {
+    return html`<wa-format-number
+      class=${this.getCellClass(value ?? 0)}
+      type="currency"
+      currency="USD"
+      value=${value ?? 0}
+      lang="en-US"
+    ></wa-format-number>`;
+  }
+
+  createWaDataGrid() {
+    const minWidth = 200;
+    const columns = [
+      {
+        field: "name",
+        label: "Budget",
+        sortable: true,
+        filterable: true,
+        filterType: "set",
+        formatter: (_, row) => {
+          if (row.id) {
+            return html`<a href=${this.getCurrentURL(row.budget.url)}
+              >${row.name}</a
+            >`;
+          }
+          return row.name;
+        },
+        flex: 1,
+        minWidth,
+      },
+      {
+        field: "total",
+        label: "Current total",
+        sortable: true,
+        formatter: (value) => this.moneyFormatter(value),
+        flex: 1,
+        minWidth,
+      },
+      {
+        field: "in",
+        label: "Income",
+        sortable: true,
+        formatter: (value) => this.moneyFormatter(value),
+        flex: 1,
+        minWidth,
+      },
+      {
+        field: "out",
+        label: "Spent",
+        sortable: true,
+        formatter: (value) => this.moneyFormatter(value),
+        flex: 1,
+        minWidth,
+      },
+      {
+        field: "net",
+        label: "Net",
+        sortable: true,
+        formatter: (value) => this.moneyFormatter(value),
+        flex: 1,
+        minWidth,
+      },
+    ];
+
+    this.spendingGridEl.columns = columns;
+    this.spendingGridEl.data = this.dataCache[this.key];
+  }
+
   render() {
     return html`<wa-details
       summary="Spending by budget"
@@ -231,7 +311,7 @@ class BudgetSpendingGrid extends BaseGrid {
           >${this.optionsTemplate()}</nb-combobox
         >
 
-        <div id="spending-by-budget-grid"></div>
+        <nb-data-grid size="s" id="spending-by-budget-grid"></nb-data-grid>
       </div>
     </wa-details>`;
   }

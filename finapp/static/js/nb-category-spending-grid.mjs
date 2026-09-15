@@ -45,6 +45,26 @@ class CategorySpendingGrid extends BaseGrid {
     };
   }
 
+  getCellClass(value) {
+    if (value > 0) {
+      return "text-greater-than-zero";
+    } else if (value < 0) {
+      return "text-less-than-zero";
+    } else {
+      return "";
+    }
+  }
+
+  moneyFormatter(value) {
+    return html`<wa-format-number
+      class=${this.getCellClass(value ?? 0)}
+      type="currency"
+      currency="USD"
+      value=${value ?? 0}
+      lang="en-US"
+    ></wa-format-number>`;
+  }
+
   connectedCallback() {
     super.connectedCallback();
 
@@ -74,7 +94,7 @@ class CategorySpendingGrid extends BaseGrid {
     this.columnsCache = {};
 
     this.parseData();
-    this.createDataGrid();
+    this.createWaDataGrid();
     this.updateSpendingGrid();
     this.setupThemeWatcher();
   }
@@ -100,7 +120,7 @@ class CategorySpendingGrid extends BaseGrid {
     this.data = await response.json();
 
     this.parseData();
-    this.createGridColumns();
+    this.createWaGridColumns();
   }
 
   parseData() {
@@ -137,8 +157,11 @@ class CategorySpendingGrid extends BaseGrid {
   }
 
   updateSpendingGrid() {
-    this.dataGrid.setGridOption("columnDefs", this.columnsCache[this.interval]);
-    this.dataGrid.setGridOption("rowData", this.dataCache[this.interval]);
+    this.categorySpendingGridEl.columns = this.columnsCache[this.interval];
+    this.categorySpendingGridEl.data = this.dataCache[this.interval];
+
+    // this.dataGrid.setGridOption("columnDefs", this.columnsCache[this.interval]);
+    // this.dataGrid.setGridOption("rowData", this.dataCache[this.interval]);
   }
 
   createGridColumns() {
@@ -242,6 +265,98 @@ class CategorySpendingGrid extends BaseGrid {
     this.dataGrid = agGrid.createGrid(this.categorySpendingGridEl, gridOptions);
   }
 
+  createWaGridColumns() {
+    const minWidth = 200;
+    const columns = [
+      {
+        field: "name",
+        label: "Category Name",
+        sortable: true,
+        filterable: true,
+        filterType: "set",
+        formatter: (_, row) => {
+          if (row.name && row.color) {
+            return html`<nb-category
+              name=${row.name}
+              color=${row.color}
+            ></nb-category>`;
+          }
+          return row.value;
+        },
+        flex: 1,
+        minWidth,
+      },
+      {
+        field: "average",
+        label: "Average Spend",
+        sortable: true,
+        // filterable: true,
+        // filterType: "number-range",
+        formatter: (value) => this.moneyFormatter(value),
+        flex: 1,
+        minWidth,
+      },
+    ];
+
+    if (this.interval === "weekly") {
+      let weekIndexes = Object.keys(this.spendingWeeks);
+      weekIndexes.sort((a, b) => this.spendingWeeks[b] - this.spendingWeeks[a]);
+
+      for (let index of weekIndexes) {
+        let dateString = this.spendingWeeks[index].toLocaleDateString(
+          undefined,
+          { month: "short", day: "numeric", year: "numeric" },
+        );
+        columns.push({
+          field: index,
+          label: `Week of ${dateString}`,
+          formatter: (value) => this.moneyFormatter(value),
+          flex: 1,
+          minWidth,
+        });
+      }
+    } else {
+      let date = new Date();
+      let currentMonth = date.getMonth();
+      let currentYear = date.getFullYear();
+      for (let i = 0; i < 12; i++) {
+        let month = 1 + ((12 + currentMonth - i) % 12);
+        let monthName = MONTHS[month];
+
+        if (this.spendingMonths.has(monthName)) {
+          let year = "";
+          if (month > 1 + currentMonth) {
+            year = ` ${currentYear - 1}`;
+          }
+          columns.push({
+            field: monthName,
+            label: monthName + year,
+            formatter: (value) => this.moneyFormatter(value),
+            flex: 1,
+            minWidth,
+          });
+        }
+      }
+    }
+
+    this.columnsCache[this.interval] = columns;
+  }
+
+  createWaDataGrid() {
+    this.createWaGridColumns();
+    const columnDefs = this.columnsCache[this.interval];
+    const gridOptions = {
+      ...this.baseGridOptions,
+      columnDefs,
+      rowData: [],
+      autoSizeStrategy: {
+        type: "fitGridWidth",
+        defaultMinWidth: 150,
+      },
+    };
+    this.dataGrid = agGrid.createGrid(this.categorySpendingGridEl, gridOptions);
+  }
+
   render() {
     return html`<wa-details
       summary="Spending by category"
@@ -260,7 +375,7 @@ class CategorySpendingGrid extends BaseGrid {
           <wa-option value="weekly">Weekly</wa-option>
         </wa-select>
 
-        <div id="spending-by-category-grid"></div>
+        <nb-data-grid size="s" id="spending-by-category-grid"></nb-data-grid>
       </div>
     </wa-details>`;
   }
