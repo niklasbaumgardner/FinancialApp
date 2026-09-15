@@ -289,11 +289,14 @@ import{a as jv,b as L,c as sg,d as Hv,e as hc,f as Wv,g as ng}from"./chunk-5OP2E
     </div>`}render(){return this.theme?L`<wa-card>
       <div class="wa-stack">
         <div class="wa-stack">
-          <h2>Preferences</h2>
+          <h2>Settings</h2>
+          <wa-tab-group placement="start">
+            <wa-tab panel="theme">Theme Settings</wa-tab>
+            <wa-tab panel="advanced">Advanced Theming Options</wa-tab>
+            <wa-tab panel="experimental">Experimental Settings</wa-tab>
 
-          <wa-accordion>
-            <wa-accordion-item label="Theme preferences" expanded>
-              <div class="wa-stack">
+            <wa-tab-panel name="theme" active
+              ><div class="wa-stack">
                 <wa-select
                   id="themes"
                   label="Builtin Themes"
@@ -331,33 +334,27 @@ import{a as jv,b as L,c as sg,d as Hv,e as hc,f as Wv,g as ng}from"./chunk-5OP2E
                     >Dark</wa-option
                   ></wa-select
                 >
-
-                <wa-divider></wa-divider>
-
-                <div class="wa-stack">
-                  <h4>Advanced Theming Options</h4>
-
-                  <div class="wa-grid" style="--min-column-size: 20rem;">
-                    <div class="wa-stack">
-                      ${this.backgroundColorTemplate()}
-
-                      <wa-divider></wa-divider>
-
-                      ${this.variantsTemplate()}
-                    </div>
-
-                    <div class="wa-stack gap-(--wa-space-l)">
-                      ${this.roundingTemplate()} ${this.spacingTemplate()}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </wa-accordion-item>
-
-            <wa-accordion-item label="Experimental settings"
-              >${this.experimentalSettingsTemplate()}</wa-accordion-item
+              </div></wa-tab-panel
             >
-          </wa-accordion>
+            <wa-tab-panel name="advanced"
+              ><div class="wa-grid" style="--min-column-size: 20rem;">
+                <div class="wa-stack">
+                  ${this.backgroundColorTemplate()}
+
+                  <wa-divider></wa-divider>
+
+                  ${this.variantsTemplate()}
+                </div>
+
+                <div class="wa-stack gap-(--wa-space-l)">
+                  ${this.roundingTemplate()} ${this.spacingTemplate()}
+                </div>
+              </div></wa-tab-panel
+            >
+            <wa-tab-panel name="experimental"
+              >${this.experimentalSettingsTemplate()}</wa-tab-panel
+            >
+          </wa-tab-group>
         </div>
       </div>
     </wa-card>`:null}};customElements.define("nb-preferences",hg);var jw="Email taken. Please choose a different email or login.",Hw="Username taken. Please choose a different username.",pc=class extends ce{static properties={email:{type:String},emailValid:{type:Boolean},usernameValid:{type:Boolean}};static queries={emailInput:"#email",usernameInput:"#username",submitButton:"#submitButtn"};async checkEmailUnique(t){let e=await fetch(EMAIL_UNIQUE_URL+"?"+new URLSearchParams({email:t}));return e=await e.json(),e}async checkUsernameUnique(t){let e=await fetch(USERNAME_UNIQUE_URL+"?"+new URLSearchParams({username:t}));return e=await e.json(),e}async handleEmailInput(){this.emailTask||(this.emailTask=new yr(async()=>{let t=this.emailInput.value,e=await this.checkEmailUnique(t);console.log("email is unique",e.isUnique),e.isUnique?(this.emailInput.hint="",this.emailValid=!0):(this.emailInput.hint=jw,this.emailValid=!1)},300)),this.emailTask.arm()}async handleUsernameInput(){this.usernameTask||(this.usernameTask=new yr(async()=>{let t=this.usernameInput.value,e=await this.checkUsernameUnique(t);console.log("username is unique",e.isUnique),e.isUnique?(this.usernameInput.hint="",this.usernameValid=!0):(this.usernameInput.hint=Hw,this.usernameValid=!1)},300)),this.usernameTask.arm()}render(){return L`<wa-card>
@@ -2542,4 +2539,4 @@ ${s}
         </div>
       </form></wa-dialog
     >`}};customElements.define("nb-category-modal",Uv);
-//# sourceMappingURL=nb.CV2MBZAM.mjs.map
+//# sourceMappingURL=nb.Z62PZ2WQ.mjs.map

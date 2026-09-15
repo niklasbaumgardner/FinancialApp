@@ -378,11 +378,14 @@ export class PreferencesCard extends NikElement {
     return html`<wa-card>
       <div class="wa-stack">
         <div class="wa-stack">
-          <h2>Preferences</h2>
+          <h2>Settings</h2>
+          <wa-tab-group placement="start">
+            <wa-tab panel="theme">Theme Settings</wa-tab>
+            <wa-tab panel="advanced">Advanced Theming Options</wa-tab>
+            <wa-tab panel="experimental">Experimental Settings</wa-tab>
 
-          <wa-accordion>
-            <wa-accordion-item label="Theme preferences" expanded>
-              <div class="wa-stack">
+            <wa-tab-panel name="theme" active
+              ><div class="wa-stack">
                 <wa-select
                   id="themes"
                   label="Builtin Themes"
@@ -426,33 +429,27 @@ export class PreferencesCard extends NikElement {
                     >Dark</wa-option
                   ></wa-select
                 >
-
-                <wa-divider></wa-divider>
-
-                <div class="wa-stack">
-                  <h4>Advanced Theming Options</h4>
-
-                  <div class="wa-grid" style="--min-column-size: 20rem;">
-                    <div class="wa-stack">
-                      ${this.backgroundColorTemplate()}
-
-                      <wa-divider></wa-divider>
-
-                      ${this.variantsTemplate()}
-                    </div>
-
-                    <div class="wa-stack gap-(--wa-space-l)">
-                      ${this.roundingTemplate()} ${this.spacingTemplate()}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </wa-accordion-item>
-
-            <wa-accordion-item label="Experimental settings"
-              >${this.experimentalSettingsTemplate()}</wa-accordion-item
+              </div></wa-tab-panel
             >
-          </wa-accordion>
+            <wa-tab-panel name="advanced"
+              ><div class="wa-grid" style="--min-column-size: 20rem;">
+                <div class="wa-stack">
+                  ${this.backgroundColorTemplate()}
+
+                  <wa-divider></wa-divider>
+
+                  ${this.variantsTemplate()}
+                </div>
+
+                <div class="wa-stack gap-(--wa-space-l)">
+                  ${this.roundingTemplate()} ${this.spacingTemplate()}
+                </div>
+              </div></wa-tab-panel
+            >
+            <wa-tab-panel name="experimental"
+              >${this.experimentalSettingsTemplate()}</wa-tab-panel
+            >
+          </wa-tab-group>
         </div>
       </div>
     </wa-card>`;
