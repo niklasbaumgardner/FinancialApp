@@ -276,7 +276,8 @@ export class TransactionsGrid extends BaseGrid {
         sortable: true,
         filterable: true,
         filterType: "number-range",
-        minWidth: 125,
+        flex: 1,
+        minWidth: 150,
         formatter: (amount) => {
           return html`<wa-format-number
             type="currency"
