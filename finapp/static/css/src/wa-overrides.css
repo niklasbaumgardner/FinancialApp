@@ -76,12 +76,13 @@ html {
     var(--wa-color-neutral-80),
     var(--wa-color-neutral-30)
   );
+
+  --wa-font-weight-extrabold: calc(100 + var(--wa-font-weight-bold));
 }
 
 wa-data-grid,
 nb-data-grid {
   --max-height: 1000rem;
-  /* --header-background: var(--wa-color-surface-super-raised); */
   --header-background: color-mix(
     in oklab,
     var(--wa-color-surface-raised),
@@ -94,9 +95,10 @@ nb-data-grid {
     var(--wa-color-brand-10)
   );
   --header-row-height: 3rem;
-  /* --border-radius: var(--wa-border-radius-s); */
-}
 
-nb-data-grid::part(header-cell) {
-  padding: var(--wa-space-s);
+  &::part(header-cell) {
+    padding: var(--wa-space-s);
+    font-family: var(--wa-font-family-heading);
+    font-weight: var(--wa-font-weight-extrabold);
+  }
 }

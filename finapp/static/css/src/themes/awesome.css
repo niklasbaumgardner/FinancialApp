@@ -261,6 +261,7 @@
     --wa-font-weight-normal: 500;
     --wa-font-weight-semibold: 600;
     --wa-font-weight-bold: 700;
+    --wa-font-weight-extrabold: 800;
 
     --wa-font-weight-body: var(--wa-font-weight-normal);
     --wa-font-weight-heading: var(--wa-font-weight-bold);
