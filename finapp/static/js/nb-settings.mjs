@@ -36,7 +36,7 @@ const EXPERIMENTAL_SETTINGS = [
   },
 ];
 
-export class PreferencesCard extends NikElement {
+export class SettingsCard extends NikElement {
   static properties = {
     theme: { type: Object },
   };
@@ -456,4 +456,4 @@ export class PreferencesCard extends NikElement {
   }
 }
 
-customElements.define("nb-preferences", PreferencesCard);
+customElements.define("nb-settings", SettingsCard);

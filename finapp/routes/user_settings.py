@@ -32,4 +32,4 @@ def update_settings_get() -> Response:
             settings_data[k] = False
 
     user_settings_queries.update_user_settings(**settings_data)
-    return redirect(url_for("preferences_bp.preferences"))
+    return redirect(url_for("settings_bp.settings"))

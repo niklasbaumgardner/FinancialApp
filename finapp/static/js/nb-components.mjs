@@ -13,7 +13,7 @@ import "./nb-login.mjs";
 import "./nb-password-reset-request.mjs";
 // import "./nb-email-login.mjs";
 import "./nb-reset-password.mjs";
-import "./nb-preferences.mjs";
+import "./nb-settings.mjs";
 import "./nb-profile.mjs";
 import "./nb-signup.mjs";
 // import "./nb-standings.mjs";
