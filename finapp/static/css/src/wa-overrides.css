@@ -91,8 +91,8 @@ nb-data-grid {
   --background-color: var(--wa-color-surface-raised);
   --border-color: var(--wa-color-surface-border-raised);
   --row-hover-background: light-dark(
-    var(--wa-color-brand-90),
-    var(--wa-color-brand-10)
+    color-mix(in oklab, var(--wa-color-brand-50), transparent 91%),
+    color-mix(in oklab, var(--wa-color-brand-50), transparent 88%)
   );
   --header-row-height: 3rem;
 
@@ -100,5 +100,47 @@ nb-data-grid {
     padding: var(--wa-space-s);
     font-family: var(--wa-font-family-heading);
     font-weight: var(--wa-font-weight-extrabold);
+  }
+}
+
+wa-button[variant="shoelace"] {
+  &::part(button) {
+    color: light-dark(var(--wa-color-neutral-30), var(--wa-color-neutral-70));
+    background-color: transparent;
+    border-color: light-dark(
+      var(--wa-color-neutral-70),
+      var(--wa-color-neutral-40)
+    );
+  }
+
+  &[appearance="filled"]::part(button) {
+    background-color: light-dark(
+      var(--wa-color-neutral-95),
+      var(--wa-color-neutral-10)
+    );
+  }
+
+  &:not([loading], [diasabled])::part(button):hover {
+    color: light-dark(var(--wa-color-brand-40), var(--wa-color-brand-80));
+    background-color: light-dark(
+      var(--wa-color-brand-95),
+      var(--wa-color-brand-20)
+    );
+    border-color: light-dark(
+      var(--wa-color-brand-90),
+      var(--wa-color-brand-50)
+    );
+  }
+
+  &:not([loading], [diasabled])::part(button):active {
+    color: light-dark(var(--wa-color-brand-40), var(--wa-color-brand-80));
+    background-color: light-dark(
+      var(--wa-color-brand-90),
+      var(--wa-color-brand-30)
+    );
+    border-color: light-dark(
+      var(--wa-color-brand-80),
+      var(--wa-color-brand-60)
+    );
   }
 }

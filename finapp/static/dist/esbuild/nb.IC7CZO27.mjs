@@ -2435,8 +2435,8 @@ ${s}
       <div class="wa-split">
         <h2 @click=${this.toggleSetDownloadLink}>Recent Transactions</h2>
         <wa-button
-          variant="neutral"
-          appearance="filled-outlined"
+          variant="shoelace"
+          appearance="filled"
           @click=${this.addTransactionClick}
           >Add New Transaction${this.pendingTransactionsBadge()}</wa-button
         >
@@ -2539,4 +2539,4 @@ ${s}
         </div>
       </form></wa-dialog
     >`}};customElements.define("nb-category-modal",Uv);
-//# sourceMappingURL=nb.SJSGQ6ZU.mjs.map
+//# sourceMappingURL=nb.IC7CZO27.mjs.map

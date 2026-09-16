@@ -269,8 +269,8 @@ class ViewTransactions extends NikElement {
       <div class="wa-split">
         <h2 @click=${this.toggleSetDownloadLink}>Recent Transactions</h2>
         <wa-button
-          variant="neutral"
-          appearance="filled-outlined"
+          variant="shoelace"
+          appearance="filled"
           @click=${this.addTransactionClick}
           >Add New Transaction${this.pendingTransactionsBadge()}</wa-button
         >
