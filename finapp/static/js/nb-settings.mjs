@@ -22,6 +22,7 @@ export class SettingsCard extends NikElement {
   };
 
   static queries = {
+    card: "wa-card",
     themesSelect: "#themes",
     modeSelect: "#mode",
     primaryColorSelect: "#primary-color",
@@ -36,6 +37,7 @@ export class SettingsCard extends NikElement {
     borderWidthInput: "#theme-border-width-input",
     bgNumberInputs: { all: ".box-radio" },
     selects: { all: "wa-select" },
+    tabGroup: "wa-tab-group",
   };
 
   async init() {
@@ -62,6 +64,18 @@ export class SettingsCard extends NikElement {
     document.addEventListener("updatesettings", (e) =>
       this.handleExperimentalSettingChange(e),
     );
+
+    this.resizeObserver = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        let cardWidth = entry.contentRect.width;
+        if (cardWidth > 600) {
+          this.tabGroup.placement = "start";
+        } else {
+          this.tabGroup.placement = "top";
+        }
+      }
+    });
+    this.resizeObserver.observe(this.card);
   }
 
   handleThemeChange() {
@@ -341,6 +355,7 @@ export class SettingsCard extends NikElement {
 
   themeSettingsTemplate() {
     return html`<div class="wa-stack">
+      <h4>Theme Settings</h4>
       <wa-select
         id="themes"
         label="Builtin Themes"
@@ -381,17 +396,20 @@ export class SettingsCard extends NikElement {
   }
 
   advancedSettingsTemplate() {
-    return html`<div class="wa-grid" style="--min-column-size: 20rem;">
-      <div class="wa-stack">
-        ${this.backgroundColorTemplate()}
+    return html`<div class="wa-stack">
+      <h4>Advanced Theme Settings</h4>
+      <div class="wa-grid" style="--min-column-size: 19rem;">
+        <div class="wa-stack">
+          ${this.backgroundColorTemplate()}
 
-        <wa-divider></wa-divider>
+          <wa-divider></wa-divider>
 
-        ${this.variantsTemplate()}
-      </div>
+          ${this.variantsTemplate()}
+        </div>
 
-      <div class="wa-stack gap-(--wa-space-l)">
-        ${this.roundingTemplate()} ${this.spacingTemplate()}
+        <div class="wa-stack gap-(--wa-space-l)">
+          ${this.roundingTemplate()} ${this.spacingTemplate()}
+        </div>
       </div>
     </div>`;
   }
@@ -399,6 +417,7 @@ export class SettingsCard extends NikElement {
   experimentalSettingsTemplate() {
     if (EXPERIMENTAL_SETTINGS.length > 0) {
       return html`<div class="wa-stack">
+        <h4>Experimental Settings</h4>
         ${EXPERIMENTAL_SETTINGS.map((es) => es.template())}
       </div>`;
     }
@@ -419,8 +438,12 @@ export class SettingsCard extends NikElement {
           <h2>Settings</h2>
           <wa-tab-group placement="start">
             <wa-tab panel="theme">Theme Settings</wa-tab>
-            <wa-tab panel="advanced">Advanced Theming Options</wa-tab>
-            <wa-tab panel="experimental">Experimental Settings</wa-tab>
+            <wa-tab panel="advanced">Advanced Theme Settings</wa-tab>
+            <wa-tab
+              panel="experimental"
+              ?disabled=${EXPERIMENTAL_SETTINGS.length === 0}
+              >Experimental Settings</wa-tab
+            >
 
             <wa-tab-panel name="theme" active
               >${this.themeSettingsTemplate()}</wa-tab-panel
