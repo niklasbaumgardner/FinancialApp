@@ -23,10 +23,6 @@ export class SearchBudget extends NikElement {
     this.exactAmount = true;
     this.exactDate = true;
     this.searchTotal = 0;
-
-    document.addEventListener("SearchTotalChanged", (event) =>
-      this.handleSearchTotalChanged(event),
-    );
   }
 
   static properties = {
@@ -109,6 +105,12 @@ export class SearchBudget extends NikElement {
     }
 
     return searchValues;
+  }
+
+  init() {
+    document.addEventListener("SearchTotalChanged", (event) =>
+      this.handleSearchTotalChanged(event),
+    );
   }
 
   updated(changedProperties) {

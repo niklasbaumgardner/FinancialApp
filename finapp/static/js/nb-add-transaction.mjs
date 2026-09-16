@@ -45,9 +45,7 @@ export class AddTransactionModal extends BaseDialog {
     this.pendingTransactions = [];
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-
+  init() {
     this.budgets.sort((a, b) => a.name.localeCompare(b.name));
 
     document.addEventListener("BudgetsUpdated", this);

@@ -26,13 +26,9 @@ class RequestController {
 
 class ViewTransactions extends NikElement {
   static properties = {
-    transactions: { type: Array },
     budgets: { type: Array },
     categories: { type: Array },
-    theme: { type: String },
-    total: { type: Number },
     canSetDownloadLink: { type: Boolean },
-    gotTransactions: { type: Boolean },
     pendingTransactions: { type: Array },
   };
 
@@ -44,32 +40,12 @@ class ViewTransactions extends NikElement {
     super();
 
     this.canSetDownloadLink = false;
-    this.gotTransactions = false;
     this.pendingTransactions = [];
-    this.requestController = new RequestController();
-
-    this.waGridEnabled = !!USER_SETTINGS.wa_data_grid;
   }
 
-  connectedCallback() {
-    if (!this.waGridEnabled) {
-      let dummyArray = new Array(this.total - this.transactions.length).fill({
-        budget: { name: "" },
-        user: { username: "" },
-        categories: [],
-      });
-
-      this.transactions = this.transactions.concat(dummyArray);
-    }
-
-    super.connectedCallback();
-
-    if (!this.waGridEnabled) {
-      this.requestData();
-    }
+  init() {
     this.requestPendingTransactions();
 
-    document.addEventListener("RequestNewData", this);
     document.addEventListener("keydown", this);
     document.addEventListener("UpdatePendingTransactions", this);
     document.addEventListener("BudgetsUpdated", this);
@@ -77,11 +53,6 @@ class ViewTransactions extends NikElement {
 
   handleEvent(event) {
     switch (event.type) {
-      case "RequestNewData": {
-        let includeBudgets = event.detail.includeBudgets;
-        this.requestData(includeBudgets);
-        break;
-      }
       case "keydown": {
         this.handleKeyDown(event);
         break;
@@ -105,48 +76,6 @@ class ViewTransactions extends NikElement {
         continue;
       }
       this.budgets[budgetIndex] = budget;
-    }
-  }
-
-  async requestData(includeBudgets = false) {
-    if (!this.waGridEnabled) {
-      this.gotTransactions = false;
-      let url = VIEW_TRANSACTIONS_CONTENT_URL;
-      if (includeBudgets) {
-        url += "?includeBudgets=True";
-      }
-
-      let data;
-      try {
-        data = await this.requestController.doRequest(url);
-      } catch (e) {
-        if (e.name === ABORT_ERROR) {
-          return;
-        }
-
-        throw e;
-      }
-
-      let { transactions } = data;
-      this.transactions = transactions;
-      this.gotTransactions = true;
-      this.setDownloadLink();
-      document.dispatchEvent(
-        new CustomEvent("UpdateTransactions", {
-          bubbles: true,
-          composed: true,
-          detail: { transactions },
-        }),
-      );
-
-      if (includeBudgets) {
-        let { budgets } = data;
-        this.updateBudgets(budgets);
-      }
-    } else if (includeBudgets) {
-      document.dispatchEvent(
-        new CustomEvent("UpdateBudgets", { bubbles: true }),
-      );
     }
   }
 
@@ -236,21 +165,9 @@ class ViewTransactions extends NikElement {
   }
 
   transactionsTemplate() {
-    if (
-      !this.budgets ||
-      !this.categories ||
-      (!this.transactions && !this.waGridEnabled)
-    ) {
-      return html`<div class="flex items-center justify-center">
-        <wa-spinner class="text-9xl"></wa-spinner>
-      </div>`;
-    }
-
     return html`<nb-transactions-grid
-      .transactions=${this.transactions}
       .budgets=${this.budgets}
       .categories=${this.categories}
-      theme=${this.theme}
     ></nb-transactions-grid>`;
   }
 

@@ -33,9 +33,7 @@ export class PendingTransaction extends NikElement {
     return budget;
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-
+  init() {
     this.budgets.sort((a, b) => a.name.localeCompare(b.name));
   }
 
@@ -90,6 +88,11 @@ export class PendingTransaction extends NikElement {
         bubbles: true,
         composed: true,
         detail: { transaction },
+      }),
+    );
+    document.dispatchEvent(
+      new CustomEvent("UpdateBudgets", {
+        bubbles: true,
       }),
     );
 

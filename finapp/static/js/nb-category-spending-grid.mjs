@@ -1,8 +1,8 @@
 import { html } from "lit";
 import "./nb-transactions-grid.mjs";
 import "./nb-add-transaction.mjs";
-import * as agGrid from "./agGrid.mjs";
-import { BaseGrid } from "./nb-base-grid.mjs";
+import "./nb-data-grid.mjs";
+import { NikElement } from "./nik-element.mjs";
 
 const MONTHS = {
   1: "January",
@@ -19,7 +19,7 @@ const MONTHS = {
   12: "December",
 };
 
-class CategorySpendingGrid extends BaseGrid {
+class CategorySpendingGrid extends NikElement {
   static properties = {
     data: { type: Array },
     key: { type: String },
@@ -65,12 +65,6 @@ class CategorySpendingGrid extends BaseGrid {
     ></wa-format-number>`;
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-
-    this.startDate = new Date(START_DATE + "T00:00:00");
-  }
-
   getCurrentURL(budgetURL) {
     let searchParams = "";
     if (this.currentSelection?.month || this.currentSelection?.year) {
@@ -81,12 +75,10 @@ class CategorySpendingGrid extends BaseGrid {
     return `${budgetURL}${searchParams}`;
   }
 
-  firstUpdated() {
-    this.init();
-  }
-
   async init() {
     await this.updateComplete;
+
+    this.startDate = new Date(START_DATE + "T00:00:00");
 
     this.spendingMonths = new Set();
     this.spendingWeeks = {};
@@ -96,7 +88,6 @@ class CategorySpendingGrid extends BaseGrid {
     this.parseData();
     this.createWaDataGrid();
     this.updateSpendingGrid();
-    this.setupThemeWatcher();
   }
 
   async handleEvent(event) {
@@ -159,110 +150,6 @@ class CategorySpendingGrid extends BaseGrid {
   updateSpendingGrid() {
     this.categorySpendingGridEl.columns = this.columnsCache[this.interval];
     this.categorySpendingGridEl.data = this.dataCache[this.interval];
-
-    // this.dataGrid.setGridOption("columnDefs", this.columnsCache[this.interval]);
-    // this.dataGrid.setGridOption("rowData", this.dataCache[this.interval]);
-  }
-
-  createGridColumns() {
-    const columns = [
-      {
-        field: "name",
-        headerName: "Category Name",
-        cellRenderer: (param) => {
-          if (param.data.name && param.data.color) {
-            return `<nb-category
-              name="${param.data.name}"
-              color="${param.data.color}"
-            ></nb-category>`;
-          }
-          return param.value;
-        },
-      },
-      {
-        field: "average",
-        headerName: "Average Spend",
-        cellRenderer: (param) => {
-          return `<wa-format-number
-            type="currency"
-            currency="USD"
-            value=${param.value ?? 0}
-            lang="en-US"
-          ></wa-format-number>`;
-        },
-        cellClassRules: this.cellColorRules,
-      },
-    ];
-
-    if (this.interval === "weekly") {
-      let weekIndexes = Object.keys(this.spendingWeeks);
-      weekIndexes.sort((a, b) => this.spendingWeeks[b] - this.spendingWeeks[a]);
-
-      for (let index of weekIndexes) {
-        let dateString = this.spendingWeeks[index].toLocaleDateString(
-          undefined,
-          { month: "short", day: "numeric", year: "numeric" },
-        );
-        columns.push({
-          field: index,
-          headerName: `Week of ${dateString}`,
-          cellRenderer: (param) => {
-            return `<wa-format-number
-              type="currency"
-              currency="USD"
-              value=${param.value ?? 0}
-              lang="en-US"
-            ></wa-format-number>`;
-          },
-          cellClassRules: this.cellColorRules,
-        });
-      }
-    } else {
-      let date = new Date();
-      let currentMonth = date.getMonth();
-      let currentYear = date.getFullYear();
-      for (let i = 0; i < 12; i++) {
-        let month = 1 + ((12 + currentMonth - i) % 12);
-        let monthName = MONTHS[month];
-
-        if (this.spendingMonths.has(monthName)) {
-          let year = "";
-          if (month > 1 + currentMonth) {
-            year = ` ${currentYear - 1}`;
-          }
-          columns.push({
-            field: monthName,
-            headerName: monthName + year,
-            cellRenderer: (param) => {
-              return `<wa-format-number
-                type="currency"
-                currency="USD"
-                value=${param.value ?? 0}
-                lang="en-US"
-              ></wa-format-number>`;
-            },
-            cellClassRules: this.cellColorRules,
-          });
-        }
-      }
-    }
-
-    this.columnsCache[this.interval] = columns;
-  }
-
-  createDataGrid() {
-    this.createGridColumns();
-    const columnDefs = this.columnsCache[this.interval];
-    const gridOptions = {
-      ...this.baseGridOptions,
-      columnDefs,
-      rowData: [],
-      autoSizeStrategy: {
-        type: "fitGridWidth",
-        defaultMinWidth: 150,
-      },
-    };
-    this.dataGrid = agGrid.createGrid(this.categorySpendingGridEl, gridOptions);
   }
 
   createWaGridColumns() {
@@ -344,17 +231,7 @@ class CategorySpendingGrid extends BaseGrid {
 
   createWaDataGrid() {
     this.createWaGridColumns();
-    const columnDefs = this.columnsCache[this.interval];
-    const gridOptions = {
-      ...this.baseGridOptions,
-      columnDefs,
-      rowData: [],
-      autoSizeStrategy: {
-        type: "fitGridWidth",
-        defaultMinWidth: 150,
-      },
-    };
-    this.dataGrid = agGrid.createGrid(this.categorySpendingGridEl, gridOptions);
+    this.updateSpendingGrid();
   }
 
   render() {

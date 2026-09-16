@@ -23,10 +23,6 @@ class BudgetSearchCard extends NikElement {
     this.searchItems = [document.createElement("search-item")];
     this.exactAmount = true;
     this.exactDate = true;
-
-    document.addEventListener("SearchTotalChanged", (event) =>
-      this.handleSearchTotalChanged(event),
-    );
   }
 
   static properties = {
@@ -105,6 +101,12 @@ class BudgetSearchCard extends NikElement {
     }
 
     return searchValues;
+  }
+
+  init() {
+    document.addEventListener("SearchTotalChanged", (event) =>
+      this.handleSearchTotalChanged(event),
+    );
   }
 
   updated(changedProperties) {

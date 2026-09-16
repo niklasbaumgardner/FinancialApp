@@ -7,7 +7,6 @@ from finapp.queries import (
     budget_queries,
     category_queries,
     transaction_queries,
-    user_settings_queries,
 )
 
 viewtransactions_bp = Blueprint("viewtransactions_bp", __name__)
@@ -17,16 +16,6 @@ viewtransactions_bp = Blueprint("viewtransactions_bp", __name__)
 @viewtransactions_bp.get("/view_transactions")
 @login_required
 def view_transactions() -> str:
-    transactions = []
-    total = 0
-    user_settings = user_settings_queries.get_user_settings()
-
-    if user_settings is None or not user_settings.settings.get("wa_data_grid"):
-        transactions, total = transaction_queries.get_recent_transactions(
-            limit=100, include_total=True
-        )
-        transactions = [t.to_dict() for t in transactions]
-
     budgets = budget_queries.get_budgets(active_only=True)
     budgets = [b.to_dict() for b in budgets]
 
@@ -35,10 +24,8 @@ def view_transactions() -> str:
 
     return render_template(
         "viewtransactions.html",
-        transactions=transactions,
         budgets=budgets,
         categories=categories,
-        total=total,
     )
 
 

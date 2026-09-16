@@ -1,8 +1,8 @@
 import { html } from "lit";
 import "./nb-transactions-grid.mjs";
 import "./nb-add-transaction.mjs";
-import * as agGrid from "./agGrid.mjs";
-import { BaseGrid } from "./nb-base-grid.mjs";
+import "./nb-data-grid.mjs";
+import { NikElement } from "./nik-element.mjs";
 
 const MONTHS = {
   1: "January",
@@ -19,7 +19,7 @@ const MONTHS = {
   12: "December",
 };
 
-class BudgetSpendingGrid extends BaseGrid {
+class BudgetSpendingGrid extends NikElement {
   static properties = {
     data: { type: Array },
   };
@@ -47,12 +47,6 @@ class BudgetSpendingGrid extends BaseGrid {
     };
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-
-    this.startDate = new Date(START_DATE + "T00:00:00");
-  }
-
   getCurrentURL(budgetURL) {
     let searchParams = "";
     if (this.currentSelection?.month || this.currentSelection?.year) {
@@ -63,18 +57,15 @@ class BudgetSpendingGrid extends BaseGrid {
     return `${budgetURL}${searchParams}`;
   }
 
-  firstUpdated() {
-    this.init();
-  }
-
   async init() {
+    this.startDate = new Date(START_DATE + "T00:00:00");
+
     await this.updateComplete;
 
     this.dataCache = {};
     this.dataCache[this.key] = this.data;
 
     this.createWaDataGrid();
-    this.setupThemeWatcher();
   }
 
   async handleEvent() {
@@ -98,86 +89,6 @@ class BudgetSpendingGrid extends BaseGrid {
 
   updateSpendingGrid() {
     this.spendingGridEl.data = this.dataCache[this.key];
-
-    // this.dataGrid.setGridOption("rowData", this.dataCache[this.key]);
-  }
-
-  createDataGrid() {
-    const columnDefs = [
-      {
-        field: "name",
-        headerName: "Budget",
-        cellRenderer: (param) => {
-          if (param.data.id) {
-            return `<a href="${this.getCurrentURL(param.data.budget.url)}">${
-              param.value
-            }</a>`;
-          }
-          return param.value;
-        },
-      },
-      {
-        field: "total",
-        headerName: "Current total",
-        cellRenderer: (param) => {
-          return `<wa-format-number
-            type="currency"
-            currency="USD"
-            value=${param.value}
-            lang="en-US"
-          ></wa-format-number>`;
-        },
-        cellClassRules: this.cellColorRules,
-      },
-      {
-        field: "in",
-        headerName: "Income",
-        cellRenderer: (param) => {
-          return `<wa-format-number
-            type="currency"
-            currency="USD"
-            value=${param.value}
-            lang="en-US"
-          ></wa-format-number>`;
-        },
-        cellClassRules: this.cellColorRules,
-      },
-      {
-        field: "out",
-        headerName: "Spent",
-        cellRenderer: (param) => {
-          return `<wa-format-number
-            type="currency"
-            currency="USD"
-            value=${param.value}
-            lang="en-US"
-          ></wa-format-number>`;
-        },
-        cellClassRules: this.cellColorRules,
-      },
-      {
-        field: "net",
-        cellRenderer: (param) => {
-          return `<wa-format-number
-            type="currency"
-            currency="USD"
-            value=${param.value}
-            lang="en-US"
-          ></wa-format-number>`;
-        },
-        cellClassRules: this.cellColorRules,
-      },
-    ];
-    const gridOptions = {
-      ...this.baseGridOptions,
-      columnDefs,
-      rowData: this.data,
-      autoSizeStrategy: {
-        type: "fitGridWidth",
-        defaultMinWidth: 200,
-      },
-    };
-    this.dataGrid = agGrid.createGrid(this.spendingGridEl, gridOptions);
   }
 
   optionsTemplate() {
@@ -311,7 +222,7 @@ class BudgetSpendingGrid extends BaseGrid {
           >${this.optionsTemplate()}</nb-combobox
         >
 
-        <nb-data-grid size="s" id="spending-by-budget-grid"></nb-data-grid>
+        <nb-data-grid id="spending-by-budget-grid"></nb-data-grid>
       </div>
     </wa-details>`;
   }

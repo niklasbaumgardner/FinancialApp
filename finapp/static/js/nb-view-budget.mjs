@@ -25,9 +25,7 @@ export class ViewBudget extends NikElement {
     return Math.min(this.numPages, 5);
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-
+  init() {
     // this.searching = false;
     // this.pagination = new Pagination(
     //   this.transactions,

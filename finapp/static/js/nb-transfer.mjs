@@ -26,9 +26,7 @@ export class Transfer extends NikElement {
     );
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-
+  init() {
     this.sourceOptions = this.sourceBudgetOptions;
     this.destOptions = this.destBudgetOptions;
   }

@@ -58,11 +58,6 @@ export class SettingsCard extends NikElement {
     selects: { all: "wa-select" },
   };
 
-  connectedCallback() {
-    super.connectedCallback();
-    this.init();
-  }
-
   async init() {
     this.theme = THEME;
     const bgArray = this.theme.backgroundColor?.split("-");

@@ -33,4 +33,12 @@ export class NikElement extends LitElement {
   createRenderRoot() {
     return this;
   }
+
+  connectedCallback() {
+    super.connectedCallback();
+
+    this.init();
+  }
+
+  init() {}
 }

@@ -7,9 +7,7 @@ export class LoginCard extends NikElement {
     email: { type: String },
   };
 
-  connectedCallback() {
-    super.connectedCallback();
-
+  init() {
     const params = new URLSearchParams(location.search);
     const nextURL = params.get("next");
 

@@ -19,9 +19,7 @@ export class SimpleFINAccounts extends NikElement {
     return false;
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-
+  init() {
     this.accounts.sort((a, b) => a.name.localeCompare(b.name));
 
     let seenOrgs = new Set();

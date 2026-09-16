@@ -21,9 +21,7 @@ export class EditBudgetModal extends BaseDialog {
     activeSwitch: "wa-switch",
   };
 
-  connectedCallback() {
-    super.connectedCallback();
-
+  init() {
     document.addEventListener("BudgetsUpdated", this);
   }
 

@@ -30,12 +30,6 @@ export class BaseChart extends NikElement {
     };
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-
-    this.init();
-  }
-
   async createChart() {
     this.chart = AgCharts.create(this.chartOptions);
   }

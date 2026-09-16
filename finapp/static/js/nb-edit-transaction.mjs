@@ -30,9 +30,7 @@ export class EditTransactionModal extends AddTransactionModal {
     return budget;
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-
+  init() {
     let users = [this.selectedBudget.user];
     users.push(...this.selectedBudget.shared_users);
     users.sort((a, b) => a.username.localeCompare(b.username));

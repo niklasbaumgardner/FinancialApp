@@ -74,9 +74,7 @@ export class ViewBudgets extends NikElement {
     waDataGrid: "nb-data-grid",
   };
 
-  connectedCallback() {
-    super.connectedCallback();
-
+  init() {
     this.sortBudgets();
 
     document.addEventListener("BudgetsUpdated", this);

@@ -94,9 +94,7 @@ export class CategoriesSelect extends NikElement {
     }
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-
+  init() {
     this.categories.sort((a, b) => a.name.localeCompare(b.name));
   }
 

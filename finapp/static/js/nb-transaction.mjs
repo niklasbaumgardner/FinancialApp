@@ -23,9 +23,7 @@ export class Transaction extends NikElement {
     };
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-
+  init() {
     this.transaction.categories.sort((a, b) =>
       a.category.name.localeCompare(b.category.name),
     );

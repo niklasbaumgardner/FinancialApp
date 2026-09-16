@@ -23,9 +23,7 @@ export class AddPaycheck extends NikElement {
     this.formValid = false;
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-
+  init() {
     document.addEventListener("CopyFromPaycheck", this);
   }
 

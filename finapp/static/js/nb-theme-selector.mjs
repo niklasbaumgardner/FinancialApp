@@ -19,12 +19,6 @@ export class ThemeSelector extends NikElement {
     return this.lightIcon;
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-
-    this.init();
-  }
-
   async init() {
     await this.updateComplete;
 

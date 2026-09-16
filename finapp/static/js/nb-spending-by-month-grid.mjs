@@ -1,8 +1,8 @@
 import { html } from "lit";
 import "./nb-transactions-grid.mjs";
 import "./nb-add-transaction.mjs";
-import * as agGrid from "./agGrid.mjs";
-import { BaseGrid } from "./nb-base-grid.mjs";
+import "./nb-data-grid.mjs";
+import { NikElement } from "./nik-element.mjs";
 
 const MONTHS = {
   1: "January",
@@ -19,7 +19,7 @@ const MONTHS = {
   12: "December",
 };
 
-class SpendingByMonth extends BaseGrid {
+class SpendingByMonth extends NikElement {
   static properties = {
     data: { type: Object },
     dataArray: { type: Array },
@@ -56,21 +56,12 @@ class SpendingByMonth extends BaseGrid {
     ></wa-format-number>`;
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-
-    this.parseData();
-  }
-
-  firstUpdated() {
-    this.init();
-  }
-
   async init() {
     await this.updateComplete;
 
+    this.parseData();
+
     this.createWaDataGrid();
-    this.setupThemeWatcher();
   }
 
   parseData() {
@@ -113,61 +104,6 @@ class SpendingByMonth extends BaseGrid {
 
     dataArray.sort((a, b) => a.name.localeCompare(b.name));
     this.dataArray = dataArray;
-  }
-
-  createDataGrid() {
-    const columnDefs = [
-      {
-        field: "name",
-        headerName: "Budget",
-        cellRenderer: (param) => {
-          return `<a href="${param.data.budget.url}">${param.value}</a>`;
-        },
-      },
-    ];
-
-    let date = new Date();
-    let currentMonth = date.getMonth();
-    let currentYear = date.getFullYear();
-    for (let i = 0; i < 12; i++) {
-      let month = 1 + ((12 + currentMonth - i) % 12);
-      let monthName = MONTHS[month];
-
-      let year = "";
-      if (month > 1 + currentMonth) {
-        year = ` ${currentYear - 1}`;
-      }
-      columnDefs.push({
-        field: monthName,
-        headerName: monthName + year,
-        cellRenderer: (param) => {
-          return `<wa-format-number
-                type="currency"
-                currency="USD"
-                value=${param.value ?? 0}
-                lang="en-US"
-              ></wa-format-number>`;
-        },
-        cellClassRules: this.cellColorRules,
-      });
-    }
-
-    const gridOptions = {
-      ...this.baseGridOptions,
-      columnDefs,
-      rowData: this.dataArray,
-      autoSizeStrategy: {
-        type: "fitGridWidth",
-        defaultMinWidth: 150,
-        columnLimits: [
-          {
-            colId: "name",
-            minWidth: 200,
-          },
-        ],
-      },
-    };
-    this.dataGrid = agGrid.createGrid(this.spendingGridEl, gridOptions);
   }
 
   createWaDataGrid() {

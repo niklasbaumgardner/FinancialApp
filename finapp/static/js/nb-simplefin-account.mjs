@@ -88,9 +88,7 @@ export class SimpleFINAccount extends NikElement {
     return `${this.account.organization.name} ${this.account.name}`;
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-
+  init() {
     document.addEventListener("SimpleFINAccountChange", this);
     document.addEventListener("AccountAccessChange", this);
   }

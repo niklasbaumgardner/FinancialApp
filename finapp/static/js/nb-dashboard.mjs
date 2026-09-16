@@ -19,9 +19,7 @@ class Dashboard extends NikElement {
     downloadLink: "a",
   };
 
-  connectedCallback() {
-    super.connectedCallback();
-
+  init() {
     this.requestInitialData();
   }
 

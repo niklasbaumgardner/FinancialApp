@@ -20,9 +20,7 @@ export class AddBudget extends BaseDialog {
     amountInput: "#starting-budget-amount",
   };
 
-  connectedCallback() {
-    super.connectedCallback();
-
+  init() {
     document.addEventListener("BudgetsUpdated", this);
   }
 

@@ -7,8 +7,7 @@ export class SearchItem extends NikElement {
     removeButton: "wa-button",
   };
 
-  connectedCallback() {
-    super.connectedCallback();
+  init() {
     this.dispatchEvent(new CustomEvent("SearchItemAdded", { bubbles: true }));
   }
 

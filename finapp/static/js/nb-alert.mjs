@@ -8,9 +8,7 @@ export class Alert extends NikElement {
     category: { type: String },
   };
 
-  connectedCallback() {
-    super.connectedCallback();
-
+  init() {
     this.removeSelfTask = new DeferredTask(() => this.removeSelf(), 5000, {
       finalizeBeforeUnload: true,
     });
