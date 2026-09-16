@@ -144,3 +144,7 @@ wa-button[variant="shoelace"] {
     );
   }
 }
+
+.wa-font-size-smaller {
+  font-size: var(--wa-font-size-smaller);
+}

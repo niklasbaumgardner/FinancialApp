@@ -1,77 +1,5 @@
-import { NikElement } from "./nik-element.mjs";
 import { html } from "lit";
 import { BaseDialog } from "./nb-base-dialog.mjs";
-
-class Paycheck extends NikElement {
-  static properties = {
-    paycheck: { type: Object },
-  };
-
-  handlePaycheckClick() {
-    this.closest("nb-previous-paychecks").hide();
-
-    document.dispatchEvent(
-      new CustomEvent("CopyFromPaycheck", {
-        detail: { paycheck: this.paycheck },
-      }),
-    );
-  }
-
-  render() {
-    return html`<wa-details appearance="filled-outlined">
-      <div slot="summary">
-        Paycheck on
-        <wa-format-date
-          month="long"
-          day="numeric"
-          year="numeric"
-          date="${this.paycheck.date}T00:00:00"
-        ></wa-format-date>
-        for
-        <wa-format-number
-          type="currency"
-          currency="USD"
-          value=${this.paycheck.total}
-          lang="en-US"
-        ></wa-format-number>
-      </div>
-      <div class="wa-stack">
-        <table>
-          <thead>
-            <tr>
-              <th scope="col">Budget Name</th>
-              <th scope="col">Amount</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${this.paycheck.transactions.map(
-              (t) =>
-                html`<tr>
-                  <td>${t.budget.name}</td>
-                  <td id="${t.budget.id}">
-                    <wa-format-number
-                      type="currency"
-                      currency="USD"
-                      value="${t.amount}"
-                      lang="en-US"
-                    ></wa-format-number>
-                  </td>
-                </tr>`,
-            )}
-          </tbody>
-        </table>
-
-        <wa-button
-          variant="brand"
-          appearance="filled"
-          @click=${this.handlePaycheckClick}
-          >Copy from this paycheck</wa-button
-        >
-      </div>
-    </wa-details>`;
-  }
-}
-customElements.define("nb-paycheck", Paycheck);
 
 export class PreviousPaychecks extends BaseDialog {
   static properties = {
@@ -82,10 +10,74 @@ export class PreviousPaychecks extends BaseDialog {
     dialog: "wa-dialog",
   };
 
-  paychecksTemplate() {
-    return this.paychecks.map(
-      (p) => html`<nb-paycheck .paycheck=${p}></nb-paycheck>`,
+  handlePaycheckClick(paycheck) {
+    this.hide();
+
+    document.dispatchEvent(
+      new CustomEvent("CopyFromPaycheck", {
+        detail: { paycheck },
+      }),
     );
+  }
+
+  paychecksTemplate() {
+    return html`<wa-accordion mode="single-collapsible"
+      >${this.paychecks.map(
+        (p) =>
+          html`<wa-accordion-item>
+            <div slot="label">
+              Paycheck on
+              <wa-format-date
+                month="long"
+                day="numeric"
+                year="numeric"
+                date="${p.date}T00:00:00"
+              ></wa-format-date>
+              for
+              <wa-format-number
+                type="currency"
+                currency="USD"
+                value=${p.total}
+                lang="en-US"
+              ></wa-format-number>
+            </div>
+            <div class="wa-stack wa-font-size-smaller wa-color-text-normal">
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col">Budget Name</th>
+                    <th scope="col">Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${p.transactions.map(
+                    (t) =>
+                      html`<tr>
+                        <td>${t.budget.name}</td>
+                        <td id="${t.budget.id}">
+                          <wa-format-number
+                            type="currency"
+                            currency="USD"
+                            value="${t.amount}"
+                            lang="en-US"
+                          ></wa-format-number>
+                        </td>
+                      </tr>`,
+                  )}
+                </tbody>
+              </table>
+
+              <wa-button
+                size="s"
+                variant="brand"
+                appearance="filled"
+                @click=${() => this.handlePaycheckClick(p)}
+                >Copy from this paycheck</wa-button
+              >
+            </div>
+          </wa-accordion-item>`,
+      )}</wa-accordion
+    >`;
   }
 
   render() {

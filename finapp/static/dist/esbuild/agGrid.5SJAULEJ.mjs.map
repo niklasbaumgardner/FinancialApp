@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../js/agGrid.mjs"],
-  "sourcesContent": ["import {\n  ModuleRegistry,\n  ClientSideRowModelApiModule,\n  ColumnAutoSizeModule,\n  RowAutoHeightModule,\n  PaginationModule,\n  CellSpanModule,\n  CellStyleModule,\n  TextFilterModule,\n  NumberFilterModule,\n  DateFilterModule,\n  ClientSideRowModelModule,\n  createGrid,\n  colorSchemeDark,\n  colorSchemeLight,\n  themeAlpine,\n} from \"ag-grid-community\";\n\nModuleRegistry.registerModules([\n  ColumnAutoSizeModule,\n  ClientSideRowModelApiModule,\n  RowAutoHeightModule,\n  PaginationModule,\n  CellSpanModule,\n  CellStyleModule,\n  TextFilterModule,\n  NumberFilterModule,\n  DateFilterModule,\n  ClientSideRowModelModule,\n]);\n\nexport { createGrid, colorSchemeDark, colorSchemeLight, themeAlpine };\n"],
-  "mappings": "mKAkBAA,EAAe,gBAAgB,CAC7BC,EACAC,EACAC,EACAC,EACAC,EACAC,EACAC,EACAC,EACAC,EACAC,CACF,CAAC",
-  "names": ["ModuleRegistry", "ColumnAutoSizeModule", "ClientSideRowModelApiModule", "RowAutoHeightModule", "PaginationModule", "CellSpanModule", "CellStyleModule", "TextFilterModule", "NumberFilterModule", "DateFilterModule", "ClientSideRowModelModule"]
-}

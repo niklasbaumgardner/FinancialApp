@@ -14,7 +14,6 @@ const result = await buildFunction({
   entryPoints: {
     // JS
     main: "./finapp/static/js/main.mjs",
-    agGrid: "./finapp/static/js/agGrid.mjs",
     nb: "./finapp/static/js/nb-components.mjs",
     theme: "./finapp/static/js/theme.mjs",
     sentry: "./finapp/static/js/sentry.mjs",
