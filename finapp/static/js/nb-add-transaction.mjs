@@ -54,9 +54,9 @@ export class AddTransactionModal extends BaseDialog {
   handleEvent(event) {
     switch (event.type) {
       case "BudgetsUpdated": {
-        const { budgets } = event.detail;
+        const { active } = event.detail;
 
-        this.updateBudgets(budgets);
+        this.updateBudgets(active);
       }
     }
   }
