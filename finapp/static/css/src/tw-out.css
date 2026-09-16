@@ -551,8 +551,14 @@
   .p-\(--wa-space-2xs\) {
     padding: var(--wa-space-2xs);
   }
+  .p-0 {
+    padding: 0px;
+  }
   .py-\(--wa-space-2xs\) {
     padding-block: var(--wa-space-2xs);
+  }
+  .py-0 {
+    padding-block: 0px;
   }
   .ps-\(--wa-space-2xl\) {
     padding-inline-start: var(--wa-space-2xl);

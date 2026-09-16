@@ -1,0 +1,77 @@
+<header slot="header" class="flex justify-center">
+  <div class="container max-w-[80rem]">
+    <div class="wa-split flex-nowrap">
+      <div class="wa-cluster">
+        {% block backButton %}{% endblock backButton %}
+        <a class="wa-heading-xl" href="/">NB Budgets</a>
+        <a
+          class="wa-desktop-only wa-heading-l"
+          href="{{ url_for('viewbudgets_bp.viewbudgets') }}"
+          >Budgets</a
+        >
+        <a
+          class="wa-desktop-only wa-heading-l"
+          href="{{ url_for('paycheck_bp.add_paycheck') }}"
+          >Add Paycheck</a
+        >
+        <a
+          class="wa-desktop-only wa-heading-l"
+          href="{{ url_for('transfer_bp.transfer') }}"
+          >Transfer</a
+        >
+        <a
+          class="wa-desktop-only wa-heading-l"
+          href="{{ url_for('dashboard_bp.dashboard') }}"
+          >Dashboard</a
+        >
+      </div>
+
+      <div class="wa-cluster flex-nowrap">
+        <div class="wa-cluster flex-nowrap">
+          <nb-theme-selector></nb-theme-selector>
+          {% if current_user.is_authenticated %}
+          <wa-dropdown class="wa-desktop-only" placement="bottom-end"
+            ><wa-button
+              id="user-button"
+              appearance="plain"
+              slot="trigger"
+              with-caret
+              ><wa-icon
+                slot="start"
+                name="person-circle-outline"
+                library="ion"
+              ></wa-icon
+              >{{ current_user.username }}</wa-button
+            >
+            <wa-dropdown-item
+              ><a href="{{ url_for('simplefin_bp.simplefin') }}"
+                >External Accounts</a
+              ></wa-dropdown-item
+            ><wa-dropdown-item
+              ><a href="{{ url_for('settings_bp.settings') }}"
+                >Settings</a
+              ></wa-dropdown-item
+            ><wa-dropdown-item
+              ><a href="{{ url_for('profile_bp.profile') }}"
+                >Profile</a
+              ></wa-dropdown-item
+            ><wa-dropdown-item
+              ><a href="{{ url_for('auth_bp.logout') }}"
+                >Logout</a
+              ></wa-dropdown-item
+            >
+          </wa-dropdown>
+          {% else %}
+          <a class="wa-desktop-only" href="{{ url_for('auth_bp.login') }}"
+            >Login</a
+          >
+          {% endif %}
+        </div>
+
+        <wa-button data-toggle-nav appearance="plain"
+          ><wa-icon library="ion" name="menu-outline" label="Menu"></wa-icon
+        ></wa-button>
+      </div>
+    </div>
+  </div>
+</header>

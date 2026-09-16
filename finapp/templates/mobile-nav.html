@@ -1,0 +1,36 @@
+<a slot="navigation-header" class="wa-mobile-only wa-heading-xl p-0" href="/"
+  >NB Budgets</a
+>
+
+<nav slot="navigation" class="wa-mobile-only py-0 gap-(--wa-space-s)">
+  <a class="wa-heading-l" href="{{ url_for('viewbudgets_bp.viewbudgets') }}"
+    >Budgets</a
+  >
+  <a class="wa-heading-l" href="{{ url_for('paycheck_bp.add_paycheck') }}"
+    >Add Paycheck</a
+  >
+  <a class="wa-heading-l" href="{{ url_for('transfer_bp.transfer') }}"
+    >Transfer</a
+  >
+  <a class="wa-heading-l" href="{{ url_for('dashboard_bp.dashboard') }}"
+    >Dashboard</a
+  >
+
+  {% if current_user.is_authenticated %}
+  <wa-divider></wa-divider>
+
+  <a class="wa-heading-l" href="{{ url_for('simplefin_bp.simplefin') }}"
+    >External Accounts</a
+  >
+  <a class="wa-heading-l" href="{{ url_for('settings_bp.settings') }}"
+    >Settings</a
+  >
+  <a class="wa-heading-l" href="{{ url_for('profile_bp.profile') }}">Profile</a>
+
+  <wa-divider></wa-divider>
+
+  <a class="wa-heading-l" href="{{ url_for('auth_bp.logout') }}">Logout</a>
+  {% else %}
+  <a class="wa-heading-l" href="{{ url_for('auth_bp.login') }}">Login</a>
+  {% endif %}
+</nav>
