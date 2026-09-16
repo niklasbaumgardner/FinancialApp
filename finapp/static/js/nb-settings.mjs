@@ -14,27 +14,7 @@ function toUpper(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-const EXPERIMENTAL_SETTINGS = [
-  {
-    validValues: [true, false],
-    template: () => {
-      return html`<wa-checkbox
-        id="wa_data_grid"
-        hint="The transactions page will use WaDataGrid"
-        ?checked=${USER_SETTINGS.wa_data_grid}
-        @change=${(e) => {
-          document.dispatchEvent(
-            new CustomEvent("updatesettings", {
-              detail: { wa_data_grid: e.target.checked },
-              bubbles: true,
-            }),
-          );
-        }}
-        >Use WaDataGrid instead of AgGrid</wa-checkbox
-      >`;
-    },
-  },
-];
+const EXPERIMENTAL_SETTINGS = [];
 
 export class SettingsCard extends NikElement {
   static properties = {
@@ -359,9 +339,72 @@ export class SettingsCard extends NikElement {
     );
   }
 
-  experimentalSettingsTemplate() {
+  themeSettingsTemplate() {
     return html`<div class="wa-stack">
-      ${EXPERIMENTAL_SETTINGS.map((es) => es.template())}
+      <wa-select
+        id="themes"
+        label="Builtin Themes"
+        @input=${this.handleThemeChange}
+        >${THEME_LIST.map(
+          (theme) =>
+            html`<wa-option
+              ?selected=${this.theme.theme === theme}
+              value=${theme}
+              >${toUpper(theme)}</wa-option
+            >`,
+        )}</wa-select
+      >
+
+      <wa-select
+        with-clear
+        id="color-palette"
+        label="Color Palette"
+        @input=${this.handleColorPaletteChange}
+        >${COLOR_PALETTE_LIST.map(
+          (color) =>
+            html`<wa-option
+              ?selected=${this.theme.colorPalette === color}
+              value=${color}
+              >${toUpper(color)}</wa-option
+            >`,
+        )}</wa-select
+      >
+
+      <wa-select id="mode" label="Mode" @input=${this.handleModeChange}
+        ><wa-option value="light" ?selected=${this.theme.mode === "light"}
+          >Light</wa-option
+        ><wa-option value="dark" ?selected=${this.theme.mode === "dark"}
+          >Dark</wa-option
+        ></wa-select
+      >
+    </div>`;
+  }
+
+  advancedSettingsTemplate() {
+    return html`<div class="wa-grid" style="--min-column-size: 20rem;">
+      <div class="wa-stack">
+        ${this.backgroundColorTemplate()}
+
+        <wa-divider></wa-divider>
+
+        ${this.variantsTemplate()}
+      </div>
+
+      <div class="wa-stack gap-(--wa-space-l)">
+        ${this.roundingTemplate()} ${this.spacingTemplate()}
+      </div>
+    </div>`;
+  }
+
+  experimentalSettingsTemplate() {
+    if (EXPERIMENTAL_SETTINGS.length > 0) {
+      return html`<div class="wa-stack">
+        ${EXPERIMENTAL_SETTINGS.map((es) => es.template())}
+      </div>`;
+    }
+
+    return html`<div>
+      No experimental settings at the moment. Check back later.
     </div>`;
   }
 
@@ -380,66 +423,10 @@ export class SettingsCard extends NikElement {
             <wa-tab panel="experimental">Experimental Settings</wa-tab>
 
             <wa-tab-panel name="theme" active
-              ><div class="wa-stack">
-                <wa-select
-                  id="themes"
-                  label="Builtin Themes"
-                  @input=${this.handleThemeChange}
-                  >${THEME_LIST.map(
-                    (theme) =>
-                      html`<wa-option
-                        ?selected=${this.theme.theme === theme}
-                        value=${theme}
-                        >${toUpper(theme)}</wa-option
-                      >`,
-                  )}</wa-select
-                >
-
-                <wa-select
-                  with-clear
-                  id="color-palette"
-                  label="Color Palette"
-                  @input=${this.handleColorPaletteChange}
-                  >${COLOR_PALETTE_LIST.map(
-                    (color) =>
-                      html`<wa-option
-                        ?selected=${this.theme.colorPalette === color}
-                        value=${color}
-                        >${toUpper(color)}</wa-option
-                      >`,
-                  )}</wa-select
-                >
-
-                <wa-select
-                  id="mode"
-                  label="Mode"
-                  @input=${this.handleModeChange}
-                  ><wa-option
-                    value="light"
-                    ?selected=${this.theme.mode === "light"}
-                    >Light</wa-option
-                  ><wa-option
-                    value="dark"
-                    ?selected=${this.theme.mode === "dark"}
-                    >Dark</wa-option
-                  ></wa-select
-                >
-              </div></wa-tab-panel
+              >${this.themeSettingsTemplate()}</wa-tab-panel
             >
             <wa-tab-panel name="advanced"
-              ><div class="wa-grid" style="--min-column-size: 20rem;">
-                <div class="wa-stack">
-                  ${this.backgroundColorTemplate()}
-
-                  <wa-divider></wa-divider>
-
-                  ${this.variantsTemplate()}
-                </div>
-
-                <div class="wa-stack gap-(--wa-space-l)">
-                  ${this.roundingTemplate()} ${this.spacingTemplate()}
-                </div>
-              </div></wa-tab-panel
+              >${this.advancedSettingsTemplate()}</wa-tab-panel
             >
             <wa-tab-panel name="experimental"
               >${this.experimentalSettingsTemplate()}</wa-tab-panel

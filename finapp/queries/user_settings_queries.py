@@ -20,7 +20,6 @@ VALID_USER_SETTINGS_ARGS = {
     "color_contrast",
     "color_palette",
     "rounding",
-    "wa_data_grid",
     *VALID_VARIANTS,
 }
 
@@ -29,7 +28,6 @@ ARGS_ALLOW_NULL = {
     "color_contrast",
     "color_palette",
     "rounding",
-    "wa_data_grid",
     *VALID_VARIANTS,
 }
 
@@ -117,11 +115,6 @@ VALID_USER_SETTINGS_DICT = {
     "neutral": {"valid_values": COLORS, "nullable": True},
     "success": {"valid_values": COLORS, "nullable": True},
     "warning": {"valid_values": COLORS, "nullable": True},
-    "wa_data_grid": {
-        "valid_values": {True, False},
-        "nullable": True,
-        "experimental": True,
-    },
 }
 
 
