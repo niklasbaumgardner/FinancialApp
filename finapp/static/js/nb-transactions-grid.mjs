@@ -160,7 +160,7 @@ export class TransactionsGrid extends NikElement {
         sortable: true,
         sortFn: "alphanumeric",
         filterable: true,
-        flex: 1,
+        flex: 2,
         minWidth: 200,
       },
       {
@@ -169,7 +169,6 @@ export class TransactionsGrid extends NikElement {
         sortable: true,
         filterable: true,
         filterType: "number-range",
-        flex: 1,
         minWidth: 150,
         formatter: (amount) => {
           return html`<wa-format-number
@@ -187,7 +186,6 @@ export class TransactionsGrid extends NikElement {
         sortFn: "alphanumeric",
         filterable: true,
         filterType: "set",
-        flex: 1,
         minWidth: 200,
         value: (row) => {
           return row.budget?.name;
@@ -229,7 +227,6 @@ export class TransactionsGrid extends NikElement {
         sortFn: "alphanumeric",
         filterable: true,
         filterType: "set",
-        flex: 1,
         minWidth: 175,
         value: (row) => {
           return row.user.username;

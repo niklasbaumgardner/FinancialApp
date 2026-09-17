@@ -88,9 +88,9 @@ export class WaBaseGrid extends WaDataGrid {
     // explicit was truthy so min width was never being set like I wanted.
     if (col?.width) {
       base = { flex: `0 0 ${explicit}px`, width: `${explicit}px` };
-    } else if (col?.flex != null) {
+    } else if (col?.maxWidth != null) {
       base = {
-        flex: `${col.flex} 1 0`,
+        flex: `${col.flex ?? 1} 1 0`,
         minWidth: `${col.minWidth ?? 0}px`,
         ...(col.maxWidth != null ? { maxWidth: `${col.maxWidth}px` } : {}),
       };
