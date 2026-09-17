@@ -39,7 +39,14 @@ export class EditBudgetModal extends BaseDialog {
   async handleInput() {
     await this.updateComplete;
 
+    let isActive = this.activeSwitch.checked;
     let newName = this.nameInput.value.trim();
+    if (isActive !== this.budget.is_active && this.budget.name === newName) {
+      this.submitButton.disabled = false;
+      this.nameInput.hint = "";
+      return;
+    }
+
     if (newName.length === 0) {
       this.submitButton.disabled = true;
       this.nameInput.hint = "";

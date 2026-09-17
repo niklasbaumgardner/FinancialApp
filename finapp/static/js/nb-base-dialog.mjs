@@ -28,8 +28,6 @@ export class BaseDialog extends NikElement {
     if (event.target !== this.dialog) {
       return;
     }
-
-    this.querySelector("wa-input")?.focus();
   }
 
   handleWaHide(event) {
