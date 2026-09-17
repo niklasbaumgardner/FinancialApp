@@ -2,7 +2,16 @@ import os
 from datetime import date, timedelta
 
 from flask_login import current_user
-from sqlalchemy import FLOAT, cast, delete, extract, insert, select, update
+from sqlalchemy import (
+    FLOAT,
+    String,
+    cast,
+    delete,
+    extract,
+    insert,
+    select,
+    update,
+)
 from sqlalchemy.orm import noload
 from sqlalchemy.sql import and_, func, or_
 from sqlalchemy.sql.elements import ColumnElement
@@ -11,6 +20,7 @@ from sqlalchemy.sql.selectable import Select
 from finapp import db
 from finapp.models import (
     Budget,
+    Category,
     CompletedTransaction,
     PendingTransaction,
     SimpleFINTransaction,
@@ -34,6 +44,7 @@ def paginate_query(stmt, page, page_size: int = 10):
     total = db.session.execute(
         select(func.count()).select_from(stmt.subquery())
     ).scalar_one()
+
     num_pages = max(1, ((total - 1) // page_size) + 1)
     stmt = stmt.limit(page_size).offset((page - 1) * page_size)
     transactions = db.session.scalars(stmt).unique().all()
@@ -591,7 +602,7 @@ def data_grid(sort, filters, search, page, page_size):
 
     def join_once(
         stmt,
-        model: type[Budget] | type[TransactionCategory] | type[User],
+        model: type[Budget] | type[TransactionCategory] | type[User] | type[Category],
         join_condition: ColumnElement[bool],
     ):
         if model in joined:
@@ -599,6 +610,21 @@ def data_grid(sort, filters, search, page, page_size):
         joined.add(model)
 
         return stmt.join(model, join_condition)
+
+    def is_number(str_num):
+        try:
+            float(str_num)
+            return True
+        except ValueError:
+            return False
+
+    def is_date_string(string):
+        # TODO: format in db is YYYY-MM-DD
+        nums = string.replace("-", "/").split("/")
+        for num in nums:
+            if not num.isdigit():
+                return False
+        return True
 
     if len(sort) > 0:
         for o in sort:
@@ -663,13 +689,50 @@ def data_grid(sort, filters, search, page, page_size):
                 TransactionCategory,
                 Transaction.id == TransactionCategory.transaction_id,
             ).where(
-                and_(
-                    Transaction.id == TransactionCategory.transaction_id,
-                    TransactionCategory.category_id.in_(sqids.decode_list(value)),
-                )
+                TransactionCategory.category_id.in_(sqids.decode_list(value)),
             )
 
-    return paginate_query(stmt=stmt, page=page + 1, page_size=page_size)
+    if search:
+        search_list = [Transaction.name.ilike(f"%{search}%")]
+
+        if is_number(search):
+            search_list.append(Transaction.amount.cast(String).ilike(f"%{search}%"))
+        if search.isdigit() or is_date_string(search):
+            search_list.append(Transaction.date.cast(String).ilike(f"%{search}%"))
+
+        stmt = join_once(
+            stmt,
+            Budget,
+            Transaction.budget_id == Budget.id,
+        )
+
+        stmt = join_once(
+            stmt,
+            User,
+            Transaction.user_id == User.id,
+        )
+
+        category_stmt = (
+            select(1)
+            .select_from(TransactionCategory)
+            .join(Category, Category.id == TransactionCategory.category_id)
+            .where(
+                Transaction.id == TransactionCategory.transaction_id,
+                Category.name.ilike(f"%{search}%"),
+            )
+            .exists()
+        )
+
+        stmt = stmt.where(
+            or_(
+                *search_list,
+                Budget.name.ilike(f"%{search}%"),
+                User.username.ilike(f"%{search}%"),
+                category_stmt,
+            )
+        )
+
+    return paginate_query(stmt=stmt, page=page + 1, page_size=20)
 
 
 def find_transactions_v2():
