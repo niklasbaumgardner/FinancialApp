@@ -620,11 +620,13 @@
     wa-badge,
     wa-tag,
     wa-select::part(tag),
-    wa-combobox::part(tag) {
+    wa-combobox::part(tag),
+    wa-tag-input::part(tag) {
       border-width: calc(var(--wa-border-width-s) * 0.67);
     }
     wa-select::part(tag),
-    wa-combobox::part(tag) {
+    wa-combobox::part(tag),
+    wa-tag-input::part(tag) {
       border-radius: var(--wa-form-control-border-radius);
     }
 

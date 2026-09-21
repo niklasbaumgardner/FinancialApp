@@ -518,9 +518,6 @@
   .gap-\(--wa-space-l\) {
     gap: var(--wa-space-l);
   }
-  .gap-\(--wa-space-m\) {
-    gap: var(--wa-space-m);
-  }
   .gap-\(--wa-space-s\) {
     gap: var(--wa-space-s);
   }
@@ -554,9 +551,6 @@
   .p-0 {
     padding: 0px;
   }
-  .py-\(--wa-space-2xs\) {
-    padding-block: var(--wa-space-2xs);
-  }
   .py-0 {
     padding-block: 0px;
   }
@@ -573,15 +567,8 @@
   .text-\(length\:--wa-font-size-l\) {
     font-size: var(--wa-font-size-l);
   }
-  .text-\(length\:--wa-font-size-m\) {
-    font-size: var(--wa-font-size-m);
-  }
   .text-\(length\:--wa-font-size-xl\) {
     font-size: var(--wa-font-size-xl);
-  }
-  .leading-\(--wa-line-height-normal\)\! {
-    --tw-leading: var(--wa-line-height-normal) !important;
-    line-height: var(--wa-line-height-normal) !important;
   }
   .text-wrap {
     text-wrap: wrap;
@@ -591,9 +578,6 @@
   }
   .whitespace-nowrap {
     white-space: nowrap;
-  }
-  .text-\[unset\]\! {
-    color: unset !important;
   }
   .italic {
     font-style: italic;
@@ -608,9 +592,6 @@
   }
   .no-underline {
     text-decoration-line: none;
-  }
-  .no-underline\! {
-    text-decoration-line: none !important;
   }
   .underline {
     text-decoration-line: underline;
@@ -689,10 +670,6 @@
   syntax: "*";
   inherits: false;
   initial-value: solid;
-}
-@property --tw-leading {
-  syntax: "*";
-  inherits: false;
 }
 @property --tw-ordinal {
   syntax: "*";
@@ -886,7 +863,6 @@
       --tw-skew-x: initial;
       --tw-skew-y: initial;
       --tw-border-style: solid;
-      --tw-leading: initial;
       --tw-ordinal: initial;
       --tw-slashed-zero: initial;
       --tw-numeric-figure: initial;

@@ -497,6 +497,7 @@
     wa-textarea,
     wa-select,
     wa-combobox,
+    wa-tag-input,
     :is(wa-checkbox, wa-radio, wa-switch):not(:state(checked)),
     wa-slider,
     input:not([type="button"], [type="reset"], [type="submit"], :checked),
@@ -509,6 +510,7 @@
         &:where(wa-textarea)::part(base),
         &:where(wa-combobox)::part(combobox),
         &:where(wa-select)::part(combobox),
+        &:where(wa-tag-input)::part(tag-input),
         &:where(wa-slider)::part(track) {
           box-shadow: inset var(--wa-shadow-s);
         }

@@ -261,7 +261,6 @@
     --wa-font-weight-normal: 500;
     --wa-font-weight-semibold: 600;
     --wa-font-weight-bold: 700;
-    --wa-font-weight-extrabold: 800;
 
     --wa-font-weight-body: var(--wa-font-weight-normal);
     --wa-font-weight-heading: var(--wa-font-weight-bold);
@@ -528,6 +527,7 @@
       wa-textarea,
       wa-select,
       wa-combobox,
+      wa-tag-input,
       input:not(
         [type="button"],
         [type="checkbox"],
@@ -543,11 +543,14 @@
       textarea,
       select
     ):not(:focus, [appearance="filled"]) {
-      &:where(:not(wa-input, wa-textarea, wa-select, wa-combobox)),
+      &:where(
+        :not(wa-input, wa-textarea, wa-select, wa-combobox, wa-tag-input)
+      ),
       &:where(wa-input)::part(base),
       &:where(wa-textarea)::part(base),
       &:where(wa-select)::part(combobox),
-      &:where(wa-combobox)::part(combobox) {
+      &:where(wa-combobox)::part(combobox),
+      &:where(wa-tag-input)::part(tag-input) {
         box-shadow: inset var(--wa-shadow-offset-x-s)
           max(var(--wa-shadow-offset-y-s), var(--wa-form-control-border-width))
           0 0 var(--wa-color-shadow);

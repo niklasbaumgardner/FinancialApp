@@ -517,6 +517,7 @@
     wa-textarea,
     wa-select,
     wa-combobox,
+    wa-tag-input,
     input:not(
       [type="button"],
       [type="checkbox"],
@@ -556,6 +557,7 @@
           &:where(wa-input)::part(base),
           &:where(wa-select)::part(combobox),
           &:where(wa-combobox)::part(combobox),
+          &:where(wa-tag-input)::part(tag-input),
           &:where(wa-textarea)::part(base) {
             border-color: transparent transparent var(--wa-color-focus)
               transparent;
@@ -568,6 +570,7 @@
         &:where(wa-input)::part(base),
         &:where(wa-select)::part(combobox),
         &:where(wa-combobox)::part(combobox),
+        &:where(wa-tag-input)::part(tag-input),
         &:where(wa-textarea)::part(base) {
           box-shadow: 0 var(--wa-form-control-border-width) 0 0
             var(--wa-form-control-border-color);
@@ -577,7 +580,7 @@
       }
 
       /* Floating labels */
-      &::part(label) {
+      &::part(form-control-label) {
         transition-property: top, font-size;
         transition-duration: var(--wa-transition-normal);
         transition-timing-function: var(--wa-transition-easing);
@@ -595,7 +598,7 @@
         padding-inline: 0.25em;
       }
 
-      &:focus::part(label) {
+      &:focus::part(form-control-label) {
         color: var(--wa-color-focus);
       }
 
@@ -604,15 +607,24 @@
         &:where(wa-input)::part(input),
         &:where(wa-select)::part(display-input),
         &:where(wa-combobox)::part(combobox-input),
+        &:where(wa-tag-input):state(blank)::part(input),
         &:where(wa-textarea)::part(form-control-input) {
           /* Move the value down to make room for the floating label */
           translate: 0 0.5em;
         }
 
-        &::part(label) {
+        &::part(form-control-label) {
           /* In filled inputs, keep the floating label within the input */
           background-color: transparent;
           top: 0.25em;
+        }
+
+        /* Tags are boxes, not a text line, so once there are tags make room for the label with padding instead */
+        &:where(wa-tag-input):not(:state(blank))::part(tag-input) {
+          padding-block-start: calc(
+            0.25em + var(--wa-font-size-smaller) *
+              var(--wa-form-control-label-line-height)
+          );
         }
       }
 
@@ -621,7 +633,7 @@
        * - the input is not focused
        * - there is no actual placeholder
        */
-      &:state(blank):not(:focus, [placeholder])::part(label) {
+      &:state(blank):not(:focus, [placeholder])::part(form-control-label) {
         background-color: transparent;
         top: calc(
           var(--wa-form-control-height) / 2 -

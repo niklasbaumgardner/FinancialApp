@@ -1,4 +1,4 @@
-import{a as Bv,b as E,c as eg,d as Vv,e as cc,f as $v,g as tg}from"./chunk-5OP2ESCD.mjs";import{a as fr,b as zv,d as Dh,e as Gv,f as Uv,g as ig,j as jv}from"./chunk-5K2RSI3Y.mjs";import{a as Ew}from"./chunk-HZWWJL43.mjs";function Ow(i,t){return()=>i.querySelector(t)}function Rw(i,t){return()=>i.querySelectorAll(t)}var ce=class extends Vv{constructor(){super();let{queries:t}=this.constructor;if(t)for(let[e,s]of Object.entries(t))s.all?Object.defineProperty(this,e,{get:Rw(this,s.all)}):Object.defineProperty(this,e,{get:Ow(this,s)})}createRenderRoot(){return this}connectedCallback(){super.connectedCallback(),this.init()}init(){}};var sg=class extends ce{static properties={message:{type:String},category:{type:String}};init(){this.removeSelfTask=new fr(()=>this.removeSelf(),5e3,{finalizeBeforeUnload:!0}),this.removeSelfTask.arm()}removeSelf(){this.remove()}render(){return E`<wa-callout variant=${this.category}>
+import{a as Bv,b as E,c as eg,d as Vv,e as cc,f as $v,g as tg}from"./chunk-OFLEFORY.mjs";import{a as fr,b as zv,d as Dh,e as Gv,f as Uv,g as ig,j as jv}from"./chunk-5K2RSI3Y.mjs";import{a as Ew}from"./chunk-HZWWJL43.mjs";function Ow(i,t){return()=>i.querySelector(t)}function Rw(i,t){return()=>i.querySelectorAll(t)}var ce=class extends Vv{constructor(){super();let{queries:t}=this.constructor;if(t)for(let[e,s]of Object.entries(t))s.all?Object.defineProperty(this,e,{get:Rw(this,s.all)}):Object.defineProperty(this,e,{get:Ow(this,s)})}createRenderRoot(){return this}connectedCallback(){super.connectedCallback(),this.init()}init(){}};var sg=class extends ce{static properties={message:{type:String},category:{type:String}};init(){this.removeSelfTask=new fr(()=>this.removeSelf(),5e3,{finalizeBeforeUnload:!0}),this.removeSelfTask.arm()}removeSelf(){this.remove()}render(){return E`<wa-callout variant=${this.category}>
       ${this.message}
       <wa-button
         class="icon-button"
@@ -2474,4 +2474,4 @@ ${s}
         </div>
       </form></wa-dialog
     >`}};customElements.define("nb-category-modal",Fv);
-//# sourceMappingURL=nb.LRAG7K5L.mjs.map
+//# sourceMappingURL=nb.AL52JX4T.mjs.map

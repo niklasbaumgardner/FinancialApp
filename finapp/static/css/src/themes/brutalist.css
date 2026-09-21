@@ -494,6 +494,7 @@
     wa-textarea::part(base),
     wa-select::part(combobox),
     wa-combobox::part(combobox),
+    wa-tag-input::part(tag-input),
     input:not(
       [type="button"],
       [type="checkbox"],
