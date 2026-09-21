@@ -541,7 +541,7 @@ ${s}
   }
 `,Qb=class extends tg{size="s";static css=[...tg.css,kV];async connectedCallback(){super.connectedCallback(),await customElements.whenDefined("wa-data-grid");let t=Array.from(document.styleSheets).map(s=>Array.from(s.cssRules).map(n=>n.cssText).join(`
 `)).join(`
-`),e=new CSSStyleSheet;e.replaceSync(t),this.shadowRoot.adoptedStyleSheets=[e,...this.shadowRoot.adoptedStyleSheets]}firstUpdated(t){super.firstUpdated(t);let e=this.virtualizer.virtualizer;e?.setOptions({...e.options,getItemKey:s=>this.previousRows?.[s]?.id??s}),this.virtualizer.clearMeasurements()}updated(t){super.updated(t);for(let e of this.shadowRoot.querySelectorAll('[part~="body"] .row[data-index]'))this.virtualizer.measureElement(e)}columnStyle(t,e){let s=this.columnSizingState[t],n=this.columnById(t),a=s??(e&&e!==150?n?.width??e:n?.width);if(s==null&&a!=null){let o=this.headerMinWidths[t];o!=null&&o>a&&(a=o)}let r;return n?.width?r={flex:`0 0 ${a}px`,width:`${a}px`}:n?.maxWidth!=null?r={flex:`${n.flex??1} 1 0`,minWidth:`${n.minWidth??0}px`,...n.maxWidth!=null?{maxWidth:`${n.maxWidth}px`}:{}}:r={flex:"1 1 0",minWidth:"0"},{...r,...this.pinnedStyle(t)}}};customElements.define("nb-data-grid",Qb);var ev=class extends ce{static properties={name:{type:String},color:{type:String},size:{type:String},removable:{type:Boolean}};constructor(){super(),this.removable=!1}handleRemoveClick(){this.dispatchEvent(new CustomEvent("wa-remove",{bubbles:!0,cancelable:!1,composed:!0}))}render(){return E`<span class="tag ${this.color}" part="base"
+`),e=new CSSStyleSheet;e.replaceSync(t),this.shadowRoot.adoptedStyleSheets=[e,...this.shadowRoot.adoptedStyleSheets]}firstUpdated(t){super.firstUpdated(t);let e=this.virtualizer.virtualizer;e?.setOptions({...e.options,getItemKey:s=>this.previousRows?.[s]?.id??s}),this.virtualizer.clearMeasurements()}updated(t){super.updated(t);for(let e of this.shadowRoot.querySelectorAll('[part~="body"] .row[data-index]'))this.virtualizer.measureElement(e)}};customElements.define("nb-data-grid",Qb);var ev=class extends ce{static properties={name:{type:String},color:{type:String},size:{type:String},removable:{type:Boolean}};constructor(){super(),this.removable=!1}handleRemoveClick(){this.dispatchEvent(new CustomEvent("wa-remove",{bubbles:!0,cancelable:!1,composed:!0}))}render(){return E`<span class="tag ${this.color}" part="base"
       ><span>${this.name}</span>${this.removable?E`
             <wa-button
               class="tag__remove"
@@ -2304,7 +2304,7 @@ ${s}
         @click=${this.handleDeleteClick}
         ><wa-icon library="ion" name="trash-outline" label="Delete"></wa-icon
       ></wa-button>
-    </div>`}};customElements.define("nb-budget-actions",Lv);var Ev=class extends ce{static properties={budgets:{type:Array},total:{type:String}};static queries={active:"#active",inactive:"#inactive",waDataGrid:"nb-data-grid"};init(){this.sortBudgets(),document.addEventListener("BudgetsUpdated",this),this.addEventListener("wa-cell-click",this),this.createDataGrid()}sortBudgets(){this.budgets[0].sort((t,e)=>t.name.localeCompare(e.name)),this.budgets[1].sort((t,e)=>t.name.localeCompare(e.name))}async createDataGrid(){await customElements.whenDefined("wa-data-grid");let t=[{field:"name",label:"Name",sortable:!0,filterable:!0,formatter:(e,s)=>s.url?E`<a href=${s.url}>${s.name}</a>`:E`<span class="wa-color-text-quiet">${e}</span>`,flex:2,minWidth:200},{field:"total",label:"Balance",sortable:!0,filterable:!0,formatter:e=>{let s="";return e>0?s="text-greater-than-zero":e<0&&(s="text-less-than-zero"),E`<wa-format-number
+    </div>`}};customElements.define("nb-budget-actions",Lv);var Ev=class extends ce{static properties={budgets:{type:Array},total:{type:String}};static queries={active:"#active",inactive:"#inactive",waDataGrid:"nb-data-grid"};init(){this.sortBudgets(),document.addEventListener("BudgetsUpdated",this),this.addEventListener("wa-cell-click",this),this.createDataGrid()}sortBudgets(){this.budgets[0].sort((t,e)=>t.name.localeCompare(e.name)),this.budgets[1].sort((t,e)=>t.name.localeCompare(e.name))}async createDataGrid(){await customElements.whenDefined("wa-data-grid");let t=[{field:"name",label:"Name",sortable:!0,filterable:!0,formatter:(e,s)=>s.url?E`<a href=${s.url}>${s.name}</a>`:E`<span class="wa-color-text-quiet">${e}</span>`,flex:1,minWidth:200},{field:"total",label:"Balance",sortable:!0,filterable:!0,formatter:e=>{let s="";return e>0?s="text-greater-than-zero":e<0&&(s="text-less-than-zero"),E`<wa-format-number
             class=${s}
             type="currency"
             currency="USD"
@@ -2474,4 +2474,4 @@ ${s}
         </div>
       </form></wa-dialog
     >`}};customElements.define("nb-category-modal",Fv);
-//# sourceMappingURL=nb.AL52JX4T.mjs.map
+//# sourceMappingURL=nb.2QNH4NQ3.mjs.map

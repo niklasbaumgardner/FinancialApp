@@ -103,7 +103,7 @@ export class ViewBudgets extends NikElement {
 
           return html`<span class="wa-color-text-quiet">${value}</span>`;
         },
-        flex: 2,
+        flex: 1,
         minWidth: 200,
       },
       {
