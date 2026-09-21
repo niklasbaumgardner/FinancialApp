@@ -42,7 +42,7 @@ class BudgetActions extends NikElement {
   }
 
   render() {
-    return html`<div class="wa-cluster items-center gap-4">
+    return html`<div class="wa-cluster items-center gap-4 flex-nowrap">
       <wa-button
         class="icon-button no-border"
         variant="brand"

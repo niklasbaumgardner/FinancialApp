@@ -1035,7 +1035,7 @@ ${s}
           >Update</wa-button
         >
       </div>
-    </wa-dialog>`}};customElements.define("nb-edit-transaction",ov);var lv=class extends ce{static properties={transaction:{type:Object},budgets:{type:Array},categories:{type:Array}};handleEditClick(){this.editTransactionModal||(this.editTransactionModal=document.createElement("nb-edit-transaction"),this.editTransactionModal.transaction=this.transaction,this.editTransactionModal.budgets=this.budgets,this.editTransactionModal.categories=this.categories,document.body.appendChild(this.editTransactionModal)),this.editTransactionModal.show()}handleDeleteClick(){this.deleteTransactionModal||(this.deleteTransactionModal=document.createElement("nb-delete-transaction"),this.deleteTransactionModal.transaction=this.transaction,document.body.appendChild(this.deleteTransactionModal)),this.deleteTransactionModal.show()}render(){return E`<div class="wa-cluster items-center gap-4">
+    </wa-dialog>`}};customElements.define("nb-edit-transaction",ov);var lv=class extends ce{static properties={transaction:{type:Object},budgets:{type:Array},categories:{type:Array}};handleEditClick(){this.editTransactionModal||(this.editTransactionModal=document.createElement("nb-edit-transaction"),this.editTransactionModal.transaction=this.transaction,this.editTransactionModal.budgets=this.budgets,this.editTransactionModal.categories=this.categories,document.body.appendChild(this.editTransactionModal)),this.editTransactionModal.show()}handleDeleteClick(){this.deleteTransactionModal||(this.deleteTransactionModal=document.createElement("nb-delete-transaction"),this.deleteTransactionModal.transaction=this.transaction,document.body.appendChild(this.deleteTransactionModal)),this.deleteTransactionModal.show()}render(){return E`<div class="wa-cluster items-center gap-4 flex-nowrap">
       <wa-button
         class="icon-button no-border"
         variant="brand"
@@ -2289,7 +2289,7 @@ ${s}
         disabled
         >Save</wa-button
       >
-    </div>`}};customElements.define("nb-edit-budget",Nv);var Lv=class extends ce{static properties={budget:{type:Object},activeBudgets:{type:Array},inactiveBudgets:{type:Array}};get transferBudgets(){}handleEditClick(){this.editBudgetModal||(this.editBudgetModal=document.createElement("nb-edit-budget"),this.editBudgetModal.budget=this.budget,this.editBudgetModal.budgets=[...this.activeBudgets,...this.inactiveBudgets],document.body.appendChild(this.editBudgetModal)),this.editBudgetModal.show()}handleDeleteClick(){this.deleteBudgetModal||(this.deleteBudgetModal=document.createElement("nb-delete-budget-modal"),this.deleteBudgetModal.budget=this.budget,this.deleteBudgetModal.transferBudgets=this.activeBudgets,document.body.appendChild(this.deleteBudgetModal)),this.deleteBudgetModal.show()}render(){return E`<div class="wa-cluster items-center gap-4">
+    </div>`}};customElements.define("nb-edit-budget",Nv);var Lv=class extends ce{static properties={budget:{type:Object},activeBudgets:{type:Array},inactiveBudgets:{type:Array}};get transferBudgets(){}handleEditClick(){this.editBudgetModal||(this.editBudgetModal=document.createElement("nb-edit-budget"),this.editBudgetModal.budget=this.budget,this.editBudgetModal.budgets=[...this.activeBudgets,...this.inactiveBudgets],document.body.appendChild(this.editBudgetModal)),this.editBudgetModal.show()}handleDeleteClick(){this.deleteBudgetModal||(this.deleteBudgetModal=document.createElement("nb-delete-budget-modal"),this.deleteBudgetModal.budget=this.budget,this.deleteBudgetModal.transferBudgets=this.activeBudgets,document.body.appendChild(this.deleteBudgetModal)),this.deleteBudgetModal.show()}render(){return E`<div class="wa-cluster items-center gap-4 flex-nowrap">
       <wa-button
         class="icon-button no-border"
         variant="brand"
@@ -2474,4 +2474,4 @@ ${s}
         </div>
       </form></wa-dialog
     >`}};customElements.define("nb-category-modal",Fv);
-//# sourceMappingURL=nb.2QNH4NQ3.mjs.map
+//# sourceMappingURL=nb.YKVOZ337.mjs.map
