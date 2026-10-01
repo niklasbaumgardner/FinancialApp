@@ -41,7 +41,7 @@ def add_budget():
 
 
 @editbudget_bp.post("/edit_budget/<string:sqid>/")
-@editbudget_bp.post("/edit_budget/<string:sqid>/<string:name>")
+@editbudget_bp.post("/edit_budget/<string:sqid>/<path:name>")
 @login_required
 def edit_budget(sqid=None, name=None) -> dict[str, bool]:
     budget_id = sqids.decode_one(sqid)
@@ -59,7 +59,7 @@ def edit_budget(sqid=None, name=None) -> dict[str, bool]:
 
 
 @editbudget_bp.post("/delete_budget/<string:sqid>/")
-@editbudget_bp.post("/delete_budget/<string:sqid>/<string:name>")
+@editbudget_bp.post("/delete_budget/<string:sqid>/<path:name>")
 @login_required
 def delete_budget(sqid=None, name=None) -> Response:
     budget_id = sqids.decode_one(sqid)

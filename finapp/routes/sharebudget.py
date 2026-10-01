@@ -10,7 +10,7 @@ sharebudget_bp = Blueprint("sharebudget_bp", __name__)
 
 
 @sharebudget_bp.get("/share_budget/<string:sqid>/")
-@sharebudget_bp.get("/share_budget/<string:sqid>/<string:name>")
+@sharebudget_bp.get("/share_budget/<string:sqid>/<path:name>")
 @login_required
 def share_budget(sqid=None, name=None) -> dict[str, bool]:
     email = request.args.get("email", "", type=str)

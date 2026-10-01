@@ -12,7 +12,7 @@ transaction_bp = Blueprint("transaction_bp", __name__)
 
 
 @transaction_bp.post("/add_transaction/<string:sqid>/")
-@transaction_bp.post("/add_transaction/<string:sqid>/<string:name>")
+@transaction_bp.post("/add_transaction/<string:sqid>/<path:name>")
 @login_required
 def add_transaction(sqid=None, name=None):
     budget_id = sqids.decode_one(sqid)

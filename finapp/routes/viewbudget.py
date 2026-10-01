@@ -15,7 +15,7 @@ viewbudget_bp = Blueprint("viewbudget_bp", __name__)
 
 
 @viewbudget_bp.get("/view_budget/<string:sqid>/")
-@viewbudget_bp.get("/view_budget/<string:sqid>/<string:name>")
+@viewbudget_bp.get("/view_budget/<string:sqid>/<path:name>")
 @login_required
 def view_budget(sqid, name=None) -> str:
     budget_id = sqids.decode_one(sqid)
@@ -65,7 +65,7 @@ def view_budget(sqid, name=None) -> str:
 
 
 @viewbudget_bp.get("/get_page/<string:sqid>/")
-@viewbudget_bp.get("/get_page/<string:sqid>/<string:name>")
+@viewbudget_bp.get("/get_page/<string:sqid>/<path:name>")
 @login_required
 def get_page(sqid, name=None):
     page = request.args.get("page", -1, type=int)
@@ -124,7 +124,7 @@ def get_page(sqid, name=None):
 
 
 @viewbudget_bp.get("/search/<string:sqid>/")
-@viewbudget_bp.get("/search/<string:sqid>/<string:name>")
+@viewbudget_bp.get("/search/<string:sqid>/<path:name>")
 @login_required
 def search(sqid, name=None):
     budget_id = sqids.decode_one(sqid)
