@@ -1158,7 +1158,7 @@ ${s}
       currency="USD"
       value=${t??0}
       lang="en-US"
-    ></wa-format-number>`}async init(){await this.updateComplete,this.parseData(),this.createWaDataGrid()}parseData(){let{budgets:t,income:e,spending:s}=this.data,n=new Date,a=n.getMonth()+1,r=n.getFullYear(),o={};for(let c of s){let{amount:u,budget_id:h,month:d,year:p}=c;if(a===d&&r!==p)continue;let g=t[h];o[h]||(o[h]={budget_id:h,budget:g,name:g.name,average:[]});let f=Nw[d];o[h][f]||(o[h][f]=0),o[h][f]+=u,o[h].average.push(u)}let l=[];for(let c of Object.values(o))c.average=c.average.reduce((u,h)=>u+h,0)/c.average.length,l.push(c);l.sort((c,u)=>c.name.localeCompare(u.name)),this.dataArray=l}createWaDataGrid(){let t=[{field:"name",label:"Budget",sortable:!0,filterable:!0,filterType:"set",formatter:(a,r)=>E`<a href="${r.budget.url}">${r.name}</a>`,flex:1,minWidth:200},{field:"average",label:"Average",sortable:!0,formatter:a=>this.moneyFormatter(a),flex:1,minWidth:150}],e=new Date,s=e.getMonth(),n=e.getFullYear();for(let a=0;a<12;a++){let r=1+(12+s-a)%12,o=Nw[r],l="";r>1+s&&(l=` ${n-1}`),t.push({field:o,label:o+l,sortable:!0,formatter:c=>this.moneyFormatter(c),flex:1,minWidth:150})}this.spendingGridEl.columns=t,this.spendingGridEl.data=this.dataArray}render(){return E`<wa-details
+    ></wa-format-number>`}async init(){await this.updateComplete,this.parseData(),this.createWaDataGrid()}parseData(){let{budgets:t,income:e,spending:s}=this.data,n=new Date,a=n.getMonth()+1,r=n.getFullYear(),o={};for(let c of s){let{amount:u,budget_id:h,month:d,year:p}=c;if(a===d&&r!==p)continue;let g=t[h];o[h]||(o[h]={budget_id:h,budget:g,name:g.name,average:[]});let f=Nw[d];o[h][f]||(o[h][f]=0),o[h][f]+=u,o[h].average.push(u)}let l=[];for(let c of Object.values(o))c.average=c.average.reduce((u,h)=>u+h,0)/12,l.push(c);l.sort((c,u)=>c.name.localeCompare(u.name)),this.dataArray=l}createWaDataGrid(){let t=[{field:"name",label:"Budget",sortable:!0,filterable:!0,filterType:"set",formatter:(a,r)=>E`<a href="${r.budget.url}">${r.name}</a>`,flex:1,minWidth:200},{field:"average",label:"Average",sortable:!0,formatter:a=>this.moneyFormatter(a),flex:1,minWidth:150}],e=new Date,s=e.getMonth(),n=e.getFullYear();for(let a=0;a<12;a++){let r=1+(12+s-a)%12,o=Nw[r],l="";r>1+s&&(l=` ${n-1}`),t.push({field:o,label:o+l,sortable:!0,formatter:c=>this.moneyFormatter(c),flex:1,minWidth:150})}this.spendingGridEl.columns=t,this.spendingGridEl.data=this.dataArray}render(){return E`<wa-details
       summary="Monthly spending"
       appearance="filled-outlined"
       open
@@ -2474,4 +2474,4 @@ ${s}
         </div>
       </form></wa-dialog
     >`}};customElements.define("nb-category-modal",Fv);
-//# sourceMappingURL=nb.ZSYDNCA3.mjs.map
+//# sourceMappingURL=nb.GW37Q3IJ.mjs.map

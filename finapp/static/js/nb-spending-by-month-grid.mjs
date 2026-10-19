@@ -101,9 +101,7 @@ class SpendingByMonth extends NikElement {
 
     let dataArray = [];
     for (let spent of Object.values(spendingDataObject)) {
-      spent.average =
-        spent.average.reduce((acc, curr) => acc + curr, 0) /
-        spent.average.length;
+      spent.average = spent.average.reduce((acc, curr) => acc + curr, 0) / 12;
       dataArray.push(spent);
     }
 
