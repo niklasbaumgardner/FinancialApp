@@ -87,6 +87,7 @@ class SpendingByMonth extends NikElement {
           budget_id,
           budget,
           name: budget.name, //`${budget?.name ?? budget_id} spent`,
+          average: [],
         };
       }
       let monthString = MONTHS[month];
@@ -95,10 +96,14 @@ class SpendingByMonth extends NikElement {
       }
 
       spendingDataObject[budget_id][monthString] += amount;
+      spendingDataObject[budget_id].average.push(amount);
     }
 
     let dataArray = [];
     for (let spent of Object.values(spendingDataObject)) {
+      spent.average =
+        spent.average.reduce((acc, curr) => acc + curr, 0) /
+        spent.average.length;
       dataArray.push(spent);
     }
 
@@ -119,6 +124,14 @@ class SpendingByMonth extends NikElement {
         },
         flex: 1,
         minWidth: 200,
+      },
+      {
+        field: "average",
+        label: "Average",
+        sortable: true,
+        formatter: (value) => this.moneyFormatter(value),
+        flex: 1,
+        minWidth: 150,
       },
     ];
 

@@ -16,7 +16,7 @@ def globals() -> dict[str, dict[str, dict[str, Any]]]:
         if us := user_settings_queries.get_user_settings():
             user_settings = us.to_dict()
 
-    else:
+    if not len(user_settings):
         user_settings = {"settings": {"theme": "shoelace", "color_palette": "shoelace"}}
 
     return {"user_settings": user_settings}
