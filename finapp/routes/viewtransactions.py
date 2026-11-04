@@ -91,11 +91,16 @@ def data_grid_transactions():
     sort = json.loads(request.args.get("sort", ""))
     filters = json.loads(request.args.get("filters", ""))
     search = request.args.get("search")
-    page = request.args.get("page", default=0, type=int)
+    page = request.args.get("page", default=1, type=int)
     page_size = request.args.get("pageSize", default=20, type=int)
 
-    transactions, total, _, _ = transaction_queries.data_grid(
+    transactions, total, page, num_pages = transaction_queries.data_grid(
         sort, filters, search, page, page_size
     )
 
-    return {"transactions": [t.to_dict() for t in transactions], "total": total}
+    return {
+        "transactions": [t.to_dict() for t in transactions],
+        "total": total,
+        "page": page,
+        "num_pages": num_pages,
+    }

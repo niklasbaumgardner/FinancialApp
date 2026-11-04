@@ -46,6 +46,8 @@ def paginate_query(stmt, page, page_size: int = 10):
     ).scalar_one()
 
     num_pages = max(1, ((total - 1) // page_size) + 1)
+
+    page = min(num_pages, max(page, 1))
     stmt = stmt.limit(page_size).offset((page - 1) * page_size)
     transactions = db.session.scalars(stmt).unique().all()
     return (
@@ -732,7 +734,7 @@ def data_grid(sort, filters, search, page, page_size):
             )
         )
 
-    return paginate_query(stmt=stmt, page=page + 1, page_size=20)
+    return paginate_query(stmt=stmt, page=page, page_size=20)
 
 
 def find_transactions_v2():

@@ -68,6 +68,13 @@ export class TransactionsGrid extends NikElement {
     waGrid: "nb-data-grid",
   };
 
+  constructor() {
+    super();
+
+    const searchParams = new URLSearchParams(location.search);
+    this.currentPage = searchParams.get("page") ?? 1;
+  }
+
   init() {
     document.addEventListener("UpdateTransactions", this);
     document.addEventListener("UpdateTransaction", this);
@@ -146,6 +153,33 @@ export class TransactionsGrid extends NikElement {
 
   requestNewData() {
     this.waGrid.reload();
+  }
+
+  handleFilterChange(event) {
+    let { filters, search } = event.detail;
+
+    this.filterReset = filters.length === 0 && search.length === 0;
+  }
+
+  setCurrentPage(newPage) {
+    if (this.newPage === this.currentPage) {
+      return;
+    }
+
+    if (this.filterReset) {
+      this.filterReset = false;
+      queueMicrotask(() => {
+        this.waGrid.setState({ version: 1, page: this.currentPage - 1 });
+      });
+
+      return;
+    }
+
+    this.currentPage = newPage;
+
+    const url = new URL(location);
+    url.searchParams.set("page", this.currentPage);
+    history.pushState({}, "", url);
   }
 
   async createWaDataGrid() {
@@ -321,7 +355,7 @@ export class TransactionsGrid extends NikElement {
         sort: JSON.stringify(sort),
         filters: JSON.stringify(filters),
         search,
-        page,
+        page: page + 1, // server is 1 based
         pageSize,
       });
 
@@ -329,17 +363,25 @@ export class TransactionsGrid extends NikElement {
         "/api/data_grid_transactions?" + params.toString(),
         { signal },
       );
-      let { transactions, total } = await response.json();
+      let { transactions, total, page: actualPage } = await response.json();
+
+      // Don't change current page if there are filters present because it will break refreshing
+      if (filters.length === 0 && search.length === 0) {
+        this.setCurrentPage(actualPage);
+      }
+
       return { rows: transactions, total };
     };
   }
 
   render() {
+    // @wa-filter-change=${this.handleFilterChange}
     return html`<nb-data-grid
       child-rows="children"
       row-key="id"
       paginate
       page-size="20"
+      page=${this.currentPage - 1}
     ></nb-data-grid>`;
   }
 }
