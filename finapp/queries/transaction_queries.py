@@ -4,6 +4,7 @@ from datetime import date, timedelta
 from flask_login import current_user
 from sqlalchemy import (
     FLOAT,
+    Date,
     String,
     cast,
     delete,
@@ -676,12 +677,19 @@ def data_grid(sort, filters, search, page, page_size):
 
             else:
                 stmt = stmt.where(getattr(Transaction, o["id"]).ilike(f"%{value}%"))
-        elif o["id"] == "date" or o["id"] == "amount":
+        elif o["id"] == "amount":
             first, second = value
             if first is not None:
                 stmt = stmt.where(getattr(Transaction, o["id"]) >= first)
             if second is not None:
                 stmt = stmt.where(getattr(Transaction, o["id"]) <= second)
+
+        elif o["id"] == "date":
+            first, second = value
+            if first is not None:
+                stmt = stmt.where(getattr(Transaction, o["id"]) >= cast(first, Date))
+            if second is not None:
+                stmt = stmt.where(getattr(Transaction, o["id"]) <= cast(second, Date))
 
         elif o["id"] == "categories":
             stmt = join_once(
