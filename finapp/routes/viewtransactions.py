@@ -94,7 +94,7 @@ def data_grid_transactions():
     page = request.args.get("page", default=1, type=int)
     page_size = request.args.get("pageSize", default=20, type=int)
 
-    transactions, total, page, num_pages = transaction_queries.data_grid(
+    transactions, total, page, num_pages, total_sum = transaction_queries.data_grid(
         sort, filters, search, page, page_size
     )
 
@@ -103,4 +103,5 @@ def data_grid_transactions():
         "total": total,
         "page": page,
         "num_pages": num_pages,
+        "total_sum": total_sum,
     }

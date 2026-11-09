@@ -45,17 +45,15 @@ def paginate_query(stmt, page, page_size: int = 10):
         select(func.count()).select_from(stmt.subquery())
     ).scalar_one()
 
+    subq = stmt.subquery()
+    total_sum = db.session.execute(select(func.sum(subq.c.amount))).scalar_one()
+
     num_pages = max(1, ((total - 1) // page_size) + 1)
 
     page = min(num_pages, max(page, 1))
     stmt = stmt.limit(page_size).offset((page - 1) * page_size)
     transactions = db.session.scalars(stmt).unique().all()
-    return (
-        transactions,
-        total,
-        page,
-        num_pages,
-    )
+    return (transactions, total, page, num_pages, total_sum)
 
 
 ##
@@ -582,7 +580,7 @@ def search(
 
         stmt = sort_transactions(sort_by=sort_by, transactions_query=stmt)
 
-        items, total, page, num_pages = paginate_query(stmt=stmt, page=page)
+        items, total, page, num_pages, _ = paginate_query(stmt=stmt, page=page)
 
         if total > 0:
             return (

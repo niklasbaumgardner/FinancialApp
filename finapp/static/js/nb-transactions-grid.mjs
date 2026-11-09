@@ -161,6 +161,43 @@ export class TransactionsGrid extends NikElement {
     this.filterReset = filters.length === 0 && search.length === 0;
   }
 
+  async updateFooterSum() {
+    await this.waGrid.updateComplete;
+
+    queueMicrotask(() => {
+      const currency = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+      });
+
+      let div = this.waGrid?.shadowRoot?.querySelector(".total-sum");
+      const footer = this.waGrid?.shadowRoot?.querySelector("[part='footer']");
+      const pager = footer?.querySelector("wa-pagination");
+
+      if (!footer) {
+        this.updateFooterSum();
+        return;
+      }
+
+      if (!div) {
+        div = document.createElement("div");
+        div.classList.add("total-sum");
+        footer.insertBefore(div, pager);
+      }
+
+      let pagerInfo = footer.querySelector(".pager-info");
+      let nameColumn = this.waGrid.shadowRoot.querySelector(
+        '[data-col-id="name"]',
+      );
+
+      div.textContent = currency.format(this.total_sum);
+
+      requestAnimationFrame(() => {
+        div.style.marginLeft = `calc(${nameColumn.offsetWidth - pagerInfo.offsetWidth}px - var(--cell-padding))`;
+      });
+    });
+  }
+
   setCurrentPage(newPage) {
     if (this.newPage === this.currentPage) {
       return;
@@ -212,6 +249,13 @@ export class TransactionsGrid extends NikElement {
             lang="en-US"
           ></wa-format-number>`;
         },
+        // footer: () =>
+        //   html`<wa-format-number
+        //     type="currency"
+        //     currency="USD"
+        //     value="${this.total_sum ?? 0}"
+        //     lang="en-US"
+        //   ></wa-format-number>`,
       },
       {
         field: "budget",
@@ -363,7 +407,15 @@ export class TransactionsGrid extends NikElement {
         "/api/data_grid_transactions?" + params.toString(),
         { signal },
       );
-      let { transactions, total, page: actualPage } = await response.json();
+      let {
+        transactions,
+        total,
+        page: actualPage,
+        total_sum,
+      } = await response.json();
+
+      this.total_sum = total_sum;
+      this.updateFooterSum();
 
       // Don't change current page if there are filters present because it will break refreshing
       if (filters.length === 0 && search.length === 0) {
@@ -377,7 +429,6 @@ export class TransactionsGrid extends NikElement {
   render() {
     // @wa-filter-change=${this.handleFilterChange}
     return html`<nb-data-grid
-      child-rows="children"
       row-key="id"
       paginate
       page-size="20"

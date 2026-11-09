@@ -87,7 +87,7 @@ def get_page(sqid, name=None):
     budget = budget_queries.get_budget(budget_id=budget_id)
 
     if ytd:
-        transactions, total, page, num_pages = (
+        transactions, total, page, num_pages, _ = (
             transaction_queries.get_transactions_for_year(
                 budget_id=budget_id,
                 year=year,
@@ -97,7 +97,7 @@ def get_page(sqid, name=None):
             )
         )
     elif month:
-        transactions, total, page, num_pages = (
+        transactions, total, page, num_pages, _ = (
             transaction_queries.get_transactions_for_month(
                 budget_id=budget_id,
                 month=month,
@@ -108,7 +108,7 @@ def get_page(sqid, name=None):
             )
         )
     else:
-        transactions, total, page, num_pages = transaction_queries.get_transactions(
+        transactions, total, page, num_pages, _ = transaction_queries.get_transactions(
             budget_id=budget_id, page=page, sort_by=sort_by, paginate=True
         )
 
