@@ -72,7 +72,18 @@ export class TransactionsGrid extends NikElement {
     super();
 
     const searchParams = new URLSearchParams(location.search);
-    this.currentPage = searchParams.get("page") ?? 1;
+    const page = searchParams.get("page") ?? 1;
+
+    this.sort = JSON.parse(searchParams.get("sort")) ?? [];
+
+    this.filters = JSON.parse(searchParams.get("filters")) ?? [];
+
+    this.currentPage = this.isFiltered ? 1 : page;
+    this.filteredPage = this.isFiltered ? page : 1;
+  }
+
+  get isFiltered() {
+    return this.filters.length > 0;
   }
 
   init() {
@@ -198,24 +209,38 @@ export class TransactionsGrid extends NikElement {
     });
   }
 
-  setCurrentPage(newPage) {
-    if (this.newPage === this.currentPage) {
-      return;
-    }
-
-    if (this.filterReset) {
-      this.filterReset = false;
-      queueMicrotask(() => {
-        this.waGrid.setState({ version: 1, page: this.currentPage - 1 });
-      });
-
-      return;
-    }
-
-    this.currentPage = newPage;
-
+  setCurrentPage(newPage, { sort, filters }) {
     const url = new URL(location);
-    url.searchParams.set("page", this.currentPage);
+
+    if (sort.length === 0) {
+      url.searchParams.delete("sort");
+    } else {
+      url.searchParams.set("sort", JSON.stringify(sort));
+    }
+
+    if (filters.length === 0) {
+      url.searchParams.delete("filters");
+    } else {
+      url.searchParams.set("filters", JSON.stringify(filters));
+    }
+
+    if (filters.length === 0) {
+      // if (this.filterReset) {
+      //   this.filterReset = false;
+      //   queueMicrotask(() => {
+      //     this.waGrid.setState({ version: 1, page: this.currentPage - 1 });
+      //   });
+
+      //   return;
+      // }
+
+      this.currentPage = newPage;
+
+      url.searchParams.set("page", this.currentPage);
+    } else {
+      url.searchParams.set("page", newPage);
+    }
+
     history.pushState({}, "", url);
   }
 
@@ -417,10 +442,7 @@ export class TransactionsGrid extends NikElement {
       this.total_sum = total_sum;
       this.updateFooterSum();
 
-      // Don't change current page if there are filters present because it will break refreshing
-      if (filters.length === 0 && search.length === 0) {
-        this.setCurrentPage(actualPage);
-      }
+      this.setCurrentPage(actualPage, { sort, filters });
 
       return { rows: transactions, total };
     };
@@ -432,7 +454,9 @@ export class TransactionsGrid extends NikElement {
       row-key="id"
       paginate
       page-size="20"
-      page=${this.currentPage - 1}
+      page=${(this.isFiltered ? this.filteredPage : this.currentPage) - 1}
+      .filters=${this.filters}
+      .sort=${this.sort}
     ></nb-data-grid>`;
   }
 }

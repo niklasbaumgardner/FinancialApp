@@ -46,15 +46,21 @@ export class WaBaseGrid extends WaDataGrid {
   firstUpdated(changed) {
     super.firstUpdated(changed);
 
-    // The size cache is keyed by getItemKey, which defaults to the index — so a sort or
-    // filter would leave each measured height attached to the slot rather than the row.
-    // Key it to the row id. configure() spreads existing options, so this survives.
+    // Keep the default index keys and always measure the real element. The default
+    // measureElement returns the stored height when called without a ResizeObserver entry,
+    // so the loop in updated() never notices that a sort put a taller/shorter row in a slot.
+    // Measuring for real means a changed slot reports a new height, and the virtualizer
+    // re-lays out every row from that slot down.
     const v = this.virtualizer.virtualizer;
     v?.setOptions({
       ...v.options,
-      getItemKey: (index) => this.previousRows?.[index]?.id ?? index,
+      measureElement: (element, entry) => {
+        const box = entry?.borderBoxSize?.[0];
+        return Math.round(
+          box ? box.blockSize : element.getBoundingClientRect().height,
+        );
+      },
     });
-    this.virtualizer.clearMeasurements();
   }
 
   updated(changed) {
