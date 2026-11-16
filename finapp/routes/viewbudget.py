@@ -30,19 +30,19 @@ def view_budget(sqid, name=None) -> str:
     budgets = [b.to_dict() for b in budget_queries.get_budgets(active_only=True)]
 
     if ytd:
-        transactions, total, page, num_pages = (
+        transactions, total, page, num_pages, _ = (
             transaction_queries.get_transactions_for_year(
                 budget_id=budget.id, year=year, page=page, paginate=True
             )
         )
     elif month:
-        transactions, total, page, num_pages = (
+        transactions, total, page, num_pages, _ = (
             transaction_queries.get_transactions_for_month(
                 budget_id=budget.id, month=month, year=year, page=page, paginate=True
             )
         )
     else:
-        transactions, total, page, num_pages = transaction_queries.get_transactions(
+        transactions, total, page, num_pages, _ = transaction_queries.get_transactions(
             budget_id=budget.id, page=page, paginate=True
         )
 
