@@ -2486,7 +2486,7 @@ ${s}
             currency="USD"
             value="${e}"
             lang="en-US"
-          ></wa-format-number>`},{field:"account",label:"Account",sortable:!0,sortFn:"alphanumeric",filterable:!0,filterType:"set",minWidth:200,value:e=>e.account?.name},{field:"user",label:"User",sortable:!0,sortFn:"alphanumeric",filterable:!0,filterType:"set",minWidth:175,value:e=>e.user.username},{id:"date",label:"Date",sortable:!0,sortFn:"datetime",filterable:!0,filterType:"date-range",formatter:(e,s)=>{let n=s.transacted_at??s.posted;return L`<wa-format-date
+          ></wa-format-number>`},{field:"account",label:"Account",sortable:!0,sortFn:"alphanumeric",filterable:!0,filterType:"set",minWidth:200,value:e=>e.account?.name},{field:"user",label:"User",sortable:!0,sortFn:"alphanumeric",filterable:!0,filterType:"set",minWidth:175,value:e=>e.user.username},{id:"date",label:"Date",sortable:!0,filterable:!0,filterType:"date-range",value:e=>e.transacted_at??e.posted,formatter:(e,s)=>{let n=s.transacted_at??s.posted;return L`<wa-format-date
             month="short"
             day="numeric"
             year="numeric"
@@ -2500,4 +2500,4 @@ ${s}
 
       ${this.transactionsTemplate()}
     </div>`}};customElements.define("nb-view-external-transactions",Bv);
-//# sourceMappingURL=nb.IUUMWGIA.mjs.map
+//# sourceMappingURL=nb.UGVDUUOZ.mjs.map

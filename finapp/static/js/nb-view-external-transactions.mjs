@@ -135,9 +135,11 @@ class ViewExternalTransactions extends NikElement {
         id: "date",
         label: "Date",
         sortable: true,
-        sortFn: "datetime",
         filterable: true,
         filterType: "date-range",
+        value: (row) => {
+          return row.transacted_at ?? row.posted;
+        },
         formatter: (_, row) => {
           let date = row.transacted_at ?? row.posted;
 
