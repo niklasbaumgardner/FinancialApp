@@ -34,7 +34,7 @@ if not os.environ.get("FLASK_DEBUG"):
         dsn=os.environ.get("SENTRY_DSN"),
         traces_sample_rate=1.0,
         send_default_pii=True,
-        release="nbbudget@3.0.64",
+        release="nbbudget@3.0.65",
     )
 
 
@@ -102,6 +102,7 @@ from finapp.routes.auth import auth_bp
 from finapp.routes.category import category_bp
 from finapp.routes.dashboard import dashboard_bp
 from finapp.routes.editbudget import editbudget_bp
+from finapp.routes.externaltransactions import externaltransactions_bp
 from finapp.routes.paycheck import paycheck_bp
 from finapp.routes.profile import profile_bp
 from finapp.routes.settings import settings_bp
@@ -120,6 +121,7 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(category_bp)
 app.register_blueprint(dashboard_bp)
 app.register_blueprint(editbudget_bp)
+app.register_blueprint(externaltransactions_bp)
 app.register_blueprint(paycheck_bp)
 app.register_blueprint(settings_bp)
 app.register_blueprint(profile_bp)

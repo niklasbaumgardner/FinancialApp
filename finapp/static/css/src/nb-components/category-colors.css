@@ -86,6 +86,22 @@
   --nb-category-stone-background-color: var(--color-stone-100);
   --nb-category-stone-border-color: var(--color-stone-400);
   --nb-category-stone-color: var(--color-stone-800);
+
+  --nb-category-taupe-background-color: var(--color-taupe-100);
+  --nb-category-taupe-border-color: var(--color-taupe-400);
+  --nb-category-taupe-color: var(--color-taupe-800);
+
+  --nb-category-mauve-background-color: var(--color-mauve-100);
+  --nb-category-mauve-border-color: var(--color-mauve-400);
+  --nb-category-mauve-color: var(--color-mauve-800);
+
+  --nb-category-mist-background-color: var(--color-mist-100);
+  --nb-category-mist-border-color: var(--color-mist-400);
+  --nb-category-mist-color: var(--color-mist-800);
+
+  --nb-category-olive-background-color: var(--color-olive-100);
+  --nb-category-olive-border-color: var(--color-olive-400);
+  --nb-category-olive-color: var(--color-olive-800);
 }
 
 .wa-dark {
@@ -176,4 +192,20 @@
   --nb-category-stone-background-color: var(--color-stone-900);
   --nb-category-stone-border-color: var(--color-stone-600);
   --nb-category-stone-color: var(--color-stone-200);
+
+  --nb-category-taupe-background-color: var(--color-taupe-900);
+  --nb-category-taupe-border-color: var(--color-taupe-600);
+  --nb-category-taupe-color: var(--color-taupe-200);
+
+  --nb-category-mauve-background-color: var(--color-mauve-900);
+  --nb-category-mauve-border-color: var(--color-mauve-600);
+  --nb-category-mauve-color: var(--color-mauve-200);
+
+  --nb-category-mist-background-color: var(--color-mist-900);
+  --nb-category-mist-border-color: var(--color-mist-600);
+  --nb-category-mist-color: var(--color-mist-200);
+
+  --nb-category-olive-background-color: var(--color-olive-900);
+  --nb-category-olive-border-color: var(--color-olive-600);
+  --nb-category-olive-color: var(--color-olive-200);
 }

@@ -383,9 +383,12 @@ export class TransactionsGrid extends NikElement {
         formatter: (_, row) => {
           let date = row.date;
 
-          return html`<wa-format-date month="short" day="numeric" year="numeric" date="${
-            date + "T00:00:00"
-          }"></sl-format-date>`;
+          return html`<wa-format-date
+            month="short"
+            day="numeric"
+            year="numeric"
+            date="${date + "T00:00:00"}"
+          ></wa-format-date>`;
         },
         width: 150,
       },
@@ -429,8 +432,10 @@ export class TransactionsGrid extends NikElement {
       });
 
       let response = await fetch(
-        "/api/data_grid_transactions?" + params.toString(),
-        { signal },
+        API_GET_TRANSACTIONS_URL + "?" + params.toString(),
+        {
+          signal,
+        },
       );
       let {
         transactions,

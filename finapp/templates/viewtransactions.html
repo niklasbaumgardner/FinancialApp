@@ -1,8 +1,8 @@
 {% extends "base.html" %} {% block title %}Home{% endblock title %} {% block
 head %}
 <script>
-  const VIEW_TRANSACTIONS_CONTENT_URL =
-    "{{ url_for('viewtransactions_bp.api_get_transactions_stream') }}";
+  const API_GET_TRANSACTIONS_URL =
+    "{{ url_for('viewtransactions_bp.api_data_grid_transactions') }}";
   const PENDING_TRANSACTIONS_URL =
     "{{ url_for('simplefin_bp.api_get_pending_transaction') }}";
   const API_SYNC_SIMPLEFIN_TRANSACTIONS_URL =

@@ -123,6 +123,7 @@ export class SimpleFINAccounts extends NikElement {
             >Add External Accounts
             <wa-icon slot="end" library="ion" name="open-outline"></wa-icon
           ></wa-button>
+          <a href="/external_transactions">View all external transactions</a>
           <wa-button
             appearance="outlined"
             variant="brand"

@@ -38,3 +38,4 @@ import "./nb-theme-selector.mjs";
 import "./nb-category-modal.mjs";
 // import "./main.bundle.mjs";
 import "./nb-combobox.mjs";
+import "./nb-view-external-transactions.mjs";

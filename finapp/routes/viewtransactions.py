@@ -87,7 +87,7 @@ def api_get_transactions_stream() -> Response:
 
 @viewtransactions_bp.get("/api/data_grid_transactions")
 @login_required
-def data_grid_transactions():
+def api_data_grid_transactions():
     sort = json.loads(request.args.get("sort", ""))
     filters = json.loads(request.args.get("filters", ""))
     search = request.args.get("search")

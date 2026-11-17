@@ -2,7 +2,7 @@ import os
 from datetime import date as date_type
 from datetime import datetime as datetime_type
 from enum import IntFlag
-from typing import Annotated, Any
+from typing import Annotated, Any, ClassVar
 
 from cryptography.fernet import Fernet
 from flask import url_for
@@ -43,7 +43,10 @@ class AlertType(IntFlag):
 
 
 class SqidSerializerMixin(SerializerMixin):
-    custom_mappings = {"id": "sqid_id", "user_id": "sqid_user_id"}
+    custom_mappings: ClassVar[dict[str, str]] = {
+        "id": "sqid_id",
+        "user_id": "sqid_user_id",
+    }
 
     def sqid_id(self) -> str | None:
         return sqids.encode_one(self.id)  # type: ignore
@@ -84,7 +87,7 @@ class User(BaseModel, UserMixin, SerializerMixin):
             return None
         return db.session.get(User, user_id)
 
-    custom_mappings = {"id": "sqid_id"}
+    custom_mappings: ClassVar[dict[str, str]] = {"id": "sqid_id"}
 
     def sqid_id(self) -> str | None:
         return sqids.encode_one(self.id)
@@ -202,7 +205,7 @@ class SharedBudget(BaseModel, SqidSerializerMixin):
 
     budget: Mapped["Budget"] = relationship(lazy="joined", viewonly=True)
 
-    custom_mappings = {
+    custom_mappings: ClassVar[dict[str, str]] = {
         "id": "sqid_id",
         "user_id": "sqid_user_id",
         "budget_id": "sqid_budget_id",
@@ -251,7 +254,7 @@ class Transaction(BaseModel, SqidSerializerMixin):
     def delete_url(self) -> str:
         return url_for("transaction_bp.delete_transaction", sqid=self.sqid_ids())
 
-    custom_mappings = {
+    custom_mappings: ClassVar[dict[str, str]] = {
         "id": "sqid_id",
         "user_id": "sqid_user_id",
         "budget_id": "sqid_budget_id",
@@ -297,7 +300,7 @@ class TransactionCategory(BaseModel, SqidSerializerMixin):
 
     category: Mapped["Category"] = relationship(lazy="joined", viewonly=True)
 
-    custom_mappings = {
+    custom_mappings: ClassVar[dict[str, str]] = {
         "id": "sqid_id",
         "user_id": "sqid_user_id",
         "transaction_id": "sqid_transaction_id",
@@ -359,6 +362,8 @@ class SimpleFINCredentials(BaseModel, SqidSerializerMixin):
 class SimpleFINOrganization(BaseModel, SerializerMixin):
     __tablename__ = "simplefin_organization"
 
+    serialize_rules = ("-id",)
+
     id: Mapped[int_pk]
     simplefin_id: Mapped[str] = mapped_column(unique=True, index=True)
     name: Mapped[str]
@@ -373,6 +378,7 @@ class SimpleFINAccount(BaseModel, SerializerMixin):
     serialize_rules = (
         "update_account_access_type_url",
         "update_account_name",
+        "-id",
     )
 
     id: Mapped[str_pk]
@@ -460,6 +466,8 @@ class CompletedTransaction(BaseModel, SerializerMixin):
 class SimpleFINTransaction(BaseModel, SerializerMixin):
     __tablename__ = "simplefin_transaction"
 
+    serialize_rules = ("-id",)
+
     id: Mapped[str] = mapped_column(primary_key=True)
 
     posted: Mapped[int]  # UNIX epoch timestamp
@@ -471,6 +479,9 @@ class SimpleFINTransaction(BaseModel, SerializerMixin):
 
     account_id: Mapped[str] = mapped_column(ForeignKey("simplefin_account.id"))
     user_id: Mapped[user_fk]
+
+    user: Mapped["User"] = relationship(lazy="joined", viewonly=True)
+    account: Mapped["SimpleFINAccount"] = relationship(lazy="joined", viewonly=True)
 
 
 class AccountBalance(BaseModel, SqidSerializerMixin):

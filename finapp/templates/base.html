@@ -44,6 +44,7 @@
       const ADD_NEW_BUDGET_URL = "{{ url_for('editbudget_bp.add_budget') }}";
 
       const GET_BUDGETS_URL = "{{ url_for('viewbudgets_bp.api_get_budgets') }}";
+      const GET_CATEGORIES_URL = "{{ url_for('category_bp.get_categories') }}";
 
       {% if current_user.is_authenticated %}
         const CURRENT_USER = {{ current_user.to_dict()|tojson }};

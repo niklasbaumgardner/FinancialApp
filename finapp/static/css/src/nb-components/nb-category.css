@@ -166,3 +166,27 @@ nb-category {
   --nb-category-border-color: var(--nb-category-stone-border-color);
   --nb-category-color: var(--nb-category-stone-color);
 }
+
+.taupe {
+  --nb-category-background-color: var(--nb-category-taupe-background-color);
+  --nb-category-border-color: var(--nb-category-taupe-border-color);
+  --nb-category-color: var(--nb-category-taupe-color);
+}
+
+.mauve {
+  --nb-category-background-color: var(--nb-category-mauve-background-color);
+  --nb-category-border-color: var(--nb-category-mauve-border-color);
+  --nb-category-color: var(--nb-category-mauve-color);
+}
+
+.mist {
+  --nb-category-background-color: var(--nb-category-mist-background-color);
+  --nb-category-border-color: var(--nb-category-mist-border-color);
+  --nb-category-color: var(--nb-category-mist-color);
+}
+
+.olive {
+  --nb-category-background-color: var(--nb-category-olive-background-color);
+  --nb-category-border-color: var(--nb-category-olive-border-color);
+  --nb-category-color: var(--nb-category-olive-color);
+}

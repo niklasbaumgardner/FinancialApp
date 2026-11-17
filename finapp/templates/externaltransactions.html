@@ -1,0 +1,12 @@
+{% extends "base.html" %} {% block title %}External Transactions{% endblock
+title %} {% block head %}
+<script>
+  const API_GET_TRANSACTIONS_URL =
+    "{{ url_for('externaltransactions_bp.api_data_grid_transactions') }}";
+</script>
+
+{% endblock head %}{% block content %}
+
+<nb-view-external-transactions></nb-view-external-transactions>
+
+{% endblock content %}
