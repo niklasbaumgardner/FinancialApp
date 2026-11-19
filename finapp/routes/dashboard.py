@@ -38,14 +38,14 @@ def api_get_budget_totals_by_date():
 
 @dashboard_bp.get("/api/get_spending_by_budget")
 @login_required
-def api_get_spending_by_budget() -> list[dict[str, int | str]]:
+def api_get_spending_by_budget() -> dict[str, list[list[dict[str, int | str]]]]:
     month = request.args.get("month", 0, type=int)
     year = request.args.get("year", 0, type=int)
     ytd = request.args.get("ytd") == "true"
 
-    data = helpers.net_spending(month, year, ytd)
-
-    return data
+    return transaction_queries.get_net_spending_by_budget_and_category(
+        year=year, month=month, ytd=ytd
+    )
 
 
 @dashboard_bp.get("/api/get_spending_by_month")

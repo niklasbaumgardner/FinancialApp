@@ -20,6 +20,8 @@ const MONTHS = {
 };
 
 class BudgetSpendingGrid extends NikElement {
+  dataCache = {};
+
   static properties = {
     data: { type: Array },
   };
@@ -62,8 +64,7 @@ class BudgetSpendingGrid extends NikElement {
 
     await this.updateComplete;
 
-    this.dataCache = {};
-    this.dataCache[this.key] = this.data;
+    await this.getData();
 
     this.createWaDataGrid();
   }
@@ -76,6 +77,84 @@ class BudgetSpendingGrid extends NikElement {
     this.updateSpendingGrid();
   }
 
+  parseData(data) {
+    let { income, spent } = data;
+
+    let budgets = {};
+
+    for (let [b, c, a] of income) {
+      c.total = NaN;
+      let budget = budgets[b.id];
+      let category = budget?.categories?.[c.id];
+
+      if (budget) {
+        if (category) {
+          category.in += a;
+        } else {
+          c.in = a;
+          c.out = 0;
+          budget.categories[c.id] = c;
+        }
+
+        budget.in += a;
+      } else {
+        b.categories = {};
+        b.in = 0;
+        b.out = 0;
+        c.in = 0;
+        c.out = 0;
+
+        c.in += a;
+        b.categories[c.id] = c;
+        b.in += a;
+        budgets[b.id] = b;
+      }
+    }
+
+    for (let [b, c, a] of spent) {
+      c.total = NaN;
+      let budget = budgets[b.id];
+      let category = budget?.categories?.[c.id];
+
+      if (budget) {
+        if (category) {
+          category.out += a;
+        } else {
+          c.in = 0;
+          c.out = a;
+          budget.categories[c.id] = c;
+        }
+
+        budget.out += a;
+      } else {
+        b.categories = {};
+        b.in = 0;
+        b.out = 0;
+        c.in = 0;
+        c.out = 0;
+
+        c.out += a;
+        b.categories[c.id] = c;
+        b.out += a;
+        budgets[b.id] = b;
+      }
+    }
+
+    const parsed = Object.values(budgets)
+      .map((b) => {
+        b.categories = Object.values(b.categories).sort((a, b) =>
+          a.name.localeCompare(b.name),
+        );
+        b.categories.forEach((c) => {
+          c.net = c.in + c.out;
+        });
+        return b;
+      })
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+    this.dataCache[this.key] = parsed;
+  }
+
   async getData() {
     let response = await fetch(
       GET_BUDGET_SPENDING_URL +
@@ -83,8 +162,7 @@ class BudgetSpendingGrid extends NikElement {
         new URLSearchParams(this.currentSelection),
     );
     let data = await response.json();
-
-    this.dataCache[this.key] = data;
+    this.parseData(data);
   }
 
   updateSpendingGrid() {
@@ -140,6 +218,9 @@ class BudgetSpendingGrid extends NikElement {
   }
 
   moneyFormatter(value) {
+    if (value === null) {
+      return "";
+    }
     return html`<wa-format-number
       class=${this.getCellClass(value ?? 0)}
       type="currency"
@@ -159,10 +240,13 @@ class BudgetSpendingGrid extends NikElement {
         filterable: true,
         filterType: "set",
         formatter: (_, row) => {
-          if (row.id) {
-            return html`<a href=${this.getCurrentURL(row.budget.url)}
-              >${row.name}</a
-            >`;
+          if (row.url) {
+            return html`<a href=${this.getCurrentURL(row.url)}>${row.name}</a>`;
+          } else if (row.name && row.color) {
+            return html`<nb-category
+              name=${row.name}
+              color=${row.color}
+            ></nb-category>`;
           }
           return row.name;
         },
@@ -222,7 +306,10 @@ class BudgetSpendingGrid extends NikElement {
           >${this.optionsTemplate()}</nb-combobox
         >
 
-        <nb-data-grid id="spending-by-budget-grid"></nb-data-grid>
+        <nb-data-grid
+          id="spending-by-budget-grid"
+          child-rows="categories"
+        ></nb-data-grid>
       </div>
     </wa-details>`;
   }

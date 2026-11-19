@@ -1097,7 +1097,7 @@ ${s}
       page=${(this.isFiltered?this.filteredPage:this.currentPage)-1}
       .filters=${this.filters}
       .sort=${this.sort}
-    ></nb-data-grid>`}};customElements.define("nb-transactions-grid",cv);var kw={1:"January",2:"February",3:"March",4:"April",5:"May",6:"June",7:"July",8:"August",9:"September",10:"October",11:"November",12:"December"},uv=class extends oe{static properties={data:{type:Array}};static queries={spendingGridEl:"#spending-by-budget-grid",netSpendingSelect:"#netSpendingSelect"};get currentSelection(){return this.key?JSON.parse(this.key):null}get key(){return this.netSpendingSelect?.value}get cellColorRules(){return{"text-greater-than-zero":"x > 0","text-less-than-zero":"x < 0"}}getCurrentURL(t){let e="";return(this.currentSelection?.month||this.currentSelection?.year)&&(e="?"+new URLSearchParams(this.currentSelection).toString()),`${t}${e}`}async init(){this.startDate=new Date(START_DATE+"T00:00:00"),await this.updateComplete,this.dataCache={},this.dataCache[this.key]=this.data,this.createWaDataGrid()}async handleEvent(){this.dataCache[this.key]||await this.getData(),this.updateSpendingGrid()}async getData(){let e=await(await fetch(GET_BUDGET_SPENDING_URL+"?"+new URLSearchParams(this.currentSelection))).json();this.dataCache[this.key]=e}updateSpendingGrid(){this.spendingGridEl.data=this.dataCache[this.key]}optionsTemplate(){let t=new Date,e=this.startDate.getFullYear(),s=t.getFullYear(),n=[];for(let a=e;a<=s;a++){let r=a===e?this.startDate.getMonth()+1:1,o=a===s?t.getMonth()+1:12;for(let l=r;l<=o;l++){let c=a===s?`${kw[l]}`:`${kw[l]} ${a}`,u=L`<wa-option
+    ></nb-data-grid>`}};customElements.define("nb-transactions-grid",cv);var kw={1:"January",2:"February",3:"March",4:"April",5:"May",6:"June",7:"July",8:"August",9:"September",10:"October",11:"November",12:"December"},uv=class extends oe{dataCache={};static properties={data:{type:Array}};static queries={spendingGridEl:"#spending-by-budget-grid",netSpendingSelect:"#netSpendingSelect"};get currentSelection(){return this.key?JSON.parse(this.key):null}get key(){return this.netSpendingSelect?.value}get cellColorRules(){return{"text-greater-than-zero":"x > 0","text-less-than-zero":"x < 0"}}getCurrentURL(t){let e="";return(this.currentSelection?.month||this.currentSelection?.year)&&(e="?"+new URLSearchParams(this.currentSelection).toString()),`${t}${e}`}async init(){this.startDate=new Date(START_DATE+"T00:00:00"),await this.updateComplete,await this.getData(),this.createWaDataGrid()}async handleEvent(){this.dataCache[this.key]||await this.getData(),this.updateSpendingGrid()}parseData(t){let{income:e,spent:s}=t,n={};for(let[r,o,l]of e){o.total=NaN;let c=n[r.id],u=c?.categories?.[o.id];c?(u?u.in+=l:(o.in=l,o.out=0,c.categories[o.id]=o),c.in+=l):(r.categories={},r.in=0,r.out=0,o.in=0,o.out=0,o.in+=l,r.categories[o.id]=o,r.in+=l,n[r.id]=r)}for(let[r,o,l]of s){o.total=NaN;let c=n[r.id],u=c?.categories?.[o.id];c?(u?u.out+=l:(o.in=0,o.out=l,c.categories[o.id]=o),c.out+=l):(r.categories={},r.in=0,r.out=0,o.in=0,o.out=0,o.out+=l,r.categories[o.id]=o,r.out+=l,n[r.id]=r)}let a=Object.values(n).map(r=>(r.categories=Object.values(r.categories).sort((o,l)=>o.name.localeCompare(l.name)),r.categories.forEach(o=>{o.net=o.in+o.out}),r)).sort((r,o)=>r.name.localeCompare(o.name));this.dataCache[this.key]=a}async getData(){let e=await(await fetch(GET_BUDGET_SPENDING_URL+"?"+new URLSearchParams(this.currentSelection))).json();this.parseData(e)}updateSpendingGrid(){this.spendingGridEl.data=this.dataCache[this.key]}optionsTemplate(){let t=new Date,e=this.startDate.getFullYear(),s=t.getFullYear(),n=[];for(let a=e;a<=s;a++){let r=a===e?this.startDate.getMonth()+1:1,o=a===s?t.getMonth()+1:12;for(let l=r;l<=o;l++){let c=a===s?`${kw[l]}`:`${kw[l]} ${a}`,u=L`<wa-option
           value=${JSON.stringify({month:l,year:a,ytd:!1})}
           ?selected=${l===o&&a===s}
           >${c}</wa-option
@@ -1107,15 +1107,16 @@ ${s}
         >`)}return n.push(L`<wa-option
         value=${JSON.stringify({month:null,year:null,ytd:!1})}
         >All time</wa-option
-      >`),n=n.reverse(),n}getCellClass(t){return t>0?"text-greater-than-zero":t<0?"text-less-than-zero":""}moneyFormatter(t){return L`<wa-format-number
+      >`),n=n.reverse(),n}getCellClass(t){return t>0?"text-greater-than-zero":t<0?"text-less-than-zero":""}moneyFormatter(t){return t===null?"":L`<wa-format-number
       class=${this.getCellClass(t??0)}
       type="currency"
       currency="USD"
       value=${t??0}
       lang="en-US"
-    ></wa-format-number>`}createWaDataGrid(){let e=[{field:"name",label:"Budget",sortable:!0,filterable:!0,filterType:"set",formatter:(s,n)=>n.id?L`<a href=${this.getCurrentURL(n.budget.url)}
-              >${n.name}</a
-            >`:n.name,flex:1,minWidth:200},{field:"total",label:"Current total",sortable:!0,formatter:s=>this.moneyFormatter(s),flex:1,minWidth:200},{field:"in",label:"Income",sortable:!0,formatter:s=>this.moneyFormatter(s),flex:1,minWidth:200},{field:"out",label:"Spent",sortable:!0,formatter:s=>this.moneyFormatter(s),flex:1,minWidth:200},{field:"net",label:"Net",sortable:!0,formatter:s=>this.moneyFormatter(s),flex:1,minWidth:200}];this.spendingGridEl.columns=e,this.spendingGridEl.data=this.dataCache[this.key]}render(){return L`<wa-details
+    ></wa-format-number>`}createWaDataGrid(){let e=[{field:"name",label:"Budget",sortable:!0,filterable:!0,filterType:"set",formatter:(s,n)=>n.url?L`<a href=${this.getCurrentURL(n.url)}>${n.name}</a>`:n.name&&n.color?L`<nb-category
+              name=${n.name}
+              color=${n.color}
+            ></nb-category>`:n.name,flex:1,minWidth:200},{field:"total",label:"Current total",sortable:!0,formatter:s=>this.moneyFormatter(s),flex:1,minWidth:200},{field:"in",label:"Income",sortable:!0,formatter:s=>this.moneyFormatter(s),flex:1,minWidth:200},{field:"out",label:"Spent",sortable:!0,formatter:s=>this.moneyFormatter(s),flex:1,minWidth:200},{field:"net",label:"Net",sortable:!0,formatter:s=>this.moneyFormatter(s),flex:1,minWidth:200}];this.spendingGridEl.columns=e,this.spendingGridEl.data=this.dataCache[this.key]}render(){return L`<wa-details
       summary="Spending by budget"
       appearance="filled-outlined"
       open
@@ -1129,7 +1130,10 @@ ${s}
           >${this.optionsTemplate()}</nb-combobox
         >
 
-        <nb-data-grid id="spending-by-budget-grid"></nb-data-grid>
+        <nb-data-grid
+          id="spending-by-budget-grid"
+          child-rows="categories"
+        ></nb-data-grid>
       </div>
     </wa-details>`}};customElements.define("nb-budget-spending-grid",uv);var Nw={1:"January",2:"February",3:"March",4:"April",5:"May",6:"June",7:"July",8:"August",9:"September",10:"October",11:"November",12:"December"},hv=class extends oe{static properties={data:{type:Array},key:{type:String}};static queries={categorySpendingGridEl:"#spending-by-category-grid",categorySpendingSelect:"#categorySpendingSelect"};get interval(){return this.categorySpendingSelect.value}get key(){return this.netSpendingSelect?.value}get cellColorRules(){return{"text-greater-than-zero":"x > 0","text-less-than-zero":"x < 0"}}getCellClass(t){return t>0?"text-greater-than-zero":t<0?"text-less-than-zero":""}moneyFormatter(t){return L`<wa-format-number
       class=${this.getCellClass(t??0)}
@@ -1173,13 +1177,13 @@ ${s}
       <div class="wa-stack">
         <nb-data-grid size="s" id="spending-by-month-grid"></nb-data-grid>
       </div>
-    </wa-details>`}};customElements.define("nb-spending-by-month-grid",dv);var pv=class extends oe{static properties={netWorthData:{type:Array},lineChartData:{type:Object},budgetSpendingData:{type:Array},categorySpendingData:{type:Array},budgetSpendingDataCache:{type:Object}};static queries={downloadLink:"a"};init(){this.requestInitialData()}async requestInitialData(){fetch(GET_NET_WORTH_DATA_URL).then(async t=>{this.netWorthData=(await t.json()).data}),fetch(GET_LINE_CHART_DATA_URL).then(async t=>{this.lineChartData=await t.json()}),fetch(GET_SPENDING_BY_MONTH_URL).then(async t=>{this.spendingByMonthData=await t.json()}),fetch(GET_BUDGET_SPENDING_URL+`?month=${month}&year=${year}&ytd=false`).then(async t=>{this.budgetSpendingData=await t.json()}),fetch(GET_CATEGORY_SPENDING_URL+`?date=${CURRENT_DATE}&interval=monthly`).then(async t=>{this.categorySpendingData=await t.json()})}netWorthTemplate(){if(this.netWorthData)return L`<nb-net-worth-chart
+    </wa-details>`}};customElements.define("nb-spending-by-month-grid",dv);var pv=class extends oe{static properties={netWorthData:{type:Array},lineChartData:{type:Object},budgetSpendingData:{type:Array},categorySpendingData:{type:Array},budgetSpendingDataCache:{type:Object}};static queries={downloadLink:"a"};init(){this.requestInitialData()}async requestInitialData(){fetch(GET_NET_WORTH_DATA_URL).then(async t=>{this.netWorthData=(await t.json()).data}),fetch(GET_LINE_CHART_DATA_URL).then(async t=>{this.lineChartData=await t.json()}),fetch(GET_SPENDING_BY_MONTH_URL).then(async t=>{this.spendingByMonthData=await t.json()}),fetch(GET_CATEGORY_SPENDING_URL+`?date=${CURRENT_DATE}&interval=monthly`).then(async t=>{this.categorySpendingData=await t.json()})}netWorthTemplate(){if(this.netWorthData)return L`<nb-net-worth-chart
       .data=${this.netWorthData}
     ></nb-net-worth-chart>`}budgetsLineChartTemplate(){if(this.lineChartData)return L`<nb-budgets-line-chart
       .initialData=${this.lineChartData}
     ></nb-budgets-line-chart>`}spendingByMonthTemplate(){if(this.spendingByMonthData)return L`<nb-spending-by-month-grid
       .data=${this.spendingByMonthData}
-    ></nb-spending-by-month-grid>`}budgetSpendingTemplate(){if(this.budgetSpendingData)return L`<nb-budget-spending-grid
+    ></nb-spending-by-month-grid>`}budgetSpendingTemplate(){return L`<nb-budget-spending-grid
       .data=${this.budgetSpendingData}
     ></nb-budget-spending-grid>`}categorySpendingTemplate(){if(this.categorySpendingData)return L`<nb-category-spending-grid
       .data=${this.categorySpendingData}
@@ -2500,4 +2504,4 @@ ${s}
 
       ${this.transactionsTemplate()}
     </div>`}};customElements.define("nb-view-external-transactions",Bv);
-//# sourceMappingURL=nb.UGVDUUOZ.mjs.map
+//# sourceMappingURL=nb.56VUCRRY.mjs.map

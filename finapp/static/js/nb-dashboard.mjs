@@ -36,11 +36,13 @@ class Dashboard extends NikElement {
       this.spendingByMonthData = await response.json();
     });
 
-    fetch(
-      GET_BUDGET_SPENDING_URL + `?month=${month}&year=${year}&ytd=${false}`,
-    ).then(async (response) => {
-      this.budgetSpendingData = await response.json();
-    });
+    // fetch(
+    //   GET_BUDGET_SPENDING_URL + `?month=${month}&year=${year}&ytd=${false}`,
+    // ).then(async (response) => {
+    //   this.budgetSpendingData = await response.json();
+    //   console.log(this.budgetSpendingData);
+
+    // });
 
     fetch(
       GET_CATEGORY_SPENDING_URL + `?date=${CURRENT_DATE}&interval=monthly`,
@@ -80,10 +82,6 @@ class Dashboard extends NikElement {
   }
 
   budgetSpendingTemplate() {
-    if (!this.budgetSpendingData) {
-      return;
-    }
-
     return html`<nb-budget-spending-grid
       .data=${this.budgetSpendingData}
     ></nb-budget-spending-grid>`;

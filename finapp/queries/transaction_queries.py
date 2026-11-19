@@ -987,6 +987,49 @@ def __get_net_spending__(condition, year=None, month=None):
     return transactions
 
 
+def get_net_spending_by_budget_and_category(year=None, month=None, ytd=None):
+    if ytd:
+        month = None
+
+    budget_ids = {b.id for b in budget_queries.get_budgets_for_user(current_user.id)}
+    spent_stmt = (
+        select(Budget, Category, func.sum(Transaction.amount))
+        .where(and_(Budget.id.in_(budget_ids), Transaction.amount < 0))
+        .join(Transaction, Transaction.budget_id == Budget.id)
+        .join(TransactionCategory, Transaction.id == TransactionCategory.transaction_id)
+        .join(Category, TransactionCategory.category_id == Category.id)
+        .group_by(Budget.id, Category.id)
+    )
+
+    if year:
+        spent_stmt = spent_stmt.where(extract("year", Transaction.date) == year)
+    if month:
+        spent_stmt = spent_stmt.where(extract("month", Transaction.date) == month)
+
+    spent_data = db.session.execute(spent_stmt).unique().all()
+
+    income_stmt = (
+        select(Budget, Category, func.sum(Transaction.amount))
+        .where(and_(Budget.id.in_(budget_ids), Transaction.amount > 0))
+        .join(Transaction, Transaction.budget_id == Budget.id)
+        .join(TransactionCategory, Transaction.id == TransactionCategory.transaction_id)
+        .join(Category, TransactionCategory.category_id == Category.id)
+        .group_by(Budget.id, Category.id)
+    )
+
+    if year:
+        income_stmt = income_stmt.where(extract("year", Transaction.date) == year)
+    if month:
+        income_stmt = income_stmt.where(extract("month", Transaction.date) == month)
+
+    income_data = db.session.execute(income_stmt).unique().all()
+
+    return {
+        "spent": [[b.to_dict(), c.to_dict(), a] for b, c, a in spent_data],
+        "income": [[b.to_dict(), c.to_dict(), a] for b, c, a in income_data],
+    }
+
+
 def get_total_spent(year, month):
     condition = Transaction.amount < 0
     return __get_net_spending__(condition=condition, year=year, month=month)
