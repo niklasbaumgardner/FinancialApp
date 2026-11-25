@@ -1,0 +1,2 @@
+import"./chunk-FESJ7L74.mjs";var e={scopeName:"source.json",patterns:[{match:'"(?:\\\\.|[^"\\\\])*"(?=\\s*:)',name:"entity.name.key"},{match:'"(?:\\\\.|[^"\\\\])*"(?=\\s*[,}\\]])',name:"string.quoted.double"},{match:"\\b(?:true|false)\\b",name:"constant.language.boolean"},{match:"\\bnull\\b",name:"constant.language"},{match:"(?<![\\w.])-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?\\b",name:"constant.numeric"}]};export{e as default};
+//# sourceMappingURL=json-DDQTIKJV.mjs.map

@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../../../node_modules/microlighter/dist/grammars/json.js"],
+  "sourcesContent": ["\"use strict\";export default{scopeName:\"source.json\",patterns:[{match:'\"(?:\\\\\\\\.|[^\"\\\\\\\\])*\"(?=\\\\s*:)',name:\"entity.name.key\"},{match:'\"(?:\\\\\\\\.|[^\"\\\\\\\\])*\"(?=\\\\s*[,}\\\\]])',name:\"string.quoted.double\"},{match:\"\\\\b(?:true|false)\\\\b\",name:\"constant.language.boolean\"},{match:\"\\\\bnull\\\\b\",name:\"constant.language\"},{match:\"(?<![\\\\w.])-?(?:0|[1-9]\\\\d*)(?:\\\\.\\\\d+)?(?:[eE][+-]?\\\\d+)?\\\\b\",name:\"constant.numeric\"}]};\n"],
+  "mappings": "6BAAa,IAAOA,EAAO,CAAC,UAAU,cAAc,SAAS,CAAC,CAAC,MAAM,iCAAiC,KAAK,iBAAiB,EAAE,CAAC,MAAM,uCAAuC,KAAK,sBAAsB,EAAE,CAAC,MAAM,uBAAuB,KAAK,2BAA2B,EAAE,CAAC,MAAM,aAAa,KAAK,mBAAmB,EAAE,CAAC,MAAM,gEAAgE,KAAK,kBAAkB,CAAC,CAAC",
+  "names": ["json_default"]
+}

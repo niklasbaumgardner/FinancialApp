@@ -13,6 +13,7 @@
   .wa-dark .wa-theme-matter .wa-invert {
     /* #region Colors (Light) ~~~~~~~~~~~~~~~~~~~~~ */
     color-scheme: light;
+    --wa-color-scheme: light;
     color: var(--wa-color-text-normal);
 
     --wa-color-surface-raised: var(--wa-color-neutral-95);
@@ -29,6 +30,7 @@
       var(--wa-color-neutral-05) 50%,
       transparent
     );
+    --wa-color-overlay-media: color-mix(in oklab, black 90%, transparent);
     --wa-color-overlay-inline: color-mix(
       in oklab,
       var(--wa-color-neutral-80) 25%,
@@ -103,6 +105,7 @@
   .wa-light .wa-theme-matter .wa-invert {
     /* #region Colors (Dark) ~~~~~~~~~~~~~~~~~~~~~~ */
     color-scheme: dark;
+    --wa-color-scheme: dark;
     color: var(--wa-color-text-normal);
 
     --wa-color-surface-raised: var(--wa-color-neutral-10);
@@ -119,6 +122,7 @@
     --wa-color-text-link: var(--wa-color-brand-70);
 
     --wa-color-overlay-modal: color-mix(in oklab, black 60%, transparent);
+    --wa-color-overlay-media: color-mix(in oklab, black 90%, transparent);
     --wa-color-overlay-inline: color-mix(
       in oklab,
       var(--wa-color-neutral-50) 10%,
@@ -441,7 +445,7 @@
       --ripple-duration: calc(2 * var(--wa-transition-slow));
 
       &:where(:not(wa-button)),
-      &::part(base) {
+      &::part(button) {
         /* Fixed ripple properties */
         --ripple-progress: 1;
         --ripple-progress-inv: calc(1 - var(--ripple-progress));
@@ -469,7 +473,7 @@
 
       &:active {
         &:where(:not(wa-button)),
-        &::part(base) {
+        &::part(button) {
           --ripple-progress: 0;
           --ripple-duration: 0s;
         }
@@ -478,7 +482,7 @@
       /* Apply extra padding to buttons with a fill or border */
       &:not([appearance="plain"], .wa-plain) {
         &:where(:not(wa-button)),
-        &::part(base) {
+        &::part(button) {
           padding-inline: calc(var(--wa-form-control-padding-inline) * 1.5);
         }
       }
@@ -491,14 +495,14 @@
           .wa-plain
         ):hover {
         &:where(:not(wa-button)),
-        &::part(base) {
+        &::part(button) {
           box-shadow: var(--wa-shadow-s);
         }
 
         /* Remove the shadow on press */
         &:active {
           &:where(:not(wa-button)),
-          &::part(base) {
+          &::part(button) {
             box-shadow: 0 0 transparent;
           }
         }
@@ -507,7 +511,7 @@
       /* Give all outlined buttons a neutral border */
       &:is([appearance="outlined"], .wa-outlined:not(.wa-filled)) {
         &:where(:not(wa-button)),
-        &::part(base) {
+        &::part(button) {
           border-color: var(--wa-form-control-border-color);
         }
       }
@@ -518,6 +522,7 @@
     wa-select,
     wa-combobox,
     wa-tag-input,
+    wa-rich-text-editor,
     input:not(
       [type="button"],
       [type="checkbox"],
@@ -549,16 +554,24 @@
           [pill],
           .wa-pill
         ) {
-        --wa-focus-ring-width: 0;
+        /* A zero ring would inherit into the editor's popovers and toolbar, where the underline doesn't reach */
+        &:not(wa-rich-text-editor) {
+          --wa-focus-ring-width: 0;
+        }
+
+        &:where(wa-rich-text-editor)::part(rich-text-editor) {
+          outline-width: 0;
+        }
 
         &:focus,
         &:focus-within {
           &:where(input, select, textarea),
-          &:where(wa-input)::part(base),
+          &:where(wa-input)::part(input-wrapper),
           &:where(wa-select)::part(combobox),
           &:where(wa-combobox)::part(combobox),
           &:where(wa-tag-input)::part(tag-input),
-          &:where(wa-textarea)::part(base) {
+          &:where(wa-textarea)::part(textarea-wrapper),
+          &:where(wa-rich-text-editor)::part(rich-text-editor) {
             border-color: transparent transparent var(--wa-color-focus)
               transparent;
             box-shadow: 0 var(--wa-form-control-border-width) 0 0
@@ -567,11 +580,12 @@
         }
 
         &:where(input, select, textarea),
-        &:where(wa-input)::part(base),
+        &:where(wa-input)::part(input-wrapper),
         &:where(wa-select)::part(combobox),
         &:where(wa-combobox)::part(combobox),
         &:where(wa-tag-input)::part(tag-input),
-        &:where(wa-textarea)::part(base) {
+        &:where(wa-textarea)::part(textarea-wrapper),
+        &:where(wa-rich-text-editor)::part(rich-text-editor) {
           box-shadow: 0 var(--wa-form-control-border-width) 0 0
             var(--wa-form-control-border-color);
           border-radius: var(--wa-form-control-border-radius)
@@ -619,8 +633,10 @@
           top: 0.25em;
         }
 
-        /* Tags are boxes, not a text line, so once there are tags make room for the label with padding instead */
-        &:where(wa-tag-input):not(:state(blank))::part(tag-input) {
+        /* Tags are boxes, not a text line, so once there are tags make room for the label with padding instead.
+         * The editor's first row is its toolbar (or content), so it always makes room the same way. */
+        &:where(wa-tag-input):not(:state(blank))::part(tag-input),
+        &:where(wa-rich-text-editor)::part(rich-text-editor) {
           padding-block-start: calc(
             0.25em + var(--wa-font-size-smaller) *
               var(--wa-form-control-label-line-height)
@@ -632,8 +648,11 @@
        * - the input is empty
        * - the input is not focused
        * - there is no actual placeholder
+       * - it isn't a rich text editor, whose toolbar would sit under the label
        */
-      &:state(blank):not(:focus, [placeholder])::part(form-control-label) {
+      &:state(blank):not(:focus, [placeholder], wa-rich-text-editor)::part(
+          form-control-label
+        ) {
         background-color: transparent;
         top: calc(
           var(--wa-form-control-height) / 2 -
@@ -643,7 +662,7 @@
       }
     }
 
-    wa-progress-bar::part(base),
+    wa-progress-bar::part(progress-bar),
     progress {
       border-radius: var(--wa-border-radius-square);
     }

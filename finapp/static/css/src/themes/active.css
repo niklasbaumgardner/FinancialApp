@@ -13,6 +13,7 @@
   .wa-dark .wa-theme-active .wa-invert {
     /* #region Colors (Light) ~~~~~~~~~~~~~~~~~~~~~ */
     color-scheme: light;
+    --wa-color-scheme: light;
     color: var(--wa-color-text-normal);
 
     --wa-color-surface-raised: white;
@@ -29,6 +30,7 @@
       var(--wa-color-neutral-05) 50%,
       transparent
     );
+    --wa-color-overlay-media: color-mix(in oklab, black 90%, transparent);
     --wa-color-overlay-inline: color-mix(
       in oklab,
       var(--wa-color-neutral-80) 25%,
@@ -107,6 +109,7 @@
   .wa-light .wa-theme-active .wa-invert {
     /* #region Colors (Dark) ~~~~~~~~~~~~~~~~~~~~~~ */
     color-scheme: dark;
+    --wa-color-scheme: dark;
     color: var(--wa-color-text-normal);
 
     --wa-color-surface-raised: var(--wa-color-neutral-10);
@@ -119,6 +122,7 @@
     --wa-color-text-link: var(--wa-color-brand-70);
 
     --wa-color-overlay-modal: color-mix(in oklab, black 60%, transparent);
+    --wa-color-overlay-media: color-mix(in oklab, black 90%, transparent);
     --wa-color-overlay-inline: color-mix(
       in oklab,
       var(--wa-color-neutral-50) 10%,
@@ -464,7 +468,7 @@
       }
 
       &:where(:not(wa-button)),
-      &::part(base) {
+      &::part(button) {
         border-width: 0px;
         box-shadow:
           var(--shadow-pop-out) /* extrude */,
@@ -479,7 +483,7 @@
 
       &:not([disabled], [loading]):active {
         &:where(:not(wa-button)),
-        &::part(base) {
+        &::part(button) {
           box-shadow:
             var(--shadow-punch-in) /* impress */,
             inset 0 0 0 var(--wa-form-control-border-width)
@@ -498,6 +502,7 @@
     wa-select,
     wa-combobox,
     wa-tag-input,
+    wa-rich-text-editor,
     :is(wa-checkbox, wa-radio, wa-switch):not(:state(checked)),
     wa-slider,
     input:not([type="button"], [type="reset"], [type="submit"], :checked),
@@ -506,11 +511,12 @@
       &:not([appearance="filled"], .wa-filled, [disabled], :disabled) {
         &:where(:is(input, select, textarea)),
         &:where(wa-checkbox, wa-radio, wa-switch)::part(control),
-        &:where(wa-input)::part(base),
-        &:where(wa-textarea)::part(base),
+        &:where(wa-input)::part(input-wrapper),
+        &:where(wa-textarea)::part(textarea-wrapper),
         &:where(wa-combobox)::part(combobox),
         &:where(wa-select)::part(combobox),
         &:where(wa-tag-input)::part(tag-input),
+        &:where(wa-rich-text-editor)::part(rich-text-editor),
         &:where(wa-slider)::part(track) {
           box-shadow: inset var(--wa-shadow-s);
         }
@@ -538,7 +544,7 @@
 
     /* Make progress tracks sunken and indicators extruded */
     wa-progress-bar {
-      &::part(base) {
+      &::part(progress-bar) {
         box-shadow: inset var(--wa-shadow-s);
       }
 

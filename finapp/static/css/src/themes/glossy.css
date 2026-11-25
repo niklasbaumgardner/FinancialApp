@@ -13,6 +13,7 @@
   .wa-dark .wa-theme-glossy .wa-invert {
     /* #region Colors (Light) ~~~~~~~~~~~~~~~~~~~~~ */
     color-scheme: light;
+    --wa-color-scheme: light;
     color: var(--wa-color-text-normal);
 
     --wa-color-surface-raised: white;
@@ -29,6 +30,7 @@
       var(--wa-color-neutral-05) 50%,
       transparent
     );
+    --wa-color-overlay-media: color-mix(in oklab, black 90%, transparent);
     --wa-color-overlay-inline: color-mix(
       in oklab,
       var(--wa-color-neutral-80) 25%,
@@ -107,6 +109,7 @@
   .wa-light .wa-theme-glossy .wa-invert {
     /* #region Colors (Dark) ~~~~~~~~~~~~~~~~~~~~~~ */
     color-scheme: dark;
+    --wa-color-scheme: dark;
     color: var(--wa-color-text-normal);
 
     --wa-color-surface-raised: var(--wa-color-neutral-10);
@@ -123,6 +126,7 @@
     --wa-color-text-link: var(--wa-color-brand-70);
 
     --wa-color-overlay-modal: color-mix(in oklab, black 60%, transparent);
+    --wa-color-overlay-media: color-mix(in oklab, black 90%, transparent);
     --wa-color-overlay-inline: color-mix(
       in oklab,
       var(--wa-color-neutral-50) 10%,
@@ -445,7 +449,7 @@
       a.wa-button
     ):not([appearance~="plain"], .wa-plain) {
       &:where(:not(wa-button)),
-      &::part(base) {
+      &::part(button) {
         box-shadow:
           var(--inner-shine), var(--top-highlight), var(--upper-tint),
           var(--lower-shade), var(--bottom-shadow);
@@ -459,7 +463,7 @@
 
       &:not([disabled]):active {
         &:where(:not(wa-button)),
-        &::part(base) {
+        &::part(button) {
           box-shadow:
             var(--inner-shine-active), var(--top-highlight-active),
             var(--upper-tint-active), var(--lower-shade-active),
@@ -488,26 +492,29 @@
     wa-select,
     wa-combobox,
     wa-tag-input,
-    wa-textarea {
+    wa-textarea,
+    wa-rich-text-editor {
       --upper-tint: inset 0 -1.25em 0 0 rgb(255 255 255 / 0.085);
       --lower-shade: inset 0 1.125em 0 0 rgb(0 0 0 / 0.02);
       &:where(:is(input, select, textarea)),
-      &:where(wa-input)::part(base),
+      &:where(wa-input)::part(input-wrapper),
       &:where(wa-select)::part(combobox),
       &:where(wa-combobox)::part(combobox),
       &:where(wa-tag-input)::part(tag-input),
-      &:where(wa-textarea)::part(base) {
+      &:where(wa-textarea)::part(textarea-wrapper),
+      &:where(wa-rich-text-editor)::part(rich-text-editor) {
         box-shadow: var(--upper-tint), var(--lower-shade);
         transition: all var(--wa-transition-fast);
       }
 
       &:focus {
         &:where(:is(input, select, textarea)),
-        &:where(wa-input)::part(base),
+        &:where(wa-input)::part(input-wrapper),
         &:where(wa-select)::part(combobox),
         &:where(wa-combobox)::part(combobox),
         &:where(wa-tag-input)::part(tag-input),
-        &:where(wa-textarea)::part(base) {
+        &:where(wa-textarea)::part(textarea-wrapper),
+        &:where(wa-rich-text-editor)::part(rich-text-editor) {
           box-shadow:
             0 0 transparent,
             0 0 transparent;
@@ -546,7 +553,7 @@
     progress,
     wa-progress-bar {
       &:where(:not(wa-progress-bar)),
-      &::part(base) {
+      &::part(progress-bar) {
         box-shadow: inset var(--wa-shadow-s);
       }
 
