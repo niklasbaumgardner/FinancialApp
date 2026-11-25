@@ -101,6 +101,9 @@ def convert_pending_transaction(id):
         pending_transaction_id=id,
     )
 
+    if transaction_id is None:
+        return {"error": "Could not create transaction"}, 403
+
     transaction = transaction_queries.get_transaction(
         transaction_id=transaction_id, include_budget=True
     )

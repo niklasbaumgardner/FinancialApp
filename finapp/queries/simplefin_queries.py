@@ -534,7 +534,14 @@ def get_completed_transactions() -> Sequence[CompletedTransaction]:
 
 
 def convert_pending_transaction(
-    user_id, name, amount, t_date, budget_id, categories, pending_transaction_id
+    user_id,
+    name,
+    amount,
+    t_date,
+    budget_id,
+    categories,
+    pending_transaction_id,
+    commit_transaction=False,
 ):
     p_transaction = get_pending_transaction_by_id(id=pending_transaction_id)
 
@@ -545,7 +552,11 @@ def convert_pending_transaction(
         date=t_date,
         budget_id=budget_id,
         categories=categories,
+        commit=commit_transaction,
     )
+    if transaction_id is None:
+        # Failed insert
+        return None
 
     create_completed_transaction(
         simplefin_id=p_transaction.simplefin_id,
@@ -554,6 +565,7 @@ def convert_pending_transaction(
         name=p_transaction.name,
         amount=p_transaction.amount,
         t_date=p_transaction.date,
+        transaction_id=transaction_id,
     )
 
     delete_pending_transaction(id=p_transaction.id, create_completed=False)

@@ -1,4 +1,3 @@
-from sqlalchemy.sql.dml import Update
 import os
 from collections.abc import Sequence
 
@@ -21,7 +20,7 @@ def create_user(email, username, password) -> None:
     db.session.commit()
 
 
-def get_user_by_id(id: Update) -> User | None:
+def get_user_by_id(id: int) -> User | None:
     stmt = select(User).where(User.id == id)
     return db.session.scalars(stmt.limit(1)).first()
 
@@ -93,9 +92,9 @@ def get_shared_users_for_all_budgets() -> Sequence[User]:
     return shared_users
 
 
-def get_shared_users_for_user(key, user_id) -> Sequence[User] | None:
+def get_shared_users_for_user(key, user_id) -> Sequence[User]:
     if key != os.environ.get("SIMPLEFIN_KEY"):
-        return
+        return []
 
     stmt = (
         select(User)

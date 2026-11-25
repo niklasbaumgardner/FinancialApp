@@ -453,8 +453,9 @@ class CompletedTransaction(BaseModel, SerializerMixin):
 
     simplefin_id: Mapped[str] = mapped_column(unique=True, index=True)
     transaction_id: Mapped[int | None] = mapped_column(
-        ForeignKey("transaction.id")
-    )  # do i need this?
+        # Deleting the Transaction deletes this row, so the SFT resurfaces as pending
+        ForeignKey("transaction.id", ondelete="CASCADE"),
+    )
 
     account_id: Mapped[str] = mapped_column(ForeignKey("simplefin_account.id"))
     user_id: Mapped[user_fk]

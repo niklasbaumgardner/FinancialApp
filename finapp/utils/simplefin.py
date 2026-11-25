@@ -1,11 +1,13 @@
 import base64
 import os
+from collections.abc import Sequence
 from datetime import datetime
 
 import requests
 from flask_login import current_user
+from sqlalchemy import Row
 
-from finapp.models import AccountAccess
+from finapp.models import AccountAccess, SimpleFINTransaction, Transaction
 from finapp.queries import simplefin_queries, transaction_queries
 
 
@@ -23,25 +25,34 @@ def claim_simplefin_token(setup_token) -> tuple[str, str]:
     return username, password
 
 
-def check_matching_transactions(result):
-    # TODO: Make sure this works with -19.60 bathing suit example
-    # Meaning: two SFTs in the db with same amount and only 1 transaction in T
-    missing_SFTs = []
-    seen_transactions = set()
-    seen_SFTs = set()
+def check_matching_transactions(
+    result: Sequence[Row[tuple[SimpleFINTransaction, Transaction | None]]],
+) -> list[SimpleFINTransaction]:
+    missing_SFTs: list[SimpleFINTransaction] = []
+    claimed_transactions: set[int] = set()
+    # sft.id -> (sft, [t, ...]); insertion order = transacted_at order
+    candidates: dict[str, tuple[SimpleFINTransaction, list[Transaction]]] = {}
 
     for sft, t in result:
-        if sft.id not in seen_SFTs and (
-            t is None or (t is not None and t.id in seen_transactions)
-        ):
-            missing_SFTs.append(sft)
-            seen_SFTs.add(sft.id)
+        _, lst = candidates.setdefault(sft.id, (sft, []))
+        if t is not None:
+            lst.append(t)
 
-            if t is not None:
-                seen_transactions.add(t.id)
+    def get_next_transaction(transactions: list[Transaction]) -> Transaction | None:
+        for t in transactions:
+            if t.id not in claimed_transactions:
+                return t
+
+        return None
+
+    for sft, ts in candidates.values():
+        match = get_next_transaction(ts)
+        if match is None:
+            missing_SFTs.append(sft)
+        else:
+            claimed_transactions.add(match.id)
 
     print(f"found {len(missing_SFTs)} missing transactions")
-
     return missing_SFTs
 
 

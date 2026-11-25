@@ -127,6 +127,7 @@ def create_transaction(
     commit: bool = True,
 ):
     user_ids = [id for id in {user_id, current_user.id} if id is not None]
+    transaction_id = None
 
     can_add_transaction = True
     for u_id in user_ids:
@@ -151,6 +152,7 @@ def create_transaction(
             paycheck_id=paycheck_id,
         )
         result = db.session.execute(stmt)
+        db.session.flush()
         transaction_id = result.inserted_primary_key.id
 
         if categories:
@@ -743,11 +745,9 @@ def data_grid(sort, filters, search, page, page_size):
     return paginate_query(stmt=stmt, page=page, page_size=20)
 
 
-def find_transactions_v2():
-    shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
-
-    completed_stmt = (
-        select(CompletedTransaction)
+def __find_sft_candidates(shared_user_ids):
+    completed_sft_stmt = (
+        select(CompletedTransaction.id)
         .where(
             and_(
                 CompletedTransaction.simplefin_id == SimpleFINTransaction.id,
@@ -757,93 +757,66 @@ def find_transactions_v2():
         .exists()
     )
 
+    # (2) Transactions already linked to a completed SFT can't be claimed again
+    linked_transaction_stmt = (
+        select(CompletedTransaction.id)
+        .where(CompletedTransaction.transaction_id == Transaction.id)
+        .exists()
+    )
+
+    column_date = func.coalesce(
+        SimpleFINTransaction.transacted_at, func.nullif(SimpleFINTransaction.posted, 0)
+    )
+
+    sft_date = cast(func.to_timestamp(column_date), Date)
+
     DAY_RANGE = 5
     stmt = (
         select(SimpleFINTransaction, Transaction)
         .where(
             and_(
-                ~completed_stmt,
+                ~completed_sft_stmt,
                 SimpleFINTransaction.user_id.in_(shared_user_ids),
-                or_(
-                    Transaction.user_id.is_(None),
-                    Transaction.user_id.in_(shared_user_ids),
-                ),
             )
         )
         .join(
             Transaction,
             and_(
                 Transaction.date.between(
-                    func.to_timestamp(SimpleFINTransaction.transacted_at)
-                    - timedelta(days=DAY_RANGE),
-                    func.to_timestamp(SimpleFINTransaction.transacted_at)
-                    + timedelta(days=DAY_RANGE),
+                    sft_date - timedelta(days=DAY_RANGE),
+                    sft_date + timedelta(days=DAY_RANGE),
                 ),
                 Transaction.amount == cast(SimpleFINTransaction.amount, FLOAT),
                 Transaction.paycheck_id.is_(None),
+                Transaction.user_id.in_(shared_user_ids),
+                ~linked_transaction_stmt,
             ),
             isouter=True,
         )
-        .order_by(SimpleFINTransaction.transacted_at)
+        # (3) Within each SFT, closest-dated candidate first so greedy claims it
+        .order_by(
+            column_date,
+            SimpleFINTransaction.id,
+            func.abs(Transaction.date - sft_date),
+        )
     )
 
-    result = db.session.execute(stmt).unique().all()
+    return db.session.execute(stmt).unique().all()
 
-    return result
+
+def find_transactions_v2():
+    shared_user_ids = [u.id for u in user_queries.get_shared_users_for_all_budgets()]
+    return __find_sft_candidates(shared_user_ids)
 
 
 def find_transactions_for_user_v2(key, user_id):
     if key != os.environ.get("SIMPLEFIN_KEY"):
-        return
+        return []
 
     shared_user_ids = [
         u.id for u in user_queries.get_shared_users_for_user(key=key, user_id=user_id)
     ]
-
-    completed_stmt = (
-        select(CompletedTransaction)
-        .where(
-            and_(
-                CompletedTransaction.simplefin_id == SimpleFINTransaction.id,
-                CompletedTransaction.user_id.in_(shared_user_ids),
-            )
-        )
-        .exists()
-    )
-
-    DAY_RANGE = 5
-    stmt = (
-        select(SimpleFINTransaction, Transaction)
-        .where(
-            and_(
-                ~completed_stmt,
-                SimpleFINTransaction.user_id.in_(shared_user_ids),
-                or_(
-                    Transaction.user_id.is_(None),
-                    Transaction.user_id.in_(shared_user_ids),
-                ),
-            )
-        )
-        .join(
-            Transaction,
-            and_(
-                Transaction.date.between(
-                    func.to_timestamp(SimpleFINTransaction.transacted_at)
-                    - timedelta(days=DAY_RANGE),
-                    func.to_timestamp(SimpleFINTransaction.transacted_at)
-                    + timedelta(days=DAY_RANGE),
-                ),
-                Transaction.amount == cast(SimpleFINTransaction.amount, FLOAT),
-                Transaction.paycheck_id.is_(None),
-            ),
-            isouter=True,
-        )
-        .order_by(SimpleFINTransaction.transacted_at)
-    )
-
-    result = db.session.execute(stmt).unique().all()
-
-    return result
+    return __find_sft_candidates(shared_user_ids)
 
 
 def find_transaction_for_pending_transaction(
