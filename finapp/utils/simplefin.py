@@ -26,15 +26,15 @@ def claim_simplefin_token(setup_token) -> tuple[str, str]:
 
 
 def check_matching_transactions(
-    result: Sequence[Row[tuple[SimpleFINTransaction, Transaction | None]]],
+    result: Sequence[Row[tuple[SimpleFINTransaction, Transaction | None, bool]]],
 ) -> list[SimpleFINTransaction]:
     missing_SFTs: list[SimpleFINTransaction] = []
     claimed_transactions: set[int] = set()
-    # sft.id -> (sft, [t, ...]); insertion order = transacted_at order
-    candidates: dict[str, tuple[SimpleFINTransaction, list[Transaction]]] = {}
+    # sft.id -> (sft, [t, ...], bool); insertion order = transacted_at order
+    candidates: dict[str, tuple[SimpleFINTransaction, list[Transaction], bool]] = {}
 
-    for sft, t in result:
-        _, lst = candidates.setdefault(sft.id, (sft, []))
+    for sft, t, is_completed in result:
+        _, lst, _ = candidates.setdefault(sft.id, (sft, [], is_completed))
         if t is not None:
             lst.append(t)
 
@@ -45,7 +45,20 @@ def check_matching_transactions(
 
         return None
 
-    for sft, ts in candidates.values():
+    # Unlinked completed SFTs claim first: the transaction they created is
+    # theirs, and they are never reported as missing.
+    for sft, ts, is_completed in candidates.values():
+        if not is_completed:
+            continue
+
+        match = get_next_transaction(ts)
+        if match is not None:
+            claimed_transactions.add(match.id)
+
+    for sft, ts, is_completed in candidates.values():
+        if is_completed:
+            continue
+
         match = get_next_transaction(ts)
         if match is None:
             missing_SFTs.append(sft)

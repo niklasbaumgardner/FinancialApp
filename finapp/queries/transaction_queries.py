@@ -746,21 +746,48 @@ def data_grid(sort, filters, search, page, page_size):
 
 
 def __find_sft_candidates(shared_user_ids):
-    completed_sft_stmt = (
-        select(CompletedTransaction.id)
-        .where(
-            and_(
-                CompletedTransaction.simplefin_id == SimpleFINTransaction.id,
-                CompletedTransaction.user_id.in_(shared_user_ids),
+    def completed_sft_stmt(*conditions):
+        return (
+            select(CompletedTransaction.id)
+            .where(
+                and_(
+                    CompletedTransaction.simplefin_id == SimpleFINTransaction.id,
+                    CompletedTransaction.user_id.in_(shared_user_ids),
+                    *conditions,
+                )
             )
+            .exists()
         )
-        .exists()
+
+    # Conversions after this date always store transaction_id, so an unlinked
+    # completed SFT dated after it must be a dismissal, not a legacy conversion.
+    LEGACY_UNLINKED_CUTOFF = date(2026, 11, 25)
+
+    # Fully resolved completed SFTs: linked to a transaction, or dismissed
+    # after the cutoff. Skip them.
+    linked_completed_stmt = completed_sft_stmt(
+        or_(
+            CompletedTransaction.transaction_id.is_not(None),
+            CompletedTransaction.date > LEGACY_UNLINKED_CUTOFF,
+        )
+    )
+    # Legacy unlinked completed SFTs (converted before transaction_id was
+    # stored, or dismissed) still take part in matching so they consume the
+    # transaction they created, but are never reported as missing.
+    unlinked_completed_stmt = completed_sft_stmt(
+        CompletedTransaction.transaction_id.is_(None),
+        CompletedTransaction.date <= LEGACY_UNLINKED_CUTOFF,
     )
 
     # (2) Transactions already linked to a completed SFT can't be claimed again
     linked_transaction_stmt = (
         select(CompletedTransaction.id)
-        .where(CompletedTransaction.transaction_id == Transaction.id)
+        .where(
+            and_(
+                CompletedTransaction.transaction_id == Transaction.id,
+                CompletedTransaction.user_id.in_(shared_user_ids),
+            )
+        )
         .exists()
     )
 
@@ -772,10 +799,14 @@ def __find_sft_candidates(shared_user_ids):
 
     DAY_RANGE = 5
     stmt = (
-        select(SimpleFINTransaction, Transaction)
+        select(
+            SimpleFINTransaction,
+            Transaction,
+            unlinked_completed_stmt.label("is_completed"),
+        )
         .where(
             and_(
-                ~completed_sft_stmt,
+                ~linked_completed_stmt,
                 SimpleFINTransaction.user_id.in_(shared_user_ids),
             )
         )
