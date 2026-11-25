@@ -154,11 +154,10 @@ export class EditTransactionModal extends AddTransactionModal {
         html`<wa-option
           value=${b.id}
           ?selected=${b.id === this.transaction.budget_id}
-          ><span class="">${b.name}</span>:
-          ${new Intl.NumberFormat(undefined, {
+          ><span>${b.name}</span> (${new Intl.NumberFormat(undefined, {
             style: "currency",
             currency: "USD",
-          }).format(b.total)}</wa-option
+          }).format(b.total)})</wa-option
         >`,
     );
   }

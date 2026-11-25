@@ -697,8 +697,7 @@ ${s}
     </wa-dialog>`}};customElements.define("nb-delete-pending-transaction",nv);var av=class extends oe{static properties={transaction:{type:Object},budgets:{type:Array},categories:{type:Array},sharedUsers:{type:Array}};static queries={form:"form",budgetsSelect:"#budgets-select",usersSelect:"#user-select",categoriesSelect:"nb-categories-select",submitButton:"#submit-button",discardButton:"#discard-button",nameInput:"#name",dateInput:"#date",amountInput:"#amount"};get selectedBudget(){let t=this.budgetsSelect?.value;return t?this.budgets.find(s=>s.id==t):null}init(){this.budgets.sort((t,e)=>t.name.localeCompare(e.name))}openCategoriesModal(){document.querySelector("nb-category-modal").show()}getPotentialCategories(){let t=[];for(let e of this.categories){let s=e.name.toLowerCase(),n=this.transaction.name.toLowerCase(),a=this.transaction.account.name.toLowerCase();(s.includes(n)||s.includes(a)||n.includes(s)||a.includes(s))&&t.push(e.id)}return t}async handleTransactionAdd(){if(!this.form.reportValidity())return;this.submitButton.loading=!0,this.submitButton.disabled=!0,this.discardButton.disabled=!0;let t=new FormData(this.form),e=await fetch(this.transaction.convert_pending_transaction_url,{method:"POST",body:t}),{transaction:s,pending_transactions:n}=await e.json();document.dispatchEvent(new CustomEvent("AddTransaction",{bubbles:!0,composed:!0,detail:{transaction:s}})),document.dispatchEvent(new CustomEvent("UpdateBudgets",{bubbles:!0})),this.updatePendingTransactions(n)}async handleTransactionDiscard(){this.deletePendingTransactionModal||(this.deletePendingTransactionModal=document.createElement("nb-delete-pending-transaction"),this.deletePendingTransactionModal.pendingTransaction=this.transaction,document.body.appendChild(this.deletePendingTransactionModal)),this.deletePendingTransactionModal.show()}updatePendingTransactions(t){document.dispatchEvent(new CustomEvent("UpdatePendingTransactions",{bubbles:!0,composed:!0,detail:{pendingTransactions:t}}))}async budgetChange(){if(!this.selectedBudget)return;let t=[this.selectedBudget.user];t.push(...this.selectedBudget.shared_users),t.sort((e,s)=>e.username.localeCompare(s.username)),this.sharedUsers=t}budgetOptionsTemplate(){return this.budgets.map(t=>L`<wa-option
           value=${t.id}
           ?selected=${t.id===this.transaction.budget_id}
-          ><span class="">${t.name}</span>:
-          ${new Intl.NumberFormat(void 0,{style:"currency",currency:"USD"}).format(t.total)}</wa-option
+          ><span>${t.name}</span> (${new Intl.NumberFormat(void 0,{style:"currency",currency:"USD"}).format(t.total)})</wa-option
         >`)}budgetsTemplate(){return L`<nb-combobox
       size="s"
       label="Select Budget"
@@ -822,8 +821,7 @@ ${s}
         </div>
       </div>
     </wa-details>`:null}};customElements.define("nb-pending-transaction",av);var rv=class{constructor(){addEventListener("UpdateBudgets",this)}handleEvent(t){t.type==="UpdateBudgets"&&this.#e()}async#e(){let t=await fetch(GET_BUDGETS_URL),{budgets:e,active:s,inactive:n}=await t.json();document.dispatchEvent(new CustomEvent("BudgetsUpdated",{bubbles:!0,detail:{budgets:e,active:s,inactive:n}}))}},UY=new rv;var Sh=class extends rt{static properties={budgets:{type:Array},categories:{type:Array},sharedUsers:{type:Array},pendingTransactions:{type:Array}};static queries={dialog:"wa-dialog",form:"form",budgetsSelect:"#budgets-select",usersSelect:"#user-select",submitButton:"#add-transaction-button",nameInput:"#name",tabGroup:"wa-tab-group",pendingTabPanel:"#pending",refreshPendingButton:"#refresh-pending-transactions",pendingTransactionEls:{all:"nb-pending-transaction"}};get selectedBudget(){let t=this.budgetsSelect?.value;return t?this.budgets.find(s=>s.id==t):null}get showPendingTransactions(){return CURRENT_USER.credentials?.exists||this.pendingTransactions.length}constructor(){super(),this.pendingTransactions=[]}init(){this.budgets.sort((t,e)=>t.name.localeCompare(e.name)),document.addEventListener("BudgetsUpdated",this)}handleEvent(t){if(t.type==="BudgetsUpdated"){let{active:e}=t.detail;this.updateBudgets(e)}}updateBudgets(t){t.sort((e,s)=>e.name.localeCompare(s.name)),this.budgets=[],this.budgets=t,this.requestUpdate(),this.updateComplete.then(()=>{this.budgetsSelect.selectedOptions[0]?.updateDefaultLabel()&&this.budgetsSelect.selectionChanged()})}reset(){this.submitButton.loading=!1,this.submitButton.disabled=!1,this.sharedUsers=[],this.form.reset(),this.hide()}async handleTransactionAdd(){if(!this.form.reportValidity())return;this.submitButton.loading=!0,this.submitButton.disabled=!0;let t=new FormData(this.form),e=await fetch(this.selectedBudget.add_transaction_url,{method:"POST",body:t}),{transaction:s}=await e.json();document.dispatchEvent(new CustomEvent("AddTransaction",{bubbles:!0,composed:!0,detail:{transaction:s}})),document.dispatchEvent(new CustomEvent("UpdateBudgets",{bubbles:!0})),this.reset()}async budgetChange(){if(!this.selectedBudget)return;let t=[this.selectedBudget.user];t.push(...this.selectedBudget.shared_users),t.sort((e,s)=>e.username.localeCompare(s.username)),this.sharedUsers=t}openCategoriesModal(){document.querySelector("nb-category-modal").show()}budgetOptionsTemplate(){return this.budgets.map(t=>L`<wa-option value=${t.id}
-          ><span class="">${t.name}</span>:
-          ${new Intl.NumberFormat(void 0,{style:"currency",currency:"USD"}).format(t.total)}</wa-option
+          ><span>${t.name}</span> (${new Intl.NumberFormat(void 0,{style:"currency",currency:"USD"}).format(t.total)})</wa-option
         >`)}budgetsTemplate(){return L`<nb-combobox
       label="Select Budget"
       id="budgets-select"
@@ -936,8 +934,7 @@ ${s}
     </wa-dialog>`}};customElements.define("nb-add-transaction",Sh);var ov=class extends Sh{static properties={transaction:{type:Object}};static queries={dialog:"wa-dialog",form:"form",budgetsSelect:"#budgets-select",usersSelect:"#user-select",categoriesSelect:"nb-categories-select",submitButton:"#submit-button",nameInput:"#name",dateInput:"#date",amountInput:"#amount"};get selectedBudget(){let t=this.budgetsSelect?.value;return(!t||!this.budgetsSelect)&&(t=this.transaction.budget_id),this.budgets.find(s=>s.id==t)}init(){let t=[this.selectedBudget.user];t.push(...this.selectedBudget.shared_users),t.sort((e,s)=>e.username.localeCompare(s.username)),this.sharedUsers=t,document.addEventListener("BudgetsUpdated",this)}handleEvent(t){if(t.type==="BudgetsUpdated"){let{budgets:e}=t.detail;this.updateBudgets(e)}}updateBudgets(t){t.sort((e,s)=>e.name.localeCompare(s.name)),this.budgets=[],this.budgets=t,this.requestUpdate(),this.updateComplete.then(()=>{this.budgetsSelect.selectedOptions[0]?.updateDefaultLabel()&&this.budgetsSelect.selectionChanged()})}reset(){this.submitButton.loading=!1,this.submitButton.disabled=!1,this.hide()}categoriesChange(t,e){let s=new Set(t),n=new Set(e),a=Array.from(n.difference(s)),r=Array.from(s.difference(n));return{categoriesAdded:a,categoriesDeleted:r}}async handleTransactionAdd(){if(!this.form.reportValidity())return;this.submitButton.loading=!0,this.submitButton.disabled=!0;let t=this.transaction.categories.map(l=>l.category_id),e=this.categoriesSelect.value,{categoriesAdded:s,categoriesDeleted:n}=this.categoriesChange(t,e);if(this.nameInput.value===this.transaction.name&&this.dateInput.value===this.transaction.date&&this.amountInput.value==this.transaction.amount&&this.budgetsSelect.value==this.transaction.budget_id&&this.usersSelect.value==this.transaction.user_id&&!s.length&&!n.length){this.reset();return}let a=new FormData(this.form);for(let l of s)a.append("categoriesAdded",l);for(let l of n)a.append("categoriesDeleted",l);let r=await fetch(this.transaction.edit_url,{method:"POST",body:a}),{transaction:o}=await r.json();this.transaction=o,document.dispatchEvent(new CustomEvent("UpdateTransaction",{bubbles:!0,composed:!0,detail:{transaction:o}})),document.dispatchEvent(new CustomEvent("UpdateBudgets",{bubbles:!0})),this.reset()}budgetOptionsTemplate(){return this.budgets.map(t=>L`<wa-option
           value=${t.id}
           ?selected=${t.id===this.transaction.budget_id}
-          ><span class="">${t.name}</span>:
-          ${new Intl.NumberFormat(void 0,{style:"currency",currency:"USD"}).format(t.total)}</wa-option
+          ><span>${t.name}</span> (${new Intl.NumberFormat(void 0,{style:"currency",currency:"USD"}).format(t.total)})</wa-option
         >`)}budgetsTemplate(){return L`<nb-combobox
       label="Select Budget"
       id="budgets-select"
@@ -1560,8 +1557,7 @@ ${s}
         </div>
       </div></wa-card
     >`}render(){return this.credentialsExist?this.existingCredentialsTemplate():this.noCredentialsTemplate()}};customElements.define("nb-simplefin",xv);var Sv=class extends oe{static properties={budgets:{type:Array},sourceOptions:{type:Array},destOptions:{type:Array}};static queries={form:"form",sourceBudgetSelect:"#source-budget",destBudgetSelect:"#dest-budget"};get sourceBudgetOptions(){return Array.from(this.budgets.filter(t=>t.id!=this.destBudgetSelect?.value))}get destBudgetOptions(){return Array.from(this.budgets.filter(t=>t.id!=this.sourceBudgetSelect?.value))}init(){this.sourceOptions=this.sourceBudgetOptions,this.destOptions=this.destBudgetOptions}sourceOptionsTemplate(){return this.sourceOptions.map(t=>L`<wa-option value=${t.id}
-          ><span class="">${t.name}</span>:
-          ${new Intl.NumberFormat(void 0,{style:"currency",currency:"USD"}).format(t.total)}</wa-option
+          ><span>${t.name}</span> (${new Intl.NumberFormat(void 0,{style:"currency",currency:"USD"}).format(t.total)})</wa-option
         >`)}sourceBudgetTemplate(){return L`<nb-combobox
       label="Source budget"
       placeholder="Please select"
@@ -1572,8 +1568,7 @@ ${s}
     >
       ${this.sourceOptionsTemplate()}
     </nb-combobox>`}destOptionsTemplate(){return this.destOptions.map(t=>L`<wa-option value=${t.id}
-          ><span class="">${t.name}</span>:
-          ${new Intl.NumberFormat(void 0,{style:"currency",currency:"USD"}).format(t.total)}</wa-option
+          ><span>${t.name}</span> (${new Intl.NumberFormat(void 0,{style:"currency",currency:"USD"}).format(t.total)})</wa-option
         >`)}destBudgetTemplate(){return L`<nb-combobox
       label="Destination budget"
       placeholder="Please select"
@@ -1658,9 +1653,8 @@ ${s}
         label="Move to"
         required
       >
-        ${t.map(e=>L`<wa-option value="${e.id}"
-              ><span class="">${e.name}</span>:
-              ${new Intl.NumberFormat(void 0,{style:"currency",currency:"USD"}).format(e.total)}</wa-option
+        ${t.map(e=>L`<wa-option value=${e.id}
+              ><span>${e.name}</span> (${new Intl.NumberFormat(void 0,{style:"currency",currency:"USD"}).format(e.total)})</wa-option
             >`)}
       </nb-combobox>`:L`There are no other budgets shared with
     ${this.transaction.user.username}. You can only move this transaction to a
@@ -2504,4 +2498,4 @@ ${s}
 
       ${this.transactionsTemplate()}
     </div>`}};customElements.define("nb-view-external-transactions",Bv);
-//# sourceMappingURL=nb.MSGBIRZL.mjs.map
+//# sourceMappingURL=nb.63ELILZX.mjs.map

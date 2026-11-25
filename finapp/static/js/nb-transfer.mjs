@@ -35,11 +35,10 @@ export class Transfer extends NikElement {
     return this.sourceOptions.map(
       (b) =>
         html`<wa-option value=${b.id}
-          ><span class="">${b.name}</span>:
-          ${new Intl.NumberFormat(undefined, {
+          ><span>${b.name}</span> (${new Intl.NumberFormat(undefined, {
             style: "currency",
             currency: "USD",
-          }).format(b.total)}</wa-option
+          }).format(b.total)})</wa-option
         >`,
     );
   }
@@ -61,11 +60,10 @@ export class Transfer extends NikElement {
     return this.destOptions.map(
       (b) =>
         html`<wa-option value=${b.id}
-          ><span class="">${b.name}</span>:
-          ${new Intl.NumberFormat(undefined, {
+          ><span>${b.name}</span> (${new Intl.NumberFormat(undefined, {
             style: "currency",
             currency: "USD",
-          }).format(b.total)}</wa-option
+          }).format(b.total)})</wa-option
         >`,
     );
   }
