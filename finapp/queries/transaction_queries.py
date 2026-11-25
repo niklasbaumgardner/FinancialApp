@@ -829,6 +829,8 @@ def __find_sft_candidates(shared_user_ids):
             column_date,
             SimpleFINTransaction.id,
             func.abs(Transaction.date - sft_date),
+            Transaction.date,
+            Transaction.id,
         )
     )
 
