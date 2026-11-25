@@ -132,6 +132,16 @@ export class PendingTransaction extends NikElement {
     this.sharedUsers = users;
   }
 
+  toggleSentenceCase() {
+    let value = this.nameInput.value;
+    if (value.charAt(1) === value.charAt(1).toUpperCase()) {
+      this.nameInput.value =
+        value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+    } else {
+      this.nameInput.value = value.toUpperCase();
+    }
+  }
+
   budgetOptionsTemplate() {
     return this.budgets.map(
       (b) =>
@@ -236,6 +246,13 @@ export class PendingTransaction extends NikElement {
             hidden
           />
           <div class="wa-stack">
+            <wa-button
+              @click=${this.toggleSentenceCase}
+              variant="brand"
+              appearance="outlined"
+              size="xs"
+              >Toggle sentence case</wa-button
+            >
             <wa-input
               size="s"
               label="Name"

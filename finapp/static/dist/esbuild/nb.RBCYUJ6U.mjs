@@ -694,7 +694,7 @@ ${s}
           >Discard</wa-button
         >
       </div>
-    </wa-dialog>`}};customElements.define("nb-delete-pending-transaction",nv);var av=class extends oe{static properties={transaction:{type:Object},budgets:{type:Array},categories:{type:Array},sharedUsers:{type:Array}};static queries={form:"form",budgetsSelect:"#budgets-select",usersSelect:"#user-select",categoriesSelect:"nb-categories-select",submitButton:"#submit-button",discardButton:"#discard-button",nameInput:"#name",dateInput:"#date",amountInput:"#amount"};get selectedBudget(){let t=this.budgetsSelect?.value;return t?this.budgets.find(s=>s.id==t):null}init(){this.budgets.sort((t,e)=>t.name.localeCompare(e.name))}openCategoriesModal(){document.querySelector("nb-category-modal").show()}getPotentialCategories(){let t=[];for(let e of this.categories){let s=e.name.toLowerCase(),n=this.transaction.name.toLowerCase(),a=this.transaction.account.name.toLowerCase();(s.includes(n)||s.includes(a)||n.includes(s)||a.includes(s))&&t.push(e.id)}return t}async handleTransactionAdd(){if(!this.form.reportValidity())return;this.submitButton.loading=!0,this.submitButton.disabled=!0,this.discardButton.disabled=!0;let t=new FormData(this.form),e=await fetch(this.transaction.convert_pending_transaction_url,{method:"POST",body:t}),{transaction:s,pending_transactions:n}=await e.json();document.dispatchEvent(new CustomEvent("AddTransaction",{bubbles:!0,composed:!0,detail:{transaction:s}})),document.dispatchEvent(new CustomEvent("UpdateBudgets",{bubbles:!0})),this.updatePendingTransactions(n)}async handleTransactionDiscard(){this.deletePendingTransactionModal||(this.deletePendingTransactionModal=document.createElement("nb-delete-pending-transaction"),this.deletePendingTransactionModal.pendingTransaction=this.transaction,document.body.appendChild(this.deletePendingTransactionModal)),this.deletePendingTransactionModal.show()}updatePendingTransactions(t){document.dispatchEvent(new CustomEvent("UpdatePendingTransactions",{bubbles:!0,composed:!0,detail:{pendingTransactions:t}}))}async budgetChange(){if(!this.selectedBudget)return;let t=[this.selectedBudget.user];t.push(...this.selectedBudget.shared_users),t.sort((e,s)=>e.username.localeCompare(s.username)),this.sharedUsers=t}budgetOptionsTemplate(){return this.budgets.map(t=>L`<wa-option
+    </wa-dialog>`}};customElements.define("nb-delete-pending-transaction",nv);var av=class extends oe{static properties={transaction:{type:Object},budgets:{type:Array},categories:{type:Array},sharedUsers:{type:Array}};static queries={form:"form",budgetsSelect:"#budgets-select",usersSelect:"#user-select",categoriesSelect:"nb-categories-select",submitButton:"#submit-button",discardButton:"#discard-button",nameInput:"#name",dateInput:"#date",amountInput:"#amount"};get selectedBudget(){let t=this.budgetsSelect?.value;return t?this.budgets.find(s=>s.id==t):null}init(){this.budgets.sort((t,e)=>t.name.localeCompare(e.name))}openCategoriesModal(){document.querySelector("nb-category-modal").show()}getPotentialCategories(){let t=[];for(let e of this.categories){let s=e.name.toLowerCase(),n=this.transaction.name.toLowerCase(),a=this.transaction.account.name.toLowerCase();(s.includes(n)||s.includes(a)||n.includes(s)||a.includes(s))&&t.push(e.id)}return t}async handleTransactionAdd(){if(!this.form.reportValidity())return;this.submitButton.loading=!0,this.submitButton.disabled=!0,this.discardButton.disabled=!0;let t=new FormData(this.form),e=await fetch(this.transaction.convert_pending_transaction_url,{method:"POST",body:t}),{transaction:s,pending_transactions:n}=await e.json();document.dispatchEvent(new CustomEvent("AddTransaction",{bubbles:!0,composed:!0,detail:{transaction:s}})),document.dispatchEvent(new CustomEvent("UpdateBudgets",{bubbles:!0})),this.updatePendingTransactions(n)}async handleTransactionDiscard(){this.deletePendingTransactionModal||(this.deletePendingTransactionModal=document.createElement("nb-delete-pending-transaction"),this.deletePendingTransactionModal.pendingTransaction=this.transaction,document.body.appendChild(this.deletePendingTransactionModal)),this.deletePendingTransactionModal.show()}updatePendingTransactions(t){document.dispatchEvent(new CustomEvent("UpdatePendingTransactions",{bubbles:!0,composed:!0,detail:{pendingTransactions:t}}))}async budgetChange(){if(!this.selectedBudget)return;let t=[this.selectedBudget.user];t.push(...this.selectedBudget.shared_users),t.sort((e,s)=>e.username.localeCompare(s.username)),this.sharedUsers=t}toggleSentenceCase(){let t=this.nameInput.value;t.charAt(1)===t.charAt(1).toUpperCase()?this.nameInput.value=t.charAt(0).toUpperCase()+t.slice(1).toLowerCase():this.nameInput.value=t.toUpperCase()}budgetOptionsTemplate(){return this.budgets.map(t=>L`<wa-option
           value=${t.id}
           ?selected=${t.id===this.transaction.budget_id}
           ><span>${t.name}</span> (${new Intl.NumberFormat(void 0,{style:"currency",currency:"USD"}).format(t.total)})</wa-option
@@ -764,6 +764,13 @@ ${s}
             hidden
           />
           <div class="wa-stack">
+            <wa-button
+              @click=${this.toggleSentenceCase}
+              variant="brand"
+              appearance="outlined"
+              size="xs"
+              >Toggle sentence case</wa-button
+            >
             <wa-input
               size="s"
               label="Name"
@@ -2498,4 +2505,4 @@ ${s}
 
       ${this.transactionsTemplate()}
     </div>`}};customElements.define("nb-view-external-transactions",Bv);
-//# sourceMappingURL=nb.63ELILZX.mjs.map
+//# sourceMappingURL=nb.RBCYUJ6U.mjs.map
